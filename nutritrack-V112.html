@@ -52,21 +52,21 @@
             --accent-fat: #fbbf24;        /* Ambre - lipides */
             --accent-danger: #ef4444;     /* Rouge - erreurs/suppression */
 
-            /* Espacements (ajustés après suppression zoom 0.9) */
-            --space-xs: 3px;
-            --space-sm: 7px;
-            --space-md: 10px;
-            --space-lg: 14px;
-            --space-xl: 18px;
-            --space-2xl: 22px;
-            --space-3xl: 28px;
+            /* Espacements (système 4px) */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 12px;
+            --space-lg: 16px;
+            --space-xl: 20px;
+            --space-2xl: 24px;
+            --space-3xl: 32px;
 
-            /* Border radius unifiés (ajustés) */
-            --radius-sm: 5px;
-            --radius-md: 9px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
-            --radius-2xl: 20px;
+            /* Border radius unifiés */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 18px;
+            --radius-2xl: 22px;
             --radius-full: 9999px;
 
             /* Ombres subtiles */
@@ -132,13 +132,14 @@
             z-index: 1;
         }
 
-        /* App principale - tailles ajustées (ex-zoom 0.9 supprimé) */
+        /* Zoom sur l'app principale */
+        #main-app { zoom: 0.9; }
 
         /* Header */
         header {
             text-align: center;
             margin-bottom: 0;
-            padding: 36px 18px 28px;
+            padding: 40px 20px 32px;
             background: var(--bg-secondary);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             position: relative;
@@ -160,20 +161,20 @@
 
         h1 {
             font-family: 'DM Sans', sans-serif;
-            font-size: clamp(2.2rem, 5.5vw, 4.5rem);
+            font-size: clamp(2.5rem, 6vw, 5rem);
             font-weight: 900;
             background: var(--accent-ui);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 9px;
+            margin-bottom: 10px;
             letter-spacing: -2px;
             position: relative;
             z-index: 1;
         }
 
         .subtitle {
-            font-size: 1.05rem;
+            font-size: 1.15rem;
             color: var(--text-secondary);
             font-weight: 500;
             position: relative;
@@ -192,7 +193,7 @@
 
         /* Sidebar Navigation */
         .sidebar {
-            width: 200px;
+            width: 220px;
             background: var(--bg-secondary);
             border-right: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
@@ -827,44 +828,74 @@
             20%, 40%, 60%, 80% { transform: translateX(10px); }
         }
 
-        /* Responsive */
-        @media (max-width: 768px)  { .app-layout {
-                flex-direction: column; }
-
-            .sidebar {
-                width: 100% !important;
-                flex-direction: row;
-                overflow-x: auto;
-                position: static;
-                max-height: none;
-                border-right: none;
-                border-bottom: 1px solid var(--bg-tertiary);
-                padding: var(--space-md) !important;
+        /* Responsive - Bottom navbar mobile */
+        @media (max-width: 768px) {
+            .app-layout {
+                flex-direction: column;
+                padding-bottom: 80px; /* Espace pour la bottom navbar */
             }
 
-            .sidebar.collapsed  { width: 100% !important; }
+            .sidebar {
+                position: fixed !important;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: auto !important;
+                width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                flex-direction: row;
+                justify-content: space-around;
+                overflow-x: visible;
+                border-right: none;
+                border-top: 1px solid var(--bg-tertiary);
+                padding: var(--space-sm) !important;
+                z-index: 1000;
+                background: var(--bg-secondary);
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            }
 
-            .sidebar-toggle  { display: none; }
+            .sidebar.collapsed { width: 100% !important; }
+
+            .sidebar-toggle { display: none; }
+
+            .sidebar-group-title { display: none !important; }
+
+            /* Séparateur masqué */
+            .sidebar > div[style*="height: 1px"] { display: none !important; }
 
             .sidebar-btn {
                 flex-direction: column;
-                gap: var(--space-sm);
-                padding: 10px 12px !important;
-                min-width: 70px;
+                gap: 2px;
+                padding: 8px 6px !important;
+                min-width: auto;
+                flex: 1;
+                max-width: 70px;
             }
 
-            .sidebar.collapsed .sidebar-btn  { padding: 10px 12px !important; }
+            .sidebar-btn .sidebar-icon {
+                min-width: auto;
+            }
+
+            .sidebar-btn .sidebar-icon i,
+            .sidebar-btn .sidebar-icon svg {
+                width: 20px !important;
+                height: 20px !important;
+            }
+
+            .sidebar.collapsed .sidebar-btn { padding: 8px 6px !important; }
 
             .sidebar-label {
-                font-size: 0.85rem;
+                font-size: 0.65rem;
                 opacity: 1 !important;
                 width: auto !important;
+                text-align: center;
             }
 
-            .main-content  { padding: var(--space-lg); }
+            .main-content { padding: var(--space-lg); }
 
             /* Meals grid becomes vertical on mobile */
-            #meals > div:first-of-type  { grid-template-columns: 1fr !important; }
+            #meals > div:first-of-type { grid-template-columns: 1fr !important; }
 
             #meals .food-item {
                 flex-wrap: wrap;
@@ -877,11 +908,11 @@
                 margin-top: var(--space-sm);
             }
 
-            .food-list .food-item  { grid-template-columns: 1fr; }
+            .food-list .food-item { grid-template-columns: 1fr; }
 
-            .food-macros  { justify-content: space-around; }
+            .food-macros { justify-content: space-around; }
 
-            h1  { font-size: 2.5rem; }
+            h1 { font-size: 2.5rem; }
         }
 
         /* Scrollbar */
@@ -1064,7 +1095,7 @@
         .day-totals {
             background: var(--bg-secondary);
             border: 1px solid rgba(16, 185, 129, 0.2);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
             pointer-events: all;
             border-radius: 20px;
             padding: var(--space-3xl);
@@ -1567,35 +1598,34 @@
 
         .macro-display:nth-child(1)::before  { background: #ff6b6b !important; }
 
-        /* Badge journalier */
+        /* Badge journalier - uniformisé sans ombre */
         .calorie-badge {
-            display: inline-block;
-            padding: var(--space-sm) var(--space-lg);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-md);
             border-radius: var(--radius-full);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-left: var(--space-md);
-            animation: badgePop var(--transition-normal);
         }
 
         .badge-green {
             background: rgba(16, 185, 129, 0.15);
-            color: var(--accent-ui);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-            pointer-events: all;
+            color: var(--accent-main);
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
         .badge-orange {
-            background: rgba(255, 159, 64, 0.15);
+            background: rgba(251, 191, 36, 0.15);
             color: var(--accent-fat);
-            border: 2px solid var(--accent-fat);
+            border: 1px solid rgba(251, 191, 36, 0.3);
         }
 
         .badge-red {
-            background: rgba(255, 68, 68, 0.15);
+            background: rgba(239, 68, 68, 0.15);
             color: var(--accent-danger);
-            border: 2px solid var(--accent-danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
         @keyframes badgePop {
@@ -2066,7 +2096,7 @@
 
                         <div class="input-group">
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                <i data-lucide="user" style="width: 18px; height: 18px;"></i> Sexe
+                                👤 Sexe
                                 <span style="color: var(--accent-danger);">*</span>
                             </label>
                             <select id="profile-gender" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s; font-family: inherit;">
@@ -2138,7 +2168,7 @@
 
                         <div class="input-group">
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                <i data-lucide="beef" style="width: 18px; height: 18px; color: var(--accent-protein);"></i> Protéines (g/kg)
+                                <i data-lucide="beef" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Protéines (g/kg)
                             </label>
                             <input type="number" id="proteinCoeff" onblur="tryAutoCalculate()" placeholder="ex: 2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                             <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 1.8-2.2 g/kg • Minimum : 1.5 g/kg</p>
@@ -2176,7 +2206,7 @@
 
                             <div class="input-group">
                                 <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                    <i data-lucide="beef" style="width: 18px; height: 18px; color: var(--accent-protein);"></i> Protéines (g/kg)
+                                    <i data-lucide="beef" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Protéines (g/kg)
                                 </label>
                                 <input type="number" id="proteinCoeffBulk" onblur="tryAutoCalculate()" placeholder="ex: 2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                                 <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 1.8-2.2 g/kg • Minimum : 1.5 g/kg</p>
@@ -2392,13 +2422,13 @@
                         <div id="quick-results-breakfast" class="quick-add-results" style="display: none;"></div></div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
-                       <button class="add-food-btn" onclick="openMealTemplatesModal('breakfast')" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
+                       <button class="add-food-btn" onclick="openMealTemplatesModal('breakfast')" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
                                 Charger un repas type
                             </button>
-                      <button class="add-food-btn" onclick="saveMealAsTemplate('breakfast')" style="border: 2px dashed var(--accent-main); color: var(--accent-main);">
+                      <button class="add-food-btn" onclick="saveMealAsTemplate('breakfast')" style="border: 2px solid var(--accent-main); color: var(--accent-main);">
                                 Enregistrer comme repas type
                             </button>
-                       <button class="add-food-btn" onclick="const div = document.getElementById('breakfast-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('breakfast-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
+                       <button class="add-food-btn" onclick="const div = document.getElementById('breakfast-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('breakfast-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
                                 <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
                             </button>
                     </div></div>
@@ -2439,13 +2469,13 @@
                         <div id="quick-results-lunch" class="quick-add-results" style="display: none;"></div></div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
-                        <button class="add-food-btn" onclick="openMealTemplatesModal('lunch')" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
+                        <button class="add-food-btn" onclick="openMealTemplatesModal('lunch')" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
                                 Charger un repas type
                             </button>
-                        <button class="add-food-btn" onclick="saveMealAsTemplate('lunch')" style="border: 2px dashed var(--accent-main); color: var(--accent-main);">
+                        <button class="add-food-btn" onclick="saveMealAsTemplate('lunch')" style="border: 2px solid var(--accent-main); color: var(--accent-main);">
                                 Enregistrer comme repas type
                             </button>
-                       <button class="add-food-btn" onclick="const div = document.getElementById('lunch-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('lunch-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
+                       <button class="add-food-btn" onclick="const div = document.getElementById('lunch-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('lunch-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
                                 <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
                             </button>
                     </div></div>
@@ -2486,13 +2516,13 @@
                         <div id="quick-results-snack" class="quick-add-results" style="display: none;"></div></div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
-                        <button class="add-food-btn" onclick="openMealTemplatesModal('snack')" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
+                        <button class="add-food-btn" onclick="openMealTemplatesModal('snack')" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
                                 Charger un repas type
                             </button>
-                        <button class="add-food-btn" onclick="saveMealAsTemplate('snack')" style="border: 2px dashed var(--accent-main); color: var(--accent-main);">
+                        <button class="add-food-btn" onclick="saveMealAsTemplate('snack')" style="border: 2px solid var(--accent-main); color: var(--accent-main);">
                                 Enregistrer comme repas type
                             </button>
-                       <button class="add-food-btn" onclick="const div = document.getElementById('snack-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('snack-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
+                       <button class="add-food-btn" onclick="const div = document.getElementById('snack-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('snack-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
                                 <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
                             </button>
                     </div></div>
@@ -2533,13 +2563,13 @@
                         <div id="quick-results-dinner" class="quick-add-results" style="display: none;"></div></div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
-                        <button class="add-food-btn" onclick="openMealTemplatesModal('dinner')" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
+                        <button class="add-food-btn" onclick="openMealTemplatesModal('dinner')" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
                                 Charger un repas type
                             </button>
-                        <button class="add-food-btn" onclick="saveMealAsTemplate('dinner')" style="border: 2px dashed var(--accent-main); color: var(--accent-main);">
+                        <button class="add-food-btn" onclick="saveMealAsTemplate('dinner')" style="border: 2px solid var(--accent-main); color: var(--accent-main);">
                                 Enregistrer comme repas type
                             </button>
-                       <button class="add-food-btn" onclick="const div = document.getElementById('dinner-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('dinner-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
+                       <button class="add-food-btn" onclick="const div = document.getElementById('dinner-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('dinner-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
                                 <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
                             </button>
                     </div></div></div>
@@ -2758,7 +2788,7 @@
 
                     <div style="display: grid; gap: var(--space-lg); flex: 1;">
                         <div class="input-group">
-                            <label style="font-weight: 600; margin-bottom: var(--space-xs); display: block;">📝 Nom du repas</label>
+                            <label style="font-weight: 600; margin-bottom: var(--space-xs); display: block;"><i data-lucide="file-text" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Nom du repas</label>
                             <input type="text" id="new-template-name" placeholder="Ex: Petit-déj protéiné..." style="width: 100%; padding: var(--space-md); font-size: 1rem; background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary);">
                         </div>
 
@@ -2875,7 +2905,7 @@
                     </div>
 
                     <div class="input-group">
-                        <label>Taux de graisse (%)</label>
+                        <label>Taux de graisse (%) <span style="opacity: 0.6;">(optionnel)</span></label>
                         <input type="number" id="tracking-bodyfat" step="0.1" placeholder="Ex: 25">
                         <p class="info-text">Nécessite une balance avec analyse corporelle</p>
                     </div>
@@ -3196,7 +3226,7 @@
                     <li><strong style="color: var(--text-primary);">7 cartes (Lun → Dim) :</strong> Chaque jour affiche tous les repas</li>
                     <li><strong style="color: var(--text-primary);">Macros par repas :</strong> P/g/L détaillés pour chaque repas</li>
                     <li><strong style="color: var(--text-primary);">Totaux journaliers :</strong> Somme des macros de la journée</li>
-                    <li><strong style="color: var(--text-primary);">Badge objectif :</strong> 🟢 Dans l'objectif / 🟡 Presque / 🔴 Hors objectif</li>
+                    <li><strong style="color: var(--text-primary);">Badge objectif :</strong> Dans l'objectif / Presque / Hors objectif</li>
                     <li><strong style="color: var(--text-primary);">Navigation semaine :</strong> Boutons pour voir semaine précédente/suivante</li>
                 </ul>
 
@@ -5337,12 +5367,12 @@ Solutions possibles :
             let badgeText = '';
 
             if (Math.abs(diff) <= 10)  { badgeClass = 'badge-green';
-                badgeText = '🟢 Objectif atteint'; } else if (Math.abs(diff) <= 20) {
+                badgeText = '<i data-lucide="check-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Objectif atteint'; } else if (Math.abs(diff) <= 20) {
                 badgeClass = 'badge-orange';
-                badgeText = diff > 0 ? '🟠 Un peu au-dessus' : '🟠 Un peu en-dessous';
+                badgeText = diff > 0 ? '<i data-lucide="arrow-up" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Un peu au-dessus' : '<i data-lucide="arrow-down" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Un peu en-dessous';
             } else {
                 badgeClass = 'badge-red';
-                badgeText = diff > 0 ? '🔴 Trop' : '🔴 Pas assez';
+                badgeText = diff > 0 ? '<i data-lucide="alert-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Trop' : '<i data-lucide="alert-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Pas assez';
             }
 
             badgeHTML = `<span class="calorie-badge ${badgeClass}">${badgeText}</span>`;
@@ -5377,12 +5407,12 @@ Solutions possibles :
 
             // Tolérance 20% pour macros (vs 10% pour calories)
             if (Math.abs(diff) <= 20)  { badgeClass = 'badge-green';
-                badgeText = '🟢 Objectif atteint'; } else if (Math.abs(diff) <= 35) {
+                badgeText = '<i data-lucide="check-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Objectif atteint'; } else if (Math.abs(diff) <= 35) {
                 badgeClass = 'badge-orange';
-                badgeText = diff > 0 ? '🟠 Un peu au-dessus' : '🟠 Un peu en-dessous';
+                badgeText = diff > 0 ? '<i data-lucide="arrow-up" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Un peu au-dessus' : '<i data-lucide="arrow-down" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Un peu en-dessous';
             } else {
                 badgeClass = 'badge-red';
-                badgeText = diff > 0 ? '🔴 Trop' : '🔴 Pas assez';
+                badgeText = diff > 0 ? '<i data-lucide="alert-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Trop' : '<i data-lucide="alert-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Pas assez';
             }
 
             const badgeHTML = `<span class="calorie-badge ${badgeClass}">${badgeText}</span>`;
@@ -5516,7 +5546,7 @@ Solutions possibles :
                 textColor = '#ffc107';
             } else if (calPct > 140) {
                 // Excès important
-                emoji = '🔴';
+                emoji = '<i data-lucide="x-circle" style="width: 24px; height: 24px; color: var(--accent-danger);"></i>';
                 message = 'Excès notable, repositionne-toi dès demain';
                 bgColor = 'rgba(239, 68, 68, 0.15)';
                 textColor = 'var(--accent-danger)';
@@ -5528,7 +5558,7 @@ Solutions possibles :
                 textColor = '#ffc107';
             } else if (calPct <= 50) {
                 // Déficit critique
-                emoji = '🚨';
+                emoji = '<i data-lucide="alert-triangle" style="width: 24px; height: 24px; color: var(--accent-danger);"></i>';
                 message = 'Apport très bas, veille à ta santé';
                 bgColor = 'rgba(239, 68, 68, 0.15)';
                 textColor = 'var(--accent-danger)';
@@ -5544,7 +5574,7 @@ Solutions possibles :
 
         // === CLÔTURE DE JOURNÉE ===
         function closeDayConfirm() {
-            const dateKey = currentMealDate.toISOString().split('T')[0];
+            const dateKey = getDateKey(currentMealDate);
             const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
 
             if (closedDays[dateKey]) {
@@ -5627,7 +5657,7 @@ Solutions possibles :
         }
 
         function checkIfDayClosed() {
-            const dateKey = currentMealDate.toISOString().split('T')[0];
+            const dateKey = getDateKey(currentMealDate);
             const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
             const isClosed = !!closedDays[dateKey];
             updateCloseDayUI(isClosed);
@@ -5789,7 +5819,7 @@ Solutions possibles :
 
         function completeDuplication() {
             const targetDate = new Date(document.getElementById('duplicate-date').value);
-            const targetDateKey = targetDate.toISOString().split('T')[0];
+            const targetDateKey = getDateKey(targetDate);
             const allDailyMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
 
             // Deep copy pour éviter les références - utiliser dailyMeals actuel
@@ -6769,7 +6799,7 @@ Solutions possibles :
             // Update header date
             const headerDate = document.getElementById('meal-header-date');
             if (headerDate) {
-                headerDate.textContent = current.getDate() + ' ' + months[current.getMonth()] + ' ' + current.getFullYear();
+                headerDate.textContent = days[current.getDay()] + ' ' + current.getDate() + ' ' + months[current.getMonth()] + ' ' + current.getFullYear();
             }
 
             // Aussi mettre à jour le display si il existe
@@ -6927,7 +6957,7 @@ Solutions possibles :
                 const date = new Date(weekStart);
                 date.setDate(date.getDate() + index);
                 date.setHours(0, 0, 0, 0);
-                const dateKey = date.toISOString().split('T')[0];
+                const dateKey = getDateKey(date); // Utilise la date locale, pas UTC
                 const dayPlan = weeklyPlan[dateKey] || { breakfast: 'Non planifié', lunch: 'Non planifié', snack: 'Non planifié', dinner: 'Non planifié' };
                 const isToday = date.getTime() === today.getTime();
 
@@ -7239,7 +7269,7 @@ Solutions possibles :
     if (data.length === 0) {
         container.innerHTML = `
             <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
-                <div style="font-size: 4rem; margin-bottom: var(--space-lg); opacity: 0.5;">📊</div>
+                <div style="font-size: 4rem; margin-bottom: var(--space-lg); opacity: 0.5;"><i data-lucide="bar-chart-2" style="width: 48px; height: 48px;"></i></div>
                 <div style="font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-sm);">Aucun suivi pour le moment</div>
                 <div style="font-size: 0.95rem; line-height: 1.6;">Enregistre ta première mesure ci-dessus pour commencer à suivre ton évolution corporelle</div></div>
         `;
@@ -7883,7 +7913,7 @@ Solutions possibles :
             if (mealTemplates.length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
-                        <div style="font-size: 3rem; margin-bottom: var(--space-md);">📋</div>
+                        <div style="font-size: 3rem; margin-bottom: var(--space-md);"><i data-lucide="clipboard-list" style="width: 48px; height: 48px;"></i></div>
                         <p style="font-size: 1.1rem; margin: 0;">Aucun repas type sauvegardé</p>
                         <p style="margin-top: var(--space-sm); margin-bottom: 0;">Crée-en un ci-dessus !</p>
                     </div>
@@ -8191,7 +8221,7 @@ Solutions possibles :
 
         function setTheme(theme) {
             console.log('setTheme called:', theme);
-            if (theme === 'light') { document.body.classList.add('light-mode'); } else  { document.body.classList.remove('light-mode'); }
+            if (theme === 'light') { document.body.classList.add('light-theme'); } else  { document.body.classList.remove('light-theme'); }
             localStorage.setItem('theme', theme);
 
             // Update buttons immediately and with timeout to ensure they exist
