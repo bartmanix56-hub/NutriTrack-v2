@@ -5694,8 +5694,13 @@ Solutions possibles :
         function openFoodModal(mealType) {
             currentMealType = mealType;
             document.getElementById('foodModal').classList.add('active');
-            document.getElementById('modalFoodSearch').focus();
             document.body.style.overflow = 'hidden';
+            // Auto-focus seulement sur desktop (évite clavier mobile intempestif)
+            if (window.innerWidth > 768) {
+                setTimeout(() => {
+                    document.getElementById('modalFoodSearch').focus();
+                }, 50);
+            }
         }
 
         function closeFoodModal() {
@@ -7528,6 +7533,8 @@ Solutions possibles :
             showSaveToast();
             allDailyMeals[dateKey] = dailyMeals;
             localStorage.setItem('allDailyMeals', JSON.stringify(allDailyMeals));
+            // Mettre à jour le streak en temps réel
+            if (typeof updateStreakDisplay === 'function') updateStreakDisplay();
         }
 
         // Wrapper les fonctions existantes
