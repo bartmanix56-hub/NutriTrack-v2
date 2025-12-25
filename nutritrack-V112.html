@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="fr" style="overflow: hidden;">
 <head>
@@ -42,42 +43,42 @@
             --bg-tertiary: #2a2a2a;
             --text-primary: #ffffff;
             --text-secondary: #b8b8b8;
+            --text-muted: #6b7280;
 
-            /* Couleurs d'accent */
-            --accent-main: #059669;
-            --accent-ui: #059669;        /* Vert pour UI (bordures, titres) */
-            --accent-protein: #ff6b6b;   /* Rouge pour protéines (macros) */
-            --accent-carbs: #4ecdc4;
-            --accent-fat: #ffe66d;
-            --accent-purple: #a855f7;
-            --accent-danger: #ef4444;
+            /* Palette de 5 couleurs unifiée */
+            --accent-main: #10b981;       /* Vert émeraude - couleur principale */
+            --accent-ui: #10b981;         /* Vert pour UI (bordures, titres) */
+            --accent-protein: #f87171;    /* Rouge corail - protéines */
+            --accent-carbs: #38bdf8;      /* Bleu ciel - glucides */
+            --accent-fat: #fbbf24;        /* Ambre - lipides */
+            --accent-danger: #ef4444;     /* Rouge - erreurs/suppression */
 
-            /* Espacements (système 4px) */
-            --space-xs: 4px;
-            --space-sm: 8px;
-            --space-md: 12px;
-            --space-lg: 16px;
-            --space-xl: 20px;
-            --space-2xl: 24px;
-            --space-3xl: 32px;
+            /* Espacements (ajustés après suppression zoom 0.9) */
+            --space-xs: 3px;
+            --space-sm: 7px;
+            --space-md: 10px;
+            --space-lg: 14px;
+            --space-xl: 18px;
+            --space-2xl: 22px;
+            --space-3xl: 28px;
 
-            /* Border radius */
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 20px;
-            --radius-2xl: 24px;
+            /* Border radius unifiés (ajustés) */
+            --radius-sm: 5px;
+            --radius-md: 9px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 20px;
             --radius-full: 9999px;
 
-            /* Ombres */
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+            /* Ombres subtiles */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.3);
 
             /* Transitions */
             --transition-fast: 0.15s ease;
-            --transition-normal: 0.3s ease;
-            --transition-slow: 0.5s ease;
+            --transition-normal: 0.2s ease;
+            --transition-slow: 0.3s ease;
         }
 
         /* Mode Clair */
@@ -132,17 +133,15 @@
             z-index: 1;
         }
 
-        /* Zoom 0.9 uniquement sur l'app principale, pas le tuto/landing */
-        #main-app  { zoom: 0.9; }
+        /* App principale - tailles ajustées (ex-zoom 0.9 supprimé) */
 
         /* Header */
         header {
             text-align: center;
             margin-bottom: 0;
-            padding: 40px 20px 32px;
+            padding: 36px 18px 28px;
             background: var(--bg-secondary);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
             position: relative;
             overflow: hidden;
         }
@@ -162,20 +161,20 @@
 
         h1 {
             font-family: 'DM Sans', sans-serif;
-            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-size: clamp(2.2rem, 5.5vw, 4.5rem);
             font-weight: 900;
             background: var(--accent-ui);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 10px;
+            margin-bottom: 9px;
             letter-spacing: -2px;
             position: relative;
             z-index: 1;
         }
 
         .subtitle {
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             color: var(--text-secondary);
             font-weight: 500;
             position: relative;
@@ -194,10 +193,9 @@
 
         /* Sidebar Navigation */
         .sidebar {
-            width: 220px;
+            width: 200px;
             background: var(--bg-secondary);
-            border-right: 1px solid var(--bg-tertiary);
-            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             flex-direction: column;
             gap: var(--space-sm);
@@ -205,7 +203,7 @@
             position: sticky;
             top: 0;
             height: 100vh;
-            max-height: 100vh;
+            align-self: flex-start;
             transition: width 0.3s ease, padding 0.3s ease;
         }
 
@@ -410,8 +408,6 @@
         }
 
         .card:hover {
-            transform: none;
-            box-shadow: var(--shadow-md);
             border-color: rgba(255, 255, 255, 0.1);
         }
 
@@ -426,31 +422,41 @@
             font-size: 0.95rem;
         }
 
+        /* ===== SYSTÈME D'INPUTS UNIFIÉ ===== */
         input[type="number"],
         input[type="text"],
         input[type="date"],
         select {
             width: 100%;
             background: var(--bg-tertiary);
-            border: 2px solid transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-primary);
             padding: var(--space-md) var(--space-lg);
             border-radius: var(--radius-md);
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: var(--transition-normal);
             font-family: 'DM Sans', sans-serif;
         }
 
         input:focus,
-        select:focus  { outline: none;
-            border-color: var(--accent-ui); }
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-main);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
 
-        /* Buttons */
-        .btn:hover  { transform: translateY(-2px);
+        input::placeholder,
+        textarea::placeholder {
+            color: var(--text-muted);
+        }
 
-            filter: brightness(1.1); }
-
-        .btn:active  { transform: translateY(0); }
+        input:disabled,
+        select:disabled,
+        textarea:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
 
         /* Grid Layout */
         .grid-2 {
@@ -577,12 +583,24 @@
             background: var(--bg-tertiary);
             border-radius: var(--radius-md);
             padding: var(--space-lg);
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto auto;
-            gap: var(--space-xl);
+            display: flex;
+            flex-wrap: nowrap;
+            gap: var(--space-md);
             align-items: center;
             transition: all var(--transition-normal);
             border: 1px solid transparent;
+        }
+
+        #meals .food-item .food-name {
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #meals .food-item .food-macros {
+            flex-shrink: 0;
         }
 
         .food-item:hover {
@@ -632,9 +650,10 @@
 
         .food-macros .value  { font-weight: 700; }
 
+        /* Bouton de suppression (variante danger) */
         .delete-btn {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid var(--accent-danger);
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.3);
             color: var(--accent-danger);
             width: 36px;
             height: 36px;
@@ -848,7 +867,18 @@
             /* Meals grid becomes vertical on mobile */
             #meals > div:first-of-type  { grid-template-columns: 1fr !important; }
 
-            .food-item  { grid-template-columns: 1fr; }
+            #meals .food-item {
+                flex-wrap: wrap;
+                gap: var(--space-sm);
+            }
+
+            #meals .food-item .food-macros {
+                width: 100%;
+                justify-content: space-around;
+                margin-top: var(--space-sm);
+            }
+
+            .food-list .food-item  { grid-template-columns: 1fr; }
 
             .food-macros  { justify-content: space-around; }
 
@@ -1062,7 +1092,7 @@
         .week-nav-btn {
             background: var(--bg-secondary);
             border: 1px solid rgba(16, 185, 129, 0.2);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             pointer-events: all;
             color: var(--text-primary);
             padding: 10px 20px;
@@ -1077,7 +1107,17 @@
             background: var(--accent-ui);
             color: white;
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .week-nav-btn.this-week-btn {
+            background: var(--accent-ui);
+            color: white;
+        }
+
+        .day-card.today {
+            border: 2px solid var(--accent-ui);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
         }
 
         .week-nav-btn:active  { transform: translateY(0); }
@@ -1143,106 +1183,115 @@
             color: var(--accent-ui);
         }
 
+        /* ===== SYSTÈME DE MODALES UNIFIÉ ===== */
         .modal {
             display: none;
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.75);
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(4px);
         }
 
-        .modal.active  { display: flex; }
+        .modal.active {
+            display: flex;
+        }
 
         .modal-content {
             background: var(--bg-secondary);
-            border-radius: var(--radius-2xl);
+            border-radius: var(--radius-xl);
             padding: 0;
             max-width: 900px;
             width: 95%;
             max-height: 90vh;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-            pointer-events: all;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: var(--shadow-lg);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: var(--shadow-lg);
         }
 
         .modal-header {
-            padding: var(--space-3xl) var(--space-3xl) var(--space-xl) var(--space-3xl);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: var(--space-2xl) var(--space-2xl) var(--space-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             flex-shrink: 0;
         }
 
         .modal-body {
-            padding: var(--space-xl) var(--space-3xl) var(--space-3xl) var(--space-3xl);
-            overflow: visible;
+            padding: var(--space-lg) var(--space-2xl) var(--space-2xl);
+            overflow-y: auto;
             flex: 1;
         }
 
-        .modal-body::-webkit-scrollbar  { width: 8px; }
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
 
-        .modal-body::-webkit-scrollbar-track  { background: rgba(0, 0, 0, 0.2);
-            border-radius: var(--radius-sm); }
+        .modal-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
-        .modal-body::-webkit-scrollbar-thumb  { background: var(--accent-main);
-            border-radius: var(--radius-sm); }
+        .modal-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-full);
+        }
 
-        .modal-body::-webkit-scrollbar-thumb:hover  { background: var(--accent-protein); }
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
 
         .modal-title {
             font-family: 'DM Sans', sans-serif;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: var(--space-md);
+            color: var(--text-primary);
         }
 
         .modal-close {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-            pointer-events: all;
-            color: var(--accent-ui);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-full);
             cursor: pointer;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: var(--transition-normal);
         }
 
-        .modal-close:hover  { background: var(--accent-protein);
-            color: white; }
+        .modal-close:hover {
+            background: var(--accent-danger);
+            border-color: var(--accent-danger);
+            color: white;
+        }
 
         /* Date navigation */
         .date-nav {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: var(--space-xl);
-            margin-bottom: 30px;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
             flex-wrap: wrap;
         }
 
         .date-nav-btn {
-            background: var(--bg-secondary);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-            pointer-events: all;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-primary);
-            padding: 10px 20px;
+            padding: var(--space-sm) var(--space-lg);
             border-radius: var(--radius-md);
             cursor: pointer;
             font-size: 1rem;
@@ -1251,37 +1300,20 @@
         }
 
         .date-nav-btn:hover {
-            background: var(--accent-ui);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--accent-main);
+            color: var(--accent-main);
         }
 
-        .date-nav-btn:active  { transform: translateY(0); }
-
-        .current-date  { font-size: 1.3rem;
-            font-weight: 700; }
-
-        /* Icon buttons */
-        .icon-btn {
-            background: var(--bg-tertiary);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-            pointer-events: all;
-            color: var(--accent-ui);
-            padding: 10px 20px;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-sm);
+        .date-nav-btn:active {
+            transform: scale(0.98);
         }
 
-        .icon-btn:hover  { background: var(--accent-protein);
-            color: white; }
+        .current-date {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
 
         .action-buttons  { display: flex;
             gap: 10px;
@@ -1339,70 +1371,108 @@
             box-shadow: none !important;
         }
 
-        input:focus,
-        select:focus,
-        textarea:focus  { outline: none;
-            border-color: var(--accent-main); }
+        /* ===== SYSTÈME DE BOUTONS UNIFIÉ (3 types) ===== */
 
+        /* Type 1: Bouton Primary (solid) */
         .btn {
             background: var(--accent-main);
             border: none;
             color: white;
-            padding: var(--space-md);
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn:hover  { transform: translateY(-2px);
-            box-shadow: var(--shadow-lg); }
-
-        .btn-secondary {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            border: 2px solid var(--accent-main);
-        }
-
-        .btn-secondary:hover  { background: rgba(16, 185, 129, 0.1); }
-
-        .icon-btn {
-            background: var(--bg-tertiary);
-            border: 2px solid var(--accent-main);
-            color: var(--accent-main);
-            padding: 10px 20px;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .icon-btn:hover  { background: #a78bfa; /* Violet pour calories */
-            color: white; }
-
-        .add-food-btn {
-            background: rgba(16, 185, 129, 0.1);
-            border: 2px dashed var(--accent-main);
-            color: var(--accent-main);
-            padding: 12px 24px;
+            padding: var(--space-md) var(--space-lg);
             border-radius: var(--radius-md);
             cursor: pointer;
             font-size: 0.95rem;
             font-weight: 600;
-            transition: all 0.3s ease;
-            margin-top: var(--space-xs);
-            display: inline-block;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
         }
 
-        .add-food-btn:hover  { background: rgba(16, 185, 129, 0.2);
-            transform: translateY(-2px); }
+        .btn:hover {
+            filter: brightness(1.1);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Type 2: Bouton Secondary (outlined) */
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-main);
+            border: 2px solid var(--accent-main);
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.98);
+        }
+
+        /* Type 3: Bouton Ghost (minimal) */
+        .btn-ghost, .icon-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+
+        .btn-ghost:hover, .icon-btn:hover {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--accent-main);
+            color: var(--accent-main);
+        }
+
+        /* Bouton d'ajout (variante dashed) */
+        .add-food-btn {
+            background: rgba(16, 185, 129, 0.08);
+            border: 2px dashed var(--accent-main);
+            color: var(--accent-main);
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+
+        .add-food-btn:hover {
+            background: rgba(16, 185, 129, 0.15);
+            border-style: solid;
+        }
 
         .meal-section {
             background: var(--bg-tertiary);
@@ -1421,40 +1491,7 @@
         }
 
         .day-card:hover  { border-color: var(--accent-main);
-            transform: translateY(-5px); }
-
-        .modal-content {
-            background: var(--bg-secondary);
-            border-radius: 20px;
-            padding: var(--space-3xl);
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 2px solid var(--accent-main);
-            position: relative;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 2px solid var(--accent-main);
-            color: var(--accent-main);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .modal-close:hover  { background: #a78bfa; /* Violet pour calories */
-            color: white; }
+            transform: translateY(-3px); }
 
         /* Garde les couleurs spécifiques pour macros */
         .macro-value.protein { color: var(--accent-protein); }
@@ -1490,10 +1527,8 @@
             min-height: 100px;
             background: var(--bg-tertiary) !important;
             color: var(--text-primary) !important;
-            border: 2px solid transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        textarea:focus  { border-color: var(--accent-main); }
 
         input[type="date"] {
             background: var(--bg-tertiary) !important;
@@ -1655,27 +1690,45 @@
         }
 
         .custom-popup-btn {
-            padding: 12px 28px;
+            padding: var(--space-md) var(--space-xl);
             border: none;
             border-radius: var(--radius-md);
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1rem;
+            transition: var(--transition-normal);
+            font-size: 0.95rem;
         }
 
-        .custom-popup-btn.cancel  { background: var(--bg-tertiary);
-            color: var(--text-primary); }
+        .custom-popup-btn.cancel {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-        .custom-popup-btn.confirm  { background: var(--accent-main);
-            color: white; }
+        .custom-popup-btn.cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-        .custom-popup-btn.danger  { background: #ff4444;
-            color: white; }
+        .custom-popup-btn.confirm {
+            background: var(--accent-main);
+            color: white;
+        }
 
-        .custom-popup-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        .custom-popup-btn.confirm:hover {
+            filter: brightness(1.1);
+        }
+
+        .custom-popup-btn.danger {
+            background: var(--accent-danger);
+            color: white;
+        }
+
+        .custom-popup-btn.danger:hover {
+            filter: brightness(1.1);
+        }
+
+        .custom-popup-btn:active {
+            transform: scale(0.98);
         }
 
         /* Toast de confirmation */
@@ -2014,7 +2067,7 @@
 
                         <div class="input-group">
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                👤 Sexe
+                                <i data-lucide="user" style="width: 18px; height: 18px;"></i> Sexe
                                 <span style="color: var(--accent-danger);">*</span>
                             </label>
                             <select id="profile-gender" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s; font-family: inherit;">
@@ -2080,15 +2133,15 @@
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
                                 <i data-lucide="trending-down" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Déficit calorique (%)
                             </label>
-                            <input type="number" id="deficit" onchange="tryAutoCalculate()" value="18" min="10" max="30" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            <input type="number" id="deficit" onblur="tryAutoCalculate()" placeholder="ex: 18" min="10" max="30" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                             <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 15-25% • Minimum : 10%</p>
                         </div>
 
                         <div class="input-group">
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                <i data-lucide="circle" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> 🥩 Protéines (g/kg)
+                                <i data-lucide="beef" style="width: 18px; height: 18px; color: var(--accent-protein);"></i> Protéines (g/kg)
                             </label>
-                            <input type="number" id="proteinCoeff" onchange="tryAutoCalculate()" value="2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            <input type="number" id="proteinCoeff" onblur="tryAutoCalculate()" placeholder="ex: 2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                             <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 1.8-2.2 g/kg • Minimum : 1.5 g/kg</p>
                         </div>
 
@@ -2096,7 +2149,7 @@
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
                                 <i data-lucide="droplet" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Lipides (g/kg)
                             </label>
-                            <input type="number" id="fatCoeff" value="0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'cut'); tryAutoCalculate()" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            <input type="number" id="fatCoeff" placeholder="ex: 0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'cut')" onblur="tryAutoCalculate()" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                             <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 0.8-1.0 g/kg • Minimum : 0.6 g/kg</p>
                             <div id="fat-warning-cut" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(255, 230, 109, 0.1); border-left: 3px solid var(--accent-fat); border-radius: var(--radius-sm);">
                                 <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Attention</div>
@@ -2116,17 +2169,17 @@
                         <div style="display: grid; gap: var(--space-xl);">
                             <div class="input-group">
                                 <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                    📈 Surplus calorique (%)
+                                    <i data-lucide="trending-up" style="width: 18px; height: 18px; color: var(--accent-main);"></i> Surplus calorique (%)
                                 </label>
-                                <input type="number" id="surplus" onchange="tryAutoCalculate()" value="8" min="5" max="15" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <input type="number" id="surplus" onblur="tryAutoCalculate()" placeholder="ex: 8" min="5" max="15" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                                 <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 5-10% • Minimum : 5%</p>
                             </div>
 
                             <div class="input-group">
                                 <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                    <i data-lucide="circle" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> 🥩 Protéines (g/kg)
+                                    <i data-lucide="beef" style="width: 18px; height: 18px; color: var(--accent-protein);"></i> Protéines (g/kg)
                                 </label>
-                                <input type="number" id="proteinCoeffBulk" value="2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <input type="number" id="proteinCoeffBulk" onblur="tryAutoCalculate()" placeholder="ex: 2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                                 <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 1.8-2.2 g/kg • Minimum : 1.5 g/kg</p>
                             </div>
 
@@ -2134,7 +2187,7 @@
                                 <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
                                     <i data-lucide="droplet" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Lipides (g/kg)
                                 </label>
-                                <input type="number" id="fatCoeffBulk" value="0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'bulk')" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <input type="number" id="fatCoeffBulk" placeholder="ex: 0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'bulk')" onblur="tryAutoCalculate()" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                                 <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 0.8-1.0 g/kg • Minimum : 0.6 g/kg</p>
                                 <div id="fat-warning-bulk" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(255, 230, 109, 0.1); border-left: 3px solid var(--accent-fat); border-radius: var(--radius-sm);">
                                     <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Attention</div>
@@ -2181,16 +2234,6 @@
                         <div style="position: relative; min-height: 60px;">
                             <div style="font-size: 1.5rem; font-weight: 700;" id="imc-display-blur">0</div>
                             <div style="font-size: 0.9rem; margin-top: var(--space-xs);" id="imc-category-blur">-</div>
-
-                            <!-- Overlay button qui floute (toggle) -->
-                            <button id="imc-overlay-btn" onclick="toggleIMCVisibility()" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; gap: var(--space-xs); background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; color: var(--text-primary); transition: opacity 0.3s, background 0.3s, backdrop-filter 0.3s; z-index: 10;">
-                                <span id="imc-icon">👁️</span> <span id="imc-text">Afficher</span>
-                            </button>
-
-                            <!-- Bouton masquer visible quand IMC révélé -->
-                            <button id="imc-hide-btn" onclick="toggleIMCVisibility()" style="display: none; margin-top: var(--space-sm); background: transparent; border: none; color: var(--text-secondary); padding: var(--space-xs) 0; cursor: pointer; font-size: 0.85rem; text-decoration: underline;">
-                                👁️‍🗨️ Masquer l'IMC
-                            </button>
                         </div></div></div>
 
                 <h3 style="margin-bottom: var(--space-xl); font-size: 1.2rem;">Tes Objectifs Macros :</h3>
@@ -2349,14 +2392,14 @@
                                style="width: 100%; padding: var(--space-md); font-size: 0.95rem; background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary); transition: var(--transition-normal);">
                         <div id="quick-results-breakfast" class="quick-add-results" style="display: none;"></div></div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-xs);; margin-bottom: 0;">
-                       <button class="add-food-btn" onclick="openMealTemplatesModal('breakfast')" style="background: var(--bg-tertiary); border: 1px solid var(--accent-carbs); color: var(--accent-carbs);">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
+                       <button class="add-food-btn" onclick="openMealTemplatesModal('breakfast')" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
                                 Charger un repas type
                             </button>
-                      <button class="add-food-btn" onclick="saveMealAsTemplate('breakfast')" style="background: var(--bg-tertiary); border: 1px solid var(--accent-purple); color: var(--accent-purple);">
+                      <button class="add-food-btn" onclick="saveMealAsTemplate('breakfast')" style="border: 2px dashed var(--accent-main); color: var(--accent-main);">
                                 Enregistrer comme repas type
                             </button>
-                       <button class="add-food-btn" onclick="const div = document.getElementById('breakfast-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('breakfast-recipe-input').focus(); } else { div.style.display = 'none'; }" style="background: var(--bg-tertiary); border: 1px solid var(--accent-carbs); color: var(--accent-carbs);">
+                       <button class="add-food-btn" onclick="const div = document.getElementById('breakfast-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('breakfast-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
                                 <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
                             </button>
                     </div></div>
@@ -2396,14 +2439,14 @@
                                style="width: 100%; padding: var(--space-md); font-size: 0.95rem; background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary); transition: var(--transition-normal);">
                         <div id="quick-results-lunch" class="quick-add-results" style="display: none;"></div></div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-xs);; margin-bottom: 0;">
-                        <button class="add-food-btn" onclick="openMealTemplatesModal('lunch')" style="background: var(--bg-tertiary); border: 1px solid var(--accent-carbs); color: var(--accent-carbs);">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
+                        <button class="add-food-btn" onclick="openMealTemplatesModal('lunch')" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
                                 Charger un repas type
                             </button>
-                        <button class="add-food-btn" onclick="saveMealAsTemplate('lunch')" style="background: var(--bg-tertiary); border: 1px solid var(--accent-purple); color: var(--accent-purple);">
+                        <button class="add-food-btn" onclick="saveMealAsTemplate('lunch')" style="border: 2px dashed var(--accent-main); color: var(--accent-main);">
                                 Enregistrer comme repas type
                             </button>
-                       <button class="add-food-btn" onclick="const div = document.getElementById('lunch-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('lunch-recipe-input').focus(); } else { div.style.display = 'none'; }" style="background: var(--bg-tertiary); border: 1px solid var(--accent-carbs); color: var(--accent-carbs);">
+                       <button class="add-food-btn" onclick="const div = document.getElementById('lunch-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('lunch-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
                                 <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
                             </button>
                     </div></div>
@@ -2443,14 +2486,14 @@
                                style="width: 100%; padding: var(--space-md); font-size: 0.95rem; background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary); transition: var(--transition-normal);">
                         <div id="quick-results-snack" class="quick-add-results" style="display: none;"></div></div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-xs);; margin-bottom: 0;">
-                        <button class="add-food-btn" onclick="openMealTemplatesModal('snack')" style="background: var(--bg-tertiary); border: 1px solid var(--accent-carbs); color: var(--accent-carbs);">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
+                        <button class="add-food-btn" onclick="openMealTemplatesModal('snack')" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
                                 Charger un repas type
                             </button>
-                        <button class="add-food-btn" onclick="saveMealAsTemplate('snack')" style="background: var(--bg-tertiary); border: 1px solid var(--accent-purple); color: var(--accent-purple);">
+                        <button class="add-food-btn" onclick="saveMealAsTemplate('snack')" style="border: 2px dashed var(--accent-main); color: var(--accent-main);">
                                 Enregistrer comme repas type
                             </button>
-                       <button class="add-food-btn" onclick="const div = document.getElementById('snack-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('snack-recipe-input').focus(); } else { div.style.display = 'none'; }" style="background: var(--bg-tertiary); border: 1px solid var(--accent-carbs); color: var(--accent-carbs);">
+                       <button class="add-food-btn" onclick="const div = document.getElementById('snack-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('snack-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
                                 <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
                             </button>
                     </div></div>
@@ -2490,14 +2533,14 @@
                                style="width: 100%; padding: var(--space-md); font-size: 0.95rem; background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary); transition: var(--transition-normal);">
                         <div id="quick-results-dinner" class="quick-add-results" style="display: none;"></div></div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-xs);; margin-bottom: 0;">
-                        <button class="add-food-btn" onclick="openMealTemplatesModal('dinner')" style="background: var(--bg-tertiary); border: 1px solid var(--accent-carbs); color: var(--accent-carbs);">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
+                        <button class="add-food-btn" onclick="openMealTemplatesModal('dinner')" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
                                 Charger un repas type
                             </button>
-                        <button class="add-food-btn" onclick="saveMealAsTemplate('dinner')" style="background: var(--bg-tertiary); border: 1px solid var(--accent-purple); color: var(--accent-purple);">
+                        <button class="add-food-btn" onclick="saveMealAsTemplate('dinner')" style="border: 2px dashed var(--accent-main); color: var(--accent-main);">
                                 Enregistrer comme repas type
                             </button>
-                       <button class="add-food-btn" onclick="const div = document.getElementById('dinner-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('dinner-recipe-input').focus(); } else { div.style.display = 'none'; }" style="background: var(--bg-tertiary); border: 1px solid var(--accent-carbs); color: var(--accent-carbs);">
+                       <button class="add-food-btn" onclick="const div = document.getElementById('dinner-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('dinner-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px dashed var(--accent-carbs); color: var(--accent-carbs);">
                                 <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
                             </button>
                     </div></div></div>
@@ -2597,6 +2640,9 @@
                     <div class="current-week" id="current-week">Semaine du 15 Déc 2025</div>
                     <button class="week-nav-btn" onclick="changeWeek(1)">Semaine suivante →</button>
                 </div>
+                <div style="text-align: center; margin-bottom: var(--space-xl);">
+                    <button class="week-nav-btn this-week-btn" onclick="goToCurrentWeek()">Cette semaine</button>
+                </div>
 
                 <div class="week-grid" id="week-grid"></div></div></div>
 
@@ -2653,7 +2699,7 @@
                         Tous
                     </button>
                     <button class="filter-btn" data-category="proteines" onclick="filterFoodsByCategory('proteines')" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                        <i data-lucide="circle" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> 🥩 Protéines
+                        🥩 Protéines
                     </button>
                     <button class="filter-btn" data-category="feculents" onclick="filterFoodsByCategory('feculents')" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                         🍚 Féculents
@@ -2668,7 +2714,7 @@
                         🧀 Laitages
                     </button>
                     <button class="filter-btn" data-category="matieres-grasses" onclick="filterFoodsByCategory('matieres-grasses')" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                        <i data-lucide="droplet" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Graisses
+                        🧈 Graisses
                     </button>
                     <button class="filter-btn" data-category="liquides" onclick="filterFoodsByCategory('liquides')" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                         💧 Liquides
@@ -3732,12 +3778,15 @@
             <script>
                 // Calculer les stats au chargement de settings
                 function updateSettingsStats() {
-                    // Compter les repas (aliments ajoutés au total)
-                    const meals = JSON.parse(localStorage.getItem('meals') || '{}');
+                    // Compter les repas (1 repas = 1 case avec au moins 1 aliment, max 4 par jour)
+                    const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
                     let mealCount = 0;
-                    Object.values(meals).forEach(day => {
-                        ['breakfast', 'lunch', 'dinner', 'snacks'].forEach(meal => {
-                            if (day[meal] && day[meal].length > 0) mealCount += day[meal].length;
+                    Object.values(allMeals).forEach(day => {
+                        ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
+                            // Si le repas a au moins 1 aliment, ça compte comme 1 repas
+                            if (day[mealType] && day[mealType].foods && day[mealType].foods.length > 0) {
+                                mealCount += 1; // Compte le repas, pas les aliments individuels
+                            }
                         });
                     });
                     document.getElementById('stats-meals').textContent = mealCount;
@@ -3810,7 +3859,7 @@
             </p>
             <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg); display: inline-flex; align-items: center; gap: var(--space-sm);">
                 <i data-lucide="mail" style="width: 18px; height: 18px; color: var(--accent-ui);"></i>
-                <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="771418190316140359190203051e030516141c37101a161e1b5914181a">[email&#160;protected]</a>
+                <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
             </div>
 
             <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="code" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Version & Mises à Jour</h3>
@@ -3922,7 +3971,7 @@
             <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);">Article 10 - Contact</h2>
             <p style="line-height: 1.8; color: var(--text-secondary);">
                 Pour toute question relative aux présentes CGU, tu peux nous contacter à l'adresse suivante :<br>
-                <strong>Email :</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9dfef2f3e9fcfee9b3f3e8e9eff4e9effcfef6ddfaf0fcf4f1b3fef2f0">[email&#160;protected]</a>
+                <strong>Email :</strong> <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
             </p>
         </div></div>
 
@@ -3952,7 +4001,7 @@
                 <strong>Éditeur :</strong> Jérémy Mathurel<br>
                 <strong>Statut :</strong> Particulier<br>
                 <strong>Pays :</strong> France<br>
-                <strong>Email :</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="86e5e9e8f2e7e5f2a8e8f3f2f4eff2f4e7e5edc6e1ebe7efeaa8e5e9eb">[email&#160;protected]</a>
+                <strong>Email :</strong> <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
             </p>
 
             <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="server" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Hébergement</h2>
@@ -4125,7 +4174,7 @@
             <div>
                 <h4 style="color: var(--text-primary); font-size: 0.85rem; font-weight: 700; margin: 0 0 16px; text-transform: uppercase; letter-spacing: 1px;">Contact</h4>
                 <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0 0 12px;">Une question ? Une suggestion ?</p>
-                <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="85e6eaebf1e4e6f1abebf0f1f7ecf1f7e4e6eec5e2e8e4ece9abe6eae8">[email&#160;protected]</a>
+                <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
             </div></div>
         <div style="max-width: 1200px; margin: 0 auto; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 32px; text-align: center;">
             <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0;">© 2025 NutriTrack • Tous Droits Réservés • Version 3.0</p>
@@ -4189,8 +4238,8 @@
                 </div>
 
                 <div class="input-group">
-                    <label>Unité</label>
-                    <input type="text" id="new-food-unit" value="100g" placeholder="100g, 1u, 100ml...">
+                    <label>Unité (fixée à 100g)</label>
+                    <input type="text" id="new-food-unit" value="100g" readonly disabled style="background: var(--bg-tertiary); cursor: not-allowed; opacity: 0.7;">
                 </div>
 
                 <div class="modal-grid-2">
@@ -4220,7 +4269,7 @@
             </div></div></div>
 
     <!-- html2canvas for screenshot export -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
         // Food database
@@ -4564,17 +4613,17 @@
                 
                 // GARDE-FOUS: Validation des limites
                 if (deficit < 0.10 || deficit > 0.25) {
-                    showProfileAlert('<i data-lucide="alert-triangle"></i> Déficit invalide : max 25%');
+                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Déficit invalide : max 25%');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; }
                     return;
                 }
                 if (proteinCoeff < 1.5 || proteinCoeff > 2.2) {
-                    showProfileAlert('<i data-lucide="alert-triangle"></i> Protéines invalides : min 1,5 g/kg, max 2,2 g/kg');
+                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Protéines invalides : min 1,5 g/kg, max 2,2 g/kg');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; }
                     return;
                 }
                 if (fatCoeff < 0.6 || fatCoeff > 1.5) {
-                    showProfileAlert('<i data-lucide="alert-triangle"></i> Lipides invalides : min 0,6 g/kg, max 1,5 g/kg');
+                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Lipides invalides : min 0,6 g/kg, max 1,5 g/kg');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; }
                     return;
                 }
@@ -4669,9 +4718,6 @@ Solutions possibles :
             document.getElementById('imc-category-blur').textContent = imcCategory;
             document.getElementById('imc-category-blur').style.color = imcColor;
 
-            // Réinitialiser l'overlay (masqué par défaut)
-            resetIMCVisibility();
-
             // Afficher les résultats
             document.getElementById('targetProtein').textContent = protein;
             document.getElementById('targetCarbs').textContent = carbs;
@@ -4739,11 +4785,12 @@ Solutions possibles :
 
         // === VALIDATION DU PROFIL ===
 
-        function showProfileAlert(message, type = 'warning', autoHide = true) {
+        function showProfileAlert(message, type = 'warning', autoHide = false) {
             const alert = document.getElementById('profile-alert');
             const messageEl = document.getElementById('profile-alert-message');
 
-            messageEl.textContent = message;
+            // Use innerHTML to support icons in message
+            messageEl.innerHTML = message;
             alert.style.display = 'block';
 
             if (type === 'info') {
@@ -4758,7 +4805,13 @@ Solutions possibles :
                 messageEl.previousElementSibling.style.color = 'var(--accent-danger)';
             }
 
-            // Auto-hide after 5 seconds (sauf si désactivé)
+            // Reinitialize Lucide icons after setting HTML
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            // Focus on alert
+            alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Only auto-hide if explicitly requested
             if (autoHide)  { setTimeout(() => {
                     alert.style.display = 'none'; }, 5000);
             }
@@ -5108,7 +5161,10 @@ Solutions possibles :
         }
 
 
-        // Sauvegarder la recette d'un repas
+        // Debounce pour la sauvegarde de recette
+        let recipeDebounceTimer = null;
+
+        // Sauvegarder la recette d'un repas (avec debounce)
         function saveRecipe(mealType, recipeText) {
             const dateKey = getCurrentDateKey();
             if (!allDailyMeals[dateKey]) {
@@ -5125,7 +5181,12 @@ Solutions possibles :
             dailyMeals[mealType].recipe = recipeText;
 
             saveDailyMeals();
-            showToast('<i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette sauvegardée');
+
+            // Debounce le toast pour éviter le spam
+            if (recipeDebounceTimer) clearTimeout(recipeDebounceTimer);
+            recipeDebounceTimer = setTimeout(() => {
+                showToast('<i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette sauvegardée');
+            }, 1000);
         }
 
         function renderMeal(mealType) {
@@ -5224,7 +5285,14 @@ Solutions possibles :
         function updateMealQuantity(mealType, id, quantity) {
             const food = dailyMeals[mealType].foods.find(f => f.id === id);
             if (food) {
-                food.quantity = parseFloat(quantity);
+                const parsedQuantity = parseFloat(quantity);
+                // Block negative quantities
+                if (parsedQuantity < 1 || isNaN(parsedQuantity)) {
+                    showToast('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Quantité invalide (min: 1g)');
+                    renderMeal(mealType);
+                    return;
+                }
+                food.quantity = parsedQuantity;
                 renderMeal(mealType);
                 updateDayTotals();
                 saveDailyMeals();
@@ -5530,8 +5598,8 @@ Solutions possibles :
             if (isClosed) {
                 btn.innerHTML = '<i data-lucide="lock-open" style="width: 18px; height: 18px;"></i><span id="close-day-text">Rouvrir cette journée</span>';
                 if (typeof lucide !== 'undefined') lucide.createIcons();
-                if (typeof lucide !== "undefined") lucide.createIcons();
-                btn.style.background = 'var(--accent-fat)';
+                btn.style.background = '#d4a847';
+                btn.style.color = '#1a1a1a';
                 notice.style.display = 'block';
                 if (badge) badge.style.display = 'inline-block';
                 if (typeof lucide !== "undefined") lucide.createIcons();
@@ -5545,10 +5613,9 @@ Solutions possibles :
             } else {
                 btn.innerHTML = '<i data-lucide="check-circle" style="width: 18px; height: 18px;"></i><span id="close-day-text">Clôturer cette journée</span>';
                 if (typeof lucide !== 'undefined') lucide.createIcons();
-                if (typeof lucide !== "undefined") lucide.createIcons();
-                btn.style.background = 'var(--accent-carbs)';
+                btn.style.background = '#5b8dd9';
+                btn.style.color = 'white';
                 notice.style.display = 'none';
-                if (typeof lucide !== "undefined") lucide.createIcons();
                 if (badge) badge.style.display = 'none';
 
                 // Réactiver les boutons
@@ -5761,24 +5828,31 @@ Solutions possibles :
         }
 
 
-        // ===== TOAST DE SAUVEGARDE =====
+        // ===== TOAST DE SAUVEGARDE (avec debounce) =====
+        let saveToastDebounceTimer = null;
+
         function showSaveToast() {
-            // Créer le toast s'il n'existe pas
-            let toast = document.getElementById('save-toast');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.id = 'save-toast';
-                toast.className = 'save-toast';
-                toast.innerHTML = '<i data-lucide="save" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données enregistrées';
-                if (typeof lucide !== "undefined") lucide.createIcons();
-                document.body.appendChild(toast);
-            }
+            // Debounce to avoid spam
+            if (saveToastDebounceTimer) clearTimeout(saveToastDebounceTimer);
 
-            // Afficher
-            toast.classList.add('show');
+            saveToastDebounceTimer = setTimeout(() => {
+                // Créer le toast s'il n'existe pas
+                let toast = document.getElementById('save-toast');
+                if (!toast) {
+                    toast = document.createElement('div');
+                    toast.id = 'save-toast';
+                    toast.className = 'save-toast';
+                    toast.innerHTML = '<i data-lucide="save" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données enregistrées';
+                    if (typeof lucide !== "undefined") lucide.createIcons();
+                    document.body.appendChild(toast);
+                }
 
-            // Masquer après 3s
-            setTimeout(() =>  { toast.classList.remove('show'); }, 3000);
+                // Afficher
+                toast.classList.add('show');
+
+                // Masquer après 2s
+                setTimeout(() =>  { toast.classList.remove('show'); }, 2000);
+            }, 1000);
         }
 
         function saveDailyMeals()  { localStorage.setItem('dailyMeals', JSON.stringify(dailyMeals)); }
@@ -5816,7 +5890,7 @@ Solutions possibles :
             weekGrid.innerHTML = days.map((day, index) => {
                 const date = new Date(weekStart);
                 date.setDate(date.getDate() + index);
-                const dateKey = date.toISOString().split('T')[0];
+                const dateKey = getDateKey(date); // Utilise la date locale, pas UTC
                 const dayPlan = weeklyPlan[dateKey] || {
                     breakfast: 'Non planifié',
                     lunch: 'Non planifié',
@@ -6043,6 +6117,8 @@ Solutions possibles :
             if (modal) {
                 modal.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
+                document.documentElement.style.overflow = 'hidden';
+                window.scrollTo(0, 0);
             }
         }
 
@@ -6051,6 +6127,7 @@ Solutions possibles :
             localStorage.setItem('rgpd-consent-date', new Date().toISOString());
             document.getElementById('rgpd-modal').style.display = 'none';
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         }
 
         function refuseRGPD() {
@@ -6059,53 +6136,6 @@ Solutions possibles :
             alert('Tes données ont été effacées. L\'application ne fonctionnera pas sans consentement car elle nécessite de sauvegarder tes informations localement.');
             // Recharger pour montrer à nouveau le modal
             location.reload();
-        }
-
-        // === TOGGLE IMC ===
-        function toggleIMCVisibility() {
-            const btn = document.getElementById('imc-overlay-btn');
-            const hideBtn = document.getElementById('imc-hide-btn');
-            const icon = document.getElementById('imc-icon');
-            const text = document.getElementById('imc-text');
-
-            // Check current state by opacity
-            const isHidden = btn.style.opacity !== '0';
-
-            if (isHidden) {
-                // Reveal IMC - hide overlay, show hide button
-                btn.style.opacity = '0';
-                btn.style.background = 'transparent';
-                btn.style.backdropFilter = 'none';
-                btn.style.webkitBackdropFilter = 'none';
-                btn.style.pointerEvents = 'none'; // Désactiver maintenant qu'on a le bouton dédié
-                hideBtn.style.display = 'block';
-            } else {
-                // Hide IMC - show overlay, hide hide button
-                btn.style.opacity = '1';
-                btn.style.background = 'rgba(0, 0, 0, 0.7)';
-                btn.style.backdropFilter = 'blur(10px)';
-                btn.style.webkitBackdropFilter = 'blur(10px)';
-                btn.style.pointerEvents = 'auto';
-                icon.textContent = '👁️';
-                text.textContent = 'Afficher';
-                hideBtn.style.display = 'none';
-            }
-        }
-
-        function resetIMCVisibility() {
-            const btn = document.getElementById('imc-overlay-btn');
-            const hideBtn = document.getElementById('imc-hide-btn');
-            const icon = document.getElementById('imc-icon');
-            const text = document.getElementById('imc-text');
-
-            btn.style.opacity = '1';
-            btn.style.pointerEvents = 'auto';
-            btn.style.background = 'rgba(0, 0, 0, 0.7)';
-            btn.style.backdropFilter = 'blur(10px)';
-            btn.style.webkitBackdropFilter = 'blur(10px)';
-            icon.textContent = '👁️';
-            text.textContent = 'Afficher';
-            hideBtn.style.display = 'none';
         }
 
         // === EXPORT MACROS AS IMAGE ===
@@ -6378,6 +6408,13 @@ Solutions possibles :
         function openAddFoodModal() {
             document.getElementById('addFoodModal').classList.add('active');
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+            window.scrollTo(0, 0);
+            // Focus on first input
+            setTimeout(() => {
+                const nameInput = document.getElementById('new-food-name');
+                if (nameInput) nameInput.focus();
+            }, 100);
         }
 
         function closeAddFoodModal() {
@@ -6389,12 +6426,12 @@ Solutions possibles :
             document.getElementById('new-food-fat').value = '';
             document.getElementById('new-food-calories').value = '';
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         }
 
         function saveNewFood() {
             const name = document.getElementById('new-food-name').value.trim();
             const category = document.getElementById('new-food-category').value;
-            const unit = document.getElementById('new-food-unit').value.trim();
             const protein = parseFloat(document.getElementById('new-food-protein').value) || 0;
             const carbs = parseFloat(document.getElementById('new-food-carbs').value) || 0;
             const fat = parseFloat(document.getElementById('new-food-fat').value) || 0;
@@ -6405,9 +6442,17 @@ Solutions possibles :
                 return;
             }
 
+            // Vérifier si un aliment avec ce nom existe déjà
+            const existingFood = foodDatabase.find(f => f.name.toLowerCase() === name.toLowerCase());
+            if (existingFood) {
+                customAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nom déjà utilisé', 'Un aliment avec ce nom existe déjà dans ta base.').then(() => {});
+                return;
+            }
+
             if (!calories || calories === 0)  { calories = Math.round(protein * 4 + carbs * 4 + fat * 9); }
 
-            const newFood = { name, unit: unit || '100g', protein, carbs, fat, calories, category, custom: true };
+            // Unit is always 100g
+            const newFood = { name, unit: '100g', protein, carbs, fat, calories, category, custom: true };
 
             customFoods.push(newFood);
             foodDatabase.push(newFood);
@@ -6455,8 +6500,15 @@ Solutions possibles :
             const filter = document.getElementById('foodFilter').value;
             const sortBy = document.getElementById('foodSort').value;
 
-            // Combiner foodDatabase (const) avec customFoods
-            let allFoods = [...foodDatabase, ...customFoods];
+            // Utiliser foodDatabase qui contient déjà les customFoods (ajoutés par loadCustomFoods)
+            // Dédupliquer en utilisant un Map par nom
+            const foodMap = new Map();
+            foodDatabase.forEach(food => {
+                if (!foodMap.has(food.name)) {
+                    foodMap.set(food.name, food);
+                }
+            });
+            let allFoods = Array.from(foodMap.values());
 
             // Filtrer
             let filtered = allFoods;
@@ -6482,8 +6534,16 @@ Solutions possibles :
         function renderFoodDatabaseWithCustom(foods) {
             const container = document.getElementById('foodDatabase');
 
-            // Merger avec customFoods si foods est la base foodDatabase
-            if (foods === foodDatabase || !foods) { foods = [...foodDatabase, ...customFoods]; }
+            // Si pas de foods fournis, utiliser foodDatabase dédupliqué
+            if (!foods || foods === foodDatabase) {
+                const foodMap = new Map();
+                foodDatabase.forEach(food => {
+                    if (!foodMap.has(food.name)) {
+                        foodMap.set(food.name, food);
+                    }
+                });
+                foods = Array.from(foodMap.values());
+            }
 
             // Charger les favoris
             const favorites = JSON.parse(localStorage.getItem('favoriteFoods') || '[]');
@@ -6506,7 +6566,7 @@ Solutions possibles :
                             return `
                                 <div class="food-item" data-food-index="${globalIndex}" style="background: rgba(0, 0, 0, 0.2);">
                                     <div>
-                                        <div class="food-name">${food.name} ${food.custom ? '✨' : ''}</div>
+                                        <div class="food-name">${food.name} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''}</div>
                                         ${food.custom ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Personnalisé</span>' : ''}
                                     </div>
                                     <div class="food-macros">
@@ -6518,8 +6578,8 @@ Solutions possibles :
                                     <div style="display: flex; flex-direction: column; gap: var(--space-sm); align-items: flex-end;">
                                         <span style="color: var(--text-secondary); font-size: 0.9rem;">pour ${food.unit}</span>
                                         <div style="display: flex; gap: var(--space-sm); align-items: center;">
-                                            <button class="icon-btn" style="background: rgba(255, 230, 109, 0.2); border: 1px solid var(--accent-fat); width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${food.name.replace(/'/g, "\\'")}')">⭐</button>
-                                            <button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editFoodByIndex(${globalIndex})">✏️</button>
+                                            <button class="icon-btn" style="background: rgba(255, 230, 109, 0.2); border: 1px solid var(--accent-fat); width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${food.name.replace(/'/g, "\\'")}')"><i data-lucide="star" style="width: 16px; height: 16px; fill: var(--accent-fat); color: var(--accent-fat);"></i></button>
+                                            <button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editFoodByIndex(${globalIndex})"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>
                                             ${food.custom ? `<button class="delete-btn" style="font-size: 1.1rem; width: 36px; height: 36px;" onclick="deleteFoodByIndex(${globalIndex})"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>` : ''}
                                         </div></div></div>
                             `;
@@ -6535,7 +6595,7 @@ Solutions possibles :
                     return `
                         <div class="food-item" data-food-index="${globalIndex}">
                             <div>
-                                <div class="food-name">${food.name} ${food.custom ? '✨' : ''}</div>
+                                <div class="food-name">${food.name} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''}</div>
                                 ${food.custom ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Personnalisé</span>' : ''}
                             </div>
                             <div class="food-macros">
@@ -6547,8 +6607,8 @@ Solutions possibles :
                             <div style="display: flex; flex-direction: column; gap: var(--space-sm); align-items: flex-end;">
                                 <span style="color: var(--text-secondary); font-size: 0.9rem;">pour ${food.unit}</span>
                                 <div style="display: flex; gap: var(--space-sm); align-items: center;">
-                                    <button class="icon-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${food.name.replace(/'/g, "\\'")}')">☆</button>
-                                    <button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editFoodByIndex(${globalIndex})">✏️</button>
+                                    <button class="icon-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${food.name.replace(/'/g, "\\'")}')"><i data-lucide="star" style="width: 16px; height: 16px;"></i></button>
+                                    <button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editFoodByIndex(${globalIndex})"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>
                                     ${food.custom ? `<button class="delete-btn" style="font-size: 1.1rem; width: 36px; height: 36px;" onclick="deleteFoodByIndex(${globalIndex})"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>` : ''}
                                 </div></div></div>
                     `;
@@ -6746,16 +6806,29 @@ Solutions possibles :
                 };
             }
 
-            // Load recipes for this date
-
             // Utiliser dailyMeals de l'ancien code
             dailyMeals = allDailyMeals[dateKey];
 
-            // Charger les recettes dans les textareas
+            // Charger les recettes dans les textareas et vider les anciennes
             ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
-                const textarea = document.getElementById(`${mealType}-recipe`);
-                if (textarea) {
+                const recipeInput = document.getElementById(`${mealType}-recipe-input`);
+                const recipeDiv = document.getElementById(`${mealType}-recipe`);
+                const recipe = dailyMeals[mealType]?.recipe || '';
+
+                // Mettre à jour le textarea
+                if (recipeInput) {
+                    recipeInput.value = recipe;
                 }
+
+                // Afficher ou masquer la div de recette selon si elle existe
+                if (recipeDiv) {
+                    if (recipe && recipe.trim()) {
+                        recipeDiv.style.display = 'block';
+                    } else {
+                        recipeDiv.style.display = 'none';
+                    }
+                }
+
                 renderMeal(mealType);
             });
             updateDayTotals();
@@ -6842,20 +6915,26 @@ Solutions possibles :
         const origRenderPlan = renderWeeklyPlan;
         renderWeeklyPlan = function() {
             const weekStart = new Date(currentWeekStart);
-            document.getElementById('current-week').textContent = 'Semaine du ' + formatDate(weekStart);
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            document.getElementById('current-week').textContent = 'Semaine du ' + formatDate(weekStart) + ' au ' + formatDate(weekEnd);
 
             const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
             const weekGrid = document.getElementById('week-grid');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
             weekGrid.innerHTML = days.map((day, index) => {
                 const date = new Date(weekStart);
                 date.setDate(date.getDate() + index);
+                date.setHours(0, 0, 0, 0);
                 const dateKey = date.toISOString().split('T')[0];
                 const dayPlan = weeklyPlan[dateKey] || { breakfast: 'Non planifié', lunch: 'Non planifié', snack: 'Non planifié', dinner: 'Non planifié' };
+                const isToday = date.getTime() === today.getTime();
 
                 return `
-                    <div class="day-card">
-                        <div class="day-name" style="cursor: pointer; color: var(--accent-main);" onclick="goToDay(${index})" title="Cliquer pour voir les repas">${day}</div>
+                    <div class="day-card${isToday ? ' today' : ''}">
+                        <div class="day-name" style="cursor: pointer; color: var(--accent-main);" onclick="goToDay(${index})" title="Cliquer pour voir les repas">${day}${isToday ? ' (Aujourd\'hui)' : ''}</div>
                         <div class="day-date">${formatDate(date)}</div>
                         <div class="day-meals">
                             <div class="day-meal-item">
@@ -6872,10 +6951,20 @@ Solutions possibles :
                                 <div class="day-meal-foods" contenteditable="true" onblur="savePlanMeal('${dateKey}', 'dinner', this.textContent)">${dayPlan.dinner}</div></div></div></div>
                 `;
             }).join('');
-            
+
             // Reinitialize Lucide icons after dynamic content
             if (typeof lucide !== 'undefined') lucide.createIcons();
         };
+
+        function goToCurrentWeek() {
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            currentWeekStart = new Date(today);
+            currentWeekStart.setDate(today.getDate() + mondayOffset);
+            currentWeekStart.setHours(0, 0, 0, 0);
+            renderWeeklyPlan();
+        }
 
         function savePlanMeal(dateKey, mealType, text) {
             if (!weeklyPlan[dateKey]) {
@@ -7219,7 +7308,7 @@ Solutions possibles :
                         ` : ''}
                     </div></div>
                 <div style="display: flex; gap: var(--space-sm); align-items: center; flex-shrink: 0;">
-                    <button class="icon-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="editTracking('${entry.date}')">✏️</button>
+                    <button class="icon-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="editTracking('${entry.date}')"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>
                     <button class="delete-btn" style="width: 36px; height: 36px;" onclick="deleteTracking('${entry.date}')"<i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>
                 </div></div>
             ${entry.notes ? `
@@ -7459,6 +7548,7 @@ Solutions possibles :
             const dateKey = getCurrentDateKey();
             const meal = allDailyMeals[dateKey] ? allDailyMeals[dateKey][mealType] : null;
             const foods = meal ? (meal.foods || meal) : [];
+            const recipe = meal ? (meal.recipe || '') : '';
 
             if (foods.length === 0) {
                 customAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Repas vide', 'Ce repas est vide, ajoute des aliments d\'abord');
@@ -7472,6 +7562,7 @@ Solutions possibles :
                     id: Date.now(),
                     name: templateName.trim(),
                     foods: JSON.parse(JSON.stringify(foods)), // Copie profonde
+                    recipe: recipe, // Sauvegarder la recette avec le template
                     createdAt: new Date().toISOString()
                 };
 
@@ -7587,32 +7678,36 @@ Solutions possibles :
                 };
             }
 
+            // REMPLACER les aliments existants (ne pas ajouter)
+            if (!allDailyMeals[dateKey][mealType]) {
+                allDailyMeals[dateKey][mealType] = { foods: [], recipe: '' };
+            }
+            allDailyMeals[dateKey][mealType].foods = [];
+
             // Copier les aliments avec nouveaux IDs
             template.foods.forEach(food => {
-                if (!allDailyMeals[dateKey][mealType].foods) {
-                    allDailyMeals[dateKey][mealType] = { foods: [], recipe: '' };
-                }
                 allDailyMeals[dateKey][mealType].foods.push({
                     ...food,
                     id: Date.now() + Math.random() // ID unique
                 });
             });
 
-            // Store recipe - DESACTIVÉ TEMPORAIREMENT
-            /*
+            // Charger aussi la recette si elle existe
             if (template.recipe) {
+                allDailyMeals[dateKey][mealType].recipe = template.recipe;
+                // Mettre à jour le textarea de recette
+                const recipeInput = document.getElementById(`${mealType}-recipe-input`);
+                if (recipeInput) recipeInput.value = template.recipe;
             }
-            */
 
             dailyMeals = allDailyMeals[dateKey];
-            // mealRecipes = allMealRecipes[dateKey] || { breakfast: '', lunch: '', snack: '', dinner: '' };
             renderMeal(mealType);
             updateDayTotals();
             saveDailyMeals();
 
             syncMealsToPlanning();
             closeTemplatesModal();
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Repas type "' + template.name + '" ajouté');
+            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Repas type "' + template.name + '" chargé');
         }
 
         async function deleteMealTemplate(templateId) {
@@ -7952,7 +8047,11 @@ Solutions possibles :
             }
             dailyMeals[mealType] = { foods: [], recipe: '' };
 
-            // Clear recipe
+            // Clear recipe textarea and hide it
+            const recipeInput = document.getElementById(`${mealType}-recipe-input`);
+            const recipeDiv = document.getElementById(`${mealType}-recipe`);
+            if (recipeInput) recipeInput.value = '';
+            if (recipeDiv) recipeDiv.style.display = 'none';
 
             // Mettre à jour l'affichage
             renderMeal(mealType);
@@ -8585,6 +8684,13 @@ Solutions possibles :
                 confirmBtn.className = isDanger ? 'custom-popup-btn danger' : 'custom-popup-btn confirm';
                 confirmBtn.textContent = isDanger ? 'Supprimer' : 'Confirmer';
 
+                // IMPORTANT: Reset onclick handler (peut avoir été modifié par customAlert)
+                confirmBtn.onclick = () => closePopup(true);
+
+                // Aussi restaurer le bouton Annuler au cas où customAlert l'a masqué
+                const cancelBtn = document.querySelector('#custom-popup .cancel');
+                if (cancelBtn) cancelBtn.style.display = 'block';
+
                 document.getElementById('custom-popup').classList.add('active');
                 document.body.style.overflow = 'hidden';
                 if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -8817,7 +8923,7 @@ Solutions possibles :
                 <p>Cette application n'utilise aucun cookie. Le stockage se fait uniquement via localStorage.</p>
 
                 <h3 style="color: var(--text-primary); font-size: 1.2rem; margin-top: var(--space-xl); margin-bottom: var(--space-md);">7. Contact</h3>
-                <p>Pour toute question sur cette politique : <strong style="color: var(--accent-main);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4f2c20213b2e2c3b61213a3b3d263b3d2e2c240f28222e2623612c2022">[email&#160;protected]</a></strong></p>
+                <p>Pour toute question sur cette politique : <strong style="color: var(--accent-main);"><a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a></strong></p>
 
                 <p style="margin-top: var(--space-2xl); font-size: 0.85rem; opacity: 0.7;">Dernière mise à jour : 17 décembre 2025</p>
             </div>
@@ -8828,7 +8934,7 @@ Solutions possibles :
         </div></div>
 
     <!-- Modal RGPD -->
-    <div id="rgpd-modal" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10000; justify-content: center; align-items: center; padding: 16px;">
+    <div id="rgpd-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10000; justify-content: center; align-items: flex-start; padding: 16px; padding-top: 50px; overflow-y: auto;">
         <div style="background: var(--bg-secondary); border: 2px solid var(--accent-main); border-radius: 12px; max-width: 500px; width: 100%; padding: 20px; box-shadow: var(--shadow-lg);">
             <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary);">
                 <i data-lucide="lock" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Protection de tes données
@@ -8974,7 +9080,7 @@ Solutions possibles :
                                             <div style="width: 80%; height: 8px; background: rgba(255, 255, 255, 0.2); border-radius: 4px;"></div></div></div></div></div></div></div>
                 </div>
 
-                <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+                <script>
                 (function() {
                     const mockupContainer = document.getElementById('mockup-container');
                     const mockupTilt = document.getElementById('mockup-tilt');
@@ -9227,7 +9333,7 @@ Solutions possibles :
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0 0 12px;">
                             Une question ? Une suggestion ?
                         </p>
-                        <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4b2824253f2a283f65253e3f39223f392a28200b2c262a222765282426">[email&#160;protected]</a>
+                        <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
                     </div></div>
 
                 <div style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 32px; text-align: center;">
@@ -9299,7 +9405,7 @@ Solutions possibles :
         #tutorial-next:not(:disabled):hover { transform: translateY(-2px);  }
     </style>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script>
         // Tutorial slides data
         const tutorialSlides = [
             {
