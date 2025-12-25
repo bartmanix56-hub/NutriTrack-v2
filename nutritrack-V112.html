@@ -577,12 +577,24 @@
             background: var(--bg-tertiary);
             border-radius: var(--radius-md);
             padding: var(--space-lg);
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto auto;
-            gap: var(--space-xl);
+            display: flex;
+            flex-wrap: nowrap;
+            gap: var(--space-md);
             align-items: center;
             transition: all var(--transition-normal);
             border: 1px solid transparent;
+        }
+
+        #meals .food-item .food-name {
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #meals .food-item .food-macros {
+            flex-shrink: 0;
         }
 
         .food-item:hover {
@@ -848,7 +860,18 @@
             /* Meals grid becomes vertical on mobile */
             #meals > div:first-of-type  { grid-template-columns: 1fr !important; }
 
-            .food-item  { grid-template-columns: 1fr; }
+            #meals .food-item {
+                flex-wrap: wrap;
+                gap: var(--space-sm);
+            }
+
+            #meals .food-item .food-macros {
+                width: 100%;
+                justify-content: space-around;
+                margin-top: var(--space-sm);
+            }
+
+            .food-list .food-item  { grid-template-columns: 1fr; }
 
             .food-macros  { justify-content: space-around; }
 
@@ -1062,7 +1085,7 @@
         .week-nav-btn {
             background: var(--bg-secondary);
             border: 1px solid rgba(16, 185, 129, 0.2);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             pointer-events: all;
             color: var(--text-primary);
             padding: 10px 20px;
@@ -1077,7 +1100,17 @@
             background: var(--accent-ui);
             color: white;
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .week-nav-btn.this-week-btn {
+            background: var(--accent-ui);
+            color: white;
+        }
+
+        .day-card.today {
+            border: 2px solid var(--accent-ui);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
         }
 
         .week-nav-btn:active  { transform: translateY(0); }
@@ -2080,15 +2113,15 @@
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
                                 <i data-lucide="trending-down" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Déficit calorique (%)
                             </label>
-                            <input type="number" id="deficit" onchange="tryAutoCalculate()" value="18" min="10" max="30" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            <input type="number" id="deficit" onblur="tryAutoCalculate()" placeholder="ex: 18" min="10" max="30" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                             <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 15-25% • Minimum : 10%</p>
                         </div>
 
                         <div class="input-group">
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                <i data-lucide="circle" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> 🥩 Protéines (g/kg)
+                                🥩 Protéines (g/kg)
                             </label>
-                            <input type="number" id="proteinCoeff" onchange="tryAutoCalculate()" value="2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            <input type="number" id="proteinCoeff" onblur="tryAutoCalculate()" placeholder="ex: 2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                             <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 1.8-2.2 g/kg • Minimum : 1.5 g/kg</p>
                         </div>
 
@@ -2096,7 +2129,7 @@
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
                                 <i data-lucide="droplet" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Lipides (g/kg)
                             </label>
-                            <input type="number" id="fatCoeff" value="0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'cut'); tryAutoCalculate()" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            <input type="number" id="fatCoeff" placeholder="ex: 0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'cut')" onblur="tryAutoCalculate()" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                             <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 0.8-1.0 g/kg • Minimum : 0.6 g/kg</p>
                             <div id="fat-warning-cut" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(255, 230, 109, 0.1); border-left: 3px solid var(--accent-fat); border-radius: var(--radius-sm);">
                                 <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Attention</div>
@@ -2118,15 +2151,15 @@
                                 <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
                                     📈 Surplus calorique (%)
                                 </label>
-                                <input type="number" id="surplus" onchange="tryAutoCalculate()" value="8" min="5" max="15" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <input type="number" id="surplus" onblur="tryAutoCalculate()" placeholder="ex: 8" min="5" max="15" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                                 <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 5-10% • Minimum : 5%</p>
                             </div>
 
                             <div class="input-group">
                                 <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                    <i data-lucide="circle" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> 🥩 Protéines (g/kg)
+                                    🥩 Protéines (g/kg)
                                 </label>
-                                <input type="number" id="proteinCoeffBulk" value="2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <input type="number" id="proteinCoeffBulk" onblur="tryAutoCalculate()" placeholder="ex: 2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                                 <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 1.8-2.2 g/kg • Minimum : 1.5 g/kg</p>
                             </div>
 
@@ -2134,7 +2167,7 @@
                                 <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
                                     <i data-lucide="droplet" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Lipides (g/kg)
                                 </label>
-                                <input type="number" id="fatCoeffBulk" value="0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'bulk')" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <input type="number" id="fatCoeffBulk" placeholder="ex: 0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'bulk')" onblur="tryAutoCalculate()" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                                 <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 0.8-1.0 g/kg • Minimum : 0.6 g/kg</p>
                                 <div id="fat-warning-bulk" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(255, 230, 109, 0.1); border-left: 3px solid var(--accent-fat); border-radius: var(--radius-sm);">
                                     <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Attention</div>
@@ -2181,16 +2214,6 @@
                         <div style="position: relative; min-height: 60px;">
                             <div style="font-size: 1.5rem; font-weight: 700;" id="imc-display-blur">0</div>
                             <div style="font-size: 0.9rem; margin-top: var(--space-xs);" id="imc-category-blur">-</div>
-
-                            <!-- Overlay button qui floute (toggle) -->
-                            <button id="imc-overlay-btn" onclick="toggleIMCVisibility()" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; gap: var(--space-xs); background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; color: var(--text-primary); transition: opacity 0.3s, background 0.3s, backdrop-filter 0.3s; z-index: 10;">
-                                <span id="imc-icon">👁️</span> <span id="imc-text">Afficher</span>
-                            </button>
-
-                            <!-- Bouton masquer visible quand IMC révélé -->
-                            <button id="imc-hide-btn" onclick="toggleIMCVisibility()" style="display: none; margin-top: var(--space-sm); background: transparent; border: none; color: var(--text-secondary); padding: var(--space-xs) 0; cursor: pointer; font-size: 0.85rem; text-decoration: underline;">
-                                👁️‍🗨️ Masquer l'IMC
-                            </button>
                         </div></div></div>
 
                 <h3 style="margin-bottom: var(--space-xl); font-size: 1.2rem;">Tes Objectifs Macros :</h3>
@@ -2597,6 +2620,9 @@
                     <div class="current-week" id="current-week">Semaine du 15 Déc 2025</div>
                     <button class="week-nav-btn" onclick="changeWeek(1)">Semaine suivante →</button>
                 </div>
+                <div style="text-align: center; margin-bottom: var(--space-xl);">
+                    <button class="week-nav-btn this-week-btn" onclick="goToCurrentWeek()">Cette semaine</button>
+                </div>
 
                 <div class="week-grid" id="week-grid"></div></div></div>
 
@@ -2653,7 +2679,7 @@
                         Tous
                     </button>
                     <button class="filter-btn" data-category="proteines" onclick="filterFoodsByCategory('proteines')" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                        <i data-lucide="circle" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> 🥩 Protéines
+                        🥩 Protéines
                     </button>
                     <button class="filter-btn" data-category="feculents" onclick="filterFoodsByCategory('feculents')" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                         🍚 Féculents
@@ -3732,12 +3758,14 @@
             <script>
                 // Calculer les stats au chargement de settings
                 function updateSettingsStats() {
-                    // Compter les repas (aliments ajoutés au total)
-                    const meals = JSON.parse(localStorage.getItem('meals') || '{}');
+                    // Compter les repas (aliments ajoutés au total) - utiliser allDailyMeals
+                    const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
                     let mealCount = 0;
-                    Object.values(meals).forEach(day => {
-                        ['breakfast', 'lunch', 'dinner', 'snacks'].forEach(meal => {
-                            if (day[meal] && day[meal].length > 0) mealCount += day[meal].length;
+                    Object.values(allMeals).forEach(day => {
+                        ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
+                            if (day[mealType] && day[mealType].foods && day[mealType].foods.length > 0) {
+                                mealCount += day[mealType].foods.length;
+                            }
                         });
                     });
                     document.getElementById('stats-meals').textContent = mealCount;
@@ -4189,8 +4217,8 @@
                 </div>
 
                 <div class="input-group">
-                    <label>Unité</label>
-                    <input type="text" id="new-food-unit" value="100g" placeholder="100g, 1u, 100ml...">
+                    <label>Unité (fixée à 100g)</label>
+                    <input type="text" id="new-food-unit" value="100g" readonly disabled style="background: var(--bg-tertiary); cursor: not-allowed; opacity: 0.7;">
                 </div>
 
                 <div class="modal-grid-2">
@@ -4220,7 +4248,7 @@
             </div></div></div>
 
     <!-- html2canvas for screenshot export -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
         // Food database
@@ -4564,17 +4592,17 @@
                 
                 // GARDE-FOUS: Validation des limites
                 if (deficit < 0.10 || deficit > 0.25) {
-                    showProfileAlert('<i data-lucide="alert-triangle"></i> Déficit invalide : max 25%');
+                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Déficit invalide : max 25%');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; }
                     return;
                 }
                 if (proteinCoeff < 1.5 || proteinCoeff > 2.2) {
-                    showProfileAlert('<i data-lucide="alert-triangle"></i> Protéines invalides : min 1,5 g/kg, max 2,2 g/kg');
+                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Protéines invalides : min 1,5 g/kg, max 2,2 g/kg');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; }
                     return;
                 }
                 if (fatCoeff < 0.6 || fatCoeff > 1.5) {
-                    showProfileAlert('<i data-lucide="alert-triangle"></i> Lipides invalides : min 0,6 g/kg, max 1,5 g/kg');
+                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Lipides invalides : min 0,6 g/kg, max 1,5 g/kg');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; }
                     return;
                 }
@@ -4739,11 +4767,12 @@ Solutions possibles :
 
         // === VALIDATION DU PROFIL ===
 
-        function showProfileAlert(message, type = 'warning', autoHide = true) {
+        function showProfileAlert(message, type = 'warning', autoHide = false) {
             const alert = document.getElementById('profile-alert');
             const messageEl = document.getElementById('profile-alert-message');
 
-            messageEl.textContent = message;
+            // Use innerHTML to support icons in message
+            messageEl.innerHTML = message;
             alert.style.display = 'block';
 
             if (type === 'info') {
@@ -4758,7 +4787,13 @@ Solutions possibles :
                 messageEl.previousElementSibling.style.color = 'var(--accent-danger)';
             }
 
-            // Auto-hide after 5 seconds (sauf si désactivé)
+            // Reinitialize Lucide icons after setting HTML
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            // Focus on alert
+            alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Only auto-hide if explicitly requested
             if (autoHide)  { setTimeout(() => {
                     alert.style.display = 'none'; }, 5000);
             }
@@ -5108,7 +5143,10 @@ Solutions possibles :
         }
 
 
-        // Sauvegarder la recette d'un repas
+        // Debounce pour la sauvegarde de recette
+        let recipeDebounceTimer = null;
+
+        // Sauvegarder la recette d'un repas (avec debounce)
         function saveRecipe(mealType, recipeText) {
             const dateKey = getCurrentDateKey();
             if (!allDailyMeals[dateKey]) {
@@ -5125,7 +5163,12 @@ Solutions possibles :
             dailyMeals[mealType].recipe = recipeText;
 
             saveDailyMeals();
-            showToast('<i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette sauvegardée');
+
+            // Debounce le toast pour éviter le spam
+            if (recipeDebounceTimer) clearTimeout(recipeDebounceTimer);
+            recipeDebounceTimer = setTimeout(() => {
+                showToast('<i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette sauvegardée');
+            }, 1000);
         }
 
         function renderMeal(mealType) {
@@ -5224,7 +5267,14 @@ Solutions possibles :
         function updateMealQuantity(mealType, id, quantity) {
             const food = dailyMeals[mealType].foods.find(f => f.id === id);
             if (food) {
-                food.quantity = parseFloat(quantity);
+                const parsedQuantity = parseFloat(quantity);
+                // Block negative quantities
+                if (parsedQuantity < 1 || isNaN(parsedQuantity)) {
+                    showToast('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Quantité invalide (min: 1g)');
+                    renderMeal(mealType);
+                    return;
+                }
+                food.quantity = parsedQuantity;
                 renderMeal(mealType);
                 updateDayTotals();
                 saveDailyMeals();
@@ -5530,8 +5580,8 @@ Solutions possibles :
             if (isClosed) {
                 btn.innerHTML = '<i data-lucide="lock-open" style="width: 18px; height: 18px;"></i><span id="close-day-text">Rouvrir cette journée</span>';
                 if (typeof lucide !== 'undefined') lucide.createIcons();
-                if (typeof lucide !== "undefined") lucide.createIcons();
-                btn.style.background = 'var(--accent-fat)';
+                btn.style.background = '#d4a847';
+                btn.style.color = '#1a1a1a';
                 notice.style.display = 'block';
                 if (badge) badge.style.display = 'inline-block';
                 if (typeof lucide !== "undefined") lucide.createIcons();
@@ -5545,8 +5595,8 @@ Solutions possibles :
             } else {
                 btn.innerHTML = '<i data-lucide="check-circle" style="width: 18px; height: 18px;"></i><span id="close-day-text">Clôturer cette journée</span>';
                 if (typeof lucide !== 'undefined') lucide.createIcons();
-                if (typeof lucide !== "undefined") lucide.createIcons();
-                btn.style.background = 'var(--accent-carbs)';
+                btn.style.background = 'rgba(255, 255, 255, 0.9)';
+                btn.style.color = '#1a1a1a';
                 notice.style.display = 'none';
                 if (typeof lucide !== "undefined") lucide.createIcons();
                 if (badge) badge.style.display = 'none';
@@ -6043,6 +6093,8 @@ Solutions possibles :
             if (modal) {
                 modal.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
+                document.documentElement.style.overflow = 'hidden';
+                window.scrollTo(0, 0);
             }
         }
 
@@ -6051,6 +6103,7 @@ Solutions possibles :
             localStorage.setItem('rgpd-consent-date', new Date().toISOString());
             document.getElementById('rgpd-modal').style.display = 'none';
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         }
 
         function refuseRGPD() {
@@ -6059,53 +6112,6 @@ Solutions possibles :
             alert('Tes données ont été effacées. L\'application ne fonctionnera pas sans consentement car elle nécessite de sauvegarder tes informations localement.');
             // Recharger pour montrer à nouveau le modal
             location.reload();
-        }
-
-        // === TOGGLE IMC ===
-        function toggleIMCVisibility() {
-            const btn = document.getElementById('imc-overlay-btn');
-            const hideBtn = document.getElementById('imc-hide-btn');
-            const icon = document.getElementById('imc-icon');
-            const text = document.getElementById('imc-text');
-
-            // Check current state by opacity
-            const isHidden = btn.style.opacity !== '0';
-
-            if (isHidden) {
-                // Reveal IMC - hide overlay, show hide button
-                btn.style.opacity = '0';
-                btn.style.background = 'transparent';
-                btn.style.backdropFilter = 'none';
-                btn.style.webkitBackdropFilter = 'none';
-                btn.style.pointerEvents = 'none'; // Désactiver maintenant qu'on a le bouton dédié
-                hideBtn.style.display = 'block';
-            } else {
-                // Hide IMC - show overlay, hide hide button
-                btn.style.opacity = '1';
-                btn.style.background = 'rgba(0, 0, 0, 0.7)';
-                btn.style.backdropFilter = 'blur(10px)';
-                btn.style.webkitBackdropFilter = 'blur(10px)';
-                btn.style.pointerEvents = 'auto';
-                icon.textContent = '👁️';
-                text.textContent = 'Afficher';
-                hideBtn.style.display = 'none';
-            }
-        }
-
-        function resetIMCVisibility() {
-            const btn = document.getElementById('imc-overlay-btn');
-            const hideBtn = document.getElementById('imc-hide-btn');
-            const icon = document.getElementById('imc-icon');
-            const text = document.getElementById('imc-text');
-
-            btn.style.opacity = '1';
-            btn.style.pointerEvents = 'auto';
-            btn.style.background = 'rgba(0, 0, 0, 0.7)';
-            btn.style.backdropFilter = 'blur(10px)';
-            btn.style.webkitBackdropFilter = 'blur(10px)';
-            icon.textContent = '👁️';
-            text.textContent = 'Afficher';
-            hideBtn.style.display = 'none';
         }
 
         // === EXPORT MACROS AS IMAGE ===
@@ -6394,7 +6400,6 @@ Solutions possibles :
         function saveNewFood() {
             const name = document.getElementById('new-food-name').value.trim();
             const category = document.getElementById('new-food-category').value;
-            const unit = document.getElementById('new-food-unit').value.trim();
             const protein = parseFloat(document.getElementById('new-food-protein').value) || 0;
             const carbs = parseFloat(document.getElementById('new-food-carbs').value) || 0;
             const fat = parseFloat(document.getElementById('new-food-fat').value) || 0;
@@ -6405,9 +6410,17 @@ Solutions possibles :
                 return;
             }
 
+            // Vérifier si un aliment avec ce nom existe déjà
+            const existingFood = foodDatabase.find(f => f.name.toLowerCase() === name.toLowerCase());
+            if (existingFood) {
+                customAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nom déjà utilisé', 'Un aliment avec ce nom existe déjà dans ta base.').then(() => {});
+                return;
+            }
+
             if (!calories || calories === 0)  { calories = Math.round(protein * 4 + carbs * 4 + fat * 9); }
 
-            const newFood = { name, unit: unit || '100g', protein, carbs, fat, calories, category, custom: true };
+            // Unit is always 100g
+            const newFood = { name, unit: '100g', protein, carbs, fat, calories, category, custom: true };
 
             customFoods.push(newFood);
             foodDatabase.push(newFood);
@@ -6455,8 +6468,15 @@ Solutions possibles :
             const filter = document.getElementById('foodFilter').value;
             const sortBy = document.getElementById('foodSort').value;
 
-            // Combiner foodDatabase (const) avec customFoods
-            let allFoods = [...foodDatabase, ...customFoods];
+            // Utiliser foodDatabase qui contient déjà les customFoods (ajoutés par loadCustomFoods)
+            // Dédupliquer en utilisant un Map par nom
+            const foodMap = new Map();
+            foodDatabase.forEach(food => {
+                if (!foodMap.has(food.name)) {
+                    foodMap.set(food.name, food);
+                }
+            });
+            let allFoods = Array.from(foodMap.values());
 
             // Filtrer
             let filtered = allFoods;
@@ -6482,8 +6502,16 @@ Solutions possibles :
         function renderFoodDatabaseWithCustom(foods) {
             const container = document.getElementById('foodDatabase');
 
-            // Merger avec customFoods si foods est la base foodDatabase
-            if (foods === foodDatabase || !foods) { foods = [...foodDatabase, ...customFoods]; }
+            // Si pas de foods fournis, utiliser foodDatabase dédupliqué
+            if (!foods || foods === foodDatabase) {
+                const foodMap = new Map();
+                foodDatabase.forEach(food => {
+                    if (!foodMap.has(food.name)) {
+                        foodMap.set(food.name, food);
+                    }
+                });
+                foods = Array.from(foodMap.values());
+            }
 
             // Charger les favoris
             const favorites = JSON.parse(localStorage.getItem('favoriteFoods') || '[]');
@@ -6746,16 +6774,29 @@ Solutions possibles :
                 };
             }
 
-            // Load recipes for this date
-
             // Utiliser dailyMeals de l'ancien code
             dailyMeals = allDailyMeals[dateKey];
 
-            // Charger les recettes dans les textareas
+            // Charger les recettes dans les textareas et vider les anciennes
             ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
-                const textarea = document.getElementById(`${mealType}-recipe`);
-                if (textarea) {
+                const recipeInput = document.getElementById(`${mealType}-recipe-input`);
+                const recipeDiv = document.getElementById(`${mealType}-recipe`);
+                const recipe = dailyMeals[mealType]?.recipe || '';
+
+                // Mettre à jour le textarea
+                if (recipeInput) {
+                    recipeInput.value = recipe;
                 }
+
+                // Afficher ou masquer la div de recette selon si elle existe
+                if (recipeDiv) {
+                    if (recipe && recipe.trim()) {
+                        recipeDiv.style.display = 'block';
+                    } else {
+                        recipeDiv.style.display = 'none';
+                    }
+                }
+
                 renderMeal(mealType);
             });
             updateDayTotals();
@@ -6842,20 +6883,26 @@ Solutions possibles :
         const origRenderPlan = renderWeeklyPlan;
         renderWeeklyPlan = function() {
             const weekStart = new Date(currentWeekStart);
-            document.getElementById('current-week').textContent = 'Semaine du ' + formatDate(weekStart);
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            document.getElementById('current-week').textContent = 'Semaine du ' + formatDate(weekStart) + ' au ' + formatDate(weekEnd);
 
             const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
             const weekGrid = document.getElementById('week-grid');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
             weekGrid.innerHTML = days.map((day, index) => {
                 const date = new Date(weekStart);
                 date.setDate(date.getDate() + index);
+                date.setHours(0, 0, 0, 0);
                 const dateKey = date.toISOString().split('T')[0];
                 const dayPlan = weeklyPlan[dateKey] || { breakfast: 'Non planifié', lunch: 'Non planifié', snack: 'Non planifié', dinner: 'Non planifié' };
+                const isToday = date.getTime() === today.getTime();
 
                 return `
-                    <div class="day-card">
-                        <div class="day-name" style="cursor: pointer; color: var(--accent-main);" onclick="goToDay(${index})" title="Cliquer pour voir les repas">${day}</div>
+                    <div class="day-card${isToday ? ' today' : ''}">
+                        <div class="day-name" style="cursor: pointer; color: var(--accent-main);" onclick="goToDay(${index})" title="Cliquer pour voir les repas">${day}${isToday ? ' (Aujourd\'hui)' : ''}</div>
                         <div class="day-date">${formatDate(date)}</div>
                         <div class="day-meals">
                             <div class="day-meal-item">
@@ -6872,10 +6919,20 @@ Solutions possibles :
                                 <div class="day-meal-foods" contenteditable="true" onblur="savePlanMeal('${dateKey}', 'dinner', this.textContent)">${dayPlan.dinner}</div></div></div></div>
                 `;
             }).join('');
-            
+
             // Reinitialize Lucide icons after dynamic content
             if (typeof lucide !== 'undefined') lucide.createIcons();
         };
+
+        function goToCurrentWeek() {
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            currentWeekStart = new Date(today);
+            currentWeekStart.setDate(today.getDate() + mondayOffset);
+            currentWeekStart.setHours(0, 0, 0, 0);
+            renderWeeklyPlan();
+        }
 
         function savePlanMeal(dateKey, mealType, text) {
             if (!weeklyPlan[dateKey]) {
@@ -7459,6 +7516,7 @@ Solutions possibles :
             const dateKey = getCurrentDateKey();
             const meal = allDailyMeals[dateKey] ? allDailyMeals[dateKey][mealType] : null;
             const foods = meal ? (meal.foods || meal) : [];
+            const recipe = meal ? (meal.recipe || '') : '';
 
             if (foods.length === 0) {
                 customAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Repas vide', 'Ce repas est vide, ajoute des aliments d\'abord');
@@ -7472,6 +7530,7 @@ Solutions possibles :
                     id: Date.now(),
                     name: templateName.trim(),
                     foods: JSON.parse(JSON.stringify(foods)), // Copie profonde
+                    recipe: recipe, // Sauvegarder la recette avec le template
                     createdAt: new Date().toISOString()
                 };
 
@@ -7587,32 +7646,36 @@ Solutions possibles :
                 };
             }
 
+            // REMPLACER les aliments existants (ne pas ajouter)
+            if (!allDailyMeals[dateKey][mealType]) {
+                allDailyMeals[dateKey][mealType] = { foods: [], recipe: '' };
+            }
+            allDailyMeals[dateKey][mealType].foods = [];
+
             // Copier les aliments avec nouveaux IDs
             template.foods.forEach(food => {
-                if (!allDailyMeals[dateKey][mealType].foods) {
-                    allDailyMeals[dateKey][mealType] = { foods: [], recipe: '' };
-                }
                 allDailyMeals[dateKey][mealType].foods.push({
                     ...food,
                     id: Date.now() + Math.random() // ID unique
                 });
             });
 
-            // Store recipe - DESACTIVÉ TEMPORAIREMENT
-            /*
+            // Charger aussi la recette si elle existe
             if (template.recipe) {
+                allDailyMeals[dateKey][mealType].recipe = template.recipe;
+                // Mettre à jour le textarea de recette
+                const recipeInput = document.getElementById(`${mealType}-recipe-input`);
+                if (recipeInput) recipeInput.value = template.recipe;
             }
-            */
 
             dailyMeals = allDailyMeals[dateKey];
-            // mealRecipes = allMealRecipes[dateKey] || { breakfast: '', lunch: '', snack: '', dinner: '' };
             renderMeal(mealType);
             updateDayTotals();
             saveDailyMeals();
 
             syncMealsToPlanning();
             closeTemplatesModal();
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Repas type "' + template.name + '" ajouté');
+            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Repas type "' + template.name + '" chargé');
         }
 
         async function deleteMealTemplate(templateId) {
@@ -8828,7 +8891,7 @@ Solutions possibles :
         </div></div>
 
     <!-- Modal RGPD -->
-    <div id="rgpd-modal" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10000; justify-content: center; align-items: center; padding: 16px;">
+    <div id="rgpd-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10000; justify-content: center; align-items: flex-start; padding: 16px; padding-top: 50px; overflow-y: auto;">
         <div style="background: var(--bg-secondary); border: 2px solid var(--accent-main); border-radius: 12px; max-width: 500px; width: 100%; padding: 20px; box-shadow: var(--shadow-lg);">
             <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary);">
                 <i data-lucide="lock" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Protection de tes données
@@ -8974,7 +9037,7 @@ Solutions possibles :
                                             <div style="width: 80%; height: 8px; background: rgba(255, 255, 255, 0.2); border-radius: 4px;"></div></div></div></div></div></div></div>
                 </div>
 
-                <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+                <script>
                 (function() {
                     const mockupContainer = document.getElementById('mockup-container');
                     const mockupTilt = document.getElementById('mockup-tilt');
@@ -9299,7 +9362,7 @@ Solutions possibles :
         #tutorial-next:not(:disabled):hover { transform: translateY(-2px);  }
     </style>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script>
         // Tutorial slides data
         const tutorialSlides = [
             {
