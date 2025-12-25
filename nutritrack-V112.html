@@ -3758,13 +3758,14 @@
             <script>
                 // Calculer les stats au chargement de settings
                 function updateSettingsStats() {
-                    // Compter les repas (aliments ajoutés au total) - utiliser allDailyMeals
+                    // Compter les repas (1 repas = 1 case avec au moins 1 aliment, max 4 par jour)
                     const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
                     let mealCount = 0;
                     Object.values(allMeals).forEach(day => {
                         ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
+                            // Si le repas a au moins 1 aliment, ça compte comme 1 repas
                             if (day[mealType] && day[mealType].foods && day[mealType].foods.length > 0) {
-                                mealCount += day[mealType].foods.length;
+                                mealCount += 1; // Compte le repas, pas les aliments individuels
                             }
                         });
                     });
@@ -3838,7 +3839,7 @@
             </p>
             <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg); display: inline-flex; align-items: center; gap: var(--space-sm);">
                 <i data-lucide="mail" style="width: 18px; height: 18px; color: var(--accent-ui);"></i>
-                <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="771418190316140359190203051e030516141c37101a161e1b5914181a">[email&#160;protected]</a>
+                <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
             </div>
 
             <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="code" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Version & Mises à Jour</h3>
@@ -3950,7 +3951,7 @@
             <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);">Article 10 - Contact</h2>
             <p style="line-height: 1.8; color: var(--text-secondary);">
                 Pour toute question relative aux présentes CGU, tu peux nous contacter à l'adresse suivante :<br>
-                <strong>Email :</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9dfef2f3e9fcfee9b3f3e8e9eff4e9effcfef6ddfaf0fcf4f1b3fef2f0">[email&#160;protected]</a>
+                <strong>Email :</strong> <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
             </p>
         </div></div>
 
@@ -3980,7 +3981,7 @@
                 <strong>Éditeur :</strong> Jérémy Mathurel<br>
                 <strong>Statut :</strong> Particulier<br>
                 <strong>Pays :</strong> France<br>
-                <strong>Email :</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="86e5e9e8f2e7e5f2a8e8f3f2f4eff2f4e7e5edc6e1ebe7efeaa8e5e9eb">[email&#160;protected]</a>
+                <strong>Email :</strong> <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
             </p>
 
             <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="server" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Hébergement</h2>
@@ -4153,7 +4154,7 @@
             <div>
                 <h4 style="color: var(--text-primary); font-size: 0.85rem; font-weight: 700; margin: 0 0 16px; text-transform: uppercase; letter-spacing: 1px;">Contact</h4>
                 <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0 0 12px;">Une question ? Une suggestion ?</p>
-                <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="85e6eaebf1e4e6f1abebf0f1f7ecf1f7e4e6eec5e2e8e4ece9abe6eae8">[email&#160;protected]</a>
+                <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
             </div></div>
         <div style="max-width: 1200px; margin: 0 auto; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 32px; text-align: center;">
             <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0;">© 2025 NutriTrack • Tous Droits Réservés • Version 3.0</p>
@@ -4696,9 +4697,6 @@ Solutions possibles :
             document.getElementById('imc-display-blur').style.color = imcColor;
             document.getElementById('imc-category-blur').textContent = imcCategory;
             document.getElementById('imc-category-blur').style.color = imcColor;
-
-            // Réinitialiser l'overlay (masqué par défaut)
-            resetIMCVisibility();
 
             // Afficher les résultats
             document.getElementById('targetProtein').textContent = protein;
@@ -5595,10 +5593,9 @@ Solutions possibles :
             } else {
                 btn.innerHTML = '<i data-lucide="check-circle" style="width: 18px; height: 18px;"></i><span id="close-day-text">Clôturer cette journée</span>';
                 if (typeof lucide !== 'undefined') lucide.createIcons();
-                btn.style.background = 'rgba(255, 255, 255, 0.9)';
-                btn.style.color = '#1a1a1a';
+                btn.style.background = '#5b8dd9';
+                btn.style.color = 'white';
                 notice.style.display = 'none';
-                if (typeof lucide !== "undefined") lucide.createIcons();
                 if (badge) badge.style.display = 'none';
 
                 // Réactiver les boutons
@@ -5811,24 +5808,31 @@ Solutions possibles :
         }
 
 
-        // ===== TOAST DE SAUVEGARDE =====
+        // ===== TOAST DE SAUVEGARDE (avec debounce) =====
+        let saveToastDebounceTimer = null;
+
         function showSaveToast() {
-            // Créer le toast s'il n'existe pas
-            let toast = document.getElementById('save-toast');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.id = 'save-toast';
-                toast.className = 'save-toast';
-                toast.innerHTML = '<i data-lucide="save" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données enregistrées';
-                if (typeof lucide !== "undefined") lucide.createIcons();
-                document.body.appendChild(toast);
-            }
+            // Debounce to avoid spam
+            if (saveToastDebounceTimer) clearTimeout(saveToastDebounceTimer);
 
-            // Afficher
-            toast.classList.add('show');
+            saveToastDebounceTimer = setTimeout(() => {
+                // Créer le toast s'il n'existe pas
+                let toast = document.getElementById('save-toast');
+                if (!toast) {
+                    toast = document.createElement('div');
+                    toast.id = 'save-toast';
+                    toast.className = 'save-toast';
+                    toast.innerHTML = '<i data-lucide="save" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données enregistrées';
+                    if (typeof lucide !== "undefined") lucide.createIcons();
+                    document.body.appendChild(toast);
+                }
 
-            // Masquer après 3s
-            setTimeout(() =>  { toast.classList.remove('show'); }, 3000);
+                // Afficher
+                toast.classList.add('show');
+
+                // Masquer après 2s
+                setTimeout(() =>  { toast.classList.remove('show'); }, 2000);
+            }, 1000);
         }
 
         function saveDailyMeals()  { localStorage.setItem('dailyMeals', JSON.stringify(dailyMeals)); }
@@ -6384,6 +6388,13 @@ Solutions possibles :
         function openAddFoodModal() {
             document.getElementById('addFoodModal').classList.add('active');
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+            window.scrollTo(0, 0);
+            // Focus on first input
+            setTimeout(() => {
+                const nameInput = document.getElementById('new-food-name');
+                if (nameInput) nameInput.focus();
+            }, 100);
         }
 
         function closeAddFoodModal() {
@@ -6395,6 +6406,7 @@ Solutions possibles :
             document.getElementById('new-food-fat').value = '';
             document.getElementById('new-food-calories').value = '';
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         }
 
         function saveNewFood() {
@@ -8648,6 +8660,13 @@ Solutions possibles :
                 confirmBtn.className = isDanger ? 'custom-popup-btn danger' : 'custom-popup-btn confirm';
                 confirmBtn.textContent = isDanger ? 'Supprimer' : 'Confirmer';
 
+                // IMPORTANT: Reset onclick handler (peut avoir été modifié par customAlert)
+                confirmBtn.onclick = () => closePopup(true);
+
+                // Aussi restaurer le bouton Annuler au cas où customAlert l'a masqué
+                const cancelBtn = document.querySelector('#custom-popup .cancel');
+                if (cancelBtn) cancelBtn.style.display = 'block';
+
                 document.getElementById('custom-popup').classList.add('active');
                 document.body.style.overflow = 'hidden';
                 if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -8880,7 +8899,7 @@ Solutions possibles :
                 <p>Cette application n'utilise aucun cookie. Le stockage se fait uniquement via localStorage.</p>
 
                 <h3 style="color: var(--text-primary); font-size: 1.2rem; margin-top: var(--space-xl); margin-bottom: var(--space-md);">7. Contact</h3>
-                <p>Pour toute question sur cette politique : <strong style="color: var(--accent-main);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4f2c20213b2e2c3b61213a3b3d263b3d2e2c240f28222e2623612c2022">[email&#160;protected]</a></strong></p>
+                <p>Pour toute question sur cette politique : <strong style="color: var(--accent-main);"><a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a></strong></p>
 
                 <p style="margin-top: var(--space-2xl); font-size: 0.85rem; opacity: 0.7;">Dernière mise à jour : 17 décembre 2025</p>
             </div>
@@ -9290,7 +9309,7 @@ Solutions possibles :
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0 0 12px;">
                             Une question ? Une suggestion ?
                         </p>
-                        <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4b2824253f2a283f65253e3f39223f392a28200b2c262a222765282426">[email&#160;protected]</a>
+                        <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
                     </div></div>
 
                 <div style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 32px; text-align: center;">
