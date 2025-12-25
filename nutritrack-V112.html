@@ -2402,7 +2402,7 @@
             width: 10px;
             height: 10px;
             opacity: 0;
-            animation: confetti-fall 3s ease-out forwards;
+            animation: confetti-fall 5s ease-out forwards;
         }
 
         @keyframes confetti-fall {
@@ -2410,9 +2410,12 @@
                 opacity: 1;
                 transform: translateY(-100px) rotate(0deg) scale(1);
             }
+            80% {
+                opacity: 1;
+            }
             100% {
                 opacity: 0;
-                transform: translateY(100vh) rotate(720deg) scale(0.5);
+                transform: translateY(100vh) rotate(1080deg) scale(0.3);
             }
         }
 
@@ -6190,51 +6193,51 @@ Solutions possibles :
 
             let emoji, message, bgColor, textColor;
 
-            // Logique de feedback basée sur calories ET protéines
-            if (calPct >= 95 && calPct <= 105 && protPct >= 90) {
-                // Parfait - Lancer les confettis !
+            // Logique de feedback bienveillante basée sur les calories
+            if (calPct >= 95 && calPct <= 105) {
+                // Objectif atteint - Confettis !
                 emoji = '🎯';
-                message = 'Journée parfaite, objectifs atteints !';
+                message = 'Objectif atteint, bravo !';
                 bgColor = 'rgba(16, 185, 129, 0.15)';
                 textColor = 'var(--accent-main)';
                 launchConfetti();
                 updateStreakDisplay();
-            } else if (calPct >= 85 && calPct <= 115 && protPct >= 80) {
+            } else if (calPct >= 85 && calPct <= 115) {
                 // Très bien
                 emoji = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
-                message = 'Très bonne journée, continue sur cette lancée';
+                message = 'Super journée, tu gères !';
                 bgColor = 'rgba(78, 205, 196, 0.15)';
                 textColor = 'var(--accent-carbs)';
             } else if (calPct >= 75 && calPct <= 125) {
-                // Acceptable
-                emoji = '👍';
-                message = 'Journée correcte, ajuste légèrement demain';
+                // Correct
+                emoji = '<i data-lucide="thumbs-up" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
+                message = 'Bonne progression, continue comme ça !';
                 bgColor = 'rgba(255, 230, 109, 0.15)';
                 textColor = 'var(--accent-fat)';
-            } else if (calPct > 125 && calPct <= 140) {
-                // Excès modéré
-                emoji = '<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
-                message = 'Légèrement au-dessus, reprends le contrôle demain';
+            } else if (calPct > 125 && calPct <= 150) {
+                // Au-dessus
+                emoji = '<i data-lucide="utensils" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
+                message = 'Journée gourmande, ça fait du bien parfois !';
                 bgColor = 'rgba(255, 193, 7, 0.15)';
                 textColor = '#ffc107';
-            } else if (calPct > 140) {
-                // Excès important
-                emoji = '<i data-lucide="x-circle" style="width: 24px; height: 24px; color: var(--accent-danger);"></i>';
-                message = 'Excès notable, repositionne-toi dès demain';
-                bgColor = 'rgba(239, 68, 68, 0.15)';
-                textColor = 'var(--accent-danger)';
+            } else if (calPct > 150) {
+                // Bien au-dessus
+                emoji = '<i data-lucide="party-popper" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
+                message = 'Journée festive ! Demain est un nouveau jour';
+                bgColor = 'rgba(168, 85, 247, 0.15)';
+                textColor = '#a855f7';
             } else if (calPct < 75 && calPct > 50) {
-                // Déficit important
-                emoji = '<i data-lucide="zap" style="width: 24px; height: 24px;"></i>';
-                message = 'Déficit important, assure-toi de ne pas sous-manger';
+                // En-dessous
+                emoji = '<i data-lucide="coffee" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
+                message = 'Tu peux encore te faire plaisir si tu as faim';
                 bgColor = 'rgba(255, 193, 7, 0.15)';
                 textColor = '#ffc107';
-            } else if (calPct <= 50) {
-                // Déficit critique
-                emoji = '<i data-lucide="alert-triangle" style="width: 24px; height: 24px;"></i>';
-                message = 'Apport très bas, veille à ta santé';
-                bgColor = 'rgba(239, 68, 68, 0.15)';
-                textColor = 'var(--accent-danger)';
+            } else if (calPct <= 50 && calPct > 0) {
+                // Très en-dessous
+                emoji = '<i data-lucide="heart" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
+                message = 'Pense à bien manger, ton corps en a besoin';
+                bgColor = 'rgba(248, 113, 113, 0.15)';
+                textColor = 'var(--accent-protein)';
             }
 
             emojiEl.innerHTML = emoji;
@@ -10365,19 +10368,19 @@ Solutions possibles :
             const colors = ['#10b981', '#f87171', '#38bdf8', '#fbbf24', '#a855f7', '#ec4899'];
             const shapes = ['square', 'circle'];
 
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 150; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 confetti.style.left = Math.random() * 100 + '%';
                 confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 confetti.style.borderRadius = shapes[Math.floor(Math.random() * shapes.length)] === 'circle' ? '50%' : '2px';
-                confetti.style.animationDelay = Math.random() * 0.5 + 's';
-                confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                confetti.style.animationDelay = Math.random() * 1 + 's';
+                confetti.style.animationDuration = (4 + Math.random() * 3) + 's';
                 container.appendChild(confetti);
             }
 
-            // Supprimer après l'animation
-            setTimeout(() => container.remove(), 4000);
+            // Supprimer après l'animation (durée max 8s)
+            setTimeout(() => container.remove(), 8000);
         }
 
         // ===== STREAK COUNTER =====
