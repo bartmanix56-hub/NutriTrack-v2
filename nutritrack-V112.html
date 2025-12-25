@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="fr" style="overflow: hidden;">
 <head>
@@ -839,25 +840,25 @@
             20%, 40%, 60%, 80% { transform: translateX(10px); }
         }
 
-        /* ================================================================ */
-        /* RESPONSIVE MOBILE - VRAI STYLE APPLICATION iOS/Android        */
-        /* ================================================================ */
+        /* Responsive - Bottom navbar mobile style iOS/Android */
         @media (max-width: 768px) {
-            /* === BASE === */
             body {
                 padding-bottom: 0;
-                font-size: 14px;
             }
 
             .app-layout {
                 flex-direction: column;
             }
 
-            /* === FOOTERS === */
-            .footer-desktop { display: none !important; }
-            .footer-mobile { display: block !important; }
+            /* Footers responsive */
+            .footer-desktop {
+                display: none !important;
+            }
+            .footer-mobile {
+                display: block !important;
+            }
 
-            /* === NAVBAR MOBILE STYLE iOS === */
+            /* NAVBAR MOBILE STYLE IOS/ANDROID */
             .sidebar {
                 position: fixed !important;
                 bottom: 0 !important;
@@ -865,28 +866,37 @@
                 right: 0 !important;
                 top: auto !important;
                 width: 100% !important;
-                height: 80px !important;
-                min-height: 80px !important;
-                max-height: 80px !important;
+                height: 85px !important;
+                min-height: 85px !important;
+                max-height: 85px !important;
                 display: flex !important;
                 flex-direction: row !important;
+                flex-wrap: nowrap !important;
                 justify-content: space-around !important;
-                align-items: center !important;
+                align-items: flex-start !important;
                 overflow: visible !important;
                 border-right: none !important;
                 border-top: 1px solid rgba(255, 255, 255, 0.1);
-                padding: 8px 4px env(safe-area-inset-bottom, 16px) 4px !important;
+                padding: 10px 8px 25px 8px !important; /* padding-bottom pour safe area iPhone */
                 gap: 0 !important;
                 z-index: 1000;
                 background: var(--bg-secondary) !important;
-                box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3);
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
             }
 
-            .sidebar.collapsed { width: 100% !important; height: 80px !important; }
-            .sidebar-toggle, .sidebar-group-title { display: none !important; }
+            .sidebar.collapsed {
+                width: 100% !important;
+                height: 85px !important;
+            }
+
+            .sidebar-toggle { display: none !important; }
+
+            .sidebar-group-title { display: none !important; }
+
+            /* Séparateur masqué */
             .sidebar > div[style*="height: 1px"] { display: none !important; }
 
-            /* Masquer onglets secondaires */
+            /* Masquer les onglets secondaires sur mobile (dans le menu Plus) */
             .sidebar-btn[data-tab="foods"],
             .sidebar-btn[data-tab="meal-templates"],
             .sidebar-btn[data-tab="guide"],
@@ -899,29 +909,36 @@
                 flex-direction: column !important;
                 align-items: center !important;
                 justify-content: center !important;
-                gap: 3px !important;
-                padding: 6px 4px !important;
-                min-width: 56px;
+                gap: 4px !important;
+                padding: 8px 6px !important;
+                min-width: 60px;
                 flex: 1;
-                max-width: 72px;
-                height: 52px;
-                border-radius: 10px;
-                transition: all 0.15s ease;
+                max-width: 80px;
+                height: 55px;
+                border-radius: var(--radius-md);
+                transition: all 0.2s ease;
             }
 
             .sidebar-btn:active {
-                transform: scale(0.92);
-                background: rgba(16, 185, 129, 0.12);
+                transform: scale(0.95);
+                background: rgba(16, 185, 129, 0.1);
             }
 
             .sidebar-btn.active {
-                background: rgba(16, 185, 129, 0.12);
+                background: rgba(16, 185, 129, 0.15);
+            }
+
+            .sidebar-btn .sidebar-icon {
+                min-width: auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .sidebar-btn .sidebar-icon i,
             .sidebar-btn .sidebar-icon svg {
-                width: 24px !important;
-                height: 24px !important;
+                width: 26px !important;
+                height: 26px !important;
             }
 
             .sidebar-btn.active .sidebar-icon i,
@@ -929,334 +946,270 @@
                 color: var(--accent-main) !important;
             }
 
+            .sidebar.collapsed .sidebar-btn { padding: 8px 6px !important; }
+
             .sidebar-label {
-                font-size: 10px !important;
+                font-size: 0.7rem !important;
                 font-weight: 500 !important;
-                opacity: 0.8 !important;
+                opacity: 1 !important;
+                width: auto !important;
                 text-align: center;
                 white-space: nowrap;
+                display: block !important;
             }
 
             .sidebar-btn.active .sidebar-label {
                 color: var(--accent-main) !important;
-                opacity: 1 !important;
                 font-weight: 600 !important;
             }
 
-            #mobile-more-btn { display: flex !important; }
+            .sidebar.collapsed .sidebar-label {
+                opacity: 1 !important;
+                width: auto !important;
+                display: block !important;
+            }
 
-            /* === MAIN CONTENT === */
+            /* Bouton Plus visible sur mobile */
+            #mobile-more-btn {
+                display: flex !important;
+            }
+
             .main-content {
-                padding: 12px !important;
-                padding-bottom: 100px !important;
+                padding: var(--space-md);
+                padding-bottom: 100px; /* Espace pour la navbar */
             }
 
-            /* === HEADER APP - Compact === */
-            header {
-                padding: 12px 16px !important;
-                margin-bottom: 0 !important;
+            /* Header mobile */
+            header h1 { font-size: 1.5rem; }
+            header .subtitle { font-size: 0.85rem; }
+
+            /* Meals grid becomes vertical on mobile */
+            #meals > div:first-of-type { grid-template-columns: 1fr !important; }
+
+            #meals .food-item {
+                flex-wrap: wrap;
+                gap: var(--space-sm);
             }
 
-            header h1 {
-                font-size: 1.3rem !important;
-                letter-spacing: -0.5px !important;
+            #meals .food-item .food-macros {
+                width: 100%;
+                justify-content: space-around;
+                margin-top: var(--space-sm);
             }
 
-            header .subtitle { display: none !important; }
+            .food-list .food-item { grid-template-columns: 1fr; }
 
-            header > div:first-child {
-                top: 10px !important;
-                right: 10px !important;
-                gap: 8px !important;
+            .food-macros { justify-content: space-around; }
+
+            h1 { font-size: 1.8rem; }
+
+            /* ============================================ */
+            /* MOBILE-FIRST DESIGN - Style App iOS/Android */
+            /* ============================================ */
+
+            /* Cards compacts et full-width sur mobile */
+            .card {
+                padding: var(--space-md) !important;
+                border-radius: var(--radius-lg) !important;
+                margin: 0 !important;
             }
 
-            #username-display {
-                padding: 6px 10px !important;
-                font-size: 0.8rem !important;
-            }
-
-            /* === HERO HEADERS - MASQUÉS SUR MOBILE === */
+            /* Hero headers compacts sur mobile */
             #calculator > div:first-child,
+            #settings > div:first-child,
             #meals > div:first-child,
             #planner > div:first-child,
             #tracking > div:first-child,
             #foods > div:first-child,
             #meal-templates > div:first-child,
-            #guide > div:first-child,
-            #settings > div:first-child {
-                display: none !important;
+            #guide > div:first-child {
+                padding: var(--space-lg) !important;
+                margin-bottom: var(--space-lg) !important;
+                border-radius: var(--radius-lg) !important;
             }
 
-            /* === CARDS === */
-            .card {
-                padding: 12px !important;
-                border-radius: 12px !important;
-                margin-bottom: 12px !important;
+            /* Icône hero plus petite */
+            #calculator > div:first-child > div:first-child > div:first-child,
+            #settings > div:first-child > div > div:first-child {
+                width: 48px !important;
+                height: 48px !important;
             }
 
-            .card h2, .card h3 {
-                font-size: 1rem !important;
-                margin-bottom: 10px !important;
+            #calculator > div:first-child > div:first-child > div:first-child i,
+            #settings > div:first-child > div > div:first-child i {
+                width: 28px !important;
+                height: 28px !important;
             }
 
-            /* === INPUTS === */
+            /* Titres hero plus petits */
+            #calculator > div:first-child h1,
+            #settings > div:first-child h1 {
+                font-size: 1.4rem !important;
+            }
+
+            #calculator > div:first-child p,
+            #settings > div:first-child p {
+                font-size: 0.85rem !important;
+            }
+
+            /* GRILLES - Une seule colonne sur mobile */
+            div[style*="grid-template-columns: repeat(auto-fit, minmax(450px"],
+            div[style*="grid-template-columns: repeat(auto-fit, minmax(400px"],
+            div[style*="grid-template-columns: repeat(auto-fit, minmax(350px"],
+            div[style*="grid-template-columns: repeat(auto-fit, minmax(300px"] {
+                grid-template-columns: 1fr !important;
+                gap: var(--space-md) !important;
+            }
+
+            /* Grille 3 colonnes -> 1 colonne */
+            div[style*="grid-template-columns: 1fr 2fr 1fr"] {
+                grid-template-columns: 1fr 1fr 1fr !important;
+                gap: var(--space-sm) !important;
+            }
+
+            /* Input groups plus compacts */
             .input-group {
-                margin-bottom: 12px !important;
+                margin-bottom: var(--space-md) !important;
             }
 
             .input-group label {
-                font-size: 13px !important;
-                margin-bottom: 4px !important;
+                font-size: 0.85rem !important;
+                margin-bottom: var(--space-xs) !important;
             }
 
-            input, select, textarea {
-                padding: 10px 12px !important;
-                font-size: 16px !important; /* Évite zoom iOS */
-                border-radius: 8px !important;
-            }
-
-            /* === BOUTONS === */
-            .btn {
-                padding: 10px 14px !important;
-                font-size: 13px !important;
-                border-radius: 8px !important;
-            }
-
-            .add-food-btn {
-                padding: 8px 10px !important;
-                font-size: 11px !important;
-            }
-
-            /* === GRILLES === */
-            div[style*="grid-template-columns: repeat"],
-            div[style*="grid-template-columns: 1fr 1fr"],
-            .grid-2 {
-                grid-template-columns: 1fr !important;
-                gap: 10px !important;
-            }
-
-            /* === ONGLET REPAS === */
-            /* Navigation date compacte */
-            #meals > div:nth-child(2) {
-                flex-direction: column !important;
-                gap: 10px !important;
-                margin-bottom: 12px !important;
-            }
-
-            #meals > div:nth-child(2) h2 {
-                font-size: 14px !important;
-                margin-bottom: 0 !important;
-            }
-
-            #meals > div:nth-child(2) > div:last-child {
-                width: 100%;
-                justify-content: space-between !important;
-            }
-
-            .date-nav-btn {
-                padding: 8px 12px !important;
-                font-size: 12px !important;
-            }
-
-            /* Widget reste du jour - 2x2 au lieu de 4 colonnes */
-            #remaining-widget {
+            .input-group input,
+            .input-group select {
                 padding: 12px !important;
-                margin-bottom: 12px !important;
+                font-size: 16px !important; /* Empêche zoom iOS */
             }
 
-            #remaining-widget > div {
-                flex-direction: column !important;
-                gap: 12px !important;
-            }
-
-            #remaining-widget > div > div:last-child {
-                grid-template-columns: 1fr 1fr !important;
-                gap: 8px !important;
-            }
-
-            #remaining-widget [style*="font-size: 1.3rem"] {
-                font-size: 1rem !important;
-            }
-
-            /* Grille repas 1 colonne */
-            #meals > div[style*="grid-template-columns: 1fr 1fr"] {
-                grid-template-columns: 1fr !important;
-                gap: 12px !important;
-            }
-
-            /* Meal cards compactes */
-            .meal-card {
-                padding: 10px !important;
-                border-radius: 12px !important;
-            }
-
-            .meal-card-header {
-                padding-bottom: 8px !important;
-                margin-bottom: 8px !important;
-            }
-
-            .meal-card-header span {
-                font-size: 14px !important;
-            }
-
-            .meal-card-header i {
-                width: 18px !important;
-                height: 18px !important;
-            }
-
-            /* Boutons repas sur 1 ligne scrollable */
-            .meal-card > div[style*="grid-template-columns: 1fr 1fr 1fr"] {
-                display: flex !important;
-                overflow-x: auto !important;
-                gap: 6px !important;
-                padding-bottom: 4px !important;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .meal-card > div[style*="grid-template-columns: 1fr 1fr 1fr"] button {
-                flex-shrink: 0 !important;
-                white-space: nowrap !important;
-                font-size: 10px !important;
-                padding: 6px 10px !important;
-            }
-
-            /* Quick add input */
-            .meal-card input[id^="quick-add"] {
-                font-size: 14px !important;
-                padding: 10px !important;
-            }
-
-            /* === ONGLET SEMAINE === */
-            .week-selector {
-                flex-direction: column !important;
-                gap: 8px !important;
-            }
-
-            .week-nav-btn {
-                padding: 8px 12px !important;
-                font-size: 12px !important;
-            }
-
-            .current-week {
-                font-size: 14px !important;
-            }
-
-            .week-grid {
-                overflow-x: auto !important;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .day-card {
-                min-width: 280px !important;
-            }
-
-            /* === ONGLET SUIVI === */
-            #tracking .card {
-                padding: 10px !important;
-            }
-
-            /* Sélecteurs de date compacts */
-            #tracking select {
-                padding: 8px !important;
-                font-size: 14px !important;
-            }
-
-            /* === ONGLET CALCULATEUR === */
+            /* Boutons objectifs plus compacts */
             .goal-selector {
                 flex-direction: column !important;
-                gap: 8px !important;
+                gap: var(--space-sm) !important;
             }
 
             .goal-btn {
-                padding: 12px !important;
+                padding: var(--space-md) !important;
             }
 
             .goal-title {
-                font-size: 14px !important;
+                font-size: 1rem !important;
             }
 
             .goal-desc {
-                font-size: 11px !important;
+                font-size: 0.8rem !important;
             }
 
-            /* Résultats macros */
-            .macro-card {
-                padding: 10px !important;
+            /* Section résultats */
+            #results-section .card {
+                padding: var(--space-md) !important;
             }
 
-            /* === ONGLET BASE ALIMENTS === */
-            .filter-btn {
-                padding: 6px 10px !important;
-                font-size: 11px !important;
+            /* Titres de section dans cards */
+            .card h2,
+            .card h3 {
+                font-size: 1.1rem !important;
             }
 
+            /* Header app masqué sur mobile (on garde la navbar) */
+            header {
+                padding: 16px !important;
+            }
+
+            header h1 {
+                font-size: 1.5rem !important;
+                letter-spacing: -1px !important;
+            }
+
+            header .subtitle {
+                font-size: 0.8rem !important;
+                display: none;
+            }
+
+            /* Username display plus compact */
+            #username-display {
+                padding: 8px 12px !important;
+                font-size: 0.9rem !important;
+            }
+
+            /* Theme toggle */
+            header > div:first-child {
+                top: 12px !important;
+                right: 12px !important;
+            }
+
+            /* Meal cards */
+            .meal-card {
+                padding: var(--space-sm) !important;
+            }
+
+            /* Food items */
             .food-item {
-                padding: 10px !important;
-                flex-direction: column !important;
-                align-items: flex-start !important;
-                gap: 8px !important;
+                padding: var(--space-sm) !important;
             }
 
-            .food-macros {
-                width: 100% !important;
-                justify-content: space-between !important;
+            /* Boutons généraux */
+            .btn {
+                padding: 12px 16px !important;
+                font-size: 0.9rem !important;
             }
 
-            /* === MODALS === */
+            /* Modal content */
             .modal-content {
-                margin: 8px !important;
-                max-height: 92vh !important;
-                border-radius: 16px !important;
+                margin: 10px !important;
+                max-height: 90vh !important;
+                border-radius: var(--radius-lg) !important;
             }
 
             .modal-header {
-                padding: 12px 16px !important;
-            }
-
-            .modal-title {
-                font-size: 16px !important;
+                padding: var(--space-md) !important;
             }
 
             .modal-body {
-                padding: 12px 16px !important;
+                padding: var(--space-md) !important;
             }
 
-            .modal-close {
-                width: 32px !important;
-                height: 32px !important;
-                font-size: 20px !important;
+            /* Macro cards dans résultats */
+            .macro-card {
+                padding: var(--space-md) !important;
             }
 
-            /* === ALERTES === */
+            /* Alertes */
             #profile-alert {
-                padding: 10px !important;
-                margin-bottom: 10px !important;
-                font-size: 13px !important;
+                padding: var(--space-md) !important;
+                margin-bottom: var(--space-md) !important;
             }
 
-            /* === ESPACEMENTS GLOBAUX === */
-            div[style*="margin-bottom: var(--space-3xl)"] { margin-bottom: 16px !important; }
-            div[style*="margin-bottom: var(--space-2xl)"] { margin-bottom: 12px !important; }
-            div[style*="gap: var(--space-2xl)"] { gap: 10px !important; }
-            div[style*="gap: var(--space-xl)"] { gap: 8px !important; }
-            div[style*="padding: var(--space-3xl)"] { padding: 12px !important; }
-            div[style*="padding: var(--space-2xl)"] { padding: 10px !important; }
-
-            /* === TABLES === */
-            table { font-size: 12px !important; }
-            th, td { padding: 6px !important; }
-
-            /* === CHARTS === */
-            canvas { max-height: 180px !important; }
-
-            /* === PARAMÈTRES === */
-            #settings .card {
-                padding: 12px !important;
+            /* Espacement global réduit */
+            div[style*="margin-bottom: var(--space-3xl)"] {
+                margin-bottom: var(--space-xl) !important;
             }
 
-            #pwa-install-card button {
-                padding: 12px !important;
-                font-size: 14px !important;
+            div[style*="margin-bottom: var(--space-2xl)"] {
+                margin-bottom: var(--space-lg) !important;
+            }
+
+            div[style*="gap: var(--space-2xl)"] {
+                gap: var(--space-md) !important;
+            }
+
+            div[style*="gap: var(--space-xl)"] {
+                gap: var(--space-md) !important;
+            }
+
+            /* Tables responsive */
+            table {
+                font-size: 0.85rem !important;
+            }
+
+            th, td {
+                padding: var(--space-sm) !important;
+            }
+
+            /* Charts */
+            canvas {
+                max-height: 200px !important;
             }
         }
 
@@ -1276,17 +1229,17 @@
         .mobile-drawer {
             display: none;
             position: fixed;
-            bottom: 80px; /* Au-dessus de la navbar */
+            bottom: 85px; /* Au-dessus de la navbar */
             left: 0;
             right: 0;
             background: var(--bg-secondary);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px 20px 0 0;
-            padding: 16px;
+            border-radius: 24px 24px 0 0;
+            padding: var(--space-xl) var(--space-lg);
             z-index: 1001;
             box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.4);
-            animation: slideUp 0.2s ease-out;
-            max-height: 55vh;
+            animation: slideUp 0.25s ease-out;
+            max-height: 60vh;
             overflow-y: auto;
         }
 
@@ -1315,24 +1268,24 @@
         .mobile-drawer-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 10px;
+            gap: var(--space-lg);
+            padding: var(--space-lg) var(--space-md);
+            border-radius: var(--radius-lg);
             color: var(--text-primary);
             cursor: pointer;
-            transition: all 0.15s ease;
-            font-size: 14px;
+            transition: all 0.2s ease;
+            font-size: 1rem;
             font-weight: 500;
         }
 
         .mobile-drawer-item:active {
-            transform: scale(0.97);
+            transform: scale(0.98);
             background: rgba(16, 185, 129, 0.15);
         }
 
         .mobile-drawer-item:hover { background: var(--bg-tertiary); }
 
-        .mobile-drawer-item i { width: 22px; height: 22px; }
+        .mobile-drawer-item i { width: 28px; height: 28px; }
 
         /* Scrollbar */
         ::-webkit-scrollbar  { width: 10px; }
