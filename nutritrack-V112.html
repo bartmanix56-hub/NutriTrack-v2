@@ -7454,17 +7454,12 @@ Solutions possibles :
             }
 
             // If all data present, recalculate silently
-            if (weight && height && age && gender && activity)  { try {
-                    calculateMacros(); } catch (error) {
-                    console.error('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Error during auto-recalculation:', error);
+            if (weight && height && age && gender && activity) {
+                try {
+                    calculateMacros();
+                } catch (error) {
+                    console.error('Error during auto-recalculation:', error);
                 }
-            } else {
-                    weight: !weight,
-                    height: !height,
-                    age: !age,
-                    gender: !gender,
-                    activity: !activity
-                });
             }
         }
 
