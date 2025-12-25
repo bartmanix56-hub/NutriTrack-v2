@@ -141,8 +141,7 @@
             z-index: 1;
         }
 
-        /* Zoom sur l'app principale */
-        #main-app { zoom: 0.9; }
+        /* Pas de zoom - responsive natif */
 
         /* Header */
         header {
@@ -1003,13 +1002,213 @@
 
             h1 { font-size: 1.8rem; }
 
-            /* Cards compacts sur mobile */
-            .card { padding: var(--space-lg); }
+            /* ============================================ */
+            /* MOBILE-FIRST DESIGN - Style App iOS/Android */
+            /* ============================================ */
 
-            /* Hero header plus compact sur mobile */
+            /* Cards compacts et full-width sur mobile */
+            .card {
+                padding: var(--space-md) !important;
+                border-radius: var(--radius-lg) !important;
+                margin: 0 !important;
+            }
+
+            /* Hero headers compacts sur mobile */
             #calculator > div:first-child,
-            #settings > div:first-child {
-                padding: var(--space-xl) !important;
+            #settings > div:first-child,
+            #meals > div:first-child,
+            #planner > div:first-child,
+            #tracking > div:first-child,
+            #foods > div:first-child,
+            #meal-templates > div:first-child,
+            #guide > div:first-child {
+                padding: var(--space-lg) !important;
+                margin-bottom: var(--space-lg) !important;
+                border-radius: var(--radius-lg) !important;
+            }
+
+            /* Icône hero plus petite */
+            #calculator > div:first-child > div:first-child > div:first-child,
+            #settings > div:first-child > div > div:first-child {
+                width: 48px !important;
+                height: 48px !important;
+            }
+
+            #calculator > div:first-child > div:first-child > div:first-child i,
+            #settings > div:first-child > div > div:first-child i {
+                width: 28px !important;
+                height: 28px !important;
+            }
+
+            /* Titres hero plus petits */
+            #calculator > div:first-child h1,
+            #settings > div:first-child h1 {
+                font-size: 1.4rem !important;
+            }
+
+            #calculator > div:first-child p,
+            #settings > div:first-child p {
+                font-size: 0.85rem !important;
+            }
+
+            /* GRILLES - Une seule colonne sur mobile */
+            div[style*="grid-template-columns: repeat(auto-fit, minmax(450px"],
+            div[style*="grid-template-columns: repeat(auto-fit, minmax(400px"],
+            div[style*="grid-template-columns: repeat(auto-fit, minmax(350px"],
+            div[style*="grid-template-columns: repeat(auto-fit, minmax(300px"] {
+                grid-template-columns: 1fr !important;
+                gap: var(--space-md) !important;
+            }
+
+            /* Grille 3 colonnes -> 1 colonne */
+            div[style*="grid-template-columns: 1fr 2fr 1fr"] {
+                grid-template-columns: 1fr 1fr 1fr !important;
+                gap: var(--space-sm) !important;
+            }
+
+            /* Input groups plus compacts */
+            .input-group {
+                margin-bottom: var(--space-md) !important;
+            }
+
+            .input-group label {
+                font-size: 0.85rem !important;
+                margin-bottom: var(--space-xs) !important;
+            }
+
+            .input-group input,
+            .input-group select {
+                padding: 12px !important;
+                font-size: 16px !important; /* Empêche zoom iOS */
+            }
+
+            /* Boutons objectifs plus compacts */
+            .goal-selector {
+                flex-direction: column !important;
+                gap: var(--space-sm) !important;
+            }
+
+            .goal-btn {
+                padding: var(--space-md) !important;
+            }
+
+            .goal-title {
+                font-size: 1rem !important;
+            }
+
+            .goal-desc {
+                font-size: 0.8rem !important;
+            }
+
+            /* Section résultats */
+            #results-section .card {
+                padding: var(--space-md) !important;
+            }
+
+            /* Titres de section dans cards */
+            .card h2,
+            .card h3 {
+                font-size: 1.1rem !important;
+            }
+
+            /* Header app masqué sur mobile (on garde la navbar) */
+            header {
+                padding: 16px !important;
+            }
+
+            header h1 {
+                font-size: 1.5rem !important;
+                letter-spacing: -1px !important;
+            }
+
+            header .subtitle {
+                font-size: 0.8rem !important;
+                display: none;
+            }
+
+            /* Username display plus compact */
+            #username-display {
+                padding: 8px 12px !important;
+                font-size: 0.9rem !important;
+            }
+
+            /* Theme toggle */
+            header > div:first-child {
+                top: 12px !important;
+                right: 12px !important;
+            }
+
+            /* Meal cards */
+            .meal-card {
+                padding: var(--space-sm) !important;
+            }
+
+            /* Food items */
+            .food-item {
+                padding: var(--space-sm) !important;
+            }
+
+            /* Boutons généraux */
+            .btn {
+                padding: 12px 16px !important;
+                font-size: 0.9rem !important;
+            }
+
+            /* Modal content */
+            .modal-content {
+                margin: 10px !important;
+                max-height: 90vh !important;
+                border-radius: var(--radius-lg) !important;
+            }
+
+            .modal-header {
+                padding: var(--space-md) !important;
+            }
+
+            .modal-body {
+                padding: var(--space-md) !important;
+            }
+
+            /* Macro cards dans résultats */
+            .macro-card {
+                padding: var(--space-md) !important;
+            }
+
+            /* Alertes */
+            #profile-alert {
+                padding: var(--space-md) !important;
+                margin-bottom: var(--space-md) !important;
+            }
+
+            /* Espacement global réduit */
+            div[style*="margin-bottom: var(--space-3xl)"] {
+                margin-bottom: var(--space-xl) !important;
+            }
+
+            div[style*="margin-bottom: var(--space-2xl)"] {
+                margin-bottom: var(--space-lg) !important;
+            }
+
+            div[style*="gap: var(--space-2xl)"] {
+                gap: var(--space-md) !important;
+            }
+
+            div[style*="gap: var(--space-xl)"] {
+                gap: var(--space-md) !important;
+            }
+
+            /* Tables responsive */
+            table {
+                font-size: 0.85rem !important;
+            }
+
+            th, td {
+                padding: var(--space-sm) !important;
+            }
+
+            /* Charts */
+            canvas {
+                max-height: 200px !important;
             }
         }
 
@@ -4620,21 +4819,53 @@
             if (drawerInstallBtn) drawerInstallBtn.style.display = 'none';
         }
 
+        // Afficher bouton install sur mobile (iOS n'a pas beforeinstallprompt)
+        function checkMobileInstall() {
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            if (isMobile && !isStandalone) {
+                showInstallButton();
+            }
+        }
+        // Exécuter au chargement
+        document.addEventListener('DOMContentLoaded', checkMobileInstall);
+
         async function installPWA() {
-            if (!deferredInstallPrompt) {
-                showToast('<i data-lucide="info" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Installation non disponible sur ce navigateur');
+            // Détecter iOS
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isAndroid = /Android/.test(navigator.userAgent);
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+            // Si déjà installé
+            if (isStandalone) {
+                showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> L\'app est déjà installée !');
                 return;
             }
 
-            // Afficher le prompt d'installation
-            deferredInstallPrompt.prompt();
-
-            // Attendre le résultat
-            const { outcome } = await deferredInstallPrompt.userChoice;
-
-            if (outcome === 'accepted') {
-                showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Installation en cours...');
+            // iOS - pas de beforeinstallprompt
+            if (isIOS) {
+                showToast('<i data-lucide="share" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Appuie sur Partager <i data-lucide="square-plus" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> puis "Sur l\'écran d\'accueil"', 6000);
+                return;
             }
+
+            // Android/Chrome avec beforeinstallprompt
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                const { outcome } = await deferredInstallPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Installation en cours...');
+                }
+                return;
+            }
+
+            // Android sans prompt (déjà installé ou pas supporté)
+            if (isAndroid) {
+                showToast('<i data-lucide="menu" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Menu ⋮ → "Installer l\'application" ou "Ajouter à l\'écran d\'accueil"', 5000);
+                return;
+            }
+
+            // Autre navigateur
+            showToast('<i data-lucide="info" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Utilise Chrome ou Safari pour installer');
         }
 
         // Tab switching
