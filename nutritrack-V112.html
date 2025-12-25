@@ -823,6 +823,11 @@
 
         .search-result-item:hover  { background: var(--bg-tertiary); }
 
+        .search-result-item.selected {
+            background: var(--bg-tertiary);
+            border-left: 3px solid var(--accent-main);
+        }
+
         .search-result-name  { font-weight: 600;
             margin-bottom: 5px; }
 
@@ -2378,6 +2383,57 @@
                 margin-left: 0;
                 margin-top: var(--space-sm);
             }
+        }
+
+        /* ===== CONFETTIS ANIMATION ===== */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+            animation: confetti-fall 3s ease-out forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100px) rotate(0deg) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg) scale(0.5);
+            }
+        }
+
+        /* ===== STREAK BADGE ===== */
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+            animation: streak-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes streak-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -6131,11 +6187,13 @@ Solutions possibles :
 
             // Logique de feedback basée sur calories ET protéines
             if (calPct >= 95 && calPct <= 105 && protPct >= 90) {
-                // Parfait
+                // Parfait - Lancer les confettis !
                 emoji = '🎯';
                 message = 'Journée parfaite, objectifs atteints !';
                 bgColor = 'rgba(16, 185, 129, 0.15)';
                 textColor = 'var(--accent-main)';
+                launchConfetti();
+                updateStreakDisplay();
             } else if (calPct >= 85 && calPct <= 115 && protPct >= 80) {
                 // Très bien
                 emoji = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
@@ -10195,24 +10253,39 @@ Solutions possibles :
         });
 
         // ===== RACCOURCIS CLAVIER GLOBAUX =====
+        let searchSelectedIndex = -1;
+
         document.addEventListener('keydown', (e) => {
+            const foodModal = document.getElementById('foodModal');
+            const searchResults = document.getElementById('modalSearchResults');
+            const modalSearch = document.getElementById('modalFoodSearch');
+
+            // Ctrl+K - Ouvrir la recherche d'aliments (si pas déjà dans un input)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                const activeTag = document.activeElement?.tagName?.toLowerCase();
+                if (activeTag !== 'input' && activeTag !== 'textarea') {
+                    e.preventDefault();
+                    // Ouvrir la modale pour le premier type de repas ou le dernier utilisé
+                    openFoodModal(currentMealType || 'breakfast');
+                    return;
+                }
+            }
+
             // Escape - Fermer les modales actives
             if (e.key === 'Escape') {
-                // Fermer templatesModal en premier (peut être au-dessus)
+                searchSelectedIndex = -1;
+
                 const templatesModal = document.getElementById('templatesModal');
                 if (templatesModal) {
                     closeTemplatesModal();
                     return;
                 }
 
-                // Fermer foodModal
-                const foodModal = document.getElementById('foodModal');
                 if (foodModal && foodModal.classList.contains('active')) {
                     closeFoodModal();
                     return;
                 }
 
-                // Fermer addFoodModal
                 const addFoodModal = document.getElementById('addFoodModal');
                 if (addFoodModal && addFoodModal.classList.contains('active')) {
                     closeAddFoodModal();
@@ -10220,25 +10293,157 @@ Solutions possibles :
                 }
             }
 
-            // Enter - Valider la recherche d'aliment dans la modale
-            if (e.key === 'Enter') {
-                const foodModal = document.getElementById('foodModal');
-                const modalSearch = document.getElementById('modalFoodSearch');
-                const searchResults = document.getElementById('modalSearchResults');
+            // Navigation dans les résultats de recherche
+            if (foodModal && foodModal.classList.contains('active') &&
+                searchResults && searchResults.style.display !== 'none') {
 
-                // Si on est dans la modale de recherche d'aliments
-                if (foodModal && foodModal.classList.contains('active') &&
-                    document.activeElement === modalSearch &&
-                    searchResults && searchResults.style.display !== 'none') {
+                const items = searchResults.querySelectorAll('.search-result-item');
+                if (items.length === 0) return;
 
-                    // Sélectionner le premier résultat visible
-                    const firstResult = searchResults.querySelector('.food-result');
-                    if (firstResult) {
-                        e.preventDefault();
-                        firstResult.click();
-                    }
+                // Flèche bas - Sélectionner suivant
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    searchSelectedIndex = Math.min(searchSelectedIndex + 1, items.length - 1);
+                    updateSearchSelection(items);
+                    return;
+                }
+
+                // Flèche haut - Sélectionner précédent
+                if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    searchSelectedIndex = Math.max(searchSelectedIndex - 1, 0);
+                    updateSearchSelection(items);
+                    return;
+                }
+
+                // Enter - Valider la sélection
+                if (e.key === 'Enter' && document.activeElement === modalSearch) {
+                    e.preventDefault();
+                    const selected = items[searchSelectedIndex] || items[0];
+                    if (selected) selected.click();
+                    searchSelectedIndex = -1;
+                    return;
                 }
             }
+        });
+
+        function updateSearchSelection(items) {
+            items.forEach((item, i) => {
+                item.classList.toggle('selected', i === searchSelectedIndex);
+            });
+            // Scroll into view si nécessaire
+            if (items[searchSelectedIndex]) {
+                items[searchSelectedIndex].scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        // Reset selection quand on tape
+        document.getElementById('modalFoodSearch')?.addEventListener('input', () => {
+            searchSelectedIndex = -1;
+        });
+
+        // ===== CONFETTIS =====
+        let confettiShownToday = localStorage.getItem('confettiShownDate') === getDateKey(new Date());
+
+        function launchConfetti() {
+            // Ne pas relancer si déjà montré aujourd'hui
+            if (confettiShownToday) return;
+            confettiShownToday = true;
+            localStorage.setItem('confettiShownDate', getDateKey(new Date()));
+
+            const container = document.createElement('div');
+            container.className = 'confetti-container';
+            document.body.appendChild(container);
+
+            const colors = ['#10b981', '#f87171', '#38bdf8', '#fbbf24', '#a855f7', '#ec4899'];
+            const shapes = ['square', 'circle'];
+
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = shapes[Math.floor(Math.random() * shapes.length)] === 'circle' ? '50%' : '2px';
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                container.appendChild(confetti);
+            }
+
+            // Supprimer après l'animation
+            setTimeout(() => container.remove(), 4000);
+        }
+
+        // ===== STREAK COUNTER =====
+        function calculateStreak() {
+            const trackingData = JSON.parse(localStorage.getItem('trackingData') || '[]');
+            const allDailyMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+
+            // Combiner les dates de tracking et de repas
+            const trackedDates = new Set();
+            trackingData.forEach(t => trackedDates.add(t.date));
+            Object.keys(allDailyMeals).forEach(date => {
+                const meals = allDailyMeals[date];
+                const hasFood = Object.values(meals).some(m => m.foods && m.foods.length > 0);
+                if (hasFood) trackedDates.add(date);
+            });
+
+            if (trackedDates.size === 0) return 0;
+
+            // Trier les dates
+            const sortedDates = Array.from(trackedDates).sort().reverse();
+
+            // Calculer le streak depuis aujourd'hui
+            const today = getDateKey(new Date());
+            const yesterday = getDateKey(new Date(Date.now() - 86400000));
+
+            // Vérifier si le streak est actif (aujourd'hui ou hier)
+            if (!trackedDates.has(today) && !trackedDates.has(yesterday)) return 0;
+
+            let streak = 0;
+            let checkDate = new Date();
+
+            // Si pas de données aujourd'hui, commencer à hier
+            if (!trackedDates.has(today)) {
+                checkDate = new Date(Date.now() - 86400000);
+            }
+
+            while (trackedDates.has(getDateKey(checkDate))) {
+                streak++;
+                checkDate = new Date(checkDate.getTime() - 86400000);
+            }
+
+            return streak;
+        }
+
+        function updateStreakDisplay() {
+            const streak = calculateStreak();
+            let streakEl = document.getElementById('streak-display');
+
+            if (streak < 2) {
+                if (streakEl) streakEl.style.display = 'none';
+                return;
+            }
+
+            if (!streakEl) {
+                // Créer l'élément dans le header
+                const header = document.querySelector('#main-app header');
+                if (header) {
+                    streakEl = document.createElement('div');
+                    streakEl.id = 'streak-display';
+                    streakEl.style.cssText = 'position: absolute; top: 20px; left: 20px;';
+                    header.appendChild(streakEl);
+                }
+            }
+
+            if (streakEl) {
+                streakEl.innerHTML = `<span class="streak-badge">🔥 ${streak} jours</span>`;
+                streakEl.style.display = 'block';
+            }
+        }
+
+        // Mettre à jour le streak au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(updateStreakDisplay, 500);
         });
     </script>
 </body>
