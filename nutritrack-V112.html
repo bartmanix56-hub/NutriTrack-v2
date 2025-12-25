@@ -839,25 +839,25 @@
             20%, 40%, 60%, 80% { transform: translateX(10px); }
         }
 
-        /* Responsive - Bottom navbar mobile style iOS/Android */
+        /* ================================================================ */
+        /* RESPONSIVE MOBILE - VRAI STYLE APPLICATION iOS/Android        */
+        /* ================================================================ */
         @media (max-width: 768px) {
+            /* === BASE === */
             body {
                 padding-bottom: 0;
+                font-size: 14px;
             }
 
             .app-layout {
                 flex-direction: column;
             }
 
-            /* Footers responsive */
-            .footer-desktop {
-                display: none !important;
-            }
-            .footer-mobile {
-                display: block !important;
-            }
+            /* === FOOTERS === */
+            .footer-desktop { display: none !important; }
+            .footer-mobile { display: block !important; }
 
-            /* NAVBAR MOBILE STYLE IOS/ANDROID */
+            /* === NAVBAR MOBILE STYLE iOS === */
             .sidebar {
                 position: fixed !important;
                 bottom: 0 !important;
@@ -865,37 +865,28 @@
                 right: 0 !important;
                 top: auto !important;
                 width: 100% !important;
-                height: 85px !important;
-                min-height: 85px !important;
-                max-height: 85px !important;
+                height: 80px !important;
+                min-height: 80px !important;
+                max-height: 80px !important;
                 display: flex !important;
                 flex-direction: row !important;
-                flex-wrap: nowrap !important;
                 justify-content: space-around !important;
-                align-items: flex-start !important;
+                align-items: center !important;
                 overflow: visible !important;
                 border-right: none !important;
                 border-top: 1px solid rgba(255, 255, 255, 0.1);
-                padding: 10px 8px 25px 8px !important; /* padding-bottom pour safe area iPhone */
+                padding: 8px 4px env(safe-area-inset-bottom, 16px) 4px !important;
                 gap: 0 !important;
                 z-index: 1000;
                 background: var(--bg-secondary) !important;
-                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+                box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3);
             }
 
-            .sidebar.collapsed {
-                width: 100% !important;
-                height: 85px !important;
-            }
-
-            .sidebar-toggle { display: none !important; }
-
-            .sidebar-group-title { display: none !important; }
-
-            /* Séparateur masqué */
+            .sidebar.collapsed { width: 100% !important; height: 80px !important; }
+            .sidebar-toggle, .sidebar-group-title { display: none !important; }
             .sidebar > div[style*="height: 1px"] { display: none !important; }
 
-            /* Masquer les onglets secondaires sur mobile (dans le menu Plus) */
+            /* Masquer onglets secondaires */
             .sidebar-btn[data-tab="foods"],
             .sidebar-btn[data-tab="meal-templates"],
             .sidebar-btn[data-tab="guide"],
@@ -908,36 +899,29 @@
                 flex-direction: column !important;
                 align-items: center !important;
                 justify-content: center !important;
-                gap: 4px !important;
-                padding: 8px 6px !important;
-                min-width: 60px;
+                gap: 3px !important;
+                padding: 6px 4px !important;
+                min-width: 56px;
                 flex: 1;
-                max-width: 80px;
-                height: 55px;
-                border-radius: var(--radius-md);
-                transition: all 0.2s ease;
+                max-width: 72px;
+                height: 52px;
+                border-radius: 10px;
+                transition: all 0.15s ease;
             }
 
             .sidebar-btn:active {
-                transform: scale(0.95);
-                background: rgba(16, 185, 129, 0.1);
+                transform: scale(0.92);
+                background: rgba(16, 185, 129, 0.12);
             }
 
             .sidebar-btn.active {
-                background: rgba(16, 185, 129, 0.15);
-            }
-
-            .sidebar-btn .sidebar-icon {
-                min-width: auto;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                background: rgba(16, 185, 129, 0.12);
             }
 
             .sidebar-btn .sidebar-icon i,
             .sidebar-btn .sidebar-icon svg {
-                width: 26px !important;
-                height: 26px !important;
+                width: 24px !important;
+                height: 24px !important;
             }
 
             .sidebar-btn.active .sidebar-icon i,
@@ -945,270 +929,334 @@
                 color: var(--accent-main) !important;
             }
 
-            .sidebar.collapsed .sidebar-btn { padding: 8px 6px !important; }
-
             .sidebar-label {
-                font-size: 0.7rem !important;
+                font-size: 10px !important;
                 font-weight: 500 !important;
-                opacity: 1 !important;
-                width: auto !important;
+                opacity: 0.8 !important;
                 text-align: center;
                 white-space: nowrap;
-                display: block !important;
             }
 
             .sidebar-btn.active .sidebar-label {
                 color: var(--accent-main) !important;
+                opacity: 1 !important;
                 font-weight: 600 !important;
             }
 
-            .sidebar.collapsed .sidebar-label {
-                opacity: 1 !important;
-                width: auto !important;
-                display: block !important;
-            }
+            #mobile-more-btn { display: flex !important; }
 
-            /* Bouton Plus visible sur mobile */
-            #mobile-more-btn {
-                display: flex !important;
-            }
-
+            /* === MAIN CONTENT === */
             .main-content {
-                padding: var(--space-md);
-                padding-bottom: 100px; /* Espace pour la navbar */
+                padding: 12px !important;
+                padding-bottom: 100px !important;
             }
 
-            /* Header mobile */
-            header h1 { font-size: 1.5rem; }
-            header .subtitle { font-size: 0.85rem; }
-
-            /* Meals grid becomes vertical on mobile */
-            #meals > div:first-of-type { grid-template-columns: 1fr !important; }
-
-            #meals .food-item {
-                flex-wrap: wrap;
-                gap: var(--space-sm);
+            /* === HEADER APP - Compact === */
+            header {
+                padding: 12px 16px !important;
+                margin-bottom: 0 !important;
             }
 
-            #meals .food-item .food-macros {
-                width: 100%;
-                justify-content: space-around;
-                margin-top: var(--space-sm);
+            header h1 {
+                font-size: 1.3rem !important;
+                letter-spacing: -0.5px !important;
             }
 
-            .food-list .food-item { grid-template-columns: 1fr; }
+            header .subtitle { display: none !important; }
 
-            .food-macros { justify-content: space-around; }
-
-            h1 { font-size: 1.8rem; }
-
-            /* ============================================ */
-            /* MOBILE-FIRST DESIGN - Style App iOS/Android */
-            /* ============================================ */
-
-            /* Cards compacts et full-width sur mobile */
-            .card {
-                padding: var(--space-md) !important;
-                border-radius: var(--radius-lg) !important;
-                margin: 0 !important;
+            header > div:first-child {
+                top: 10px !important;
+                right: 10px !important;
+                gap: 8px !important;
             }
 
-            /* Hero headers compacts sur mobile */
+            #username-display {
+                padding: 6px 10px !important;
+                font-size: 0.8rem !important;
+            }
+
+            /* === HERO HEADERS - MASQUÉS SUR MOBILE === */
             #calculator > div:first-child,
-            #settings > div:first-child,
             #meals > div:first-child,
             #planner > div:first-child,
             #tracking > div:first-child,
             #foods > div:first-child,
             #meal-templates > div:first-child,
-            #guide > div:first-child {
-                padding: var(--space-lg) !important;
-                margin-bottom: var(--space-lg) !important;
-                border-radius: var(--radius-lg) !important;
+            #guide > div:first-child,
+            #settings > div:first-child {
+                display: none !important;
             }
 
-            /* Icône hero plus petite */
-            #calculator > div:first-child > div:first-child > div:first-child,
-            #settings > div:first-child > div > div:first-child {
-                width: 48px !important;
-                height: 48px !important;
+            /* === CARDS === */
+            .card {
+                padding: 12px !important;
+                border-radius: 12px !important;
+                margin-bottom: 12px !important;
             }
 
-            #calculator > div:first-child > div:first-child > div:first-child i,
-            #settings > div:first-child > div > div:first-child i {
-                width: 28px !important;
-                height: 28px !important;
+            .card h2, .card h3 {
+                font-size: 1rem !important;
+                margin-bottom: 10px !important;
             }
 
-            /* Titres hero plus petits */
-            #calculator > div:first-child h1,
-            #settings > div:first-child h1 {
-                font-size: 1.4rem !important;
-            }
-
-            #calculator > div:first-child p,
-            #settings > div:first-child p {
-                font-size: 0.85rem !important;
-            }
-
-            /* GRILLES - Une seule colonne sur mobile */
-            div[style*="grid-template-columns: repeat(auto-fit, minmax(450px"],
-            div[style*="grid-template-columns: repeat(auto-fit, minmax(400px"],
-            div[style*="grid-template-columns: repeat(auto-fit, minmax(350px"],
-            div[style*="grid-template-columns: repeat(auto-fit, minmax(300px"] {
-                grid-template-columns: 1fr !important;
-                gap: var(--space-md) !important;
-            }
-
-            /* Grille 3 colonnes -> 1 colonne */
-            div[style*="grid-template-columns: 1fr 2fr 1fr"] {
-                grid-template-columns: 1fr 1fr 1fr !important;
-                gap: var(--space-sm) !important;
-            }
-
-            /* Input groups plus compacts */
+            /* === INPUTS === */
             .input-group {
-                margin-bottom: var(--space-md) !important;
+                margin-bottom: 12px !important;
             }
 
             .input-group label {
-                font-size: 0.85rem !important;
-                margin-bottom: var(--space-xs) !important;
+                font-size: 13px !important;
+                margin-bottom: 4px !important;
             }
 
-            .input-group input,
-            .input-group select {
-                padding: 12px !important;
-                font-size: 16px !important; /* Empêche zoom iOS */
+            input, select, textarea {
+                padding: 10px 12px !important;
+                font-size: 16px !important; /* Évite zoom iOS */
+                border-radius: 8px !important;
             }
 
-            /* Boutons objectifs plus compacts */
-            .goal-selector {
+            /* === BOUTONS === */
+            .btn {
+                padding: 10px 14px !important;
+                font-size: 13px !important;
+                border-radius: 8px !important;
+            }
+
+            .add-food-btn {
+                padding: 8px 10px !important;
+                font-size: 11px !important;
+            }
+
+            /* === GRILLES === */
+            div[style*="grid-template-columns: repeat"],
+            div[style*="grid-template-columns: 1fr 1fr"],
+            .grid-2 {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+
+            /* === ONGLET REPAS === */
+            /* Navigation date compacte */
+            #meals > div:nth-child(2) {
                 flex-direction: column !important;
-                gap: var(--space-sm) !important;
+                gap: 10px !important;
+                margin-bottom: 12px !important;
             }
 
-            .goal-btn {
-                padding: var(--space-md) !important;
+            #meals > div:nth-child(2) h2 {
+                font-size: 14px !important;
+                margin-bottom: 0 !important;
             }
 
-            .goal-title {
+            #meals > div:nth-child(2) > div:last-child {
+                width: 100%;
+                justify-content: space-between !important;
+            }
+
+            .date-nav-btn {
+                padding: 8px 12px !important;
+                font-size: 12px !important;
+            }
+
+            /* Widget reste du jour - 2x2 au lieu de 4 colonnes */
+            #remaining-widget {
+                padding: 12px !important;
+                margin-bottom: 12px !important;
+            }
+
+            #remaining-widget > div {
+                flex-direction: column !important;
+                gap: 12px !important;
+            }
+
+            #remaining-widget > div > div:last-child {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px !important;
+            }
+
+            #remaining-widget [style*="font-size: 1.3rem"] {
                 font-size: 1rem !important;
             }
 
-            .goal-desc {
-                font-size: 0.8rem !important;
+            /* Grille repas 1 colonne */
+            #meals > div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
             }
 
-            /* Section résultats */
-            #results-section .card {
-                padding: var(--space-md) !important;
-            }
-
-            /* Titres de section dans cards */
-            .card h2,
-            .card h3 {
-                font-size: 1.1rem !important;
-            }
-
-            /* Header app masqué sur mobile (on garde la navbar) */
-            header {
-                padding: 16px !important;
-            }
-
-            header h1 {
-                font-size: 1.5rem !important;
-                letter-spacing: -1px !important;
-            }
-
-            header .subtitle {
-                font-size: 0.8rem !important;
-                display: none;
-            }
-
-            /* Username display plus compact */
-            #username-display {
-                padding: 8px 12px !important;
-                font-size: 0.9rem !important;
-            }
-
-            /* Theme toggle */
-            header > div:first-child {
-                top: 12px !important;
-                right: 12px !important;
-            }
-
-            /* Meal cards */
+            /* Meal cards compactes */
             .meal-card {
-                padding: var(--space-sm) !important;
+                padding: 10px !important;
+                border-radius: 12px !important;
             }
 
-            /* Food items */
+            .meal-card-header {
+                padding-bottom: 8px !important;
+                margin-bottom: 8px !important;
+            }
+
+            .meal-card-header span {
+                font-size: 14px !important;
+            }
+
+            .meal-card-header i {
+                width: 18px !important;
+                height: 18px !important;
+            }
+
+            /* Boutons repas sur 1 ligne scrollable */
+            .meal-card > div[style*="grid-template-columns: 1fr 1fr 1fr"] {
+                display: flex !important;
+                overflow-x: auto !important;
+                gap: 6px !important;
+                padding-bottom: 4px !important;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .meal-card > div[style*="grid-template-columns: 1fr 1fr 1fr"] button {
+                flex-shrink: 0 !important;
+                white-space: nowrap !important;
+                font-size: 10px !important;
+                padding: 6px 10px !important;
+            }
+
+            /* Quick add input */
+            .meal-card input[id^="quick-add"] {
+                font-size: 14px !important;
+                padding: 10px !important;
+            }
+
+            /* === ONGLET SEMAINE === */
+            .week-selector {
+                flex-direction: column !important;
+                gap: 8px !important;
+            }
+
+            .week-nav-btn {
+                padding: 8px 12px !important;
+                font-size: 12px !important;
+            }
+
+            .current-week {
+                font-size: 14px !important;
+            }
+
+            .week-grid {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .day-card {
+                min-width: 280px !important;
+            }
+
+            /* === ONGLET SUIVI === */
+            #tracking .card {
+                padding: 10px !important;
+            }
+
+            /* Sélecteurs de date compacts */
+            #tracking select {
+                padding: 8px !important;
+                font-size: 14px !important;
+            }
+
+            /* === ONGLET CALCULATEUR === */
+            .goal-selector {
+                flex-direction: column !important;
+                gap: 8px !important;
+            }
+
+            .goal-btn {
+                padding: 12px !important;
+            }
+
+            .goal-title {
+                font-size: 14px !important;
+            }
+
+            .goal-desc {
+                font-size: 11px !important;
+            }
+
+            /* Résultats macros */
+            .macro-card {
+                padding: 10px !important;
+            }
+
+            /* === ONGLET BASE ALIMENTS === */
+            .filter-btn {
+                padding: 6px 10px !important;
+                font-size: 11px !important;
+            }
+
             .food-item {
-                padding: var(--space-sm) !important;
+                padding: 10px !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 8px !important;
             }
 
-            /* Boutons généraux */
-            .btn {
-                padding: 12px 16px !important;
-                font-size: 0.9rem !important;
+            .food-macros {
+                width: 100% !important;
+                justify-content: space-between !important;
             }
 
-            /* Modal content */
+            /* === MODALS === */
             .modal-content {
-                margin: 10px !important;
-                max-height: 90vh !important;
-                border-radius: var(--radius-lg) !important;
+                margin: 8px !important;
+                max-height: 92vh !important;
+                border-radius: 16px !important;
             }
 
             .modal-header {
-                padding: var(--space-md) !important;
+                padding: 12px 16px !important;
+            }
+
+            .modal-title {
+                font-size: 16px !important;
             }
 
             .modal-body {
-                padding: var(--space-md) !important;
+                padding: 12px 16px !important;
             }
 
-            /* Macro cards dans résultats */
-            .macro-card {
-                padding: var(--space-md) !important;
+            .modal-close {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 20px !important;
             }
 
-            /* Alertes */
+            /* === ALERTES === */
             #profile-alert {
-                padding: var(--space-md) !important;
-                margin-bottom: var(--space-md) !important;
+                padding: 10px !important;
+                margin-bottom: 10px !important;
+                font-size: 13px !important;
             }
 
-            /* Espacement global réduit */
-            div[style*="margin-bottom: var(--space-3xl)"] {
-                margin-bottom: var(--space-xl) !important;
+            /* === ESPACEMENTS GLOBAUX === */
+            div[style*="margin-bottom: var(--space-3xl)"] { margin-bottom: 16px !important; }
+            div[style*="margin-bottom: var(--space-2xl)"] { margin-bottom: 12px !important; }
+            div[style*="gap: var(--space-2xl)"] { gap: 10px !important; }
+            div[style*="gap: var(--space-xl)"] { gap: 8px !important; }
+            div[style*="padding: var(--space-3xl)"] { padding: 12px !important; }
+            div[style*="padding: var(--space-2xl)"] { padding: 10px !important; }
+
+            /* === TABLES === */
+            table { font-size: 12px !important; }
+            th, td { padding: 6px !important; }
+
+            /* === CHARTS === */
+            canvas { max-height: 180px !important; }
+
+            /* === PARAMÈTRES === */
+            #settings .card {
+                padding: 12px !important;
             }
 
-            div[style*="margin-bottom: var(--space-2xl)"] {
-                margin-bottom: var(--space-lg) !important;
-            }
-
-            div[style*="gap: var(--space-2xl)"] {
-                gap: var(--space-md) !important;
-            }
-
-            div[style*="gap: var(--space-xl)"] {
-                gap: var(--space-md) !important;
-            }
-
-            /* Tables responsive */
-            table {
-                font-size: 0.85rem !important;
-            }
-
-            th, td {
-                padding: var(--space-sm) !important;
-            }
-
-            /* Charts */
-            canvas {
-                max-height: 200px !important;
+            #pwa-install-card button {
+                padding: 12px !important;
+                font-size: 14px !important;
             }
         }
 
@@ -1228,17 +1276,17 @@
         .mobile-drawer {
             display: none;
             position: fixed;
-            bottom: 85px; /* Au-dessus de la navbar */
+            bottom: 80px; /* Au-dessus de la navbar */
             left: 0;
             right: 0;
             background: var(--bg-secondary);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px 24px 0 0;
-            padding: var(--space-xl) var(--space-lg);
+            border-radius: 20px 20px 0 0;
+            padding: 16px;
             z-index: 1001;
             box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.4);
-            animation: slideUp 0.25s ease-out;
-            max-height: 60vh;
+            animation: slideUp 0.2s ease-out;
+            max-height: 55vh;
             overflow-y: auto;
         }
 
@@ -1267,24 +1315,24 @@
         .mobile-drawer-item {
             display: flex;
             align-items: center;
-            gap: var(--space-lg);
-            padding: var(--space-lg) var(--space-md);
-            border-radius: var(--radius-lg);
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
             color: var(--text-primary);
             cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 1rem;
+            transition: all 0.15s ease;
+            font-size: 14px;
             font-weight: 500;
         }
 
         .mobile-drawer-item:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
             background: rgba(16, 185, 129, 0.15);
         }
 
         .mobile-drawer-item:hover { background: var(--bg-tertiary); }
 
-        .mobile-drawer-item i { width: 28px; height: 28px; }
+        .mobile-drawer-item i { width: 22px; height: 22px; }
 
         /* Scrollbar */
         ::-webkit-scrollbar  { width: 10px; }
