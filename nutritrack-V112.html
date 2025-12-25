@@ -22,7 +22,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriTrack • Jérémy</title>
+    <title>NutriTrack</title>
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
@@ -107,8 +107,9 @@
             color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
-            min-height: 100%;
-            height: auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Subtle background (cleaner like homepage) */
@@ -187,7 +188,8 @@
         .app-layout {
             display: flex;
             gap: 0;
-            min-height: calc(100vh - 200px);
+            flex: 1;
+            min-height: 0;
             animation: fadeIn 0.8s ease 0.2s both;
         }
 
@@ -202,9 +204,8 @@
             padding: var(--space-md);
             position: sticky;
             top: 0;
-            min-height: 100vh;
-            height: auto;
-            align-self: stretch;
+            height: 100vh;
+            overflow-y: auto;
             transition: width 0.3s ease, padding 0.3s ease;
         }
 
@@ -278,29 +279,31 @@
 
         .sidebar-btn.active .sidebar-icon i  { transform: scale(1.15); }
 
-        /* Couleurs par onglet - FORCE with !important */
-        .sidebar-btn[data-tab="calculator"] .sidebar-icon i,
-        .sidebar-btn[data-tab="calculator"] .sidebar-icon svg { color: #00d2d3 !important; stroke: #00d2d3 !important; }
+        /* Icônes sidebar - Gris par défaut, vert quand actif */
+        .sidebar-btn .sidebar-icon i,
+        .sidebar-btn .sidebar-icon svg {
+            color: #9ca3af !important;
+            stroke: #9ca3af !important;
+            transition: color 0.3s ease, stroke 0.3s ease;
+        }
 
-        .sidebar-btn[data-tab="meals"] .sidebar-icon i,
-        .sidebar-btn[data-tab="meals"] .sidebar-icon svg { color: #48bb78 !important; stroke: #48bb78 !important; }
+        .sidebar-btn.active .sidebar-icon i,
+        .sidebar-btn.active .sidebar-icon svg {
+            color: var(--accent-main) !important;
+            stroke: var(--accent-main) !important;
+        }
 
-        .sidebar-btn[data-tab="planner"] .sidebar-icon i,
-        .sidebar-btn[data-tab="planner"] .sidebar-icon svg { color: #9f7aea !important; stroke: #9f7aea !important; }
+        .sidebar-btn:hover .sidebar-icon i,
+        .sidebar-btn:hover .sidebar-icon svg {
+            color: #d1d5db !important;
+            stroke: #d1d5db !important;
+        }
 
-        .sidebar-btn[data-tab="foods"] .sidebar-icon i,
-        .sidebar-btn[data-tab="foods"] .sidebar-icon svg { color: #ff9f43 !important; stroke: #ff9f43 !important; }
-
-        .sidebar-btn[data-tab="meal-templates"] .sidebar-icon i,
-        .sidebar-btn[data-tab="meal-templates"] .sidebar-icon svg { color: #00d2d3 !important; stroke: #00d2d3 !important; }
-
-        .sidebar-btn[data-tab="tracking"] .sidebar-icon i,
-        .sidebar-btn[data-tab="tracking"] .sidebar-icon svg { color: #fc5c65 !important; stroke: #fc5c65 !important; }
-
-        .sidebar-btn[data-tab="guide"] .sidebar-icon i,
-        .sidebar-btn[data-tab="guide"] .sidebar-icon svg { color: #feca57 !important; stroke: #feca57 !important; }
-        .sidebar-btn[data-tab="settings"] .sidebar-icon i,
-        .sidebar-btn[data-tab="settings"] .sidebar-icon svg { color: #a0aec0 !important; stroke: #a0aec0 !important; }
+        .sidebar-btn.active:hover .sidebar-icon i,
+        .sidebar-btn.active:hover .sidebar-icon svg {
+            color: var(--accent-main) !important;
+            stroke: var(--accent-main) !important;
+        }
 
         .sidebar.collapsed .sidebar-icon  { min-width: auto;
             width: 100%;
@@ -831,58 +834,77 @@
 
         /* Responsive - Bottom navbar mobile */
         @media (max-width: 768px) {
+            body {
+                padding-bottom: 70px;
+            }
+
             .app-layout {
                 flex-direction: column;
-                padding-bottom: 70px; /* Espace pour la bottom navbar */
             }
 
             .sidebar {
                 position: fixed !important;
-                bottom: 0;
-                left: 0;
-                right: 0;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
                 top: auto !important;
                 width: 100% !important;
-                height: auto !important;
-                max-height: none !important;
-                flex-direction: row;
-                justify-content: space-around;
-                overflow-x: visible;
-                border-right: none;
+                height: 60px !important;
+                min-height: 60px !important;
+                max-height: 60px !important;
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                justify-content: space-around !important;
+                align-items: center !important;
+                overflow: visible !important;
+                border-right: none !important;
                 border-top: 1px solid var(--bg-tertiary);
-                padding: 6px 4px !important;
+                padding: 6px 8px !important;
+                gap: 0 !important;
                 z-index: 1000;
-                background: var(--bg-secondary);
-                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+                background: var(--bg-secondary) !important;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
             }
 
-            .sidebar.collapsed { width: 100% !important; }
+            .sidebar.collapsed {
+                width: 100% !important;
+                height: 60px !important;
+            }
 
-            .sidebar-toggle { display: none; }
+            .sidebar-toggle { display: none !important; }
 
             .sidebar-group-title { display: none !important; }
 
             /* Séparateur masqué */
             .sidebar > div[style*="height: 1px"] { display: none !important; }
 
-            /* Masquer les onglets secondaires sur mobile (ils seront dans le menu Plus) */
+            /* Masquer les onglets secondaires sur mobile (dans le menu Plus) */
             .sidebar-btn[data-tab="foods"],
+            .sidebar-btn[data-tab="meal-templates"],
             .sidebar-btn[data-tab="guide"],
             .sidebar-btn[data-tab="settings"] {
                 display: none !important;
             }
 
             .sidebar-btn {
-                flex-direction: column;
-                gap: 2px;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 2px !important;
                 padding: 6px 4px !important;
-                min-width: auto;
+                min-width: 50px;
                 flex: 1;
-                max-width: 65px;
+                max-width: 70px;
+                height: 48px;
             }
 
             .sidebar-btn .sidebar-icon {
                 min-width: auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .sidebar-btn .sidebar-icon i,
@@ -894,14 +916,21 @@
             .sidebar.collapsed .sidebar-btn { padding: 6px 4px !important; }
 
             .sidebar-label {
-                font-size: 0.6rem;
+                font-size: 0.6rem !important;
                 opacity: 1 !important;
                 width: auto !important;
                 text-align: center;
                 white-space: nowrap;
+                display: block !important;
             }
 
-            /* Bouton Plus pour menu secondaire */
+            .sidebar.collapsed .sidebar-label {
+                opacity: 1 !important;
+                width: auto !important;
+                display: block !important;
+            }
+
+            /* Bouton Plus visible sur mobile */
             #mobile-more-btn {
                 display: flex !important;
             }
@@ -2121,15 +2150,19 @@
                     </button>
                 </div>
                 <div class="mobile-drawer-item" onclick="navigateFromDrawer('foods')">
-                    <i data-lucide="apple" style="color: #ff9f43;"></i>
+                    <i data-lucide="apple" style="color: var(--accent-main);"></i>
                     <span>Base d'aliments</span>
                 </div>
+                <div class="mobile-drawer-item" onclick="navigateFromDrawer('meal-templates')">
+                    <i data-lucide="clipboard-list" style="color: var(--accent-main);"></i>
+                    <span>Repas Types</span>
+                </div>
                 <div class="mobile-drawer-item" onclick="navigateFromDrawer('guide')">
-                    <i data-lucide="info" style="color: #feca57;"></i>
+                    <i data-lucide="info" style="color: var(--accent-main);"></i>
                     <span>Guide d'utilisation</span>
                 </div>
                 <div class="mobile-drawer-item" onclick="navigateFromDrawer('settings')">
-                    <i data-lucide="settings" style="color: #a0aec0;"></i>
+                    <i data-lucide="settings" style="color: var(--accent-main);"></i>
                     <span>Paramètres</span>
                 </div>
             </div>
@@ -4496,7 +4529,6 @@
 
             // Attendre le résultat
             const { outcome } = await deferredInstallPrompt.userChoice;
-            console.log('Installation choice:', outcome);
 
             if (outcome === 'accepted') {
                 showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Installation en cours...');
@@ -4829,8 +4861,6 @@
             // TDEE = BMR × Facteur d'activité
             const tdee = bmr * activity;
 
-            console.log('  BMR:', Math.round(bmr), 'kcal');
-            console.log('  TDEE:', Math.round(tdee), 'kcal');
 
             let targetCalories, protein, fat, carbs;
 
@@ -4874,7 +4904,6 @@
                 const remainingCal = targetCalories - proteinCal - fatCal;
                 carbs = Math.round((remainingCal / 4) / 5) * 5;
 
-                console.log('  Déficit:', (deficit * 100) + '%');
             } else {
                 // PRISE DE MASSE
                 const surplus = parseFloat(document.getElementById('surplus').value) / 100;
@@ -4898,13 +4927,8 @@
                 const remainingCal = targetCalories - proteinCal - fatCal;
                 carbs = Math.round((remainingCal / 4) / 5) * 5;
 
-                console.log('  Surplus:', (surplus * 100) + '%');
             }
 
-            console.log('  Calories cibles:', Math.round(targetCalories), 'kcal');
-            console.log('  Protéines:', protein, 'g');
-            console.log('  Glucides:', carbs, 'g');
-            console.log('  Lipides:', fat, 'g');
 
             // Validation : vérifier que les glucides ne sont pas négatifs
             if (carbs < 0) {
@@ -5191,7 +5215,6 @@ Solutions possibles :
             if (!saved) { return; }
 
             const profile = JSON.parse(saved);
-            console.log('📂 Loading profile:', profile);
 
             if (profile.birthDay && document.getElementById('birth-day'))  { document.getElementById('birth-day').value = profile.birthDay; }
             if (profile.birthMonth && document.getElementById('birth-month'))  { document.getElementById('birth-month').value = profile.birthMonth; }
@@ -5894,7 +5917,6 @@ Solutions possibles :
             // Rafraîchir l'affichage du planning si on est dessus
             const planningTab = document.querySelector('.sidebar-btn[data-tab="planning"]');
             if (planningTab && planningTab.classList.contains('active')) {
-                console.log('🔄 Rafraîchissement du planning...');
                 renderWeeklyPlan();
             }
         }
@@ -5932,7 +5954,6 @@ Solutions possibles :
             const targetDate = new Date(currentWeekStart);
             targetDate.setDate(targetDate.getDate() + dayIndex);
 
-            console.log('📅 Date cible:', targetDate);
 
             // Changer la date actuelle
             currentMealDate = targetDate;
@@ -5968,9 +5989,6 @@ Solutions possibles :
             const sourceDateKey = getCurrentDateKey(); // Utiliser la vraie fonction
             const sourceMeals = allDailyMeals[sourceDateKey];
 
-            console.log('Duplication - dateKey:', sourceDateKey);
-            console.log('Duplication - sourceMeals:', sourceMeals);
-            console.log('Duplication - dailyMeals:', dailyMeals);
 
             // Vérifier si on a des repas
             const hasBreakfast = dailyMeals.breakfast && dailyMeals.breakfast.length > 0;
@@ -6042,7 +6060,6 @@ Solutions possibles :
             // Sauvegarder
             localStorage.setItem('allDailyMeals', JSON.stringify(allDailyMeals));
 
-            console.log('Duplication - Données sauvegardées:', allDailyMeals[targetDateKey]);
 
             // Synchroniser avec le planning
             const oldDate = currentMealDate;
@@ -6436,16 +6453,13 @@ Solutions possibles :
         }
 
         function resetAllData() {
-            console.log('resetAllData called');
             customConfirm('Supprimer toutes les données', 'Cette action est irréversible et supprimera :\n\n• Tous tes repas et plannings\n• Tous tes aliments personnalisés\n• Tous tes suivis corporels\n• Tous tes paramètres\n\n<i data-lucide="lightbulb" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Pense à exporter tes données avant.\n\nConfirmer la suppression ?', true).then((confirmed) => {
-                console.log('Confirm result:', confirmed);
                 if (!confirmed) {
                     showToast('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Suppression annulée');
                     return;
                 }
 
                 // Supprimer toutes les données
-                console.log('Clearing localStorage');
                 localStorage.clear();
                 showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Toutes les données ont été supprimées');
 
@@ -6591,11 +6605,8 @@ Solutions possibles :
                 const daySelect = document.getElementById('birth-day');
                 const yearSelect = document.getElementById('birth-year');
 
-                console.log('Day select:', daySelect);
-                console.log('Year select:', yearSelect);
 
                 if (daySelect) {
-                    console.log('📅 Populating day dropdown');
                     // Clear existing options first
                     while (daySelect.options.length > 1) {
                         daySelect.remove(1);
@@ -6611,7 +6622,6 @@ Solutions possibles :
                 }
 
                 if (yearSelect) {
-                    console.log('📅 Populating year dropdown');
                     // Clear existing options first
                     while (yearSelect.options.length > 1) {
                         yearSelect.remove(1);
@@ -6629,7 +6639,6 @@ Solutions possibles :
 
                 // IMPORTANT: Load profile AFTER dropdowns are populated
                 // Otherwise saved values get overwritten
-                console.log('🔄 Loading profile after dropdown population...');
                 loadProfile();
 
                 // Sync weight from tracking on page load
@@ -6714,13 +6723,10 @@ Solutions possibles :
         }
 
         function deleteCustomFood(foodName) {
-            console.log('🗑️ Tentative suppression:', foodName);
-            console.log('📦 customFoods avant:', customFoods.length);
 
             customConfirm('Supprimer cet aliment ?', `Supprimer "${foodName}" de ta base ?`, true).then((confirmed) => {
 
                 if (confirmed) {
-                    console.log('🔄 Filtrage...');
 
                     // Filtrer customFoods
                     customFoods = customFoods.filter(f => f.name !== foodName);
@@ -6729,10 +6735,8 @@ Solutions possibles :
                     const dbIndex = foodDatabase.findIndex(f => f.name === foodName && f.custom === true);
                     if (dbIndex !== -1) {
                         foodDatabase.splice(dbIndex, 1);
-                        console.log('✅ Supprimé de foodDatabase aussi');
                     }
 
-                    console.log('📦 customFoods après:', customFoods.length);
 
                     localStorage.setItem('customFoods', JSON.stringify(customFoods));
 
@@ -7294,7 +7298,6 @@ Solutions possibles :
             const visceral = parseFloat(document.getElementById('tracking-visceral').value);
             const notes = document.getElementById('tracking-notes').value.trim();
 
-            console.log('📝 Données:', {date, weight, bodyfat, muscle, bone, proteinPct, water, bodyAge, visceral});
 
             if (!date) {
                 customAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Date manquante', 'Veuillez sélectionner une date.').then(() => {});
@@ -7310,7 +7313,6 @@ Solutions possibles :
             const saved = localStorage.getItem('trackingData');
             trackingData = saved ? JSON.parse(saved) : [];
 
-            console.log('📦 trackingData avant ajout:', trackingData.length);
 
             // Supprimer ancienne entrée de cette date
             trackingData = trackingData.filter(e => e.date !== date);
@@ -7329,7 +7331,6 @@ Solutions possibles :
                 notes: notes || ''
             });
 
-            console.log('📦 trackingData après ajout:', trackingData.length);
 
             // Trier par date décroissante
             trackingData.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -7364,25 +7365,21 @@ Solutions possibles :
             const saved = localStorage.getItem('trackingData');
 
             if (!saved) {
-                console.log('  <i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> No trackingData in localStorage');
                 return null;
             }
 
             const data = JSON.parse(saved);
 
             if (data.length === 0) {
-                console.log('  <i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Empty trackingData array');
                 return null;
             }
 
             // Sort by date descending and find first entry with weight
             const sorted = data.sort((a, b) => new Date(b.date) - new Date(a.date));
-            console.log('  📅 Sorted by date:', sorted.map(e => `${e.date}: ${e.weight}kg`));
 
             const latestWithWeight = sorted.find(entry => entry.weight && !isNaN(entry.weight));
 
             if (latestWithWeight)  { return latestWithWeight.weight; } else {
-                console.log('  <i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> No entry with valid weight found');
                 return null;
             }
         }
@@ -7400,7 +7397,6 @@ Solutions possibles :
                     const initial = parseFloat(initialWeight);
 
                     if (currentWeight !== initial) {
-                        console.log(`🔄 Restoring initial weight: ${currentWeight} → ${initial} kg`);
                         weightInput.value = initial;
                         saveProfile();
                         autoRecalculateMacros();
@@ -7422,7 +7418,6 @@ Solutions possibles :
 
             // Only update if weight has changed
             if (currentWeight !== latestWeight) {
-                console.log(`🔄 Syncing weight: ${currentWeight} → ${latestWeight} kg`);
                 weightInput.value = latestWeight;
 
                 // Save to profile
@@ -7436,7 +7431,6 @@ Solutions possibles :
         }
 
         function autoRecalculateMacros() {
-            console.log('🔄 autoRecalculateMacros() called');
 
             // Check if we have all required data to recalculate
             const weight = parseFloat(document.getElementById('weight')?.value);
@@ -7447,7 +7441,6 @@ Solutions possibles :
             const gender = document.getElementById('profile-gender')?.value;
             const activity = parseFloat(document.getElementById('activity')?.value);
 
-            console.log('📋 Data check:', {
                 weight, height, birthDay, birthMonth, birthYear, gender, activity
             });
 
@@ -7461,7 +7454,6 @@ Solutions possibles :
                 if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
                     age--;
                 }
-                console.log('🎂 Calculated age:', age);
             }
 
             // If all data present, recalculate silently
@@ -7470,7 +7462,6 @@ Solutions possibles :
                     console.error('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Error during auto-recalculation:', error);
                 }
             } else {
-                console.log('   Missing:', {
                     weight: !weight,
                     height: !height,
                     age: !age,
@@ -7571,19 +7562,14 @@ Solutions possibles :
         }
 
         function deleteTracking(date) {
-            console.log('🗑️ deleteTracking appelé pour date:', date);
             customConfirm('Supprimer ce suivi ?', 'Cette mesure sera définitivement supprimée.', true).then((confirmed) => {
-                console.log('✅ Promise resolved, confirmed:', confirmed);
                 if (confirmed) {
-                    console.log('✅ Suppression confirmée');
                     // Recharger depuis localStorage
                     const saved = localStorage.getItem('trackingData');
                     let data = saved ? JSON.parse(saved) : [];
-                    console.log('📦 Data avant filtrage:', data.length, 'entrées');
 
                     // Filtrer
                     data = data.filter(e => e.date !== date);
-                    console.log('📦 Data après filtrage:', data.length, 'entrées');
 
                     // Sauvegarder
                     localStorage.setItem('trackingData', JSON.stringify(data));
@@ -7596,7 +7582,6 @@ Solutions possibles :
                     // SYNC: Update calculator weight after deletion
                     syncWeightToCalculator();
                 } else {
-                    console.log('❌ Suppression annulée');
                 }
             }).catch(err => {
                 console.error('❌ Erreur Promise:', err);
@@ -7604,16 +7589,13 @@ Solutions possibles :
         }
 
         function editTracking(date) {
-            console.log('✏️ editTracking appelé pour:', date);
             // Charger l'entrée depuis localStorage
             const saved = localStorage.getItem('trackingData');
             const data = saved ? JSON.parse(saved) : [];
             const entry = data.find(e => e.date === date);
 
-            console.log('📝 Entrée trouvée:', entry);
 
             if (!entry) {
-                console.log('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Aucune entrée trouvée');
                 return;
             }
 
@@ -8310,10 +8292,8 @@ Solutions possibles :
         function loadCalcSettings() {
             ['weight', 'bodyFat', 'activity', 'deficit', 'surplus', 'proteinCoeff', 'fatCoeff', 'proteinCoeffBulk', 'fatCoeffBulk'].forEach(s => {
                 const saved = localStorage.getItem('calc_' + s);
-                console.log(`  📦 calc_${s} = ${saved}`);
                 if (saved && document.getElementById(s)) {
                     document.getElementById(s).value = saved;
-                    console.log(`    ✓ Loaded into input #${s}`);
                 }
             });
 
@@ -8325,7 +8305,6 @@ Solutions possibles :
             if (savedTargets) {
                 try {
                     const targets = JSON.parse(savedTargets);
-                    console.log('🔄 Loading saved targets:', targets);
 
                     if (targets.calories) {
                         // BMR and TDEE
@@ -8383,7 +8362,6 @@ Solutions possibles :
         }
 
         function saveCalcSettings() {
-            console.log('📝 saveCalcSettings() called');
 
             const settings = {
                 weight: document.getElementById('weight')?.value || '',
@@ -8401,7 +8379,6 @@ Solutions possibles :
             Object.keys(settings).forEach(k => {
                 if (settings[k] !== '') {  // Only save if not empty
                     localStorage.setItem('calc_' + k, settings[k]);
-                    console.log(`  ✓ calc_${k} = ${settings[k]}`);
                 }
             });
         }
@@ -8435,7 +8412,6 @@ Solutions possibles :
         }
 
         function setTheme(theme) {
-            console.log('setTheme called:', theme);
             if (theme === 'light') { document.body.classList.add('light-theme'); } else  { document.body.classList.remove('light-theme'); }
             localStorage.setItem('theme', theme);
 
@@ -8448,7 +8424,6 @@ Solutions possibles :
             const darkBtn = document.getElementById('theme-dark-btn');
             const lightBtn = document.getElementById('theme-light-btn');
 
-            console.log('updateThemeButtons:', theme, 'darkBtn:', darkBtn, 'lightBtn:', lightBtn);
 
             if (!darkBtn || !lightBtn) return;
 
@@ -8691,12 +8666,8 @@ Solutions possibles :
 
 
         function renderAdvancedTrackingList() {
-            console.log('=== renderAdvancedTrackingList START ===');
-            console.log('advancedTrackingData length:', advancedTrackingData.length);
-            console.log('Data:', advancedTrackingData);
 
             const container = document.getElementById('tracking-list');
-            console.log('Container found:', !!container);
             if (!container) return;
 
             if (advancedTrackingData.length === 0) {
@@ -8743,8 +8714,6 @@ Solutions possibles :
         }
 
         function showChart(type) {
-            console.log('showChart called with type:', type);
-            console.log('Data length:', advancedTrackingData.length);
 
             // Filter data that has the requested metric
             const validData = advancedTrackingData.filter(entry => {
@@ -8838,8 +8807,6 @@ Solutions possibles :
                 return;
             }
 
-            console.log('Creating chart with data:', data);
-            console.log('Labels:', labels);
 
             // Vérifier que Chart existe
             if (typeof Chart === 'undefined') {
@@ -8901,7 +8868,6 @@ Solutions possibles :
                     }
                 });
 
-                console.log('Chart created successfully');
                 canvas.scrollIntoView({behavior: 'smooth', block: 'nearest'});
             } catch (error) {
                 console.error('Error creating chart:', error);
@@ -8916,7 +8882,6 @@ Solutions possibles :
         let popupResolve = null;
 
         function customConfirm(title, message, isDanger = false) {
-            console.log('customConfirm called:', title);
             return new Promise((resolve) => {
                 popupResolve = resolve;
 
@@ -8938,19 +8903,16 @@ Solutions possibles :
                 document.getElementById('custom-popup').classList.add('active');
                 document.body.style.overflow = 'hidden';
                 if (typeof lucide !== 'undefined') lucide.createIcons();
-                console.log('Modal opened, waiting for user action');
             });
         }
 
         function closePopup(result) {
-            console.log('closePopup called with result:', result);
             document.getElementById('custom-popup').classList.remove('active');
             document.body.style.overflow = '';
             if (popupResolve) {
-                console.log('Resolving promise with:', result);
                 popupResolve(result);
                 popupResolve = null;
-            } else  { console.log('WARNING: popupResolve is null!'); }
+            }
         }
 
         function showToast(message) {
@@ -9858,7 +9820,6 @@ Solutions possibles :
                 document.body.style.opacity = '1';
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
-                    console.log('✅ Lucide icons initialized');
                 }
             }, 100);
         });
