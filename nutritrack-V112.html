@@ -202,8 +202,9 @@
             padding: var(--space-md);
             position: sticky;
             top: 0;
-            height: 100vh;
-            align-self: flex-start;
+            min-height: 100vh;
+            height: auto;
+            align-self: stretch;
             transition: width 0.3s ease, padding 0.3s ease;
         }
 
@@ -832,7 +833,7 @@
         @media (max-width: 768px) {
             .app-layout {
                 flex-direction: column;
-                padding-bottom: 80px; /* Espace pour la bottom navbar */
+                padding-bottom: 70px; /* Espace pour la bottom navbar */
             }
 
             .sidebar {
@@ -849,7 +850,7 @@
                 overflow-x: visible;
                 border-right: none;
                 border-top: 1px solid var(--bg-tertiary);
-                padding: var(--space-sm) !important;
+                padding: 6px 4px !important;
                 z-index: 1000;
                 background: var(--bg-secondary);
                 box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
@@ -864,13 +865,20 @@
             /* Séparateur masqué */
             .sidebar > div[style*="height: 1px"] { display: none !important; }
 
+            /* Masquer les onglets secondaires sur mobile (ils seront dans le menu Plus) */
+            .sidebar-btn[data-tab="foods"],
+            .sidebar-btn[data-tab="guide"],
+            .sidebar-btn[data-tab="settings"] {
+                display: none !important;
+            }
+
             .sidebar-btn {
                 flex-direction: column;
                 gap: 2px;
-                padding: 8px 6px !important;
+                padding: 6px 4px !important;
                 min-width: auto;
                 flex: 1;
-                max-width: 70px;
+                max-width: 65px;
             }
 
             .sidebar-btn .sidebar-icon {
@@ -879,20 +887,30 @@
 
             .sidebar-btn .sidebar-icon i,
             .sidebar-btn .sidebar-icon svg {
-                width: 20px !important;
-                height: 20px !important;
+                width: 22px !important;
+                height: 22px !important;
             }
 
-            .sidebar.collapsed .sidebar-btn { padding: 8px 6px !important; }
+            .sidebar.collapsed .sidebar-btn { padding: 6px 4px !important; }
 
             .sidebar-label {
-                font-size: 0.65rem;
+                font-size: 0.6rem;
                 opacity: 1 !important;
                 width: auto !important;
                 text-align: center;
+                white-space: nowrap;
             }
 
-            .main-content { padding: var(--space-lg); }
+            /* Bouton Plus pour menu secondaire */
+            #mobile-more-btn {
+                display: flex !important;
+            }
+
+            .main-content { padding: var(--space-md); }
+
+            /* Header mobile */
+            header h1 { font-size: 1.5rem; }
+            header .subtitle { font-size: 0.85rem; }
 
             /* Meals grid becomes vertical on mobile */
             #meals > div:first-of-type { grid-template-columns: 1fr !important; }
@@ -912,8 +930,64 @@
 
             .food-macros { justify-content: space-around; }
 
-            h1 { font-size: 2.5rem; }
+            h1 { font-size: 1.8rem; }
+
+            /* Cards compacts sur mobile */
+            .card { padding: var(--space-lg); }
         }
+
+        /* Menu Plus (drawer) - masqué par défaut */
+        #mobile-more-btn { display: none; }
+
+        .mobile-drawer {
+            display: none;
+            position: fixed;
+            bottom: 70px;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--bg-tertiary);
+            border-radius: 20px 20px 0 0;
+            padding: var(--space-lg);
+            z-index: 999;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .mobile-drawer.active { display: block; }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .mobile-drawer-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 70px;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+        }
+
+        .mobile-drawer-overlay.active { display: block; }
+
+        .mobile-drawer-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .mobile-drawer-item:hover { background: var(--bg-tertiary); }
+
+        .mobile-drawer-item i { width: 24px; height: 24px; }
 
         /* Scrollbar */
         ::-webkit-scrollbar  { width: 10px; }
@@ -1967,7 +2041,7 @@
                     <i data-lucide="moon" id="theme-icon" style="width: 20px; height: 20px;"></i>
                 </button>
                 <div id="username-display" style="background: var(--bg-secondary); padding: var(--space-md) var(--space-xl); border-radius: var(--radius-full); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-primary); font-size: 1.05rem; display: flex; align-items: center; gap: var(--space-sm); box-shadow: var(--shadow-sm);"></div></div>
-            <h1><img src="logo.svg" alt="Logo" style="height: 1.6em; width: auto; vertical-align: middle; margin-right: 0.5em;"> NutriTrack</h1>
+            <h1><img src="logo.svg" alt="Logo" style="height: 1.6em; width: auto; vertical-align: middle; margin-right: 0.5em;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><span style="display: none; width: 1.6em; height: 1.6em; background: var(--accent-main); border-radius: 8px; align-items: center; justify-content: center; vertical-align: middle; margin-right: 0.5em;"><i data-lucide="target" style="width: 1em; height: 1em; color: white;"></i></span> NutriTrack</h1>
             <p class="subtitle">Prends le contrôle de ton alimentation</p>
         </header>
 
@@ -2027,7 +2101,38 @@
                     <span class="sidebar-icon"><i data-lucide="settings"></i></span>
                     <span class="sidebar-label">Paramètres</span>
                 </button>
+
+                <!-- Bouton Plus (visible uniquement sur mobile) -->
+                <button class="sidebar-btn" id="mobile-more-btn" onclick="toggleMobileDrawer()">
+                    <span class="sidebar-icon"><i data-lucide="menu"></i></span>
+                    <span class="sidebar-label">Plus</span>
+                </button>
             </nav>
+
+            <!-- Mobile Drawer Overlay -->
+            <div class="mobile-drawer-overlay" id="mobile-drawer-overlay" onclick="closeMobileDrawer()"></div>
+
+            <!-- Mobile Drawer -->
+            <div class="mobile-drawer" id="mobile-drawer">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
+                    <span style="font-weight: 700; font-size: 1.1rem;">Plus d'options</span>
+                    <button onclick="closeMobileDrawer()" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 8px;">
+                        <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                    </button>
+                </div>
+                <div class="mobile-drawer-item" onclick="navigateFromDrawer('foods')">
+                    <i data-lucide="apple" style="color: #ff9f43;"></i>
+                    <span>Base d'aliments</span>
+                </div>
+                <div class="mobile-drawer-item" onclick="navigateFromDrawer('guide')">
+                    <i data-lucide="info" style="color: #feca57;"></i>
+                    <span>Guide d'utilisation</span>
+                </div>
+                <div class="mobile-drawer-item" onclick="navigateFromDrawer('settings')">
+                    <i data-lucide="settings" style="color: #a0aec0;"></i>
+                    <span>Paramètres</span>
+                </div>
+            </div>
 
             <!-- Main Content Area -->
             <main class="main-content">
@@ -2113,7 +2218,7 @@
                                     📏 Taille (cm)
                                     <span style="color: var(--accent-danger);">*</span>
                                 </label>
-                                <input type="number" id="height" step="0.5" min="100" max="250" placeholder="175" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <input type="number" id="height" inputmode="decimal" pattern="[0-9]*" step="0.5" min="100" max="250" placeholder="175" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                             </div>
 
                             <div class="input-group">
@@ -2121,7 +2226,7 @@
                                     ⚖️ Poids (kg)
                                     <span style="color: var(--accent-danger);">*</span>
                                 </label>
-                                <input type="number" id="weight" step="0.1" min="30" max="300" placeholder="75.5" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <input type="number" id="weight" inputmode="decimal" pattern="[0-9]*" step="0.1" min="30" max="300" placeholder="75.5" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                             </div></div>
 
                         <div class="input-group">
@@ -2900,19 +3005,19 @@
                 <div class="grid-2">
                     <div class="input-group">
                         <label>Poids (kg) *</label>
-                        <input type="number" id="tracking-weight" step="0.1" placeholder="Ex: 80">
+                        <input type="number" id="tracking-weight" inputmode="decimal" pattern="[0-9]*" step="0.1" placeholder="Ex: 80">
 						<p class="info-text">Pesez-vous de préférence le matin, à jeun</p>
                     </div>
 
                     <div class="input-group">
                         <label>Taux de graisse (%) <span style="opacity: 0.6;">(optionnel)</span></label>
-                        <input type="number" id="tracking-bodyfat" step="0.1" placeholder="Ex: 25">
+                        <input type="number" id="tracking-bodyfat" inputmode="decimal" pattern="[0-9]*" step="0.1" placeholder="Ex: 25">
                         <p class="info-text">Nécessite une balance avec analyse corporelle</p>
                     </div>
 
                     <div class="input-group">
                         <label>Masse musculaire (kg) <span style="opacity: 0.6;">(optionnel)</span></label>
-                        <input type="number" id="tracking-muscle" step="0.1" placeholder="Ex: 55">
+                        <input type="number" id="tracking-muscle" inputmode="decimal" pattern="[0-9]*" step="0.1" placeholder="Ex: 55">
                         <p class="info-text">Nécessite une balance avec analyse corporelle</p>
                     </div>
 
@@ -3527,6 +3632,30 @@
                             <div style="display: flex; align-items: start; gap: var(--space-sm);">
                                 <i data-lucide="info" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 2px;"></i>
                                 <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Les notifications nécessitent l'autorisation de ton navigateur</span>
+                            </div></div></div>
+
+                    <!-- Installation PWA -->
+                    <div class="card" id="pwa-install-card" style="display: none;">
+                        <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
+                            <i data-lucide="download-cloud" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
+                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0;">Installation</h3>
+                        </div>
+
+                        <div style="margin-bottom: var(--space-lg);">
+                            <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin: 0;">
+                                Installe NutriTrack sur ton écran d'accueil pour un accès rapide, même hors ligne !
+                            </p>
+                        </div>
+
+                        <button onclick="installPWA()" class="btn" style="width: 100%; background: linear-gradient(135deg, var(--accent-main) 0%, var(--accent-ui) 100%); color: white; display: flex; align-items: center; justify-content: center; gap: var(--space-sm); font-weight: 700;">
+                            <i data-lucide="smartphone" style="width: 18px; height: 18px;"></i>
+                            Installer l'application
+                        </button>
+
+                        <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(5, 150, 105, 0.1); border-radius: var(--radius-md); border-left: 3px solid var(--accent-ui);">
+                            <div style="display: flex; align-items: start; gap: var(--space-sm);">
+                                <i data-lucide="info" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 2px;"></i>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Fonctionne comme une vraie app, sans passer par l'App Store</span>
                             </div></div></div></div>
 
             <!-- Deuxième ligne: Données, Préférences, Zone Dangereuse -->
@@ -4229,7 +4358,7 @@
 
                 <div class="input-group">
                     <label>Quantité (g)</label>
-                    <input type="number" id="modal-quantity" value="100" min="1" step="1">
+                    <input type="number" id="modal-quantity" inputmode="numeric" pattern="[0-9]*" value="100" min="1" step="1">
                 </div></div></div></div>
     </div>
 
@@ -4274,17 +4403,17 @@
                 <div class="modal-grid-2">
                     <div class="input-group">
                         <label>Protéines (g) *</label>
-                        <input type="number" id="new-food-protein" step="0.1" min="0" placeholder="Ex: 25">
+                        <input type="number" id="new-food-protein" inputmode="decimal" pattern="[0-9]*" step="0.1" min="0" placeholder="Ex: 25">
                     </div>
 
                     <div class="input-group">
                         <label>Glucides (g) *</label>
-                        <input type="number" id="new-food-carbs" step="0.1" min="0" placeholder="Ex: 10">
+                        <input type="number" id="new-food-carbs" inputmode="decimal" pattern="[0-9]*" step="0.1" min="0" placeholder="Ex: 10">
                     </div>
 
                     <div class="input-group">
                         <label>Lipides (g) *</label>
-                        <input type="number" id="new-food-fat" step="0.1" min="0" placeholder="Ex: 5">
+                        <input type="number" id="new-food-fat" inputmode="decimal" pattern="[0-9]*" step="0.1" min="0" placeholder="Ex: 5">
                     </div>
 
                     <div class="input-group">
@@ -4297,8 +4426,7 @@
                 <button class="btn" onclick="saveNewFood()" style="width: 100%; margin-top: 20px;"><i data-lucide="plus" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Ajouter à ma Base</button>
             </div></div></div>
 
-    <!-- html2canvas for screenshot export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- html2canvas loaded dynamically when needed -->
 
     <script>
         // Food database
@@ -4324,6 +4452,57 @@
         let currentGoal = 'cut';
         let currentMealType = null;
 
+        // ===== PWA INSTALL PROMPT =====
+        let deferredInstallPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Empêcher Chrome d'afficher le prompt automatiquement
+            e.preventDefault();
+            // Sauvegarder l'événement pour l'utiliser plus tard
+            deferredInstallPrompt = e;
+            // Afficher le bouton d'installation
+            showInstallButton();
+        });
+
+        window.addEventListener('appinstalled', () => {
+            // Cacher le bouton après installation
+            hideInstallButton();
+            deferredInstallPrompt = null;
+            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> NutriTrack installé avec succès !');
+        });
+
+        function showInstallButton() {
+            const installCard = document.getElementById('pwa-install-card');
+            const landingInstallBtn = document.getElementById('landing-install-btn');
+            if (installCard) installCard.style.display = 'block';
+            if (landingInstallBtn) landingInstallBtn.style.display = 'block';
+        }
+
+        function hideInstallButton() {
+            const installCard = document.getElementById('pwa-install-card');
+            const landingInstallBtn = document.getElementById('landing-install-btn');
+            if (installCard) installCard.style.display = 'none';
+            if (landingInstallBtn) landingInstallBtn.style.display = 'none';
+        }
+
+        async function installPWA() {
+            if (!deferredInstallPrompt) {
+                showToast('<i data-lucide="info" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Installation non disponible sur ce navigateur');
+                return;
+            }
+
+            // Afficher le prompt d'installation
+            deferredInstallPrompt.prompt();
+
+            // Attendre le résultat
+            const { outcome } = await deferredInstallPrompt.userChoice;
+            console.log('Installation choice:', outcome);
+
+            if (outcome === 'accepted') {
+                showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Installation en cours...');
+            }
+        }
+
         // Tab switching
         // Fonction pour changer d'onglet programmatiquement
         // ===== SIDEBAR TOGGLE =====
@@ -4339,6 +4518,27 @@
         function loadSidebarState() {
             const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
             if (isCollapsed) { document.getElementById('sidebar').classList.add('collapsed'); }
+        }
+
+        // ===== MOBILE DRAWER =====
+        function toggleMobileDrawer() {
+            const drawer = document.getElementById('mobile-drawer');
+            const overlay = document.getElementById('mobile-drawer-overlay');
+            drawer.classList.toggle('active');
+            overlay.classList.toggle('active');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function closeMobileDrawer() {
+            const drawer = document.getElementById('mobile-drawer');
+            const overlay = document.getElementById('mobile-drawer-overlay');
+            drawer.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        function navigateFromDrawer(tabName) {
+            closeMobileDrawer();
+            switchTab(tabName);
         }
 
         function switchTab(tabName) {
@@ -5552,24 +5752,26 @@ Solutions possibles :
                 textColor = 'var(--accent-danger)';
             } else if (calPct < 75 && calPct > 50) {
                 // Déficit important
-                emoji = '⚡';
+                emoji = '<i data-lucide="zap" style="width: 24px; height: 24px;"></i>';
                 message = 'Déficit important, assure-toi de ne pas sous-manger';
                 bgColor = 'rgba(255, 193, 7, 0.15)';
                 textColor = '#ffc107';
             } else if (calPct <= 50) {
                 // Déficit critique
-                emoji = '<i data-lucide="alert-triangle" style="width: 24px; height: 24px; color: var(--accent-danger);"></i>';
+                emoji = '<i data-lucide="alert-triangle" style="width: 24px; height: 24px;"></i>';
                 message = 'Apport très bas, veille à ta santé';
                 bgColor = 'rgba(239, 68, 68, 0.15)';
                 textColor = 'var(--accent-danger)';
             }
 
-            emojiEl.textContent = emoji;
+            emojiEl.innerHTML = emoji;
             messageEl.textContent = message;
             feedbackEl.style.background = bgColor;
             feedbackEl.style.color = textColor;
             feedbackEl.style.border = `2px solid ${textColor}40`;
             feedbackEl.style.display = 'block';
+            // Réinitialiser les icônes Lucide
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         // === CLÔTURE DE JOURNÉE ===
@@ -6252,6 +6454,21 @@ Solutions possibles :
             });
         }
 
+        // Fonction pour charger html2canvas dynamiquement
+        function loadHtml2Canvas() {
+            return new Promise((resolve, reject) => {
+                if (typeof html2canvas !== 'undefined') {
+                    resolve();
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
         async function confirmExport() {
             // Fermer modal
             document.getElementById('export-warning-modal').style.display = 'none';
@@ -6260,6 +6477,10 @@ Solutions possibles :
             const resultsCard = document.getElementById('results');
 
             try {
+                // Charger html2canvas si nécessaire
+                showToast('<i data-lucide="loader" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Préparation de l\'export...');
+                await loadHtml2Canvas();
+
                 // Masquer l'IMC avant export (toujours masqué pour protéger la vie privée)
                 const imcOverlay = document.getElementById('imc-overlay-btn');
                 let wasImcVisible = false;
@@ -7338,7 +7559,7 @@ Solutions possibles :
                     </div></div>
                 <div style="display: flex; gap: var(--space-sm); align-items: center; flex-shrink: 0;">
                     <button class="icon-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="editTracking('${entry.date}')"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>
-                    <button class="delete-btn" style="width: 36px; height: 36px;" onclick="deleteTracking('${entry.date}')"<i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>
+                    <button class="delete-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="deleteTracking('${entry.date}')"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i></button>
                 </div></div>
             ${entry.notes ? `
                 <div style="margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid rgba(255,255,255,0.1);">
@@ -7628,7 +7849,7 @@ Solutions possibles :
                                                 <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 8px;">
                                                     P: ${Math.round(totalP)}g • g: ${Math.round(totalG)}g • L: ${Math.round(totalL)}g • ${Math.round(totalCal)} kcal
                                                 </div></div>
-                                            <button class="delete-btn" onclick="event.stopPropagation(); deleteMealTemplate(${t.id})" style="padding: 5px 10px;"<i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>
+                                            <button class="delete-btn" onclick="event.stopPropagation(); deleteMealTemplate(${t.id})" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i></button>
                                         </div>
                                         ${t.recipe ? `
                                             <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
@@ -7949,19 +8170,13 @@ Solutions possibles :
                                 <span><strong style="color: var(--accent-ui);">${Math.round(totals.calories)}</strong> kcal</span>
                             </div>
 
-                            <!-- Action Buttons (styled like other buttons) -->
+                            <!-- Action Buttons -->
                             <div style="display: flex; gap: var(--space-xs);">
-                                <button onclick="editMealTemplate(${template.id})"
-                                        style="padding: 6px 12px; background: var(--bg-tertiary); border: 1px solid var(--accent-carbs); border-radius: var(--radius-sm); color: var(--accent-carbs); cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: var(--transition-fast);"
-                                        onmouseover="this.style.background='var(--accent-carbs)'; this.style.color='var(--bg-primary)'"
-                                        onmouseout="this.style.background='var(--bg-tertiary)'; this.style.color='var(--accent-carbs)'">
-                                    <i data-lucide="edit-3" style="width: 18px; height: 18px;"></i> Modifier
+                                <button class="icon-btn" onclick="editMealTemplate(${template.id})" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                    <i data-lucide="pencil" style="width: 16px; height: 16px;"></i>
                                 </button>
-                                <button onclick="deleteMealTemplateFromPage(${template.id})"
-                                        style="padding: 6px 12px; background: var(--bg-tertiary); border: 1px solid var(--accent-danger); border-radius: var(--radius-sm); color: var(--accent-danger); cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: var(--transition-fast);"
-                                        onmouseover="this.style.background='var(--accent-danger)'; this.style.color='var(--bg-primary)'"
-                                        onmouseout="this.style.background='var(--bg-tertiary)'; this.style.color='var(--accent-danger)'">
-                                    <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i> Supprimer
+                                <button class="delete-btn" onclick="deleteMealTemplateFromPage(${template.id})" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                    <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
                                 </button>
                             </div></div>
 
@@ -9048,6 +9263,10 @@ Solutions possibles :
                         <i data-lucide="rocket" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i>
                         Commencer dès maintenant
                     </button>
+                    <button id="landing-install-btn" onclick="installPWA()" style="display: none; padding: 18px 36px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: 2px solid var(--accent-main); cursor: pointer; background: transparent; color: var(--accent-main); transition: all 0.2s ease;">
+                        <i data-lucide="download" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i>
+                        Installer l'app
+                    </button>
                     <button onclick="skipToApp()" style="padding: 18px 36px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: 2px solid rgba(255, 255, 255, 0.15); cursor: pointer; background: transparent; color: var(--text-primary); transition: all 0.2s ease;">
                         <i data-lucide="skip-forward" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i>
                         Passer le tutoriel
@@ -9600,16 +9819,39 @@ Solutions possibles :
             if (currentSlideIndex < tutorialSlides.length - 1) {
                 currentSlideIndex++;
                 renderSlide();
+                updateDots();
             }
         }
         function previousSlide() {
             if (currentSlideIndex > 0) {
                 currentSlideIndex--;
                 renderSlide();
+                updateDots();
             }
         }
-        function goToSlide(index)  { currentSlideIndex = index;
-            renderSlide(); }
+        function goToSlide(index) {
+            currentSlideIndex = index;
+            renderSlide();
+            updateDots();
+        }
+        function updateDots() {
+            const dots = document.querySelectorAll('#tutorial-dots > div');
+            dots.forEach((dot, index) => {
+                if (index === currentSlideIndex) {
+                    dot.style.width = '24px';
+                    dot.style.background = 'var(--accent-ui)';
+                } else {
+                    dot.style.width = '8px';
+                    dot.style.background = 'var(--bg-tertiary)';
+                }
+            });
+            // Mettre à jour la barre de progression
+            const progress = ((currentSlideIndex + 1) / tutorialSlides.length) * 100;
+            document.getElementById('tutorial-progress').style.width = progress + '%';
+            // Mettre à jour le bouton précédent
+            const prevBtn = document.getElementById('tutorial-prev');
+            prevBtn.disabled = currentSlideIndex === 0;
+        }
         // Show body after everything is loaded
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
