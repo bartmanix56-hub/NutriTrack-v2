@@ -101,6 +101,56 @@
             padding: 0;
             box-sizing: border-box; }
 
+        /* Cursor pointer global pour tous les éléments cliquables */
+        button,
+        [onclick],
+        [role="button"],
+        .clickable,
+        .sidebar-btn,
+        .goal-btn,
+        .btn,
+        .btn-primary,
+        .btn-secondary,
+        .btn-danger,
+        .modal-close,
+        .food-result,
+        .food-item,
+        .meal-item,
+        .nav-tab,
+        select,
+        label[for],
+        input[type="checkbox"],
+        input[type="radio"] {
+            cursor: pointer;
+        }
+
+        /* Scrollbars uniformisées - Style Desktop */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-full);
+            transition: background 0.2s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Firefox scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.15) var(--bg-tertiary);
+        }
+
         html {
             height: 100%;
             overflow-y: auto;
@@ -142,7 +192,10 @@
             z-index: 1;
         }
 
-        /* Pas de zoom - responsive natif */
+        /* Zoom Desktop pour une meilleure densité */
+        #main-app {
+            zoom: 0.9;
+        }
 
         /* Header */
         header {
@@ -6268,18 +6321,6 @@ Solutions possibles :
 
             return `${summary} (${mealFoods.length} aliment${mealFoods.length > 1 ? 's' : ''})`;
         }
-        function generateMealSummary(mealFoods) {
-            if (!mealFoods || mealFoods.length === 0) { return 'Non planifié'; }
-
-            const foodNames = mealFoods.slice(0, 3).map(f => f.name);
-            let summary = foodNames.join(', ');
-
-            if (mealFoods.length > 3) {
-                summary += ` +${mealFoods.length - 3}`;
-            }
-
-            return summary + ` (${mealFoods.length} aliment${mealFoods.length > 1 ? 's' : ''})`;
-        }
 
         // 2. NAVIGATION PAR JOUR
         function goToDay(dayIndex) {
@@ -6436,8 +6477,6 @@ Solutions possibles :
                 setTimeout(() =>  { toast.classList.remove('show'); }, 2000);
             }, 1000);
         }
-
-        function saveDailyMeals()  { localStorage.setItem('dailyMeals', JSON.stringify(dailyMeals)); }
 
         // Load daily meals from localStorage
         function loadDailyMeals() {
@@ -7792,14 +7831,6 @@ Solutions possibles :
                     calculateMacros(); } catch (error) {
                     console.error('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Error during auto-recalculation:', error);
                 }
-            } else {
-                console.log('Missing fields:', {
-                    weight: !weight,
-                    height: !height,
-                    age: !age,
-                    gender: !gender,
-                    activity: !activity
-                });
             }
         }
 
@@ -10161,6 +10192,53 @@ Solutions possibles :
                     lucide.createIcons();
                 }
             }, 100);
+        });
+
+        // ===== RACCOURCIS CLAVIER GLOBAUX =====
+        document.addEventListener('keydown', (e) => {
+            // Escape - Fermer les modales actives
+            if (e.key === 'Escape') {
+                // Fermer templatesModal en premier (peut être au-dessus)
+                const templatesModal = document.getElementById('templatesModal');
+                if (templatesModal) {
+                    closeTemplatesModal();
+                    return;
+                }
+
+                // Fermer foodModal
+                const foodModal = document.getElementById('foodModal');
+                if (foodModal && foodModal.classList.contains('active')) {
+                    closeFoodModal();
+                    return;
+                }
+
+                // Fermer addFoodModal
+                const addFoodModal = document.getElementById('addFoodModal');
+                if (addFoodModal && addFoodModal.classList.contains('active')) {
+                    closeAddFoodModal();
+                    return;
+                }
+            }
+
+            // Enter - Valider la recherche d'aliment dans la modale
+            if (e.key === 'Enter') {
+                const foodModal = document.getElementById('foodModal');
+                const modalSearch = document.getElementById('modalFoodSearch');
+                const searchResults = document.getElementById('modalSearchResults');
+
+                // Si on est dans la modale de recherche d'aliments
+                if (foodModal && foodModal.classList.contains('active') &&
+                    document.activeElement === modalSearch &&
+                    searchResults && searchResults.style.display !== 'none') {
+
+                    // Sélectionner le premier résultat visible
+                    const firstResult = searchResults.querySelector('.food-result');
+                    if (firstResult) {
+                        e.preventDefault();
+                        firstResult.click();
+                    }
+                }
+            }
         });
     </script>
 </body>
