@@ -2,7 +2,6 @@
 
 
 
-
 <!DOCTYPE html>
 <html lang="fr" style="overflow: hidden;">
 <head>
@@ -524,6 +523,17 @@
         textarea:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+
+        /* Masquer les spinners (flèches haut/bas) des inputs number */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
         }
 
         /* Grid Layout */
@@ -1429,20 +1439,20 @@
                 font-size: 1.1rem !important;
             }
 
-            /* Bannière sync compacte */
-            #sync-status-banner {
-                font-size: 0.75rem !important;
-                padding: 6px 12px !important;
-            }
-
-            #sync-status-banner button {
-                padding: 3px 8px !important;
+            /* Sync indicator compact */
+            #sync-indicator {
+                padding: 4px 8px !important;
                 font-size: 0.7rem !important;
             }
+            #sync-indicator .sync-dot {
+                width: 6px !important;
+                height: 6px !important;
+            }
 
-            /* Padding top pour bannière */
-            #main-app {
-                padding-top: 35px !important;
+            /* Meal cards grid - UNE SEULE COLONNE sur mobile */
+            #meals > div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+                gap: var(--space-md) !important;
             }
         }
 
@@ -2625,20 +2635,48 @@
     <!-- Login Screen -->
     <div class="container" id="main-app" style="display: none;">
         <!-- Bannière statut connexion -->
-        <div id="sync-status-banner" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9999; padding: 8px 16px; text-align: center; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; background: rgba(239, 68, 68, 0.15); color: #f87171; border-bottom: 1px solid rgba(239, 68, 68, 0.3);">
-            <span style="width: 8px; height: 8px; border-radius: 50%; background: #f87171; animation: pulse 2s infinite;"></span>
-            <span id="sync-status-text">Mode Local : Données non sauvegardées</span>
-            <button onclick="switchToTab('settings')" style="margin-left: 8px; padding: 4px 12px; background: rgba(255,255,255,0.1); border: 1px solid currentColor; border-radius: 20px; color: inherit; cursor: pointer; font-size: 0.8rem;">Se connecter</button>
-        </div>
         <style>
             @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-            #main-app { padding-top: 45px; }
-            .sync-connected { background: rgba(16, 185, 129, 0.15) !important; color: #10b981 !important; border-bottom-color: rgba(16, 185, 129, 0.3) !important; }
-            .sync-connected span:first-child { background: #10b981 !important; animation: none !important; }
+            /* Sync indicator styles */
+            #sync-indicator {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 12px;
+                border-radius: var(--radius-full);
+                font-size: 0.8rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                background: rgba(239, 68, 68, 0.15);
+                color: #f87171;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+            }
+            #sync-indicator:hover { opacity: 0.8; }
+            #sync-indicator .sync-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: currentColor;
+                animation: pulse 2s infinite;
+            }
+            #sync-indicator.connected {
+                background: rgba(16, 185, 129, 0.15);
+                color: #10b981;
+                border-color: rgba(16, 185, 129, 0.3);
+            }
+            #sync-indicator.connected .sync-dot {
+                animation: none;
+            }
         </style>
 
         <header style="position: relative;">
             <div style="position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: var(--space-md);">
+                <!-- Sync indicator discret -->
+                <div id="sync-indicator" onclick="switchToTab('settings')" title="Statut de synchronisation">
+                    <span class="sync-dot"></span>
+                    <span id="sync-indicator-text">Local</span>
+                </div>
                 <button onclick="toggleTheme()" title="Changer le thème" style="background: var(--bg-secondary); padding: var(--space-sm); border-radius: var(--radius-full); border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: var(--shadow-sm);">
                     <i data-lucide="moon" id="theme-icon" style="width: 20px; height: 20px;"></i>
                 </button>
@@ -9331,6 +9369,34 @@ Solutions possibles :
             // Vérifier au chargement si le profil est complet
             checkAndAutoCalculate();
 
+            // ===== NOTIFICATION PREFERENCES =====
+            // Load saved notification preferences
+            const notifDaily = document.getElementById('notification-daily');
+            const notifGoals = document.getElementById('notification-goals');
+
+            const savedNotifDaily = localStorage.getItem('notification-daily');
+            const savedNotifGoals = localStorage.getItem('notification-goals');
+
+            if (notifDaily) {
+                notifDaily.checked = savedNotifDaily === 'true';
+                notifDaily.addEventListener('change', function() {
+                    localStorage.setItem('notification-daily', this.checked);
+                    if (this.checked && Notification.permission !== 'granted') {
+                        Notification.requestPermission();
+                    }
+                });
+            }
+
+            if (notifGoals) {
+                notifGoals.checked = savedNotifGoals !== 'false'; // Default true
+                notifGoals.addEventListener('change', function() {
+                    localStorage.setItem('notification-goals', this.checked);
+                    if (this.checked && Notification.permission !== 'granted') {
+                        Notification.requestPermission();
+                    }
+                });
+            }
+
             // Initialiser les icônes Lucide
             if (typeof lucide !== "undefined") lucide.createIcons();
         });
@@ -9638,7 +9704,7 @@ Solutions possibles :
         // ===== POP-UPS CUSTOM =====
         let popupResolve = null;
 
-        function customConfirm(title, message, isDanger = false) {
+        function customConfirm(title, message, isDangerOrOptions = false) {
             return new Promise((resolve) => {
                 popupResolve = resolve;
 
@@ -9647,14 +9713,30 @@ Solutions possibles :
                 document.getElementById('popup-message').innerHTML = message.replace(/\n/g, '<br>');
 
                 const confirmBtn = document.getElementById('popup-confirm-btn');
+                const cancelBtn = document.querySelector('#custom-popup .cancel');
+
+                // Support custom button texts: isDangerOrOptions can be boolean or object {confirmText, cancelText, isDanger}
+                let isDanger = false;
+                let confirmText = 'Confirmer';
+                let cancelText = 'Annuler';
+
+                if (typeof isDangerOrOptions === 'object') {
+                    isDanger = isDangerOrOptions.isDanger || false;
+                    confirmText = isDangerOrOptions.confirmText || 'Confirmer';
+                    cancelText = isDangerOrOptions.cancelText || 'Annuler';
+                } else {
+                    isDanger = isDangerOrOptions;
+                    confirmText = isDanger ? 'Supprimer' : 'Confirmer';
+                }
+
                 confirmBtn.className = isDanger ? 'custom-popup-btn danger' : 'custom-popup-btn confirm';
-                confirmBtn.textContent = isDanger ? 'Supprimer' : 'Confirmer';
+                confirmBtn.textContent = confirmText;
+                if (cancelBtn) cancelBtn.textContent = cancelText;
 
                 // IMPORTANT: Reset onclick handler (peut avoir été modifié par customAlert)
                 confirmBtn.onclick = () => closePopup(true);
 
                 // Aussi restaurer le bouton Annuler au cas où customAlert l'a masqué
-                const cancelBtn = document.querySelector('#custom-popup .cancel');
                 if (cancelBtn) cancelBtn.style.display = 'block';
 
                 document.getElementById('custom-popup').classList.add('active');
@@ -10814,24 +10896,23 @@ Solutions possibles :
 
         // ===== UI UPDATE FUNCTIONS =====
         function updateSyncBanner(user) {
-            const banner = document.getElementById('sync-status-banner');
-            const textEl = document.getElementById('sync-status-text');
-            const btn = banner?.querySelector('button');
+            const indicator = document.getElementById('sync-indicator');
+            const textEl = document.getElementById('sync-indicator-text');
 
-            if (!banner || !textEl) return;
+            if (!indicator || !textEl) return;
 
             if (user) {
                 // Connecté
-                banner.classList.add('sync-connected');
+                indicator.classList.add('connected');
                 const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
-                const displayName = userProfile.firstName || user.displayName?.split(' ')[0] || 'Utilisateur';
-                textEl.textContent = `Synchronisé : ${displayName}`;
-                if (btn) btn.style.display = 'none';
+                const displayName = userProfile.firstName || user.displayName?.split(' ')[0] || '';
+                textEl.textContent = displayName ? `✓ ${displayName}` : '✓ Sync';
+                indicator.title = 'Synchronisé avec le cloud';
             } else {
                 // Non connecté
-                banner.classList.remove('sync-connected');
-                textEl.textContent = 'Mode Local : Données non sauvegardées';
-                if (btn) btn.style.display = 'inline-block';
+                indicator.classList.remove('connected');
+                textEl.textContent = 'Local';
+                indicator.title = 'Mode local - Cliquez pour vous connecter';
             }
         }
 
@@ -11003,6 +11084,14 @@ Solutions possibles :
                 }
             });
 
+            // Sync firstName from userProfile to appUsername for header display
+            try {
+                const restoredProfile = JSON.parse(cloudData.userProfile || '{}');
+                if (restoredProfile.firstName) {
+                    originalSetItem.call(localStorage, 'appUsername', restoredProfile.firstName);
+                }
+            } catch (e) { /* ignore parse errors */ }
+
             // Reload page to apply restored data
             if (typeof showToast === 'function') {
                 showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données restaurées depuis le cloud !', 'success');
@@ -11038,18 +11127,19 @@ Solutions possibles :
                     return;
                 }
 
-                // Sauvegarder le prénom dans userProfile
+                // Sauvegarder le prénom dans userProfile ET appUsername pour l'affichage header
                 const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
                 userProfile.firstName = firstName;
                 localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                localStorage.setItem('appUsername', firstName); // Pour le header display
 
                 // Maintenant connexion Google
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
 
-                // Mettre à jour l'affichage du nom d'utilisateur
-                if (typeof updateUsernameDisplay === 'function') {
-                    updateUsernameDisplay();
+                // Mettre à jour l'affichage du nom d'utilisateur dans le header
+                if (typeof displayUsername === 'function') {
+                    displayUsername();
                 }
 
                 // Check if cloud data exists
@@ -11065,7 +11155,7 @@ Solutions possibles :
                             customConfirm(
                                 'Données trouvées dans le cloud',
                                 `Des données existent déjà sur ce compte (sync: ${new Date(cloudData.lastSync).toLocaleDateString('fr-FR')}). Veux-tu les restaurer et remplacer tes données locales ?`,
-                                true
+                                { confirmText: 'Restaurer', cancelText: 'Garder local', isDanger: false }
                             ).then((restore) => {
                                 if (restore) {
                                     restoreDataFromCloud(cloudData);
