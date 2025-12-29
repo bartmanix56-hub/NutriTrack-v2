@@ -1454,6 +1454,67 @@
                 grid-template-columns: 1fr !important;
                 gap: var(--space-md) !important;
             }
+
+            /* ===== FIX HEADER MOBILE ===== */
+            header > div[style*="position: absolute"] {
+                position: relative !important;
+                top: auto !important;
+                right: auto !important;
+                justify-content: center !important;
+                flex-wrap: wrap !important;
+                gap: 8px !important;
+                margin-bottom: var(--space-sm);
+            }
+
+            #sync-indicator {
+                order: 1;
+            }
+
+            #username-display {
+                order: 2;
+                max-width: 150px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            /* ===== FIX DATE NAVIGATION MOBILE ===== */
+            #meals > div:first-child {
+                flex-direction: column !important;
+                gap: var(--space-md) !important;
+                padding: var(--space-md) !important;
+            }
+
+            #meals > div:first-child h2 {
+                font-size: 1rem !important;
+                flex-wrap: wrap;
+                justify-content: center;
+                text-align: center;
+            }
+
+            #meals > div:first-child > div[style*="display: flex"] {
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                gap: var(--space-sm) !important;
+            }
+
+            .date-nav-btn {
+                padding: 8px 12px !important;
+                font-size: 0.85rem !important;
+                min-width: auto !important;
+            }
+
+            .date-nav-btn[onclick*="goToToday"] {
+                width: 100% !important;
+                margin-top: var(--space-xs) !important;
+            }
+
+            /* ===== FIX BLUR OVERLAY Z-INDEX ===== */
+            /* Ne pas couvrir la navbar mobile */
+            .section-disabled-overlay {
+                z-index: 50 !important; /* Plus bas que la navbar (z-index: 1000) */
+                bottom: 85px !important; /* Laisser de l'espace pour la navbar */
+            }
         }
 
         /* Desktop: footer visible, mobile footer caché */
@@ -7217,14 +7278,34 @@ Solutions possibles :
             loadDailyMealsForCurrentDate();
         }
 
-        function resetAllData() {
-            customConfirm('Supprimer toutes les données', 'Cette action est irréversible et supprimera :\n\n• Tous tes repas et plannings\n• Tous tes aliments personnalisés\n• Tous tes suivis corporels\n• Tous tes paramètres\n\n<i data-lucide="lightbulb" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Pense à exporter tes données avant.\n\nConfirmer la suppression ?', true).then((confirmed) => {
+        async function resetAllData() {
+            const isConnected = typeof isFirebaseConnected === 'function' && isFirebaseConnected();
+
+            let message = 'Cette action est irréversible et supprimera :\n\n• Tous tes repas et plannings\n• Tous tes aliments personnalisés\n• Tous tes suivis corporels\n• Tous tes paramètres\n\n';
+
+            if (isConnected) {
+                message += '<i data-lucide="cloud" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> <strong>Les données locales ET cloud seront supprimées.</strong>\n\n';
+            } else {
+                message += '<i data-lucide="hard-drive" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> <strong>Seules les données locales seront supprimées</strong> (pas connecté au cloud).\n\n';
+            }
+
+            message += '<i data-lucide="lightbulb" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Pense à exporter tes données avant.\n\nConfirmer la suppression ?';
+
+            customConfirm('Supprimer toutes les données', message, true).then(async (confirmed) => {
                 if (!confirmed) {
                     showToast('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Suppression annulée');
                     return;
                 }
 
-                // Supprimer toutes les données
+                // Supprimer les données cloud si connecté
+                if (isConnected && typeof firebaseDeleteCloudData === 'function') {
+                    const cloudDeleted = await firebaseDeleteCloudData();
+                    if (cloudDeleted) {
+                        showToast('<i data-lucide="cloud-off" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données cloud supprimées');
+                    }
+                }
+
+                // Supprimer toutes les données locales
                 localStorage.clear();
                 showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Toutes les données ont été supprimées');
 
@@ -10870,7 +10951,7 @@ Solutions possibles :
         // ===== FIREBASE CONFIGURATION =====
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyCL2SvQ2c784ZyA2Pr-Qtv2F1wnnDByGkc",
@@ -10887,8 +10968,8 @@ Solutions possibles :
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        // Keys to sync with Firestore
-        const SYNC_KEYS = ['userProfile', 'foodLog', 'customFoods'];
+        // Keys to sync with Firestore - ALL important data
+        const SYNC_KEYS = ['userProfile', 'foodLog', 'customFoods', 'macroTargets', 'allDailyMeals', 'trackingData', 'mealTemplates', 'weeklyPlan', 'favoriteFoods', 'appUsername', 'closedDays', 'advancedTrackingData', 'calcSettings'];
 
         // Debounce timer for sync
         let syncTimeout = null;
@@ -11075,7 +11156,7 @@ Solutions possibles :
         }
 
         function restoreDataFromCloud(cloudData) {
-            const allKeys = [...SYNC_KEYS, 'macroTargets', 'allDailyMeals', 'trackingData', 'mealTemplates', 'weeklyPlan'];
+            const allKeys = [...SYNC_KEYS]; // All synced keys
 
             allKeys.forEach(key => {
                 if (cloudData[key]) {
@@ -11101,7 +11182,7 @@ Solutions possibles :
 
         // ===== LOCALSTORAGE HOOK =====
         const originalSetItem = localStorage.setItem.bind(localStorage);
-        const keysToWatch = [...SYNC_KEYS, 'macroTargets', 'allDailyMeals', 'trackingData', 'mealTemplates', 'weeklyPlan'];
+        const keysToWatch = [...SYNC_KEYS]; // All keys from SYNC_KEYS are watched
 
         localStorage.setItem = function(key, value) {
             originalSetItem(key, value);
@@ -11239,6 +11320,26 @@ Solutions possibles :
                     showToast('<i data-lucide="info" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Aucune donnée dans le cloud');
                 }
             }
+        };
+
+        // Delete cloud data for current user
+        window.firebaseDeleteCloudData = async function() {
+            if (!auth.currentUser) {
+                return false;
+            }
+            try {
+                const userRef = doc(db, 'users', auth.currentUser.uid);
+                await deleteDoc(userRef);
+                return true;
+            } catch (error) {
+                console.error('Erreur suppression cloud:', error);
+                return false;
+            }
+        };
+
+        // Check if user is connected to Firebase
+        window.isFirebaseConnected = function() {
+            return !!auth.currentUser;
         };
 
         // ===== AUTH STATE LISTENER =====
