@@ -56,6 +56,7 @@
             --accent-carbs: #38bdf8;      /* Bleu ciel - glucides */
             --accent-fat: #fbbf24;        /* Ambre - lipides */
             --accent-danger: #ef4444;     /* Rouge - erreurs/suppression */
+            --accent-purple: #a855f7;     /* Violet - planning/semaine */
 
             /* Espacements (système 4px) */
             --space-xs: 4px;
@@ -1270,6 +1271,178 @@
             canvas {
                 max-height: 200px !important;
             }
+
+            /* ============================================ */
+            /* OPTIMISATION MOBILE - MES REPAS / SEMAINE / BASE */
+            /* ============================================ */
+
+            /* MES REPAS - Grille 2x2 en mobile */
+            #meals .meal-card {
+                padding: var(--space-md) !important;
+            }
+
+            #meals .meal-card-header {
+                padding: var(--space-sm) var(--space-md) !important;
+                flex-wrap: wrap;
+            }
+
+            #meals .meal-card-header h3 {
+                font-size: 1rem !important;
+            }
+
+            /* Quick add compact */
+            #meals input[placeholder*="Quick Add"],
+            #meals input[placeholder*="nom de l'aliment"] {
+                font-size: 14px !important;
+                padding: 10px 12px !important;
+            }
+
+            /* Boutons repas compacts */
+            #meals .meal-card button {
+                padding: 8px 10px !important;
+                font-size: 0.75rem !important;
+            }
+
+            /* Grille boutons repas */
+            #meals .meal-card > div:last-child {
+                gap: var(--space-xs) !important;
+            }
+
+            /* SEMAINE / PLANNER */
+            #planner .day-card {
+                padding: var(--space-sm) !important;
+            }
+
+            #planner .day-name {
+                font-size: 0.9rem !important;
+            }
+
+            #planner .day-date {
+                font-size: 0.75rem !important;
+            }
+
+            #planner .day-meal-item {
+                padding: var(--space-xs) !important;
+            }
+
+            #planner .day-meal-label {
+                font-size: 0.7rem !important;
+            }
+
+            #planner .day-meal-foods {
+                font-size: 0.8rem !important;
+                min-height: 30px !important;
+            }
+
+            /* Week grid 2 colonnes sur mobile */
+            #week-grid {
+                grid-template-columns: 1fr 1fr !important;
+                gap: var(--space-sm) !important;
+            }
+
+            /* Navigation semaine */
+            #planner button[onclick*="previousWeek"],
+            #planner button[onclick*="nextWeek"] {
+                padding: 8px 12px !important;
+            }
+
+            /* BASE ALIMENTS */
+            #foods .card {
+                padding: var(--space-md) !important;
+            }
+
+            /* Search bar compact */
+            #foods input[type="text"],
+            #foods-search,
+            input[placeholder*="Rechercher un aliment"] {
+                font-size: 14px !important;
+                padding: 12px !important;
+            }
+
+            /* Filter bar */
+            #foods select {
+                font-size: 14px !important;
+                padding: 10px !important;
+            }
+
+            /* Food list items compacts */
+            #food-list .food-item,
+            .food-list .food-item {
+                padding: var(--space-sm) !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: var(--space-sm) !important;
+            }
+
+            #food-list .food-item .food-name,
+            .food-list .food-item .food-name {
+                font-size: 0.9rem !important;
+                width: 100% !important;
+            }
+
+            #food-list .food-item .food-macros,
+            .food-list .food-item .food-macros {
+                width: 100% !important;
+                justify-content: space-between !important;
+                font-size: 0.75rem !important;
+            }
+
+            #food-list .food-item .food-actions,
+            .food-list .food-item .food-actions {
+                width: 100% !important;
+                justify-content: flex-end !important;
+            }
+
+            /* Pagination compacte */
+            #food-list + div button,
+            .food-pagination button {
+                padding: 8px 12px !important;
+                font-size: 0.8rem !important;
+            }
+
+            /* SUMMARY GRID 5 colonnes -> responsive */
+            .summary-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: var(--space-xs) !important;
+            }
+
+            .summary-card {
+                padding: var(--space-sm) !important;
+            }
+
+            .summary-value {
+                font-size: 1.1rem !important;
+            }
+
+            .summary-label {
+                font-size: 0.65rem !important;
+            }
+
+            /* Progress bars plus fins */
+            .progress-bar {
+                height: 6px !important;
+            }
+
+            /* Day totals section */
+            .day-totals-title {
+                font-size: 1.1rem !important;
+            }
+
+            /* Bannière sync compacte */
+            #sync-status-banner {
+                font-size: 0.75rem !important;
+                padding: 6px 12px !important;
+            }
+
+            #sync-status-banner button {
+                padding: 3px 8px !important;
+                font-size: 0.7rem !important;
+            }
+
+            /* Padding top pour bannière */
+            #main-app {
+                padding-top: 35px !important;
+            }
         }
 
         /* Desktop: footer visible, mobile footer caché */
@@ -2450,6 +2623,19 @@
 <body style="opacity: 0; transition: opacity 0.3s; overflow: hidden;">
     <!-- Login Screen -->
     <div class="container" id="main-app" style="display: none;">
+        <!-- Bannière statut connexion -->
+        <div id="sync-status-banner" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9999; padding: 8px 16px; text-align: center; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; background: rgba(239, 68, 68, 0.15); color: #f87171; border-bottom: 1px solid rgba(239, 68, 68, 0.3);">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #f87171; animation: pulse 2s infinite;"></span>
+            <span id="sync-status-text">Mode Local : Données non sauvegardées</span>
+            <button onclick="switchToTab('settings')" style="margin-left: 8px; padding: 4px 12px; background: rgba(255,255,255,0.1); border: 1px solid currentColor; border-radius: 20px; color: inherit; cursor: pointer; font-size: 0.8rem;">Se connecter</button>
+        </div>
+        <style>
+            @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+            #main-app { padding-top: 45px; }
+            .sync-connected { background: rgba(16, 185, 129, 0.15) !important; color: #10b981 !important; border-bottom-color: rgba(16, 185, 129, 0.3) !important; }
+            .sync-connected span:first-child { background: #10b981 !important; animation: none !important; }
+        </style>
+
         <header style="position: relative;">
             <div style="position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: var(--space-md);">
                 <button onclick="toggleTheme()" title="Changer le thème" style="background: var(--bg-secondary); padding: var(--space-sm); border-radius: var(--radius-full); border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: var(--shadow-sm);">
@@ -3531,7 +3717,7 @@
                         Politique de Confidentialité
                     </h1>
                     <p style="margin: 0; margin-top: var(--space-xs); color: var(--text-secondary); font-size: 1rem;">
-                        Tes données restent 100% privées sur ton appareil
+                        Tes données sont sécurisées, en local et dans le cloud
                     </p>
                 </div></div></div>
 
@@ -3540,7 +3726,7 @@
 
             <div style="background: rgba(5, 150, 105, 0.1); border-left: 3px solid rgba(16, 185, 129, 0.4); border-radius: var(--radius-md); padding: var(--space-xl); margin-bottom: var(--space-2xl);">
                 <p style="margin: 0; font-size: 1.05rem; line-height: 1.8; color: var(--text-primary); font-weight: 500;">
-                    <strong>NutriTrack respecte absolument ta vie privée.</strong> Toutes tes données sont stockées localement dans ton navigateur. Aucune donnée n'est envoyée vers un serveur externe, aucun compte n'est créé, aucun tracking n'est effectué.
+                    <strong>NutriTrack respecte ta vie privée.</strong> Par défaut, tes données sont stockées localement dans ton navigateur. Si tu te connectes avec Google, elles sont également sauvegardées de manière sécurisée sur Firebase (Google Cloud) pour te permettre de les retrouver sur tous tes appareils.
                 </p>
             </div>
 
@@ -3559,13 +3745,25 @@
 
             <h3 style="font-size: 1.3rem; font-weight: 700; margin: var(--space-2xl) 0 var(--space-lg) 0; color: var(--text-primary);"><i data-lucide="save" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Où sont stockées mes données ?</h3>
             <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-xl); margin-bottom: var(--space-xl);">
-                <p style="margin: 0 0 var(--space-md) 0; color: var(--text-secondary); line-height: 1.7;">Toutes tes données sont stockées dans le <strong>localStorage de ton navigateur</strong>, directement sur ton appareil. Cela signifie :</p>
+                <p style="margin: 0 0 var(--space-md) 0; color: var(--text-secondary); line-height: 1.7;"><strong>Mode Local (par défaut) :</strong> Tes données sont stockées dans le localStorage de ton navigateur.</p>
+                <p style="margin: 0 0 var(--space-md) 0; color: var(--text-secondary); line-height: 1.7;"><strong>Mode Connecté (optionnel) :</strong> Si tu te connectes avec Google, tes données sont également synchronisées sur Firebase Firestore (serveurs Google Cloud sécurisés).</p>
                 <ul style="margin: var(--space-md) 0; padding-left: var(--space-xl); color: var(--text-secondary); line-height: 1.8;">
-                    <li><strong><i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Aucune transmission</strong> : Rien ne quitte ton appareil</li>
                     <li><strong><i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Accès offline</strong> : L'application fonctionne sans connexion internet</li>
-                    <li><strong><i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Contrôle total</strong> : Tu peux exporter, supprimer ou modifier tes données à tout moment</li>
-                    <li><strong><i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Appareil unique</strong> : Tes données ne se synchronisent pas entre appareils</li>
-                    <li><strong><i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Navigateur spécifique</strong> : Les données sont liées à ce navigateur (si tu changes de navigateur, tes données ne seront pas transférées)</li>
+                    <li><strong><i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Synchronisation sécurisée</strong> : Données chiffrées en transit (HTTPS/TLS)</li>
+                    <li><strong><i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Contrôle total</strong> : Tu peux exporter, supprimer ou te déconnecter à tout moment</li>
+                    <li><strong><i data-lucide="cloud" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Multi-appareils</strong> : Connecte-toi avec Google pour retrouver tes données partout</li>
+                </ul>
+            </div>
+
+            <h3 style="font-size: 1.3rem; font-weight: 700; margin: var(--space-2xl) 0 var(--space-lg) 0; color: var(--text-primary);">☁️ À propos de la synchronisation cloud</h3>
+            <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-xl); margin-bottom: var(--space-xl);">
+                <p style="margin: 0 0 var(--space-md) 0; color: var(--text-secondary); line-height: 1.7;">Si tu choisis de te connecter avec Google :</p>
+                <ul style="margin: var(--space-md) 0; padding-left: var(--space-xl); color: var(--text-secondary); line-height: 1.8;">
+                    <li><strong>Service utilisé :</strong> Firebase Firestore (Google Cloud Platform)</li>
+                    <li><strong>Données synchronisées :</strong> Profil, repas, aliments personnalisés, macros, suivi</li>
+                    <li><strong>Sécurité :</strong> Connexion HTTPS/TLS, authentification OAuth2</li>
+                    <li><strong>Accès :</strong> Seul toi peux accéder à tes données via ton compte Google</li>
+                    <li><strong>Suppression :</strong> Tu peux te déconnecter et supprimer tes données cloud à tout moment</li>
                 </ul>
             </div>
 
@@ -3574,22 +3772,20 @@
                 <ul style="margin: 0; padding-left: var(--space-xl); color: var(--text-secondary); line-height: 1.8;">
                     <li><i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nous ne collectons aucune donnée analytique</li>
                     <li><i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nous n'utilisons aucun cookie de tracking</li>
-                    <li><i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nous ne vendons jamais tes données (nous ne les avons même pas !)</li>
-                    <li><i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nous n'envoyons aucune donnée vers un serveur externe</li>
+                    <li><i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nous ne vendons jamais tes données</li>
                     <li><i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nous n'avons pas accès à tes informations personnelles</li>
-                    <li><i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nous ne créons pas de compte utilisateur</li>
                     <li><i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nous ne suivons pas ton activité</li>
                 </ul>
             </div>
 
             <h3 style="font-size: 1.3rem; font-weight: 700; margin: var(--space-2xl) 0 var(--space-lg) 0; color: var(--text-primary);">🔐 Sécurité de tes données</h3>
             <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-xl); margin-bottom: var(--space-xl);">
-                <p style="margin: 0 0 var(--space-md) 0; color: var(--text-secondary); line-height: 1.7;">Puisque tes données restent sur ton appareil :</p>
+                <p style="margin: 0 0 var(--space-md) 0; color: var(--text-secondary); line-height: 1.7;">Pour protéger tes données :</p>
                 <ul style="margin: var(--space-md) 0; padding-left: var(--space-xl); color: var(--text-secondary); line-height: 1.8;">
-                    <li>La sécurité dépend de la protection de ton appareil</li>
                     <li>Utilise un mot de passe/code sur ton appareil</li>
                     <li>Garde ton navigateur à jour</li>
-                    <li>Exporte régulièrement tes données si tu souhaites les sauvegarder</li>
+                    <li>Connecte-toi avec Google pour une sauvegarde automatique dans le cloud</li>
+                    <li>Ou exporte régulièrement tes données en JSON depuis les Paramètres</li>
                 </ul>
             </div>
 
@@ -3599,6 +3795,7 @@
                 <ul style="margin: var(--space-md) 0; padding-left: var(--space-xl); color: var(--text-secondary); line-height: 1.8;">
                     <li><strong>Exporter</strong> : Dans Paramètres → Exporter mes données (fichier JSON)</li>
                     <li><strong>Importer</strong> : Dans Paramètres → Importer des données</li>
+                    <li><strong>Cloud</strong> : Dans Paramètres → Sync Cloud → Restaurer ou Synchroniser</li>
                     <li><strong>Supprimer</strong> : Dans Paramètres → Réinitialiser l'application (suppression totale)</li>
                 </ul>
             </div>
@@ -3984,8 +4181,8 @@
                     <div style="display: flex; align-items: center; gap: var(--space-md);">
                         <i data-lucide="shield-check" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
                         <div>
-                            <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Tes données sont 100% privées</h3>
-                            <p style="margin: 0; margin-top: 4px; font-size: 0.9rem; color: var(--text-secondary);">Tout reste sur ton appareil, aucun serveur externe</p>
+                            <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Tes données sont sécurisées</h3>
+                            <p style="margin: 0; margin-top: 4px; font-size: 0.9rem; color: var(--text-secondary);">Stockage local + synchronisation cloud chiffrée (optionnelle)</p>
                         </div></div>
                     <button onclick="switchToTab('privacy')" class="btn" style="background: var(--accent-ui); color: white; white-space: nowrap;">En savoir plus</button>
                 </div></div>
@@ -4495,13 +4692,13 @@
 
             <div style="background: rgba(16, 185, 129, 0.05); border-left: 3px solid rgba(16, 185, 129, 0.4); border-radius: var(--radius-md); padding: var(--space-xl); margin-bottom: var(--space-2xl);">
                 <p style="margin: 0; font-size: 1.05rem; line-height: 1.8; color: var(--text-primary); font-weight: 500;">
-                    <strong>Notre philosophie :</strong> Rendre le tracking nutritionnel simple, accessible et respectueux de ta vie privée. Pas de compte, pas de tracking, pas de publicité. Juste un outil efficace qui te respecte.
+                    <strong>Notre philosophie :</strong> Rendre le tracking nutritionnel simple, accessible et sécurisé. Pas de tracking publicitaire. Juste un outil efficace qui te respecte.
                 </p>
             </div>
 
-            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="shield-check" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> 100% Privé</h3>
+            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="shield-check" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Sécurisé</h3>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
-                Toutes tes données sont stockées <strong>exclusivement dans ton navigateur</strong>. Aucun serveur distant, aucun compte utilisateur, aucun tracking publicitaire. Tes informations personnelles et tes données nutritionnelles restent chez toi, sur ton appareil. C'est un engagement non négociable.
+                Par défaut, tes données sont stockées <strong>localement dans ton navigateur</strong>. En te connectant avec Google, tu peux synchroniser tes données de manière sécurisée sur Firebase (Google Cloud) pour les retrouver sur tous tes appareils. Aucun tracking publicitaire, aucune vente de données.
             </p>
 
             <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="zap" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> 100% Gratuit</h3>
@@ -4673,7 +4870,7 @@
             </p>
             <div style="background: rgba(16, 185, 129, 0.05); border-left: 3px solid rgba(16, 185, 129, 0.4); border-radius: var(--radius-md); padding: var(--space-lg); margin-bottom: var(--space-2xl);">
                 <p style="margin: 0; line-height: 1.8; color: var(--text-primary); font-weight: 500;">
-                    <strong>Note importante :</strong> NutriTrack fonctionne entièrement côté client dans ton navigateur. Aucune donnée personnelle n'est envoyée aux serveurs de Netlify ou à tout autre serveur externe. L'hébergement sert uniquement à délivrer les fichiers statiques de l'application.
+                    <strong>Note importante :</strong> Par défaut, NutriTrack stocke les données localement. Si tu te connectes avec Google, tes données sont synchronisées sur Firebase (Google Cloud) de manière sécurisée.
                 </p>
             </div>
 
@@ -4688,12 +4885,15 @@
                 <strong>Icônes :</strong> Les icônes utilisées proviennent de <a href="https://lucide.dev" target="_blank" rel="noopener noreferrer" style="color: var(--accent-ui); text-decoration: none;">Lucide Icons</a> (licence ISC).
             </p>
 
-            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="cookie" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Cookies et Stockage Local</h2>
+            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="cookie" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Cookies et Stockage</h2>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
                 <strong>Pas de cookies de tracking :</strong> NutriTrack n'utilise aucun cookie de suivi, aucun cookie publicitaire, ni aucun cookie tiers.
             </p>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
-                <strong>Stockage local (localStorage) :</strong> L'application utilise uniquement le stockage local de ton navigateur (localStorage) pour sauvegarder tes données nutritionnelles sur ton appareil. Ces données ne quittent jamais ton navigateur et ne sont jamais transmises à un serveur.
+                <strong>Stockage local (localStorage) :</strong> Par défaut, l'application stocke tes données dans le localStorage de ton navigateur.
+            </p>
+            <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
+                <strong>Synchronisation cloud (optionnelle) :</strong> Si tu te connectes avec Google, tes données sont également stockées sur Firebase Firestore (Google Cloud Platform) pour permettre la synchronisation entre appareils.
             </p>
 
             <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="shield-check" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données Personnelles (RGPD)</h2>
@@ -4701,10 +4901,10 @@
                 <strong>Conformité RGPD :</strong> NutriTrack respecte le Règlement Général sur la Protection des Données (RGPD) en vigueur depuis le 25 mai 2018.
             </p>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
-                <strong>Collecte de données :</strong> Aucune donnée personnelle n'est collectée, traitée ou transmise par NutriTrack. Toutes les informations que tu saisis (prénom, poids, objectifs, repas) restent stockées localement dans ton navigateur.
+                <strong>Collecte de données :</strong> Les informations que tu saisis (prénom, poids, objectifs, repas) sont stockées localement. Si tu te connectes, elles sont également synchronisées sur Firebase pour ton usage personnel uniquement.
             </p>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
-                <strong>Responsable du traitement :</strong> Il n'y a pas de responsable de traitement au sens du RGPD, car aucune donnée n'est traitée en dehors de ton appareil.
+                <strong>Responsable du traitement :</strong> Jérémy Mathurel est responsable du traitement pour les données synchronisées sur Firebase. Contact : contact.nutritrack@gmail.com
             </p>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
                 <strong>Tes droits :</strong> Tu as le contrôle total sur tes données :
@@ -4902,14 +5102,14 @@
                 <div class="input-group">
                     <label>Catégorie *</label>
                     <select id="new-food-category" style="width: 100%; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.95rem;">
-                        <option value="proteines"><i data-lucide="circle" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Protéines</option>
+                        <option value="proteines">🥩 Protéines</option>
                         <option value="feculents">🍚 Féculents</option>
                         <option value="legumes">🥬 Légumes</option>
-                        <option value="fruits"><i data-lucide="apple" style="width: 18px; height: 18px;"></i> Fruits</option>
+                        <option value="fruits">🍎 Fruits</option>
                         <option value="produits-laitiers">🧀 Laitages</option>
-                        <option value="matieres-grasses"><i data-lucide="droplet" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Graisses</option>
+                        <option value="matieres-grasses">🧈 Graisses</option>
                         <option value="liquides">💧 Liquides</option>
-                        <option value="autres"><i data-lucide="utensils-crossed" style="width: 18px; height: 18px;"></i> Autres</option>
+                        <option value="autres">❓ Autres</option>
                     </select>
                 </div>
 
@@ -7445,7 +7645,7 @@ Solutions possibles :
 
             // Pre-fill modal
             document.getElementById('new-food-name').value = food.name;
-            document.getElementById('new-food-name').disabled = true;
+            document.getElementById('new-food-name').disabled = false; // Permettre la modification du nom
             document.getElementById('new-food-unit').value = food.unit;
             document.getElementById('new-food-protein').value = food.protein;
             document.getElementById('new-food-carbs').value = food.carbs;
@@ -7471,11 +7671,23 @@ Solutions possibles :
             if (!food || !food.custom) return;
 
             // Get values
+            const newName = document.getElementById('new-food-name').value.trim();
             const unit = document.getElementById('new-food-unit').value.trim();
             const protein = parseFloat(document.getElementById('new-food-protein').value) || 0;
             const carbs = parseFloat(document.getElementById('new-food-carbs').value) || 0;
             const fat = parseFloat(document.getElementById('new-food-fat').value) || 0;
             const fiber = parseFloat(document.getElementById('new-food-fiber').value) || 0;
+
+            if (!newName) {
+                showToast('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Le nom est obligatoire');
+                return;
+            }
+
+            // Vérifier si le nouveau nom existe déjà (sauf si c'est le même)
+            if (newName !== food.name && foodDatabase.some(f => f.name.toLowerCase() === newName.toLowerCase())) {
+                showToast('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Un aliment avec ce nom existe déjà');
+                return;
+            }
 
             let calories = parseFloat(document.getElementById('new-food-calories').value);
             if (!calories || calories === 0) { calories = Math.round(protein * 4 + carbs * 4 + fat * 9); }
@@ -7485,6 +7697,7 @@ Solutions possibles :
             if (customIndex !== -1) {
                 customFoods[customIndex] = {
                     ...customFoods[customIndex],
+                    name: newName,
                     unit,
                     protein,
                     carbs,
@@ -8243,7 +8456,7 @@ Solutions possibles :
 
             // Pré-remplir le modal avec les données actuelles
             document.getElementById('new-food-name').value = food.name;
-            document.getElementById('new-food-name').disabled = true; // Pas de changement de nom
+            document.getElementById('new-food-name').disabled = false; // Permettre la modification du nom
             document.getElementById('new-food-unit').value = food.unit;
             document.getElementById('new-food-protein').value = food.protein;
             document.getElementById('new-food-carbs').value = food.carbs;
@@ -8266,6 +8479,20 @@ Solutions possibles :
             const food = foodDatabase.find(f => f.name === originalName);
             if (!food) return;
 
+            const newName = document.getElementById('new-food-name').value.trim();
+
+            if (!newName) {
+                showToast('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Le nom est obligatoire');
+                return;
+            }
+
+            // Vérifier si le nouveau nom existe déjà (sauf si c'est le même)
+            if (newName !== originalName && foodDatabase.some(f => f.name.toLowerCase() === newName.toLowerCase())) {
+                showToast('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Un aliment avec ce nom existe déjà');
+                return;
+            }
+
+            food.name = newName;
             food.unit = document.getElementById('new-food-unit').value.trim();
             food.protein = parseFloat(document.getElementById('new-food-protein').value) || 0;
             food.carbs = parseFloat(document.getElementById('new-food-carbs').value) || 0;
@@ -8294,7 +8521,7 @@ Solutions possibles :
 
             closeAddFoodModal();
             filterFoodDatabase();
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + originalName + ' modifié !');
+            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + newName + ' modifié !');
         }
 
         // ===== REPAS TYPES =====
@@ -9637,10 +9864,10 @@ Solutions possibles :
                 </ul>
 
                 <h3 style="color: var(--text-primary); font-size: 1.2rem; margin-top: var(--space-xl); margin-bottom: var(--space-md);">2. Utilisation des données</h3>
-                <p><strong style="color: var(--text-primary);">Aucune donnée n'est envoyée sur internet.</strong> Toutes tes informations restent stockées localement dans le localStorage de ton navigateur. L'application fonctionne entièrement hors ligne.</p>
+                <p>Par défaut, tes données sont stockées <strong style="color: var(--text-primary);">localement dans ton navigateur</strong> (localStorage). Si tu te connectes avec Google, elles sont également synchronisées sur <strong style="color: var(--text-primary);">Firebase Firestore</strong> (Google Cloud) pour te permettre de les retrouver sur tous tes appareils.</p>
 
                 <h3 style="color: var(--text-primary); font-size: 1.2rem; margin-top: var(--space-xl); margin-bottom: var(--space-md);">3. Partage des données</h3>
-                <p><strong style="color: var(--text-primary);">Aucune donnée n'est partagée avec des tiers.</strong> Il n'y a aucun serveur, aucune base de données externe, aucun tracking, aucune analyse.</p>
+                <p><strong style="color: var(--text-primary);">Aucune donnée n'est partagée avec des tiers.</strong> Aucun tracking, aucune analyse, aucune publicité. Les données cloud sont accessibles uniquement par toi via ton compte Google.</p>
 
                 <h3 style="color: var(--text-primary); font-size: 1.2rem; margin-top: var(--space-xl); margin-bottom: var(--space-md);">4. Sécurité</h3>
                 <p>Les données sont protégées par les mécanismes de sécurité du navigateur. Elles sont accessibles uniquement depuis ce domaine et ce navigateur.</p>
@@ -9680,7 +9907,7 @@ Solutions possibles :
                     Cette application stocke tes données de santé (poids, âge, activité physique, suivi nutritionnel) <strong style="color: var(--text-primary);">localement sur ton navigateur</strong> (localStorage).
                 </p>
                 <p style="margin-bottom: 10px;">
-                    <strong style="color: var(--text-primary);">Aucune donnée n'est envoyée sur internet.</strong> Tout reste sur ton appareil.
+                    <strong style="color: var(--text-primary);">Option cloud :</strong> Tu peux te connecter avec Google pour synchroniser tes données de manière sécurisée sur Firebase.
                 </p>
                 <p style="margin-bottom: 10px;">
                     En utilisant cet outil, tu consens au traitement local de ces données personnelles conformément au RGPD.
@@ -10585,23 +10812,114 @@ Solutions possibles :
         let isSyncing = false;
 
         // ===== UI UPDATE FUNCTIONS =====
+        function updateSyncBanner(user) {
+            const banner = document.getElementById('sync-status-banner');
+            const textEl = document.getElementById('sync-status-text');
+            const btn = banner?.querySelector('button');
+
+            if (!banner || !textEl) return;
+
+            if (user) {
+                // Connecté
+                banner.classList.add('sync-connected');
+                const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                const displayName = userProfile.firstName || user.displayName?.split(' ')[0] || 'Utilisateur';
+                textEl.textContent = `Synchronisé : ${displayName}`;
+                if (btn) btn.style.display = 'none';
+            } else {
+                // Non connecté
+                banner.classList.remove('sync-connected');
+                textEl.textContent = 'Mode Local : Données non sauvegardées';
+                if (btn) btn.style.display = 'inline-block';
+            }
+        }
+
         function updateFirebaseUI(user) {
             const notConnected = document.getElementById('firebase-not-connected');
             const connected = document.getElementById('firebase-connected');
 
-            if (user) {
-                notConnected.style.display = 'none';
-                connected.style.display = 'block';
+            // Mise à jour bannière
+            updateSyncBanner(user);
 
-                document.getElementById('firebase-user-photo').src = user.photoURL || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2310b981"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>';
-                document.getElementById('firebase-user-name').textContent = user.displayName || 'Utilisateur';
-                document.getElementById('firebase-user-email').textContent = user.email;
+            if (user) {
+                if (notConnected) notConnected.style.display = 'none';
+                if (connected) connected.style.display = 'block';
+
+                const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                const displayName = userProfile.firstName || user.displayName || 'Utilisateur';
+
+                if (document.getElementById('firebase-user-photo')) {
+                    document.getElementById('firebase-user-photo').src = user.photoURL || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2310b981"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>';
+                }
+                if (document.getElementById('firebase-user-name')) {
+                    document.getElementById('firebase-user-name').textContent = displayName;
+                }
+                if (document.getElementById('firebase-user-email')) {
+                    document.getElementById('firebase-user-email').textContent = user.email;
+                }
 
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             } else {
-                notConnected.style.display = 'block';
-                connected.style.display = 'none';
+                if (notConnected) notConnected.style.display = 'block';
+                if (connected) connected.style.display = 'none';
             }
+        }
+
+        // Fonction pour demander le prénom avant inscription
+        function askForFirstName() {
+            return new Promise((resolve) => {
+                if (typeof customPrompt === 'function') {
+                    // Utiliser le prompt personnalisé si disponible
+                    const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                    const existingName = userProfile.firstName || '';
+
+                    customPrompt('Bienvenue sur NutriTrack !', 'Entre ton prénom pour personnaliser ton expérience :', existingName || 'Ton prénom')
+                        .then(name => resolve(name));
+                } else {
+                    // Fallback vers prompt natif
+                    const name = prompt('Entre ton prénom pour personnaliser ton expérience :');
+                    resolve(name);
+                }
+            });
+        }
+
+        // Ajouter fonction customPrompt globale si elle n'existe pas
+        if (typeof window.customPrompt !== 'function') {
+            window.customPrompt = function(title, message, placeholder) {
+                return new Promise((resolve) => {
+                    // Créer modal temporaire
+                    const modal = document.createElement('div');
+                    modal.className = 'modal active';
+                    modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 10001;';
+                    modal.innerHTML = `
+                        <div style="background: var(--bg-secondary); border-radius: 16px; padding: 24px; max-width: 400px; width: 90%; text-align: center;">
+                            <h3 style="margin: 0 0 8px 0; color: var(--text-primary); font-size: 1.3rem;">${title}</h3>
+                            <p style="margin: 0 0 20px 0; color: var(--text-secondary); font-size: 0.95rem;">${message}</p>
+                            <input type="text" id="prompt-input" placeholder="${placeholder || ''}"
+                                style="width: 100%; padding: 12px 16px; background: var(--bg-tertiary); border: 2px solid var(--accent-main); border-radius: 8px; color: var(--text-primary); font-size: 1rem; margin-bottom: 16px; text-align: center;"
+                                maxlength="20">
+                            <div style="display: flex; gap: 12px;">
+                                <button id="prompt-cancel" style="flex: 1; padding: 12px; background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text-secondary); cursor: pointer;">Annuler</button>
+                                <button id="prompt-confirm" style="flex: 1; padding: 12px; background: var(--accent-main); border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Confirmer</button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+
+                    const input = modal.querySelector('#prompt-input');
+                    input.focus();
+
+                    const cleanup = (value) => {
+                        modal.remove();
+                        resolve(value);
+                    };
+
+                    modal.querySelector('#prompt-confirm').onclick = () => cleanup(input.value.trim());
+                    modal.querySelector('#prompt-cancel').onclick = () => cleanup(null);
+                    input.onkeypress = (e) => { if (e.key === 'Enter') cleanup(input.value.trim()); };
+                    modal.onclick = (e) => { if (e.target === modal) cleanup(null); };
+                });
+            };
         }
 
         function updateSyncStatus(message) {
@@ -10710,8 +11028,28 @@ Solutions possibles :
         // ===== AUTH FUNCTIONS (exposed globally) =====
         window.firebaseSignIn = async function() {
             try {
+                // D'abord demander le prénom
+                const firstName = await askForFirstName();
+                if (!firstName) {
+                    if (typeof showToast === 'function') {
+                        showToast('<i data-lucide="info" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Inscription annulée');
+                    }
+                    return;
+                }
+
+                // Sauvegarder le prénom dans userProfile
+                const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                userProfile.firstName = firstName;
+                localStorage.setItem('userProfile', JSON.stringify(userProfile));
+
+                // Maintenant connexion Google
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
+
+                // Mettre à jour l'affichage du nom d'utilisateur
+                if (typeof updateUsernameDisplay === 'function') {
+                    updateUsernameDisplay();
+                }
 
                 // Check if cloud data exists
                 const cloudData = await loadFromFirestore(user);
