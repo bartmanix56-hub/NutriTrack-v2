@@ -1681,6 +1681,8 @@
             padding: var(--space-2xl) var(--space-2xl) var(--space-lg);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             flex-shrink: 0;
+            position: relative;
+            z-index: 10;
         }
 
         .modal-body {
@@ -1730,6 +1732,8 @@
             align-items: center;
             justify-content: center;
             transition: var(--transition-normal);
+            z-index: 100;
+            pointer-events: auto;
         }
 
         .modal-close:hover {
@@ -2692,7 +2696,7 @@
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
                                 <i data-lucide="trending-down" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Déficit calorique (%)
                             </label>
-                            <input type="number" id="deficit" onblur="tryAutoCalculate()" placeholder="ex: 18" min="10" max="30" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            <input type="number" id="deficit" placeholder="ex: 18" min="10" max="30" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                             <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 15-25% • Minimum : 10%</p>
                         </div>
 
@@ -2700,7 +2704,7 @@
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
                                 <i data-lucide="beef" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Protéines (g/kg)
                             </label>
-                            <input type="number" id="proteinCoeff" onblur="tryAutoCalculate()" placeholder="ex: 2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            <input type="number" id="proteinCoeff" placeholder="ex: 2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                             <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 1.8-2.2 g/kg • Minimum : 1.5 g/kg</p>
                         </div>
 
@@ -2708,7 +2712,7 @@
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
                                 <i data-lucide="droplet" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Lipides (g/kg)
                             </label>
-                            <input type="number" id="fatCoeff" placeholder="ex: 0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'cut')" onblur="tryAutoCalculate()" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            <input type="number" id="fatCoeff" placeholder="ex: 0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'cut')" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                             <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 0.8-1.0 g/kg • Minimum : 0.6 g/kg</p>
                             <div id="fat-warning-cut" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(255, 230, 109, 0.1); border-left: 3px solid var(--accent-fat); border-radius: var(--radius-sm);">
                                 <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Attention</div>
@@ -2730,7 +2734,7 @@
                                 <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
                                     <i data-lucide="trending-up" style="width: 18px; height: 18px; color: var(--accent-main);"></i> Surplus calorique (%)
                                 </label>
-                                <input type="number" id="surplus" onblur="tryAutoCalculate()" placeholder="ex: 8" min="5" max="15" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <input type="number" id="surplus" placeholder="ex: 8" min="5" max="15" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                                 <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 5-10% • Minimum : 5%</p>
                             </div>
 
@@ -2738,7 +2742,7 @@
                                 <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
                                     <i data-lucide="beef" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Protéines (g/kg)
                                 </label>
-                                <input type="number" id="proteinCoeffBulk" onblur="tryAutoCalculate()" placeholder="ex: 2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <input type="number" id="proteinCoeffBulk" placeholder="ex: 2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                                 <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 1.8-2.2 g/kg • Minimum : 1.5 g/kg</p>
                             </div>
 
@@ -2746,7 +2750,7 @@
                                 <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
                                     <i data-lucide="droplet" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Lipides (g/kg)
                                 </label>
-                                <input type="number" id="fatCoeffBulk" placeholder="ex: 0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'bulk')" onblur="tryAutoCalculate()" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <input type="number" id="fatCoeffBulk" placeholder="ex: 0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'bulk')" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                                 <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 0.8-1.0 g/kg • Minimum : 0.6 g/kg</p>
                                 <div id="fat-warning-bulk" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(255, 230, 109, 0.1); border-left: 3px solid var(--accent-fat); border-radius: var(--radius-sm);">
                                     <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Attention</div>
@@ -3133,9 +3137,17 @@
                                 <span id="day-fat-progress">0 / 0g</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill fat" id="day-fat-bar" style="width: 0%"></div></div></div></div>
+                                <div class="progress-fill fat" id="day-fat-bar" style="width: 0%"></div></div></div>
 
-                    <div class="summary-grid">
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="color: var(--text-primary); font-weight: 600;">Calories</span>
+                                <span id="day-cal-progress">0 / 0 kcal</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="day-cal-bar" style="width: 0%; background: rgba(255, 255, 255, 0.9);"></div></div></div></div>
+
+                    <div class="summary-grid" style="grid-template-columns: repeat(5, 1fr);">
                         <div class="summary-card protein-card">
                             <div class="summary-label">Protéines</div>
                             <div class="summary-value" id="day-protein">0</div>
@@ -3147,6 +3159,10 @@
                         <div class="summary-card fat-card">
                             <div class="summary-label">Lipides</div>
                             <div class="summary-value" id="day-fat">0</div>
+                            <div class="summary-label">g</div></div>
+                        <div class="summary-card" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);">
+                            <div class="summary-label" style="color: var(--text-secondary);">Fibres</div>
+                            <div class="summary-value" id="day-fiber" style="color: var(--text-primary);">0</div>
                             <div class="summary-label">g</div></div>
                         <div class="summary-card total-card">
                             <div class="summary-label">Total</div>
@@ -4127,6 +4143,68 @@
                                 <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Format JSON incluant repas, aliments, suivis et paramètres</span>
                             </div></div></div>
 
+                    <!-- Synchronisation Cloud -->
+                    <div class="card" id="firebase-sync-card">
+                        <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
+                            <i data-lucide="cloud" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
+                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0;">Sync Cloud</h3>
+                        </div>
+
+                        <div id="firebase-not-connected" style="margin-bottom: var(--space-lg);">
+                            <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 var(--space-lg) 0;">
+                                Connecte-toi avec Google pour synchroniser tes données sur tous tes appareils.
+                            </p>
+                            <button id="google-signin-btn" onclick="firebaseSignIn()" class="btn" style="width: 100%; background: #4285F4; color: white; display: flex; align-items: center; justify-content: center; gap: var(--space-sm); font-weight: 700;">
+                                <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#fff"/>
+                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#fff"/>
+                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#fff"/>
+                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#fff"/>
+                                </svg>
+                                Connexion avec Google
+                            </button>
+                        </div>
+
+                        <div id="firebase-connected" style="display: none;">
+                            <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-lg); background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); margin-bottom: var(--space-lg);">
+                                <img id="firebase-user-photo" src="" alt="Photo" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--accent-main);">
+                                <div style="flex: 1;">
+                                    <div id="firebase-user-name" style="font-weight: 700; font-size: 1rem; color: var(--text-primary);"></div>
+                                    <div id="firebase-user-email" style="font-size: 0.85rem; color: var(--text-secondary);"></div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: var(--space-xs); color: var(--accent-main);">
+                                    <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i>
+                                    <span style="font-size: 0.85rem; font-weight: 600;">Sync</span>
+                                </div>
+                            </div>
+
+                            <div id="firebase-sync-status" style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: var(--space-lg); text-align: center;">
+                                Dernière sync: jamais
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-bottom: var(--space-md);">
+                                <button onclick="firebaseForceSync()" class="btn" style="background: var(--accent-ui); color: white; display: flex; align-items: center; justify-content: center; gap: var(--space-xs);">
+                                    <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i>
+                                    Sync maintenant
+                                </button>
+                                <button onclick="firebaseRestoreFromCloud()" class="btn" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; gap: var(--space-xs);">
+                                    <i data-lucide="download-cloud" style="width: 16px; height: 16px;"></i>
+                                    Restaurer
+                                </button>
+                            </div>
+
+                            <button onclick="firebaseSignOut()" class="btn" style="width: 100%; background: transparent; color: var(--accent-danger); border: 1px solid var(--accent-danger); display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
+                                <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
+                                Déconnexion
+                            </button>
+                        </div>
+
+                        <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(5, 150, 105, 0.1); border-radius: var(--radius-md); border-left: 3px solid var(--accent-ui);">
+                            <div style="display: flex; align-items: start; gap: var(--space-sm);">
+                                <i data-lucide="shield-check" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 2px;"></i>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Tes données sont chiffrées et stockées de manière sécurisée</span>
+                            </div></div></div>
+
                     <!-- Préférences -->
                     <div class="card">
                         <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
@@ -4854,6 +4932,11 @@
                     <div class="input-group">
                         <label>Lipides (g) *</label>
                         <input type="number" id="new-food-fat" inputmode="decimal" pattern="[0-9]*" step="0.1" min="0" placeholder="Ex: 5">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Fibres (g)</label>
+                        <input type="number" id="new-food-fiber" inputmode="decimal" pattern="[0-9]*" step="0.1" min="0" placeholder="Facultatif">
                     </div>
 
                     <div class="input-group">
@@ -6102,7 +6185,7 @@ Solutions possibles :
         }
 
         function updateDayTotals() {
-            let totals = { protein: 0, carbs: 0, fat: 0, calories: 0 };
+            let totals = { protein: 0, carbs: 0, fat: 0, fiber: 0, calories: 0 };
 
             Object.keys(dailyMeals).forEach(mealType => {
                 const foods = dailyMeals[mealType].foods || [];
@@ -6111,6 +6194,7 @@ Solutions possibles :
                     totals.protein += food.protein * multiplier;
                     totals.carbs += food.carbs * multiplier;
                     totals.fat += food.fat * multiplier;
+                    totals.fiber += (food.fiber || 0) * multiplier;
                     totals.calories += food.calories * multiplier;
                 });
             });
@@ -6118,6 +6202,7 @@ Solutions possibles :
             document.getElementById('day-protein').textContent = totals.protein.toFixed(1);
             document.getElementById('day-carbs').textContent = totals.carbs.toFixed(1);
             document.getElementById('day-fat').textContent = totals.fat.toFixed(1);
+            document.getElementById('day-fiber').textContent = totals.fiber.toFixed(1);
             document.getElementById('day-total').textContent = Math.round(totals.calories);
 
             // Mettre à jour les badges
@@ -6179,16 +6264,17 @@ Solutions possibles :
         // Feedback émotionnel journalier
         function updateDailyFeedback(totals) {
             const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const feedbackEl = document.getElementById('daily-feedback');
 
-            if (!targets.calories) {
-                document.getElementById('daily-feedback').style.display = 'none';
+            // Ne pas afficher si pas de cibles ou si aucun aliment ajouté
+            if (!targets.calories || totals.calories === 0) {
+                feedbackEl.style.display = 'none';
                 return;
             }
 
             const calPct = (totals.calories / targets.calories) * 100;
             const protPct = (totals.protein / targets.protein) * 100;
 
-            const feedbackEl = document.getElementById('daily-feedback');
             const emojiEl = document.getElementById('feedback-emoji');
             const messageEl = document.getElementById('feedback-message');
 
@@ -7123,6 +7209,7 @@ Solutions possibles :
             document.getElementById('new-food-protein').value = '';
             document.getElementById('new-food-carbs').value = '';
             document.getElementById('new-food-fat').value = '';
+            document.getElementById('new-food-fiber').value = '';
             document.getElementById('new-food-calories').value = '';
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
@@ -7134,6 +7221,7 @@ Solutions possibles :
             const protein = parseFloat(document.getElementById('new-food-protein').value) || 0;
             const carbs = parseFloat(document.getElementById('new-food-carbs').value) || 0;
             const fat = parseFloat(document.getElementById('new-food-fat').value) || 0;
+            const fiber = parseFloat(document.getElementById('new-food-fiber').value) || 0;
             let calories = parseFloat(document.getElementById('new-food-calories').value);
 
             if (!name) {
@@ -7151,7 +7239,7 @@ Solutions possibles :
             if (!calories || calories === 0)  { calories = Math.round(protein * 4 + carbs * 4 + fat * 9); }
 
             // Unit is always 100g
-            const newFood = { name, unit: '100g', protein, carbs, fat, calories, category, custom: true };
+            const newFood = { name, unit: '100g', protein, carbs, fat, fiber, calories, category, custom: true };
 
             customFoods.push(newFood);
             foodDatabase.push(newFood);
@@ -7362,6 +7450,7 @@ Solutions possibles :
             document.getElementById('new-food-protein').value = food.protein;
             document.getElementById('new-food-carbs').value = food.carbs;
             document.getElementById('new-food-fat').value = food.fat;
+            document.getElementById('new-food-fiber').value = food.fiber || 0;
             document.getElementById('new-food-calories').value = food.calories;
 
             // Change modal title and button
@@ -7386,6 +7475,7 @@ Solutions possibles :
             const protein = parseFloat(document.getElementById('new-food-protein').value) || 0;
             const carbs = parseFloat(document.getElementById('new-food-carbs').value) || 0;
             const fat = parseFloat(document.getElementById('new-food-fat').value) || 0;
+            const fiber = parseFloat(document.getElementById('new-food-fiber').value) || 0;
 
             let calories = parseFloat(document.getElementById('new-food-calories').value);
             if (!calories || calories === 0) { calories = Math.round(protein * 4 + carbs * 4 + fat * 9); }
@@ -7399,6 +7489,7 @@ Solutions possibles :
                     protein,
                     carbs,
                     fat,
+                    fiber,
                     calories
                 };
                 localStorage.setItem('customFoods', JSON.stringify(customFoods));
@@ -7586,24 +7677,28 @@ Solutions possibles :
             updateProgressBars(); };
 
         function updateProgressBars() {
-            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{"protein":0,"carbs":0,"fat":0}');
+            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{"protein":0,"carbs":0,"fat":0,"calories":0}');
 
             if (targets.protein > 0) {
                 const pVal = parseFloat(document.getElementById('day-protein').textContent);
                 const cVal = parseFloat(document.getElementById('day-carbs').textContent);
                 const fVal = parseFloat(document.getElementById('day-fat').textContent);
+                const calVal = parseFloat(document.getElementById('day-total').textContent);
 
                 const pProg = Math.min((pVal / targets.protein) * 100, 100);
                 const cProg = Math.min((cVal / targets.carbs) * 100, 100);
                 const fProg = Math.min((fVal / targets.fat) * 100, 100);
+                const calProg = targets.calories > 0 ? Math.min((calVal / targets.calories) * 100, 100) : 0;
 
                 document.getElementById('day-protein-bar').style.width = pProg + '%';
                 document.getElementById('day-carbs-bar').style.width = cProg + '%';
                 document.getElementById('day-fat-bar').style.width = fProg + '%';
+                document.getElementById('day-cal-bar').style.width = calProg + '%';
 
                 document.getElementById('day-protein-progress').textContent = pVal.toFixed(0) + ' / ' + targets.protein + 'g';
                 document.getElementById('day-carbs-progress').textContent = cVal.toFixed(0) + ' / ' + targets.carbs + 'g';
                 document.getElementById('day-fat-progress').textContent = fVal.toFixed(0) + ' / ' + targets.fat + 'g';
+                document.getElementById('day-cal-progress').textContent = calVal.toFixed(0) + ' / ' + (targets.calories || 0) + ' kcal';
             }
         }
 
@@ -8153,6 +8248,7 @@ Solutions possibles :
             document.getElementById('new-food-protein').value = food.protein;
             document.getElementById('new-food-carbs').value = food.carbs;
             document.getElementById('new-food-fat').value = food.fat;
+            document.getElementById('new-food-fiber').value = food.fiber || 0;
             document.getElementById('new-food-calories').value = food.calories;
 
             // Changer le bouton
@@ -8174,6 +8270,7 @@ Solutions possibles :
             food.protein = parseFloat(document.getElementById('new-food-protein').value) || 0;
             food.carbs = parseFloat(document.getElementById('new-food-carbs').value) || 0;
             food.fat = parseFloat(document.getElementById('new-food-fat').value) || 0;
+            food.fiber = parseFloat(document.getElementById('new-food-fiber').value) || 0;
 
             let calories = parseFloat(document.getElementById('new-food-calories').value);
             if (!calories || calories === 0) { calories = Math.round(food.protein * 4 + food.carbs * 4 + food.fat * 9); }
@@ -10456,6 +10553,297 @@ Solutions possibles :
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(updateStreakDisplay, 500);
         });
+    </script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // ===== FIREBASE CONFIGURATION =====
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCL2SvQ2c784ZyA2Pr-Qtv2F1wnnDByGkc",
+            authDomain: "nutritraack.firebaseapp.com",
+            projectId: "nutritraack",
+            storageBucket: "nutritraack.firebasestorage.app",
+            messagingSenderId: "133692710812",
+            appId: "1:133692710812:web:4a5937cea6e86c9b25b259"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        // Keys to sync with Firestore
+        const SYNC_KEYS = ['userProfile', 'foodLog', 'customFoods'];
+
+        // Debounce timer for sync
+        let syncTimeout = null;
+        let isSyncing = false;
+
+        // ===== UI UPDATE FUNCTIONS =====
+        function updateFirebaseUI(user) {
+            const notConnected = document.getElementById('firebase-not-connected');
+            const connected = document.getElementById('firebase-connected');
+
+            if (user) {
+                notConnected.style.display = 'none';
+                connected.style.display = 'block';
+
+                document.getElementById('firebase-user-photo').src = user.photoURL || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2310b981"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>';
+                document.getElementById('firebase-user-name').textContent = user.displayName || 'Utilisateur';
+                document.getElementById('firebase-user-email').textContent = user.email;
+
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            } else {
+                notConnected.style.display = 'block';
+                connected.style.display = 'none';
+            }
+        }
+
+        function updateSyncStatus(message) {
+            const statusEl = document.getElementById('firebase-sync-status');
+            if (statusEl) {
+                statusEl.textContent = message;
+            }
+        }
+
+        // ===== FIRESTORE SYNC FUNCTIONS =====
+        async function syncToFirestore(user) {
+            if (!user || isSyncing) return;
+            isSyncing = true;
+
+            try {
+                const data = {};
+                SYNC_KEYS.forEach(key => {
+                    const value = localStorage.getItem(key);
+                    if (value) {
+                        data[key] = value;
+                    }
+                });
+
+                // Add additional keys that might be useful
+                const additionalKeys = ['macroTargets', 'allDailyMeals', 'trackingData', 'mealTemplates', 'weeklyPlan'];
+                additionalKeys.forEach(key => {
+                    const value = localStorage.getItem(key);
+                    if (value) {
+                        data[key] = value;
+                    }
+                });
+
+                data.lastSync = new Date().toISOString();
+
+                await setDoc(doc(db, 'users', user.uid), {
+                    ...data,
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+
+                const now = new Date().toLocaleString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                updateSyncStatus(`Dernière sync: ${now}`);
+
+            } catch (error) {
+                console.error('Erreur sync Firestore:', error);
+                updateSyncStatus('Erreur de synchronisation');
+            } finally {
+                isSyncing = false;
+            }
+        }
+
+        async function loadFromFirestore(user) {
+            if (!user) return null;
+
+            try {
+                const docRef = doc(db, 'users', user.uid);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    return docSnap.data();
+                }
+                return null;
+            } catch (error) {
+                console.error('Erreur lecture Firestore:', error);
+                return null;
+            }
+        }
+
+        function restoreDataFromCloud(cloudData) {
+            const allKeys = [...SYNC_KEYS, 'macroTargets', 'allDailyMeals', 'trackingData', 'mealTemplates', 'weeklyPlan'];
+
+            allKeys.forEach(key => {
+                if (cloudData[key]) {
+                    // Use original setItem to avoid triggering sync
+                    originalSetItem.call(localStorage, key, cloudData[key]);
+                }
+            });
+
+            // Reload page to apply restored data
+            if (typeof showToast === 'function') {
+                showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données restaurées depuis le cloud !', 'success');
+            }
+            setTimeout(() => location.reload(), 1500);
+        }
+
+        // ===== LOCALSTORAGE HOOK =====
+        const originalSetItem = localStorage.setItem.bind(localStorage);
+        const keysToWatch = [...SYNC_KEYS, 'macroTargets', 'allDailyMeals', 'trackingData', 'mealTemplates', 'weeklyPlan'];
+
+        localStorage.setItem = function(key, value) {
+            originalSetItem(key, value);
+
+            // If connected and key is in watch list, sync to Firestore with debounce
+            if (keysToWatch.includes(key) && auth.currentUser) {
+                clearTimeout(syncTimeout);
+                syncTimeout = setTimeout(() => {
+                    syncToFirestore(auth.currentUser);
+                }, 2000); // Debounce 2 seconds
+            }
+        };
+
+        // ===== AUTH FUNCTIONS (exposed globally) =====
+        window.firebaseSignIn = async function() {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+
+                // Check if cloud data exists
+                const cloudData = await loadFromFirestore(user);
+
+                if (cloudData && cloudData.lastSync) {
+                    // Cloud data exists - ask user what to do
+                    const hasLocalData = SYNC_KEYS.some(key => localStorage.getItem(key));
+
+                    if (hasLocalData) {
+                        // Both local and cloud data exist
+                        if (typeof customConfirm === 'function') {
+                            customConfirm(
+                                'Données trouvées dans le cloud',
+                                `Des données existent déjà sur ce compte (sync: ${new Date(cloudData.lastSync).toLocaleDateString('fr-FR')}). Veux-tu les restaurer et remplacer tes données locales ?`,
+                                true
+                            ).then((restore) => {
+                                if (restore) {
+                                    restoreDataFromCloud(cloudData);
+                                } else {
+                                    // Keep local data and sync to cloud
+                                    syncToFirestore(user);
+                                    if (typeof showToast === 'function') {
+                                        showToast('<i data-lucide="cloud-upload" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données locales envoyées vers le cloud');
+                                    }
+                                }
+                            });
+                        } else {
+                            // Fallback without custom confirm
+                            if (confirm(`Des données existent déjà sur ce compte. Voulez-vous les restaurer ?`)) {
+                                restoreDataFromCloud(cloudData);
+                            } else {
+                                syncToFirestore(user);
+                            }
+                        }
+                    } else {
+                        // No local data, restore from cloud
+                        restoreDataFromCloud(cloudData);
+                    }
+                } else {
+                    // No cloud data, upload local
+                    syncToFirestore(user);
+                    if (typeof showToast === 'function') {
+                        showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Connecté ! Tes données sont synchronisées.');
+                    }
+                }
+
+            } catch (error) {
+                console.error('Erreur connexion Google:', error);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Erreur de connexion');
+                }
+            }
+        };
+
+        window.firebaseSignOut = async function() {
+            try {
+                await signOut(auth);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="log-out" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Déconnecté');
+                }
+            } catch (error) {
+                console.error('Erreur déconnexion:', error);
+            }
+        };
+
+        window.firebaseForceSync = async function() {
+            if (auth.currentUser) {
+                updateSyncStatus('Synchronisation en cours...');
+                await syncToFirestore(auth.currentUser);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Synchronisation terminée !');
+                }
+            }
+        };
+
+        window.firebaseRestoreFromCloud = async function() {
+            if (!auth.currentUser) return;
+
+            const cloudData = await loadFromFirestore(auth.currentUser);
+            if (cloudData) {
+                if (typeof customConfirm === 'function') {
+                    customConfirm(
+                        'Restaurer depuis le cloud ?',
+                        'Tes données locales seront remplacées par celles du cloud. Cette action est irréversible.',
+                        true
+                    ).then((confirmed) => {
+                        if (confirmed) {
+                            restoreDataFromCloud(cloudData);
+                        }
+                    });
+                } else if (confirm('Tes données locales seront remplacées. Continuer ?')) {
+                    restoreDataFromCloud(cloudData);
+                }
+            } else {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="info" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Aucune donnée dans le cloud');
+                }
+            }
+        };
+
+        // ===== AUTH STATE LISTENER =====
+        onAuthStateChanged(auth, (user) => {
+            // Wait for DOM to be ready
+            const initUI = () => {
+                updateFirebaseUI(user);
+                if (user) {
+                    // Initial sync status
+                    loadFromFirestore(user).then(data => {
+                        if (data && data.lastSync) {
+                            const syncDate = new Date(data.lastSync).toLocaleString('fr-FR', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                            updateSyncStatus(`Dernière sync: ${syncDate}`);
+                        }
+                    });
+                }
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initUI);
+            } else {
+                // Small delay to ensure all elements are rendered
+                setTimeout(initUI, 100);
+            }
+        });
+
+        // Log initialization
+        console.log('🔥 Firebase NutriTrack initialisé');
     </script>
 </body>
 </html>
