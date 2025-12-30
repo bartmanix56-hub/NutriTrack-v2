@@ -1205,23 +1205,20 @@
                 border-radius: 8px !important;
             }
 
-            /* Cacher le texte long, montrer juste les flèches */
+            /* Boutons navigation semaine avec icônes */
             .week-nav-btn {
-                font-size: 0 !important;
+                font-size: 0.75rem !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 4px !important;
+                padding: 8px 12px !important;
             }
 
-            .week-nav-btn::before {
-                font-size: 0.9rem !important;
-            }
-
-            .week-selector > .week-nav-btn:first-child::before {
-                content: '← Semaine préc.' !important;
-                font-size: 0.8rem !important;
-            }
-
-            .week-selector > .week-nav-btn:last-child::before {
-                content: 'Semaine suiv. →' !important;
-                font-size: 0.8rem !important;
+            .week-nav-btn i,
+            .week-nav-btn svg {
+                width: 14px !important;
+                height: 14px !important;
+                flex-shrink: 0;
             }
 
             .week-nav-btn.this-week-btn {
@@ -1709,20 +1706,58 @@
                 height: 1.3em !important;
             }
 
-            /* Header mobile allégé : cacher username et thème */
+            /* ===== HEADER MOBILE PREMIUM ===== */
+            .app-header {
+                padding: var(--space-md) var(--space-md) var(--space-sm) !important;
+                position: relative !important;
+            }
+
+            /* Username visible mais réduit */
             .header-username {
-                display: none !important;
+                display: flex !important;
+                position: absolute !important;
+                top: 8px !important;
+                left: 12px !important;
+                min-width: auto !important;
+                height: auto !important;
+                padding: 4px 10px !important;
+                font-size: 0.75rem !important;
+                background: var(--bg-tertiary) !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+
+            /* Winstreak bien positionné (coin droit) */
+            #streak-display {
+                position: absolute !important;
+                top: 6px !important;
+                right: 12px !important;
+                left: auto !important;
+            }
+
+            #streak-display .streak-badge {
+                font-size: 0.75rem !important;
+                padding: 4px 10px !important;
             }
 
             .header-main-row {
-                justify-content: space-between !important;
-                padding: 0 4px !important;
+                flex-direction: column !important;
+                gap: var(--space-xs) !important;
+                padding-top: 28px !important; /* Espace pour username/streak */
             }
 
-            /* Garder sync indicator compact sur mobile */
+            /* Logo + NutriTrack centrés */
+            .header-title {
+                font-size: 1.4rem !important;
+                order: 1 !important;
+            }
+
+            /* Sync indicator sous le titre, centré */
             .header-right {
+                order: 2 !important;
                 min-width: auto !important;
-                gap: 4px !important;
+                justify-content: center !important;
+                width: 100% !important;
             }
 
             .header-right .header-btn {
@@ -1730,24 +1765,21 @@
             }
 
             #sync-indicator {
-                height: 28px !important;
+                height: 24px !important;
                 padding: 0 10px !important;
-                font-size: 0.7rem !important;
-                border-radius: 14px !important;
+                font-size: 0.65rem !important;
+                border-radius: 12px !important;
             }
 
             #sync-indicator .sync-dot {
-                width: 6px !important;
-                height: 6px !important;
+                width: 5px !important;
+                height: 5px !important;
             }
 
             .app-header .subtitle {
-                font-size: 0.8rem !important;
-                margin-top: 4px !important;
-            }
-
-            .header-title {
-                font-size: 1.3rem !important;
+                font-size: 0.75rem !important;
+                margin-top: 2px !important;
+                opacity: 0.8;
             }
 
             /* ===== FIX PROGRESS BARS - Afficher pourcentages ===== */
@@ -1797,24 +1829,28 @@
                 gap: var(--space-sm) !important;
             }
 
+            /* Masquer le titre redondant sur mobile */
             .date-navigation-title {
-                font-size: 1rem !important;
-                justify-content: center;
-                text-align: center;
+                display: none !important;
             }
 
             .date-navigation-controls {
-                display: grid !important;
-                grid-template-columns: 48px 1fr 48px !important;
-                grid-template-rows: auto auto !important;
-                gap: var(--space-sm) !important;
+                display: flex !important;
                 align-items: center;
+                justify-content: center;
+                gap: var(--space-sm) !important;
             }
 
             .date-navigation-center {
-                grid-column: 2;
-                grid-row: 1;
                 min-width: auto !important;
+                flex: 1;
+                text-align: center;
+            }
+
+            /* Date texte plus visible */
+            .date-navigation-center .current-date {
+                font-size: 1.1rem;
+                font-weight: 700;
             }
 
             .date-nav-btn {
@@ -1848,6 +1884,148 @@
 
             .current-date {
                 font-size: 1rem !important;
+            }
+
+            /* ===== PAGE REPAS TYPES - Mobile Premium ===== */
+            #meal-templates > div[style*="grid-template-columns: 1fr 1fr"] {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: var(--space-lg) !important;
+            }
+
+            #meal-templates .meal-card {
+                border-radius: var(--radius-lg) !important;
+            }
+
+            /* Form compact */
+            #meal-templates .input-group label {
+                font-size: 0.85rem !important;
+            }
+
+            #meal-templates input[type="text"],
+            #meal-templates textarea {
+                padding: var(--space-sm) var(--space-md) !important;
+                font-size: 0.9rem !important;
+            }
+
+            #meal-templates textarea {
+                min-height: 80px !important;
+            }
+
+            /* Templates list compact */
+            #meal-templates .card h2 {
+                font-size: 1.1rem !important;
+                margin-bottom: var(--space-sm) !important;
+            }
+
+            /* Bouton enregistrer */
+            #meal-templates .btn[onclick*="saveNewMealTemplate"] {
+                padding: var(--space-md) !important;
+                font-size: 0.9rem !important;
+            }
+
+            /* Macros grid dans templates */
+            #meal-templates div[style*="grid-template-columns: repeat(3, 1fr)"] {
+                padding: var(--space-sm) !important;
+                gap: var(--space-xs) !important;
+            }
+
+            /* ===== PAGE SUIVI - Mobile Premium ===== */
+            #tracking .card {
+                padding: var(--space-lg) !important;
+            }
+
+            #tracking h2 {
+                font-size: 1.1rem !important;
+            }
+
+            #tracking h3 {
+                font-size: 1.15rem !important;
+                margin-bottom: var(--space-md) !important;
+            }
+
+            /* Boutons de charts en grille */
+            #tracking-history > div[style*="display: flex"][style*="flex-wrap"] {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: var(--space-xs) !important;
+            }
+
+            #tracking-history .btn-secondary {
+                padding: var(--space-sm) var(--space-xs) !important;
+                font-size: 0.75rem !important;
+                white-space: nowrap;
+            }
+
+            /* Canvas chart plus compact */
+            #tracking-chart {
+                max-height: 250px !important;
+                padding: var(--space-md) !important;
+            }
+
+            /* Form inputs compact */
+            #tracking .grid-2 {
+                gap: var(--space-md) !important;
+            }
+
+            #tracking .input-group {
+                margin-bottom: var(--space-sm) !important;
+            }
+
+            #tracking .input-group label {
+                font-size: 0.85rem !important;
+                margin-bottom: var(--space-xs) !important;
+            }
+
+            #tracking .info-text {
+                font-size: 0.7rem !important;
+            }
+
+            /* ===== PAGE BASE D'ALIMENTS - Mobile Premium ===== */
+            #foods .card {
+                padding: var(--space-lg) !important;
+            }
+
+            /* Boutons filtres par catégorie en grille */
+            #foods > .card > div[style*="display: flex"][style*="flex-wrap: wrap"] {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: var(--space-xs) !important;
+            }
+
+            #foods .filter-btn {
+                padding: var(--space-xs) var(--space-sm) !important;
+                font-size: 0.7rem !important;
+                white-space: nowrap;
+                justify-content: center;
+            }
+
+            /* Cards aliments premium */
+            #foodDatabase .food-item {
+                background: var(--bg-tertiary) !important;
+                border-radius: var(--radius-lg) !important;
+                padding: var(--space-md) !important;
+                margin-bottom: var(--space-sm) !important;
+                border: 1px solid rgba(255,255,255,0.05) !important;
+            }
+
+            #foodDatabase .food-item .food-name {
+                font-weight: 600 !important;
+                margin-bottom: var(--space-xs) !important;
+            }
+
+            #foodDatabase .food-item .food-macros {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: var(--space-xs) !important;
+                padding: var(--space-sm) !important;
+                background: var(--bg-secondary) !important;
+                border-radius: var(--radius-md) !important;
+            }
+
+            #foodDatabase .food-item .food-macros span {
+                text-align: center !important;
+                font-size: 0.7rem !important;
             }
 
             /* ===== FIX BLUR OVERLAY Z-INDEX ===== */
@@ -4000,9 +4178,9 @@
 
             <div class="card">
                 <div class="week-selector">
-                    <button class="week-nav-btn" onclick="changeWeek(-1)">← Semaine précédente</button>
+                    <button class="week-nav-btn" onclick="changeWeek(-1)"><i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i> Semaine préc.</button>
                     <div class="current-week" id="current-week">Semaine du 15 Déc 2025</div>
-                    <button class="week-nav-btn" onclick="changeWeek(1)">Semaine suivante →</button>
+                    <button class="week-nav-btn" onclick="changeWeek(1)">Semaine suiv. <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i></button>
                 </div>
                 <div style="text-align: center; margin-bottom: var(--space-xl);">
                     <button class="week-nav-btn this-week-btn" onclick="goToCurrentWeek()">Cette semaine</button>
@@ -5663,12 +5841,16 @@
             <i data-lucide="download" style="width: 22px; height: 22px;"></i>
             Installer l'application
         </button>
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 16px;">
-            <a href="#" onclick="switchToTab('privacy'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;">Confidentialité</a>
-            <a href="#" onclick="switchToTab('terms'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;">CGU</a>
-            <a href="#" onclick="switchToTab('legal'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;">Mentions légales</a>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 12px;">
+            <a href="#" onclick="switchToTab('about'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;">À propos</a>
+            <a href="#" onclick="switchToTab('health-warning'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;">Santé</a>
+            <a href="#" onclick="switchToTab('privacy'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;">Confidentialité</a>
         </div>
-        <p style="color: var(--text-muted); font-size: 0.75rem; margin: 0;">© 2025 NutriTrack • v3.0</p>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 16px;">
+            <a href="#" onclick="switchToTab('terms'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;">CGU</a>
+            <a href="#" onclick="switchToTab('legal'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;">Mentions légales</a>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.7rem; margin: 0;">© 2025 NutriTrack • v3.0</p>
     </footer>
 
     <!-- Food Search Modal -->
@@ -5811,11 +5993,11 @@
         function showInstallButton() {
             const installCard = document.getElementById('pwa-install-card');
             const landingInstallBtn = document.getElementById('landing-install-btn');
-            const footerInstallBtn = document.getElementById('footer-install-btn');
             const drawerInstallBtn = document.getElementById('drawer-install-btn');
+            // Afficher uniquement dans: Settings, Landing page, et Menu Plus (drawer)
+            // Footer désactivé pour éviter l'intrusion
             if (installCard) installCard.style.display = 'block';
             if (landingInstallBtn) landingInstallBtn.style.display = 'inline-flex';
-            if (footerInstallBtn) footerInstallBtn.style.display = 'flex';
             if (drawerInstallBtn) drawerInstallBtn.style.display = 'flex';
         }
 
@@ -5961,7 +6143,7 @@
             const tabContent = document.getElementById(tab);
             if (tabContent)  { tabContent.classList.add('active'); }
 
-            if (tab === 'planner')  { renderWeeklyPlan(); } else if (tab === 'tracking')  { renderTrackingList(); } else if (tab === 'meal-templates')  { renderMealTemplatesList(); }
+            if (tab === 'planner')  { renderWeeklyPlan(); } else if (tab === 'tracking')  { renderTrackingList(); } else if (tab === 'meal-templates')  { renderMealTemplatesList(); } else if (tab === 'settings')  { if (typeof updateSettingsStats === 'function') updateSettingsStats(); }
 
             // Scroll to top
             window.scrollTo({top: 0, behavior: 'smooth'});
@@ -8708,6 +8890,14 @@ Solutions possibles :
             // Supprimer ancienne entrée de cette date
             trackingData = trackingData.filter(e => e.date !== date);
 
+            // Calculer l'IMC automatiquement si poids et taille disponibles
+            let imc = null;
+            const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+            if (weight && profile.height) {
+                const heightM = profile.height / 100;
+                imc = parseFloat((weight / (heightM * heightM)).toFixed(1));
+            }
+
             // Ajouter nouvelle entrée
             trackingData.push({
                 date,
@@ -8719,6 +8909,7 @@ Solutions possibles :
                 water: water || null,
                 bodyAge: bodyAge || null,
                 visceral: visceral || null,
+                imc: imc,
                 notes: notes || ''
             });
 
@@ -10159,11 +10350,18 @@ Solutions possibles :
 
             // Filter data that has the requested metric
             const validData = advancedTrackingData.filter(entry => {
-                if (type === 'weight') return entry.weight != null;
-                if (type === 'bodyFat') return entry.bodyFat != null;
-                if (type === 'muscleMass') return entry.muscleMass != null;
-                if (type === 'photos') return entry.photos && entry.photos.length > 0;
-                return false;
+                switch(type) {
+                    case 'weight': return entry.weight != null && entry.weight > 0;
+                    case 'bodyfat': return entry.bodyfat != null && entry.bodyfat > 0;
+                    case 'muscle': return entry.muscle != null && entry.muscle > 0;
+                    case 'imc': return entry.imc != null && entry.imc > 0;
+                    case 'water': return entry.water != null && entry.water > 0;
+                    case 'bone': return entry.bone != null && entry.bone > 0;
+                    case 'proteinPct': return entry.proteinPct != null && entry.proteinPct > 0;
+                    case 'bodyAge': return entry.bodyAge != null && entry.bodyAge > 0;
+                    case 'visceral': return entry.visceral != null && entry.visceral > 0;
+                    default: return false;
+                }
             });
 
             if (validData.length < 2) {
