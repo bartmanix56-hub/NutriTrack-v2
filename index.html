@@ -1456,51 +1456,55 @@
             }
 
             /* ===== FIX HEADER MOBILE ===== */
-            header > div[style*="position: absolute"] {
-                position: relative !important;
-                top: auto !important;
-                right: auto !important;
-                justify-content: center !important;
-                flex-wrap: wrap !important;
-                gap: 6px !important;
-                margin-bottom: var(--space-sm);
+            .app-header {
+                padding: var(--space-md) var(--space-sm) !important;
             }
 
-            /* Uniformiser la taille des éléments du header */
-            #sync-indicator {
-                order: 1;
-                height: 36px !important;
-                padding: 0 10px !important;
-                font-size: 0.75rem !important;
-                display: flex !important;
-                align-items: center !important;
+            .header-main-row {
+                gap: var(--space-md) !important;
             }
 
-            header button[onclick*="toggleTheme"] {
+            .header-btn {
                 width: 36px !important;
                 height: 36px !important;
-                padding: 0 !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
             }
 
-            header button[onclick*="toggleTheme"] i {
+            .header-btn i {
                 width: 18px !important;
                 height: 18px !important;
             }
 
-            #username-display {
-                order: 2;
+            .header-title {
+                font-size: 1.3rem !important;
+            }
+
+            .header-logo {
+                height: 1.3em !important;
+            }
+
+            .header-username {
                 height: 36px !important;
-                padding: 0 12px !important;
+                padding: 0 var(--space-md) !important;
                 font-size: 0.8rem !important;
-                max-width: 140px;
+                max-width: 110px;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-                display: flex !important;
-                align-items: center !important;
+            }
+
+            .header-subtitle-row {
+                flex-direction: column;
+                gap: var(--space-sm) !important;
+            }
+
+            .header-subtitle-row .subtitle {
+                font-size: 0.85rem !important;
+            }
+
+            #sync-indicator {
+                height: 28px !important;
+                padding: 0 10px !important;
+                font-size: 0.7rem !important;
             }
 
             /* ===== FIX PROGRESS BARS - Afficher pourcentages ===== */
@@ -1545,15 +1549,62 @@
                 gap: var(--space-sm) !important;
             }
 
-            .date-nav-btn {
-                padding: 8px 12px !important;
-                font-size: 0.85rem !important;
+            /* ===== MOBILE DATE NAVIGATION ===== */
+            .date-navigation-wrapper {
+                gap: var(--space-sm) !important;
+            }
+
+            .date-navigation-title {
+                font-size: 1rem !important;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .date-navigation-controls {
+                display: grid !important;
+                grid-template-columns: 48px 1fr 48px !important;
+                grid-template-rows: auto auto !important;
+                gap: var(--space-sm) !important;
+                align-items: center;
+            }
+
+            .date-navigation-center {
+                grid-column: 2;
+                grid-row: 1;
                 min-width: auto !important;
             }
 
-            .date-nav-btn[onclick*="goToToday"] {
+            .date-nav-btn {
+                width: 48px !important;
+                height: 48px !important;
+                padding: 0 !important;
+                border-radius: var(--radius-lg) !important;
+            }
+
+            .date-nav-btn:first-child {
+                grid-column: 1;
+                grid-row: 1;
+            }
+
+            .date-nav-btn:nth-child(3) {
+                grid-column: 3;
+                grid-row: 1;
+            }
+
+            .date-today-btn {
+                grid-column: 1 / -1 !important;
+                grid-row: 2 !important;
                 width: 100% !important;
-                margin-top: var(--space-xs) !important;
+                height: 44px !important;
+                font-size: 0.95rem !important;
+            }
+
+            .today-btn-text {
+                display: inline !important;
+            }
+
+            .current-date {
+                font-size: 1rem !important;
             }
 
             /* ===== FIX BLUR OVERLAY Z-INDEX ===== */
@@ -2064,6 +2115,57 @@
 
         .date-nav-btn:active {
             transform: scale(0.98);
+        }
+
+        /* ===== DATE NAVIGATION WRAPPER ===== */
+        .date-navigation-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .date-navigation-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin: 0;
+        }
+
+        .date-navigation-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            flex-wrap: wrap;
+        }
+
+        .date-navigation-center {
+            text-align: center;
+            min-width: 180px;
+            flex: 1;
+        }
+
+        .date-nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+        }
+
+        .date-today-btn {
+            background: var(--accent-ui);
+            color: white;
+            font-weight: 700;
+            border-color: var(--accent-ui);
+        }
+
+        .date-today-btn:hover {
+            background: var(--accent-main);
+            border-color: var(--accent-main);
+            color: white;
         }
 
         .current-date {
@@ -2776,21 +2878,116 @@
             #sync-indicator.connected .sync-dot {
                 animation: none;
             }
+
+            /* ===== NEW HEADER LAYOUT ===== */
+            .app-header {
+                text-align: center;
+                padding: var(--space-xl) var(--space-lg);
+            }
+
+            .header-main-row {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: var(--space-xl);
+                margin-bottom: var(--space-sm);
+            }
+
+            .header-btn {
+                width: 44px;
+                height: 44px;
+                background: var(--bg-secondary);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: var(--radius-full);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+                box-shadow: var(--shadow-sm);
+                color: var(--text-primary);
+            }
+
+            .header-btn:hover {
+                background: var(--bg-tertiary);
+                border-color: var(--accent-main);
+            }
+
+            .header-title {
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: var(--text-primary);
+                display: flex;
+                align-items: center;
+                gap: var(--space-sm);
+                margin: 0;
+            }
+
+            .header-logo {
+                height: 1.6em;
+                width: auto;
+            }
+
+            .header-logo-fallback {
+                display: none;
+                width: 1.6em;
+                height: 1.6em;
+                background: var(--accent-main);
+                border-radius: 8px;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .header-username {
+                min-width: 44px;
+                height: 44px;
+                background: var(--bg-secondary);
+                padding: 0 var(--space-xl);
+                border-radius: var(--radius-full);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: var(--text-primary);
+                font-size: 0.95rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: var(--space-sm);
+                box-shadow: var(--shadow-sm);
+            }
+
+            .header-subtitle-row {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: var(--space-lg);
+                flex-wrap: wrap;
+            }
+
+            .header-subtitle-row .subtitle {
+                margin: 0;
+            }
         </style>
 
-        <header style="position: relative;">
-            <div style="position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: var(--space-md);">
-                <!-- Sync indicator discret -->
+        <header class="app-header">
+            <!-- Ligne principale: Switch | NutriTrack | Prénom -->
+            <div class="header-main-row">
+                <button class="header-btn" onclick="toggleTheme()" title="Changer le thème">
+                    <i data-lucide="moon" id="theme-icon" style="width: 20px; height: 20px;"></i>
+                </button>
+                <h1 class="header-title">
+                    <img src="logo.svg" alt="Logo" class="header-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+                    <span class="header-logo-fallback"><i data-lucide="target" style="width: 1em; height: 1em; color: white;"></i></span>
+                    NutriTrack
+                </h1>
+                <div id="username-display" class="header-username"></div>
+            </div>
+            <!-- Sous-titre avec sync indicator -->
+            <div class="header-subtitle-row">
+                <p class="subtitle">Prends le contrôle de ton alimentation</p>
                 <div id="sync-indicator" onclick="switchToTab('settings')" title="Statut de synchronisation">
                     <span class="sync-dot"></span>
                     <span id="sync-indicator-text">Local</span>
                 </div>
-                <button onclick="toggleTheme()" title="Changer le thème" style="background: var(--bg-secondary); padding: var(--space-sm); border-radius: var(--radius-full); border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: var(--shadow-sm);">
-                    <i data-lucide="moon" id="theme-icon" style="width: 20px; height: 20px;"></i>
-                </button>
-                <div id="username-display" style="background: var(--bg-secondary); padding: var(--space-md) var(--space-xl); border-radius: var(--radius-full); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-primary); font-size: 1.05rem; display: flex; align-items: center; gap: var(--space-sm); box-shadow: var(--shadow-sm);"></div></div>
-            <h1><img src="logo.svg" alt="Logo" style="height: 1.6em; width: auto; vertical-align: middle; margin-right: 0.5em;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><span style="display: none; width: 1.6em; height: 1.6em; background: var(--accent-main); border-radius: 8px; align-items: center; justify-content: center; vertical-align: middle; margin-right: 0.5em;"><i data-lucide="target" style="width: 1em; height: 1em; color: white;"></i></span> NutriTrack</h1>
-            <p class="subtitle">Prends le contrôle de ton alimentation</p>
+            </div>
         </header>
 
         <!-- App Layout with Sidebar -->
@@ -3211,21 +3408,30 @@
                     </div></div></div>
 
             <!-- Navigation de date -->
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2xl);">
-                <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);"><i data-lucide="calendar" style="width: 22px; height: 22px;"></i><span>Journée du <span id="meal-header-date"></span></span></h2>
-                <div style="display: flex; align-items: center; gap: var(--space-md);">
-                    <button class="date-nav-btn" onclick="changeMealDate(-1)" title="Jour précédent">←</button>
-                    <div style="text-align: center; min-width: 200px;">
-                        <div class="current-date" id="meal-current-date" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">
+            <div class="date-navigation-wrapper">
+                <!-- Ligne 1: Titre de la journée -->
+                <h2 class="date-navigation-title"><i data-lucide="calendar" style="width: 22px; height: 22px;"></i><span>Journée du <span id="meal-header-date"></span></span></h2>
+
+                <!-- Ligne 2: Navigation -->
+                <div class="date-navigation-controls">
+                    <button class="date-nav-btn" onclick="changeMealDate(-1)" title="Jour précédent">
+                        <i data-lucide="chevron-left" style="width: 20px; height: 20px;"></i>
+                    </button>
+                    <div class="date-navigation-center">
+                        <div class="current-date" id="meal-current-date">
                             <span id="meal-date-text">Aujourd'hui</span>
                         </div>
                         <span id="closed-day-badge" style="display: none; margin-top: 4px; padding: 3px 10px; background: var(--accent-main); border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 700;"><i data-lucide="lock" style="width: 14px; height: 14px;"></i> Clôturée</span>
                     </div>
-                    <button class="date-nav-btn" onclick="changeMealDate(1)" title="Jour suivant">→</button>
-                    <button class="date-nav-btn" onclick="goToToday()" style="background: var(--accent-ui); color: white; font-weight: 700;" title="Retour à aujourd'hui">
-                        <i data-lucide="calendar-days" style="width: 18px; height: 18px;"></i> Aujourd'hui
+                    <button class="date-nav-btn" onclick="changeMealDate(1)" title="Jour suivant">
+                        <i data-lucide="chevron-right" style="width: 20px; height: 20px;"></i>
                     </button>
-                </div></div>
+                    <button class="date-nav-btn date-today-btn" onclick="goToToday()" title="Retour à aujourd'hui">
+                        <i data-lucide="calendar-check" style="width: 18px; height: 18px;"></i>
+                        <span class="today-btn-text">Aujourd'hui</span>
+                    </button>
+                </div>
+            </div>
 
             <!-- Widget "Reste du jour" -->
             <div id="remaining-widget" style="background: var(--bg-tertiary); border-radius: var(--radius-xl); padding: var(--space-xl); margin-bottom: var(--space-2xl); border: 1px solid rgba(16, 185, 129, 0.2); display: none;">
@@ -5300,7 +5506,7 @@
 
     <script>
         // Food database
-        const foodDatabase = [{"name": "Amandes","unit": "100g","protein": 21.0,"carbs": 22.0,"fat": 49.0,"calories": 575.0,"category": "matieres-grasses"},{"name": "Andouillette Super U","unit": "100g","protein": 19.0,"carbs": 0.3,"fat": 16.0,"calories": 222.0,"category": "proteines"},{"name": "Avocat","unit": "100g","protein": 2.0,"carbs": 3.5,"fat": 22.0,"calories": 220.0,"category": "fruits"},{"name": "Baked beans","unit": "100g","protein": 8.4,"carbs": 13.0,"fat": 0.8,"calories": 93.0,"category": "feculents"},{"name": "Banane","unit": "100g","protein": 1.5,"carbs": 20.0,"fat": 0.0,"calories": 86.0,"category": "fruits"},{"name": "Beurre","unit": "100g","protein": 0.7,"carbs": 0.5,"fat": 80.0,"calories": 725.0,"category": "matieres-grasses"},{"name": "Bière","unit": "100ml","protein": 0.4,"carbs": 4.0,"fat": 0.0,"calories": 46.0,"category": "liquides"},{"name": "Blanc d'œuf","unit": "1u","protein": 10.3,"carbs": 1.12,"fat": 0.0,"calories": 47.3,"category": "proteines"},{"name": "Blanc d'œuf cru","unit": "100g","protein": 11.0,"carbs": 0.7,"fat": 0.2,"calories": 52.0,"category": "proteines"},{"name": "Blanc de dinde","unit": "100g","protein": 18.0,"carbs": 3.0,"fat": 3.0,"calories": 111.0,"category": "proteines"},{"name": "Blanc de poulet carrefour","unit": "100g","protein": 20.0,"carbs": 0.9,"fat": 3.2,"calories": 112.0,"category": "proteines"},{"name": "Blanc de poulet Ranou doré au four","unit": "100g","protein": 20.8,"carbs": 1.2,"fat": 1.8,"calories": 103.0,"category": "proteines"},{"name": "Blé Saint eloi","unit": "100g","protein": 12.7,"carbs": 71.0,"fat": 1.8,"calories": 362.0,"category": "feculents"},{"name": "Bolognaise maison","unit": "100g","protein": 5.9,"carbs": 3.9,"fat": 4.1,"calories": 77.0,"category": "proteines"},{"name": "Boulgour","unit": "100g","protein": 12.0,"carbs": 75.0,"fat": 1.5,"calories": 340.0,"category": "feculents"},{"name": "Broccolis","unit": "100g","protein": 1.9,"carbs": 2.2,"fat": 0.0,"calories": 24.0,"category": "feculents"},{"name": "Brocoli","unit": "100g","protein": 2.8,"carbs": 7.0,"fat": 0.3,"calories": 34.0,"category": "legumes"},{"name": "Bœuf","unit": "100g","protein": 22.0,"carbs": 0.0,"fat": 7.0,"calories": 151.0,"category": "proteines"},{"name": "Cabillaud","unit": "100g","protein": 18.0,"carbs": 0.0,"fat": 0.7,"calories": 82.0,"category": "proteines"},{"name": "Carotte","unit": "100g","protein": 0.9,"carbs": 10.0,"fat": 0.2,"calories": 41.0,"category": "legumes"},{"name": "Carotte fraiche","unit": "100g","protein": 1.0,"carbs": 6.4,"fat": 0.3,"calories": 30.0,"category": "legumes"},{"name": "Champignon de paris","unit": "100g","protein": 2.3,"carbs": 0.6,"fat": 0.5,"calories": 15.0,"category": "legumes"},{"name": "Cheddar","unit": "100g","protein": 24.0,"carbs": 1.3,"fat": 34.0,"calories": 403.0,"category": "produits-laitiers"},{"name": "Chicorée","unit": "100g","protein": 0.9,"carbs": 0.7,"fat": 0.1,"calories": 8.0,"category": "legumes"},{"name": "Chocolat au lait","unit": "100g","protein": 8.0,"carbs": 51.0,"fat": 32.0,"calories": 535.0,"category": "autres"},{"name": "Chocolat noir 70%","unit": "100g","protein": 6.1,"carbs": 45.0,"fat": 35.0,"calories": 531.0,"category": "autres"},{"name": "Chou-fleur","unit": "100g","protein": 1.9,"carbs": 5.0,"fat": 0.3,"calories": 25.0,"category": "legumes"},{"name": "Citron","unit": "100g","protein": 1.1,"carbs": 9.0,"fat": 0.3,"calories": 29.0,"category": "fruits"},{"name": "Coca-Cola","unit": "100ml","protein": 0.0,"carbs": 10.6,"fat": 0.0,"calories": 42.0,"category": "liquides"},{"name": "Colin","unit": "100g","protein": 18.0,"carbs": 0.0,"fat": 0.6,"calories": 80.0,"category": "proteines"},{"name": "Concombre","unit": "100g","protein": 0.6,"carbs": 3.6,"fat": 0.1,"calories": 15.0,"category": "legumes"},{"name": "Coquillettes","unit": "100g","protein": 12.0,"carbs": 71.0,"fat": 1.5,"calories": 350.0,"category": "feculents"},{"name": "Courgette","unit": "100g","protein": 1.2,"carbs": 3.1,"fat": 0.3,"calories": 17.0,"category": "legumes"},{"name": "Crème Fraiche 4%","unit": "100g","protein": 3.3,"carbs": 4.3,"fat": 4.0,"calories": 70.0,"category": "produits-laitiers"},{"name": "Crème fraîche 15%","unit": "100g","protein": 2.6,"carbs": 3.3,"fat": 15.0,"calories": 165.0,"category": "produits-laitiers"},{"name": "Crème fraîche 30%","unit": "100g","protein": 2.2,"carbs": 3.3,"fat": 30.0,"calories": 292.0,"category": "produits-laitiers"},{"name": "Emmental râpé","unit": "100g","protein": 28.0,"carbs": 1.4,"fat": 30.0,"calories": 382.0,"category": "produits-laitiers"},{"name": "Endives","unit": "100g","protein": 0.9,"carbs": 2.4,"fat": 0.1,"calories": 15.0,"category": "feculents"},{"name": "Filet de poulet carrefour","unit": "100g","protein": 23.0,"carbs": 0.6,"fat": 1.2,"calories": 107.0,"category": "proteines"},{"name": "Flocons d'avoine","unit": "100g","protein": 13.0,"carbs": 66.0,"fat": 7.0,"calories": 380.0,"category": "feculents"},{"name": "Fraise","unit": "100g","protein": 0.7,"carbs": 7.7,"fat": 0.3,"calories": 32.0,"category": "fruits"},{"name": "Frites au four","unit": "100g","protein": 3.3,"carbs": 21.0,"fat": 4.7,"calories": 142.0,"category": "feculents"},{"name": "Fromage blanc 0%","unit": "100g","protein": 8.0,"carbs": 4.0,"fat": 0.0,"calories": 48.0,"category": "produits-laitiers"},{"name": "Fromage blanc 3%","unit": "100g","protein": 7.5,"carbs": 3.5,"fat": 3.0,"calories": 75.0,"category": "produits-laitiers"},{"name": "Haricots rouges secs","unit": "100g","protein": 22.0,"carbs": 45.0,"fat": 1.5,"calories": 290.0,"category": "feculents"},{"name": "Haricots verts","unit": "100g","protein": 1.8,"carbs": 7.0,"fat": 0.2,"calories": 31.0,"category": "legumes"},{"name": "Huile d'olive","unit": "100g","protein": 0.0,"carbs": 0.0,"fat": 100.0,"calories": 900.0,"category": "matieres-grasses"},{"name": "Jambon blanc","unit": "100g","protein": 21.0,"carbs": 1.2,"fat": 3.0,"calories": 115.0,"category": "proteines"},{"name": "Jambon cru","unit": "100g","protein": 26.0,"carbs": 0.5,"fat": 12.0,"calories": 215.0,"category": "proteines"},{"name": "Ketchup","unit": "100g","protein": 1.0,"carbs": 25.0,"fat": 0.1,"calories": 101.0,"category": "feculents"},{"name": "Kiwi","unit": "100g","protein": 1.1,"carbs": 15.0,"fat": 0.5,"calories": 61.0,"category": "fruits"},{"name": "Lait demi-écrémé","unit": "100g","protein": 3.4,"carbs": 4.8,"fat": 1.6,"calories": 47.0,"category": "produits-laitiers"},{"name": "Lait entier","unit": "100ml","protein": 3.3,"carbs": 4.8,"fat": 3.5,"calories": 64.0,"category": "produits-laitiers"},{"name": "Lentilles cuites","unit": "100g","protein": 9.0,"carbs": 17.0,"fat": 0.4,"calories": 116.0,"category": "feculents"},{"name": "Lentilles sèches","unit": "100g","protein": 24.0,"carbs": 50.0,"fat": 1.0,"calories": 315.0,"category": "feculents"},{"name": "Mayonnaise","unit": "100g","protein": 1.1,"carbs": 0.6,"fat": 79.0,"calories": 718.0,"category": "matieres-grasses"},{"name": "Maïs doux en conserve","unit": "100g","protein": 2.9,"carbs": 19.0,"fat": 1.2,"calories": 86.0,"category": "feculents"},{"name": "Miel","unit": "100g","protein": 0.3,"carbs": 82.0,"fat": 0.0,"calories": 304.0,"category": "feculents"},{"name": "Moutarde","unit": "100g","protein": 7.0,"carbs": 6.0,"fat": 10.0,"calories": 143.0,"category": "feculents"},{"name": "Mozzarella","unit": "100g","protein": 18.0,"carbs": 2.2,"fat": 20.0,"calories": 280.0,"category": "produits-laitiers"},{"name": "Mâche","unit": "100g","protein": 2.0,"carbs": 0.7,"fat": 0.4,"calories": 21.0,"category": "feculents"},{"name": "Noix","unit": "100g","protein": 15.0,"carbs": 14.0,"fat": 65.0,"calories": 654.0,"category": "matieres-grasses"},{"name": "Oignon","unit": "100g","protein": 1.1,"carbs": 7.1,"fat": 0.1,"calories": 40.0,"category": "feculents"},{"name": "Orange","unit": "100g","protein": 0.9,"carbs": 12.0,"fat": 0.1,"calories": 47.0,"category": "fruits"},{"name": "Pain blanc","unit": "100g","protein": 8.0,"carbs": 49.0,"fat": 3.2,"calories": 265.0,"category": "feculents"},{"name": "Pain complet","unit": "100g","protein": 9.0,"carbs": 41.0,"fat": 3.5,"calories": 247.0,"category": "feculents"},{"name": "Parmesan","unit": "100g","protein": 36.0,"carbs": 3.2,"fat": 26.0,"calories": 392.0,"category": "proteines"},{"name": "Patate douce crue","unit": "100g","protein": 1.6,"carbs": 20.0,"fat": 0.1,"calories": 86.0,"category": "feculents"},{"name": "Petits pois en conserve","unit": "100g","protein": 5.4,"carbs": 10.0,"fat": 0.4,"calories": 69.0,"category": "feculents"},{"name": "Poire","unit": "100g","protein": 0.4,"carbs": 15.0,"fat": 0.1,"calories": 57.0,"category": "fruits"},{"name": "Poireau","unit": "100g","protein": 1.5,"carbs": 3.9,"fat": 0.3,"calories": 27.0,"category": "feculents"},{"name": "Pois chiches cuits","unit": "100g","protein": 8.9,"carbs": 27.4,"fat": 2.6,"calories": 164.0,"category": "feculents"},{"name": "Pois chiches secs","unit": "100g","protein": 19.0,"carbs": 55.0,"fat": 6.0,"calories": 360.0,"category": "feculents"},{"name": "Poivron","unit": "100g","protein": 1.0,"carbs": 6.0,"fat": 0.3,"calories": 26.0,"category": "legumes"},{"name": "Pomme","unit": "100g","protein": 0.3,"carbs": 14.0,"fat": 0.2,"calories": 52.0,"category": "fruits"},{"name": "Pomme de terre","unit": "100g","protein": 2.0,"carbs": 17.0,"fat": 0.1,"calories": 77.0,"category": "feculents"},{"name": "Pommes de terre crues","unit": "100g","protein": 2.0,"carbs": 17.0,"fat": 0.1,"calories": 77.0,"category": "feculents"},{"name": "Poulet rôti","unit": "100g","protein": 27.0,"carbs": 0.0,"fat": 14.0,"calories": 239.0,"category": "proteines"},{"name": "Purée de tomate","unit": "100g","protein": 4.3,"carbs": 18.0,"fat": 0.5,"calories": 82.0,"category": "legumes"},{"name": "Pâtes","unit": "100g","protein": 13.0,"carbs": 71.0,"fat": 1.5,"calories": 371.0,"category": "feculents"},{"name": "Pâtes blanches sèches","unit": "100g","protein": 12.0,"carbs": 72.0,"fat": 1.5,"calories": 355.0,"category": "feculents"},{"name": "Quinoa cuit","unit": "100g","protein": 4.4,"carbs": 21.3,"fat": 1.9,"calories": 120.0,"category": "feculents"},{"name": "Quinoa sec","unit": "100g","protein": 14.0,"carbs": 64.0,"fat": 6.0,"calories": 365.0,"category": "feculents"},{"name": "Raisin","unit": "100g","protein": 0.7,"carbs": 17.0,"fat": 0.2,"calories": 69.0,"category": "fruits"},{"name": "Ratatouille en boite D'aucy","unit": "100g","protein": 0.9,"carbs": 4.8,"fat": 1.7,"calories": 39.0,"category": "feculents"},{"name": "Riz basmati cuit","unit": "100g","protein": 3.5,"carbs": 25.0,"fat": 0.9,"calories": 121.0,"category": "feculents"},{"name": "Riz blanc cuit","unit": "100g","protein": 2.7,"carbs": 28.0,"fat": 0.3,"calories": 130.0,"category": "feculents"},{"name": "Riz blanc sec","unit": "100g","protein": 8.0,"carbs": 77.0,"fat": 1.0,"calories": 350.0,"category": "feculents"},{"name": "Riz complet cuit","unit": "100g","protein": 2.6,"carbs": 23.0,"fat": 0.9,"calories": 111.0,"category": "feculents"},{"name": "Salade verte","unit": "100g","protein": 1.4,"carbs": 1.8,"fat": 0.2,"calories": 15.0,"category": "legumes"},{"name": "Sarrasin","unit": "100g","protein": 13.0,"carbs": 71.0,"fat": 3.0,"calories": 340.0,"category": "feculents"},{"name": "Saumon frais","unit": "100g","protein": 20.0,"carbs": 0.0,"fat": 13.0,"calories": 208.0,"category": "proteines"},{"name": "Saumon fumé","unit": "100g","protein": 21.0,"carbs": 0.0,"fat": 14.0,"calories": 208.0,"category": "proteines"},{"name": "Seitan","unit": "100g","protein": 25.0,"carbs": 5.0,"fat": 2.0,"calories": 145.0,"category": "proteines"},{"name": "Semoule Couscous","unit": "100g","protein": 12.0,"carbs": 72.0,"fat": 0.6,"calories": 376.0,"category": "feculents"},{"name": "Semoule de blé","unit": "100g","protein": 12.0,"carbs": 73.0,"fat": 1.0,"calories": 355.0,"category": "feculents"},{"name": "skyr nature","unit": "100g","protein": 11.0,"carbs": 4.0,"fat": 0.2,"calories": 63.0,"category": "produits-laitiers"},{"name": "skyr Stracciatella Siggi's","unit": "100g","protein": 10.0,"carbs": 10.0,"fat": 2.0,"calories": 98.0,"category": "produits-laitiers"},{"name": "Steak haché 10% MG","unit": "100g","protein": 20.0,"carbs": 0.0,"fat": 10.0,"calories": 176.0,"category": "proteines"},{"name": "Steak haché 12% MG","unit": "100g","protein": 19.0,"carbs": 0.0,"fat": 12.0,"calories": 196.0,"category": "proteines"},{"name": "Steak haché 15%","unit": "100g","protein": 19.0,"carbs": 0.0,"fat": 15.0,"calories": 227.0,"category": "proteines"},{"name": "Steak haché 15% MG","unit": "100g","protein": 18.0,"carbs": 0.0,"fat": 15.0,"calories": 215.0,"category": "proteines"},{"name": "Steak haché 20% MG","unit": "100g","protein": 17.0,"carbs": 0.0,"fat": 20.0,"calories": 254.0,"category": "proteines"},{"name": "Steak haché 5%","unit": "100g","protein": 21.0,"carbs": 0.0,"fat": 5.0,"calories": 137.0,"category": "proteines"},{"name": "Steak haché 5% MG","unit": "100g","protein": 21.0,"carbs": 0.0,"fat": 5.0,"calories": 126.0,"category": "proteines"},{"name": "Steak haché 8% MG","unit": "100g","protein": 20.0,"carbs": 0.0,"fat": 8.0,"calories": 158.0,"category": "proteines"},{"name": "Steak haché Charal 10%","unit": "100g","protein": 20.0,"carbs": 0.5,"fat": 10.0,"calories": 176.0,"category": "proteines"},{"name": "Thon cru","unit": "100g","protein": 24.0,"carbs": 0.0,"fat": 1.0,"calories": 110.0,"category": "proteines"},{"name": "Thon en conserve au naturel","unit": "100g","protein": 26.0,"carbs": 0.0,"fat": 1.0,"calories": 116.0,"category": "proteines"},{"name": "Tofu nature","unit": "100g","protein": 12.0,"carbs": 2.0,"fat": 6.0,"calories": 115.0,"category": "proteines"},{"name": "Tomate","unit": "100g","protein": 0.9,"carbs": 3.9,"fat": 0.2,"calories": 18.0,"category": "legumes"},{"name": "Yaourt grec","unit": "100g","protein": 10.0,"carbs": 3.6,"fat": 5.0,"calories": 97.0,"category": "produits-laitiers"},{"name": "Yaourt nature","unit": "100g","protein": 3.5,"carbs": 4.0,"fat": 1.0,"calories": 61.0,"category": "produits-laitiers"},{"name": "Épinards","unit": "100g","protein": 2.9,"carbs": 3.6,"fat": 0.4,"calories": 23.0,"category": "legumes"},{"name": "Œuf entier","unit": "1u","protein": 6.3,"carbs": 0.6,"fat": 5.3,"calories": 78.0,"category": "proteines"},{"name": "Œuf entier cru","unit": "100g","protein": 13.0,"carbs": 1.0,"fat": 11.0,"calories": 155.0,"category": "proteines"}];
+        const foodDatabase = [{"name": "Amandes","unit": "100g","protein": 21.0,"carbs": 22.0,"fat": 49.0,"calories": 575.0,"category": "matieres-grasses"},{"name": "Andouillette Super U","unit": "100g","protein": 19.0,"carbs": 0.3,"fat": 16.0,"calories": 222.0,"category": "proteines"},{"name": "Avocat","unit": "100g","protein": 2.0,"carbs": 3.5,"fat": 22.0,"calories": 220.0,"category": "fruits"},{"name": "Baked beans","unit": "100g","protein": 8.4,"carbs": 13.0,"fat": 0.8,"calories": 93.0,"category": "feculents"},{"name": "Banane","unit": "100g","protein": 1.5,"carbs": 20.0,"fat": 0.0,"calories": 86.0,"category": "fruits"},{"name": "Beurre","unit": "100g","protein": 0.7,"carbs": 0.5,"fat": 80.0,"calories": 725.0,"category": "matieres-grasses"},{"name": "Bière","unit": "100ml","protein": 0.4,"carbs": 4.0,"fat": 0.0,"calories": 46.0,"category": "liquides"},{"name": "Blanc d'œuf","unit": "1u","protein": 10.3,"carbs": 1.12,"fat": 0.0,"calories": 47.3,"category": "proteines"},{"name": "Blanc d'œuf cru","unit": "100g","protein": 11.0,"carbs": 0.7,"fat": 0.2,"calories": 52.0,"category": "proteines"},{"name": "Blanc de dinde","unit": "100g","protein": 18.0,"carbs": 3.0,"fat": 3.0,"calories": 111.0,"category": "proteines"},{"name": "Blanc de poulet carrefour","unit": "100g","protein": 20.0,"carbs": 0.9,"fat": 3.2,"calories": 112.0,"category": "proteines"},{"name": "Blanc de poulet Ranou doré au four","unit": "100g","protein": 20.8,"carbs": 1.2,"fat": 1.8,"calories": 103.0,"category": "proteines"},{"name": "Blé Saint eloi","unit": "100g","protein": 12.7,"carbs": 71.0,"fat": 1.8,"calories": 362.0,"category": "feculents"},{"name": "Bolognaise maison","unit": "100g","protein": 5.9,"carbs": 3.9,"fat": 4.1,"calories": 77.0,"category": "proteines"},{"name": "Boulgour","unit": "100g","protein": 12.0,"carbs": 75.0,"fat": 1.5,"calories": 340.0,"category": "feculents"},{"name": "Broccolis","unit": "100g","protein": 1.9,"carbs": 2.2,"fat": 0.0,"calories": 24.0,"category": "legumes"},{"name": "Brocoli","unit": "100g","protein": 2.8,"carbs": 7.0,"fat": 0.3,"calories": 34.0,"category": "legumes"},{"name": "Bœuf","unit": "100g","protein": 22.0,"carbs": 0.0,"fat": 7.0,"calories": 151.0,"category": "proteines"},{"name": "Cabillaud","unit": "100g","protein": 18.0,"carbs": 0.0,"fat": 0.7,"calories": 82.0,"category": "proteines"},{"name": "Carotte","unit": "100g","protein": 0.9,"carbs": 10.0,"fat": 0.2,"calories": 41.0,"category": "legumes"},{"name": "Carotte fraiche","unit": "100g","protein": 1.0,"carbs": 6.4,"fat": 0.3,"calories": 30.0,"category": "legumes"},{"name": "Champignon de paris","unit": "100g","protein": 2.3,"carbs": 0.6,"fat": 0.5,"calories": 15.0,"category": "legumes"},{"name": "Cheddar","unit": "100g","protein": 24.0,"carbs": 1.3,"fat": 34.0,"calories": 403.0,"category": "produits-laitiers"},{"name": "Chicorée","unit": "100g","protein": 0.9,"carbs": 0.7,"fat": 0.1,"calories": 8.0,"category": "legumes"},{"name": "Chocolat au lait","unit": "100g","protein": 8.0,"carbs": 51.0,"fat": 32.0,"calories": 535.0,"category": "autres"},{"name": "Chocolat noir 70%","unit": "100g","protein": 6.1,"carbs": 45.0,"fat": 35.0,"calories": 531.0,"category": "autres"},{"name": "Chou-fleur","unit": "100g","protein": 1.9,"carbs": 5.0,"fat": 0.3,"calories": 25.0,"category": "legumes"},{"name": "Citron","unit": "100g","protein": 1.1,"carbs": 9.0,"fat": 0.3,"calories": 29.0,"category": "fruits"},{"name": "Coca-Cola","unit": "100ml","protein": 0.0,"carbs": 10.6,"fat": 0.0,"calories": 42.0,"category": "liquides"},{"name": "Colin","unit": "100g","protein": 18.0,"carbs": 0.0,"fat": 0.6,"calories": 80.0,"category": "proteines"},{"name": "Concombre","unit": "100g","protein": 0.6,"carbs": 3.6,"fat": 0.1,"calories": 15.0,"category": "legumes"},{"name": "Coquillettes","unit": "100g","protein": 12.0,"carbs": 71.0,"fat": 1.5,"calories": 350.0,"category": "feculents"},{"name": "Courgette","unit": "100g","protein": 1.2,"carbs": 3.1,"fat": 0.3,"calories": 17.0,"category": "legumes"},{"name": "Crème Fraiche 4%","unit": "100g","protein": 3.3,"carbs": 4.3,"fat": 4.0,"calories": 70.0,"category": "produits-laitiers"},{"name": "Crème fraîche 15%","unit": "100g","protein": 2.6,"carbs": 3.3,"fat": 15.0,"calories": 165.0,"category": "produits-laitiers"},{"name": "Crème fraîche 30%","unit": "100g","protein": 2.2,"carbs": 3.3,"fat": 30.0,"calories": 292.0,"category": "produits-laitiers"},{"name": "Emmental râpé","unit": "100g","protein": 28.0,"carbs": 1.4,"fat": 30.0,"calories": 382.0,"category": "produits-laitiers"},{"name": "Endives","unit": "100g","protein": 0.9,"carbs": 2.4,"fat": 0.1,"calories": 15.0,"category": "legumes"},{"name": "Filet de poulet carrefour","unit": "100g","protein": 23.0,"carbs": 0.6,"fat": 1.2,"calories": 107.0,"category": "proteines"},{"name": "Flocons d'avoine","unit": "100g","protein": 13.0,"carbs": 66.0,"fat": 7.0,"calories": 380.0,"category": "feculents"},{"name": "Fraise","unit": "100g","protein": 0.7,"carbs": 7.7,"fat": 0.3,"calories": 32.0,"category": "fruits"},{"name": "Frites au four","unit": "100g","protein": 3.3,"carbs": 21.0,"fat": 4.7,"calories": 142.0,"category": "feculents"},{"name": "Fromage blanc 0%","unit": "100g","protein": 8.0,"carbs": 4.0,"fat": 0.0,"calories": 48.0,"category": "produits-laitiers"},{"name": "Fromage blanc 3%","unit": "100g","protein": 7.5,"carbs": 3.5,"fat": 3.0,"calories": 75.0,"category": "produits-laitiers"},{"name": "Haricots rouges secs","unit": "100g","protein": 22.0,"carbs": 45.0,"fat": 1.5,"calories": 290.0,"category": "feculents"},{"name": "Haricots verts","unit": "100g","protein": 1.8,"carbs": 7.0,"fat": 0.2,"calories": 31.0,"category": "legumes"},{"name": "Huile d'olive","unit": "100g","protein": 0.0,"carbs": 0.0,"fat": 100.0,"calories": 900.0,"category": "matieres-grasses"},{"name": "Jambon blanc","unit": "100g","protein": 21.0,"carbs": 1.2,"fat": 3.0,"calories": 115.0,"category": "proteines"},{"name": "Jambon cru","unit": "100g","protein": 26.0,"carbs": 0.5,"fat": 12.0,"calories": 215.0,"category": "proteines"},{"name": "Ketchup","unit": "100g","protein": 1.0,"carbs": 25.0,"fat": 0.1,"calories": 101.0,"category": "autres"},{"name": "Kiwi","unit": "100g","protein": 1.1,"carbs": 15.0,"fat": 0.5,"calories": 61.0,"category": "fruits"},{"name": "Lait demi-écrémé","unit": "100g","protein": 3.4,"carbs": 4.8,"fat": 1.6,"calories": 47.0,"category": "produits-laitiers"},{"name": "Lait entier","unit": "100ml","protein": 3.3,"carbs": 4.8,"fat": 3.5,"calories": 64.0,"category": "produits-laitiers"},{"name": "Lentilles cuites","unit": "100g","protein": 9.0,"carbs": 17.0,"fat": 0.4,"calories": 116.0,"category": "feculents"},{"name": "Lentilles sèches","unit": "100g","protein": 24.0,"carbs": 50.0,"fat": 1.0,"calories": 315.0,"category": "feculents"},{"name": "Mayonnaise","unit": "100g","protein": 1.1,"carbs": 0.6,"fat": 79.0,"calories": 718.0,"category": "matieres-grasses"},{"name": "Maïs doux en conserve","unit": "100g","protein": 2.9,"carbs": 19.0,"fat": 1.2,"calories": 86.0,"category": "feculents"},{"name": "Miel","unit": "100g","protein": 0.3,"carbs": 82.0,"fat": 0.0,"calories": 304.0,"category": "autres"},{"name": "Moutarde","unit": "100g","protein": 7.0,"carbs": 6.0,"fat": 10.0,"calories": 143.0,"category": "autres"},{"name": "Mozzarella","unit": "100g","protein": 18.0,"carbs": 2.2,"fat": 20.0,"calories": 280.0,"category": "produits-laitiers"},{"name": "Mâche","unit": "100g","protein": 2.0,"carbs": 0.7,"fat": 0.4,"calories": 21.0,"category": "legumes"},{"name": "Noix","unit": "100g","protein": 15.0,"carbs": 14.0,"fat": 65.0,"calories": 654.0,"category": "matieres-grasses"},{"name": "Oignon","unit": "100g","protein": 1.1,"carbs": 7.1,"fat": 0.1,"calories": 40.0,"category": "legumes"},{"name": "Orange","unit": "100g","protein": 0.9,"carbs": 12.0,"fat": 0.1,"calories": 47.0,"category": "fruits"},{"name": "Pain blanc","unit": "100g","protein": 8.0,"carbs": 49.0,"fat": 3.2,"calories": 265.0,"category": "feculents"},{"name": "Pain complet","unit": "100g","protein": 9.0,"carbs": 41.0,"fat": 3.5,"calories": 247.0,"category": "feculents"},{"name": "Parmesan","unit": "100g","protein": 36.0,"carbs": 3.2,"fat": 26.0,"calories": 392.0,"category": "produits-laitiers"},{"name": "Patate douce crue","unit": "100g","protein": 1.6,"carbs": 20.0,"fat": 0.1,"calories": 86.0,"category": "feculents"},{"name": "Petits pois en conserve","unit": "100g","protein": 5.4,"carbs": 10.0,"fat": 0.4,"calories": 69.0,"category": "feculents"},{"name": "Poire","unit": "100g","protein": 0.4,"carbs": 15.0,"fat": 0.1,"calories": 57.0,"category": "fruits"},{"name": "Poireau","unit": "100g","protein": 1.5,"carbs": 3.9,"fat": 0.3,"calories": 27.0,"category": "legumes"},{"name": "Pois chiches cuits","unit": "100g","protein": 8.9,"carbs": 27.4,"fat": 2.6,"calories": 164.0,"category": "feculents"},{"name": "Pois chiches secs","unit": "100g","protein": 19.0,"carbs": 55.0,"fat": 6.0,"calories": 360.0,"category": "feculents"},{"name": "Poivron","unit": "100g","protein": 1.0,"carbs": 6.0,"fat": 0.3,"calories": 26.0,"category": "legumes"},{"name": "Pomme","unit": "100g","protein": 0.3,"carbs": 14.0,"fat": 0.2,"calories": 52.0,"category": "fruits"},{"name": "Pomme de terre","unit": "100g","protein": 2.0,"carbs": 17.0,"fat": 0.1,"calories": 77.0,"category": "feculents"},{"name": "Pommes de terre crues","unit": "100g","protein": 2.0,"carbs": 17.0,"fat": 0.1,"calories": 77.0,"category": "feculents"},{"name": "Poulet rôti","unit": "100g","protein": 27.0,"carbs": 0.0,"fat": 14.0,"calories": 239.0,"category": "proteines"},{"name": "Purée de tomate","unit": "100g","protein": 4.3,"carbs": 18.0,"fat": 0.5,"calories": 82.0,"category": "legumes"},{"name": "Pâtes","unit": "100g","protein": 13.0,"carbs": 71.0,"fat": 1.5,"calories": 371.0,"category": "feculents"},{"name": "Pâtes blanches sèches","unit": "100g","protein": 12.0,"carbs": 72.0,"fat": 1.5,"calories": 355.0,"category": "feculents"},{"name": "Quinoa cuit","unit": "100g","protein": 4.4,"carbs": 21.3,"fat": 1.9,"calories": 120.0,"category": "feculents"},{"name": "Quinoa sec","unit": "100g","protein": 14.0,"carbs": 64.0,"fat": 6.0,"calories": 365.0,"category": "feculents"},{"name": "Raisin","unit": "100g","protein": 0.7,"carbs": 17.0,"fat": 0.2,"calories": 69.0,"category": "fruits"},{"name": "Ratatouille en boite D'aucy","unit": "100g","protein": 0.9,"carbs": 4.8,"fat": 1.7,"calories": 39.0,"category": "legumes"},{"name": "Riz basmati cuit","unit": "100g","protein": 3.5,"carbs": 25.0,"fat": 0.9,"calories": 121.0,"category": "feculents"},{"name": "Riz blanc cuit","unit": "100g","protein": 2.7,"carbs": 28.0,"fat": 0.3,"calories": 130.0,"category": "feculents"},{"name": "Riz blanc sec","unit": "100g","protein": 8.0,"carbs": 77.0,"fat": 1.0,"calories": 350.0,"category": "feculents"},{"name": "Riz complet cuit","unit": "100g","protein": 2.6,"carbs": 23.0,"fat": 0.9,"calories": 111.0,"category": "feculents"},{"name": "Salade verte","unit": "100g","protein": 1.4,"carbs": 1.8,"fat": 0.2,"calories": 15.0,"category": "legumes"},{"name": "Sarrasin","unit": "100g","protein": 13.0,"carbs": 71.0,"fat": 3.0,"calories": 340.0,"category": "feculents"},{"name": "Saumon frais","unit": "100g","protein": 20.0,"carbs": 0.0,"fat": 13.0,"calories": 208.0,"category": "proteines"},{"name": "Saumon fumé","unit": "100g","protein": 21.0,"carbs": 0.0,"fat": 14.0,"calories": 208.0,"category": "proteines"},{"name": "Seitan","unit": "100g","protein": 25.0,"carbs": 5.0,"fat": 2.0,"calories": 145.0,"category": "proteines"},{"name": "Semoule Couscous","unit": "100g","protein": 12.0,"carbs": 72.0,"fat": 0.6,"calories": 376.0,"category": "feculents"},{"name": "Semoule de blé","unit": "100g","protein": 12.0,"carbs": 73.0,"fat": 1.0,"calories": 355.0,"category": "feculents"},{"name": "skyr nature","unit": "100g","protein": 11.0,"carbs": 4.0,"fat": 0.2,"calories": 63.0,"category": "produits-laitiers"},{"name": "skyr Stracciatella Siggi's","unit": "100g","protein": 10.0,"carbs": 10.0,"fat": 2.0,"calories": 98.0,"category": "produits-laitiers"},{"name": "Steak haché 10% MG","unit": "100g","protein": 20.0,"carbs": 0.0,"fat": 10.0,"calories": 176.0,"category": "proteines"},{"name": "Steak haché 12% MG","unit": "100g","protein": 19.0,"carbs": 0.0,"fat": 12.0,"calories": 196.0,"category": "proteines"},{"name": "Steak haché 15%","unit": "100g","protein": 19.0,"carbs": 0.0,"fat": 15.0,"calories": 227.0,"category": "proteines"},{"name": "Steak haché 15% MG","unit": "100g","protein": 18.0,"carbs": 0.0,"fat": 15.0,"calories": 215.0,"category": "proteines"},{"name": "Steak haché 20% MG","unit": "100g","protein": 17.0,"carbs": 0.0,"fat": 20.0,"calories": 254.0,"category": "proteines"},{"name": "Steak haché 5%","unit": "100g","protein": 21.0,"carbs": 0.0,"fat": 5.0,"calories": 137.0,"category": "proteines"},{"name": "Steak haché 5% MG","unit": "100g","protein": 21.0,"carbs": 0.0,"fat": 5.0,"calories": 126.0,"category": "proteines"},{"name": "Steak haché 8% MG","unit": "100g","protein": 20.0,"carbs": 0.0,"fat": 8.0,"calories": 158.0,"category": "proteines"},{"name": "Steak haché Charal 10%","unit": "100g","protein": 20.0,"carbs": 0.5,"fat": 10.0,"calories": 176.0,"category": "proteines"},{"name": "Thon cru","unit": "100g","protein": 24.0,"carbs": 0.0,"fat": 1.0,"calories": 110.0,"category": "proteines"},{"name": "Thon en conserve au naturel","unit": "100g","protein": 26.0,"carbs": 0.0,"fat": 1.0,"calories": 116.0,"category": "proteines"},{"name": "Tofu nature","unit": "100g","protein": 12.0,"carbs": 2.0,"fat": 6.0,"calories": 115.0,"category": "proteines"},{"name": "Tomate","unit": "100g","protein": 0.9,"carbs": 3.9,"fat": 0.2,"calories": 18.0,"category": "legumes"},{"name": "Yaourt grec","unit": "100g","protein": 10.0,"carbs": 3.6,"fat": 5.0,"calories": 97.0,"category": "produits-laitiers"},{"name": "Yaourt nature","unit": "100g","protein": 3.5,"carbs": 4.0,"fat": 1.0,"calories": 61.0,"category": "produits-laitiers"},{"name": "Épinards","unit": "100g","protein": 2.9,"carbs": 3.6,"fat": 0.4,"calories": 23.0,"category": "legumes"},{"name": "Œuf entier","unit": "1u","protein": 6.3,"carbs": 0.6,"fat": 5.3,"calories": 78.0,"category": "proteines"},{"name": "Œuf entier cru","unit": "100g","protein": 13.0,"carbs": 1.0,"fat": 11.0,"calories": 155.0,"category": "proteines"}];
 
         // State management
         let dailyMeals = {
