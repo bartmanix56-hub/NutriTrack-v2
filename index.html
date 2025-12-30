@@ -911,25 +911,43 @@
             20%, 40%, 60%, 80% { transform: translateX(10px); }
         }
 
-        /* Responsive - Bottom navbar mobile style iOS/Android */
+        /* ================================================================ */
+        /* MOBILE UI/UX REDESIGN - Native App Experience                  */
+        /* Design System: NutriTrack DA                                   */
+        /* Principes: Minimaliste, Lisible, Respirant, Touch-First        */
+        /* ================================================================ */
+
         @media (max-width: 768px) {
+
+            /* ============================================================ */
+            /* 1. BASE MOBILE - Fondations                                  */
+            /* ============================================================ */
+
             body {
                 padding-bottom: 0;
+                -webkit-tap-highlight-color: transparent;
+                -webkit-touch-callout: none;
             }
 
             .app-layout {
                 flex-direction: column;
             }
 
-            /* Footers responsive */
-            .footer-desktop {
-                display: none !important;
-            }
-            .footer-mobile {
-                display: block !important;
+            /* Hide desktop footer, show mobile footer */
+            .footer-desktop { display: none !important; }
+            .footer-mobile { display: block !important; }
+
+            /* Main content area - breathing room */
+            .main-content {
+                padding: var(--space-lg);
+                padding-bottom: 110px; /* Space for navbar + safe area */
+                min-height: calc(100vh - 110px);
             }
 
-            /* NAVBAR MOBILE STYLE IOS/ANDROID */
+            /* ============================================================ */
+            /* 2. BOTTOM NAVBAR - Style iOS/Android Native                  */
+            /* ============================================================ */
+
             .sidebar {
                 position: fixed !important;
                 bottom: 0 !important;
@@ -937,37 +955,36 @@
                 right: 0 !important;
                 top: auto !important;
                 width: 100% !important;
-                height: 85px !important;
-                min-height: 85px !important;
-                max-height: 85px !important;
+                height: 80px !important;
+                min-height: 80px !important;
+                max-height: 80px !important;
                 display: flex !important;
                 flex-direction: row !important;
                 flex-wrap: nowrap !important;
                 justify-content: space-around !important;
-                align-items: flex-start !important;
+                align-items: center !important;
                 overflow: visible !important;
                 border-right: none !important;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-                padding: 10px 8px 25px 8px !important; /* padding-bottom pour safe area iPhone */
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                padding: 8px 4px 20px 4px !important; /* padding-bottom for iPhone safe area */
                 gap: 0 !important;
                 z-index: 1000;
                 background: var(--bg-secondary) !important;
-                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+                box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
             }
 
             .sidebar.collapsed {
                 width: 100% !important;
-                height: 85px !important;
+                height: 80px !important;
             }
 
             .sidebar-toggle { display: none !important; }
-
             .sidebar-group-title { display: none !important; }
-
-            /* Séparateur masqué */
             .sidebar > div[style*="height: 1px"] { display: none !important; }
 
-            /* Masquer les onglets secondaires sur mobile (dans le menu Plus) */
+            /* Hide secondary tabs on mobile */
             .sidebar-btn[data-tab="foods"],
             .sidebar-btn[data-tab="meal-templates"],
             .sidebar-btn[data-tab="guide"],
@@ -980,23 +997,23 @@
                 flex-direction: column !important;
                 align-items: center !important;
                 justify-content: center !important;
-                gap: 4px !important;
-                padding: 8px 6px !important;
-                min-width: 60px;
+                gap: 3px !important;
+                padding: 6px 4px !important;
+                min-width: 56px;
                 flex: 1;
-                max-width: 80px;
-                height: 55px;
-                border-radius: var(--radius-md);
-                transition: all 0.2s ease;
+                max-width: 72px;
+                height: 52px;
+                border-radius: var(--radius-lg);
+                transition: all 0.15s ease;
+                background: transparent;
             }
 
             .sidebar-btn:active {
-                transform: scale(0.95);
-                background: rgba(16, 185, 129, 0.1);
+                transform: scale(0.92);
             }
 
             .sidebar-btn.active {
-                background: rgba(16, 185, 129, 0.15);
+                background: rgba(16, 185, 129, 0.12);
             }
 
             .sidebar-btn .sidebar-icon {
@@ -1004,12 +1021,15 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                width: 28px;
+                height: 28px;
             }
 
             .sidebar-btn .sidebar-icon i,
             .sidebar-btn .sidebar-icon svg {
-                width: 26px !important;
-                height: 26px !important;
+                width: 24px !important;
+                height: 24px !important;
+                transition: color 0.15s ease;
             }
 
             .sidebar-btn.active .sidebar-icon i,
@@ -1017,75 +1037,99 @@
                 color: var(--accent-main) !important;
             }
 
-            .sidebar.collapsed .sidebar-btn { padding: 8px 6px !important; }
+            .sidebar.collapsed .sidebar-btn { padding: 6px 4px !important; }
 
             .sidebar-label {
-                font-size: 0.7rem !important;
+                font-size: 0.65rem !important;
                 font-weight: 500 !important;
-                opacity: 1 !important;
+                opacity: 0.8 !important;
                 width: auto !important;
                 text-align: center;
                 white-space: nowrap;
                 display: block !important;
+                letter-spacing: -0.01em;
             }
 
             .sidebar-btn.active .sidebar-label {
                 color: var(--accent-main) !important;
                 font-weight: 600 !important;
+                opacity: 1 !important;
             }
 
             .sidebar.collapsed .sidebar-label {
-                opacity: 1 !important;
+                opacity: 0.8 !important;
                 width: auto !important;
                 display: block !important;
             }
 
-            /* Bouton Plus visible sur mobile */
             #mobile-more-btn {
                 display: flex !important;
             }
 
-            .main-content {
-                padding: var(--space-md);
-                padding-bottom: 100px; /* Espace pour la navbar */
+            /* ============================================================ */
+            /* 3. HEADER MOBILE - Compact & Clean                           */
+            /* ============================================================ */
+
+            .app-header {
+                padding: var(--space-md) var(--space-lg) !important;
+                background: var(--bg-primary);
             }
 
-            /* Header mobile */
-            header h1 { font-size: 1.5rem; }
-            header .subtitle { font-size: 0.85rem; }
-
-            /* Meals grid becomes vertical on mobile */
-            #meals > div:first-of-type { grid-template-columns: 1fr !important; }
-
-            #meals .food-item {
-                flex-wrap: wrap;
-                gap: var(--space-sm);
+            .header-main-row {
+                gap: var(--space-md) !important;
             }
 
-            #meals .food-item .food-macros {
-                width: 100%;
-                justify-content: space-around;
-                margin-top: var(--space-sm);
-            }
-
-            .food-list .food-item { grid-template-columns: 1fr; }
-
-            .food-macros { justify-content: space-around; }
-
-            h1 { font-size: 1.8rem; }
-
-            /* ============================================ */
-            /* MOBILE-FIRST DESIGN - Style App iOS/Android */
-            /* ============================================ */
-
-            /* Cards compacts et full-width sur mobile */
-            .card {
-                padding: var(--space-md) !important;
+            .header-btn {
+                width: 40px !important;
+                height: 40px !important;
                 border-radius: var(--radius-lg) !important;
-                margin: 0 !important;
             }
 
-            /* Hero headers compacts sur mobile */
+            .header-btn i {
+                width: 20px !important;
+                height: 20px !important;
+            }
+
+            .header-title {
+                font-size: 1.2rem !important;
+                gap: var(--space-xs) !important;
+            }
+
+            .header-logo {
+                height: 1.2em !important;
+            }
+
+            .header-username {
+                height: 36px !important;
+                padding: 0 var(--space-md) !important;
+                font-size: 0.75rem !important;
+                max-width: 100px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                border-radius: var(--radius-full) !important;
+            }
+
+            .header-subtitle-row {
+                display: none !important; /* Hidden on mobile for cleaner look */
+            }
+
+            #sync-indicator {
+                position: fixed !important;
+                top: var(--space-md) !important;
+                right: var(--space-md) !important;
+                height: 28px !important;
+                padding: 0 10px !important;
+                font-size: 0.7rem !important;
+                z-index: 999;
+                border-radius: var(--radius-full) !important;
+            }
+
+            /* ============================================================ */
+            /* 4. HERO HEADERS - Simplified for Mobile                      */
+            /* ============================================================ */
+
+            /* All hero sections - compact and clean */
             #calculator > div:first-child,
             #settings > div:first-child,
             #meals > div:first-child,
@@ -1096,72 +1140,161 @@
             #guide > div:first-child {
                 padding: var(--space-lg) !important;
                 margin-bottom: var(--space-lg) !important;
-                border-radius: var(--radius-lg) !important;
+                border-radius: var(--radius-xl) !important;
+                background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(16, 185, 129, 0.05) 100%) !important;
+                border: 1px solid rgba(16, 185, 129, 0.1) !important;
             }
 
-            /* Icône hero plus petite */
+            /* Hero icon */
             #calculator > div:first-child > div:first-child > div:first-child,
-            #settings > div:first-child > div > div:first-child {
-                width: 48px !important;
-                height: 48px !important;
+            #settings > div:first-child > div > div:first-child,
+            #meals > div:first-child > div > div:first-child,
+            #planner > div:first-child > div:first-child > div:first-child,
+            #tracking > div:first-child > div:first-child > div:first-child,
+            #foods > div:first-child > div:first-child > div:first-child,
+            #meal-templates > div:first-child > div:first-child > div:first-child,
+            #guide > div:first-child > div:first-child > div:first-child {
+                width: 44px !important;
+                height: 44px !important;
+                border-radius: var(--radius-md) !important;
             }
 
             #calculator > div:first-child > div:first-child > div:first-child i,
-            #settings > div:first-child > div > div:first-child i {
-                width: 28px !important;
-                height: 28px !important;
+            #settings > div:first-child > div > div:first-child i,
+            #meals > div:first-child > div > div:first-child i,
+            #planner > div:first-child > div:first-child > div:first-child i,
+            #tracking > div:first-child > div:first-child > div:first-child i,
+            #foods > div:first-child > div:first-child > div:first-child i,
+            #meal-templates > div:first-child > div:first-child > div:first-child i,
+            #guide > div:first-child > div:first-child > div:first-child i {
+                width: 24px !important;
+                height: 24px !important;
             }
 
-            /* Titres hero plus petits */
+            /* Hero titles */
             #calculator > div:first-child h1,
-            #settings > div:first-child h1 {
-                font-size: 1.4rem !important;
+            #settings > div:first-child h1,
+            #meals > div:first-child h2,
+            #planner > div:first-child h1,
+            #tracking > div:first-child h1,
+            #foods > div:first-child h1,
+            #meal-templates > div:first-child h1,
+            #guide > div:first-child h1 {
+                font-size: 1.25rem !important;
+                line-height: 1.3 !important;
             }
 
+            /* Hero descriptions - hidden on mobile for cleaner look */
             #calculator > div:first-child p,
-            #settings > div:first-child p {
-                font-size: 0.85rem !important;
+            #settings > div:first-child p,
+            #planner > div:first-child p,
+            #tracking > div:first-child p,
+            #foods > div:first-child p,
+            #meal-templates > div:first-child p,
+            #guide > div:first-child p {
+                display: none !important;
             }
 
-            /* GRILLES - Une seule colonne sur mobile */
-            div[style*="grid-template-columns: repeat(auto-fit, minmax(450px"],
-            div[style*="grid-template-columns: repeat(auto-fit, minmax(400px"],
-            div[style*="grid-template-columns: repeat(auto-fit, minmax(350px"],
-            div[style*="grid-template-columns: repeat(auto-fit, minmax(300px"] {
+            /* ============================================================ */
+            /* 5. CARDS - Mobile Card System                                */
+            /* ============================================================ */
+
+            .card {
+                padding: var(--space-lg) !important;
+                border-radius: var(--radius-xl) !important;
+                margin: 0 0 var(--space-lg) 0 !important;
+                border: 1px solid rgba(255, 255, 255, 0.06) !important;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15) !important;
+            }
+
+            /* Card headers */
+            .card h2 {
+                font-size: 1.1rem !important;
+                margin-bottom: var(--space-lg) !important;
+            }
+
+            /* Card inner sections */
+            .card > div[style*="border-bottom"] {
+                padding-bottom: var(--space-md) !important;
+                margin-bottom: var(--space-md) !important;
+            }
+
+            /* ============================================================ */
+            /* 6. FORMS - Touch-Friendly Inputs                             */
+            /* ============================================================ */
+
+            input[type="text"],
+            input[type="number"],
+            input[type="email"],
+            input[type="password"],
+            input[type="date"],
+            select,
+            textarea {
+                font-size: 16px !important; /* Prevents iOS zoom */
+                padding: 14px 16px !important;
+                border-radius: var(--radius-lg) !important;
+                min-height: 48px !important; /* Touch target */
+                background: var(--bg-tertiary) !important;
+                border: 2px solid transparent !important;
+                transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+            }
+
+            input:focus,
+            select:focus,
+            textarea:focus {
+                border-color: var(--accent-main) !important;
+                box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+                outline: none !important;
+            }
+
+            /* Labels */
+            label {
+                font-size: 0.9rem !important;
+                font-weight: 600 !important;
+                margin-bottom: var(--space-sm) !important;
+            }
+
+            /* Input groups */
+            .input-group {
+                margin-bottom: var(--space-lg) !important;
+            }
+
+            /* Grid layouts in forms */
+            .grid-2,
+            div[style*="grid-template-columns: 1fr 1fr"] {
                 grid-template-columns: 1fr !important;
                 gap: var(--space-md) !important;
             }
 
-            /* Grille 3 colonnes -> 1 colonne */
-            div[style*="grid-template-columns: 1fr 2fr 1fr"] {
-                grid-template-columns: 1fr 1fr 1fr !important;
+            /* ============================================================ */
+            /* 7. BUTTONS - Touch-Optimized                                 */
+            /* ============================================================ */
+
+            .btn,
+            button.btn,
+            .btn-primary,
+            .btn-secondary {
+                min-height: 48px !important;
+                padding: 14px 20px !important;
+                font-size: 0.95rem !important;
+                font-weight: 600 !important;
+                border-radius: var(--radius-lg) !important;
                 gap: var(--space-sm) !important;
             }
 
-            /* Input groups plus compacts */
-            .input-group {
-                margin-bottom: var(--space-md) !important;
+            .btn:active,
+            button.btn:active {
+                transform: scale(0.97);
             }
 
-            .input-group label {
-                font-size: 0.85rem !important;
-                margin-bottom: var(--space-xs) !important;
-            }
-
-            .input-group input,
-            .input-group select {
-                padding: 12px !important;
-                font-size: 16px !important; /* Empêche zoom iOS */
-            }
-
-            /* Boutons objectifs plus compacts */
+            /* Goal buttons - stack vertically */
             .goal-selector {
                 flex-direction: column !important;
-                gap: var(--space-sm) !important;
+                gap: var(--space-md) !important;
             }
 
             .goal-btn {
-                padding: var(--space-md) !important;
+                padding: var(--space-lg) !important;
             }
 
             .goal-title {
@@ -1169,389 +1302,16 @@
             }
 
             .goal-desc {
-                font-size: 0.8rem !important;
-            }
-
-            /* Section résultats */
-            #results-section .card {
-                padding: var(--space-md) !important;
-            }
-
-            /* Titres de section dans cards */
-            .card h2,
-            .card h3 {
-                font-size: 1.1rem !important;
-            }
-
-            /* Header app masqué sur mobile (on garde la navbar) */
-            header {
-                padding: 16px !important;
-            }
-
-            header h1 {
-                font-size: 1.5rem !important;
-                letter-spacing: -1px !important;
-            }
-
-            header .subtitle {
-                font-size: 0.8rem !important;
-                display: none;
-            }
-
-            /* Username display plus compact */
-            #username-display {
-                padding: 8px 12px !important;
-                font-size: 0.9rem !important;
-            }
-
-            /* Theme toggle */
-            header > div:first-child {
-                top: 12px !important;
-                right: 12px !important;
-            }
-
-            /* Meal cards */
-            .meal-card {
-                padding: var(--space-sm) !important;
-            }
-
-            /* Food items */
-            .food-item {
-                padding: var(--space-sm) !important;
-            }
-
-            /* Boutons généraux */
-            .btn {
-                padding: 12px 16px !important;
-                font-size: 0.9rem !important;
-            }
-
-            /* Modal content */
-            .modal-content {
-                margin: 10px !important;
-                max-height: 90vh !important;
-                border-radius: var(--radius-lg) !important;
-            }
-
-            .modal-header {
-                padding: var(--space-md) !important;
-            }
-
-            .modal-body {
-                padding: var(--space-md) !important;
-            }
-
-            /* Macro cards dans résultats */
-            .macro-card {
-                padding: var(--space-md) !important;
-            }
-
-            /* Alertes */
-            #profile-alert {
-                padding: var(--space-md) !important;
-                margin-bottom: var(--space-md) !important;
-            }
-
-            /* Espacement global réduit */
-            div[style*="margin-bottom: var(--space-3xl)"] {
-                margin-bottom: var(--space-xl) !important;
-            }
-
-            div[style*="margin-bottom: var(--space-2xl)"] {
-                margin-bottom: var(--space-lg) !important;
-            }
-
-            div[style*="gap: var(--space-2xl)"] {
-                gap: var(--space-md) !important;
-            }
-
-            div[style*="gap: var(--space-xl)"] {
-                gap: var(--space-md) !important;
-            }
-
-            /* Tables responsive */
-            table {
                 font-size: 0.85rem !important;
             }
 
-            th, td {
-                padding: var(--space-sm) !important;
-            }
+            /* ============================================================ */
+            /* 8. DATE NAVIGATION - Mobile Optimized                        */
+            /* ============================================================ */
 
-            /* Charts */
-            canvas {
-                max-height: 200px !important;
-            }
-
-            /* ============================================ */
-            /* OPTIMISATION MOBILE - MES REPAS / SEMAINE / BASE */
-            /* ============================================ */
-
-            /* MES REPAS - Grille 2x2 en mobile */
-            #meals .meal-card {
-                padding: var(--space-md) !important;
-            }
-
-            #meals .meal-card-header {
-                padding: var(--space-sm) var(--space-md) !important;
-                flex-wrap: wrap;
-            }
-
-            #meals .meal-card-header h3 {
-                font-size: 1rem !important;
-            }
-
-            /* Quick add compact */
-            #meals input[placeholder*="Quick Add"],
-            #meals input[placeholder*="nom de l'aliment"] {
-                font-size: 14px !important;
-                padding: 10px 12px !important;
-            }
-
-            /* Boutons repas compacts */
-            #meals .meal-card button {
-                padding: 8px 10px !important;
-                font-size: 0.75rem !important;
-            }
-
-            /* Grille boutons repas */
-            #meals .meal-card > div:last-child {
-                gap: var(--space-xs) !important;
-            }
-
-            /* SEMAINE / PLANNER */
-            #planner .day-card {
-                padding: var(--space-sm) !important;
-            }
-
-            #planner .day-name {
-                font-size: 0.9rem !important;
-            }
-
-            #planner .day-date {
-                font-size: 0.75rem !important;
-            }
-
-            #planner .day-meal-item {
-                padding: var(--space-xs) !important;
-            }
-
-            #planner .day-meal-label {
-                font-size: 0.7rem !important;
-            }
-
-            #planner .day-meal-foods {
-                font-size: 0.8rem !important;
-                min-height: 30px !important;
-            }
-
-            /* Week grid 2 colonnes sur mobile */
-            #week-grid {
-                grid-template-columns: 1fr 1fr !important;
-                gap: var(--space-sm) !important;
-            }
-
-            /* Navigation semaine */
-            #planner button[onclick*="previousWeek"],
-            #planner button[onclick*="nextWeek"] {
-                padding: 8px 12px !important;
-            }
-
-            /* BASE ALIMENTS */
-            #foods .card {
-                padding: var(--space-md) !important;
-            }
-
-            /* Search bar compact */
-            #foods input[type="text"],
-            #foods-search,
-            input[placeholder*="Rechercher un aliment"] {
-                font-size: 14px !important;
-                padding: 12px !important;
-            }
-
-            /* Filter bar */
-            #foods select {
-                font-size: 14px !important;
-                padding: 10px !important;
-            }
-
-            /* Food list items compacts */
-            #food-list .food-item,
-            .food-list .food-item {
-                padding: var(--space-sm) !important;
-                flex-direction: column !important;
-                align-items: flex-start !important;
-                gap: var(--space-sm) !important;
-            }
-
-            #food-list .food-item .food-name,
-            .food-list .food-item .food-name {
-                font-size: 0.9rem !important;
-                width: 100% !important;
-            }
-
-            #food-list .food-item .food-macros,
-            .food-list .food-item .food-macros {
-                width: 100% !important;
-                justify-content: space-between !important;
-                font-size: 0.75rem !important;
-            }
-
-            #food-list .food-item .food-actions,
-            .food-list .food-item .food-actions {
-                width: 100% !important;
-                justify-content: flex-end !important;
-            }
-
-            /* Pagination compacte */
-            #food-list + div button,
-            .food-pagination button {
-                padding: 8px 12px !important;
-                font-size: 0.8rem !important;
-            }
-
-            /* SUMMARY GRID 5 colonnes -> responsive */
-            .summary-grid {
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: var(--space-xs) !important;
-            }
-
-            .summary-card {
-                padding: var(--space-sm) !important;
-            }
-
-            .summary-value {
-                font-size: 1.1rem !important;
-            }
-
-            .summary-label {
-                font-size: 0.65rem !important;
-            }
-
-            /* Progress bars plus fins */
-            .progress-bar {
-                height: 6px !important;
-            }
-
-            /* Day totals section */
-            .day-totals-title {
-                font-size: 1.1rem !important;
-            }
-
-            /* Sync indicator compact */
-            #sync-indicator {
-                padding: 4px 8px !important;
-                font-size: 0.7rem !important;
-            }
-            #sync-indicator .sync-dot {
-                width: 6px !important;
-                height: 6px !important;
-            }
-
-            /* Meal cards grid - UNE SEULE COLONNE sur mobile */
-            #meals > div[style*="grid-template-columns: 1fr 1fr"] {
-                grid-template-columns: 1fr !important;
-                gap: var(--space-md) !important;
-            }
-
-            /* ===== FIX HEADER MOBILE ===== */
-            .app-header {
-                padding: var(--space-md) var(--space-sm) !important;
-            }
-
-            .header-main-row {
-                gap: var(--space-md) !important;
-            }
-
-            .header-btn {
-                width: 36px !important;
-                height: 36px !important;
-            }
-
-            .header-btn i {
-                width: 18px !important;
-                height: 18px !important;
-            }
-
-            .header-title {
-                font-size: 1.3rem !important;
-            }
-
-            .header-logo {
-                height: 1.3em !important;
-            }
-
-            .header-username {
-                height: 36px !important;
-                padding: 0 var(--space-md) !important;
-                font-size: 0.8rem !important;
-                max-width: 110px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
-            .header-subtitle-row {
-                flex-direction: column;
-                gap: var(--space-sm) !important;
-            }
-
-            .header-subtitle-row .subtitle {
-                font-size: 0.85rem !important;
-            }
-
-            #sync-indicator {
-                height: 28px !important;
-                padding: 0 10px !important;
-                font-size: 0.7rem !important;
-            }
-
-            /* ===== FIX PROGRESS BARS - Afficher pourcentages ===== */
-            .progress-fill::after {
-                content: attr(data-percent);
-                position: absolute;
-                right: 8px;
-                top: 50%;
-                transform: translateY(-50%);
-                font-size: 0.7rem;
-                font-weight: 700;
-                color: rgba(0,0,0,0.7);
-                text-shadow: 0 0 2px rgba(255,255,255,0.5);
-            }
-
-            .progress-bar {
-                position: relative;
-                overflow: visible !important;
-            }
-
-            .progress-fill {
-                position: relative;
-            }
-
-            /* ===== FIX DATE NAVIGATION MOBILE ===== */
-            #meals > div:first-child {
-                flex-direction: column !important;
-                gap: var(--space-md) !important;
-                padding: var(--space-md) !important;
-            }
-
-            #meals > div:first-child h2 {
-                font-size: 1rem !important;
-                flex-wrap: wrap;
-                justify-content: center;
-                text-align: center;
-            }
-
-            #meals > div:first-child > div[style*="display: flex"] {
-                flex-wrap: wrap !important;
-                justify-content: center !important;
-                gap: var(--space-sm) !important;
-            }
-
-            /* ===== MOBILE DATE NAVIGATION ===== */
             .date-navigation-wrapper {
-                gap: var(--space-sm) !important;
+                gap: var(--space-md) !important;
+                margin-bottom: var(--space-lg) !important;
             }
 
             .date-navigation-title {
@@ -1562,7 +1322,7 @@
 
             .date-navigation-controls {
                 display: grid !important;
-                grid-template-columns: 48px 1fr 48px !important;
+                grid-template-columns: 52px 1fr 52px !important;
                 grid-template-rows: auto auto !important;
                 gap: var(--space-sm) !important;
                 align-items: center;
@@ -1575,10 +1335,13 @@
             }
 
             .date-nav-btn {
-                width: 48px !important;
-                height: 48px !important;
+                width: 52px !important;
+                height: 52px !important;
                 padding: 0 !important;
-                border-radius: var(--radius-lg) !important;
+                border-radius: var(--radius-xl) !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
 
             .date-nav-btn:first-child {
@@ -1595,23 +1358,442 @@
                 grid-column: 1 / -1 !important;
                 grid-row: 2 !important;
                 width: 100% !important;
-                height: 44px !important;
-                font-size: 0.95rem !important;
-            }
-
-            .today-btn-text {
-                display: inline !important;
+                height: 48px !important;
+                font-size: 0.9rem !important;
+                border-radius: var(--radius-xl) !important;
             }
 
             .current-date {
                 font-size: 1rem !important;
+                font-weight: 600 !important;
             }
 
-            /* ===== FIX BLUR OVERLAY Z-INDEX ===== */
-            /* Ne pas couvrir la navbar mobile */
+            /* ============================================================ */
+            /* 9. MEAL CARDS - Clean Mobile Layout                          */
+            /* ============================================================ */
+
+            /* Meals grid - single column */
+            #meals > div[style*="grid-template-columns: 1fr 1fr"],
+            #meals > div:first-of-type {
+                grid-template-columns: 1fr !important;
+                gap: var(--space-md) !important;
+            }
+
+            .meal-card {
+                padding: var(--space-lg) !important;
+                border-radius: var(--radius-xl) !important;
+                margin-bottom: var(--space-sm) !important;
+            }
+
+            .meal-card .meal-header {
+                margin-bottom: var(--space-md) !important;
+            }
+
+            .meal-card .meal-header h3 {
+                font-size: 1rem !important;
+            }
+
+            /* Food items in meals */
+            .food-item {
+                padding: var(--space-md) !important;
+                border-radius: var(--radius-lg) !important;
+                margin-bottom: var(--space-sm) !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: var(--space-sm) !important;
+            }
+
+            .food-item .food-name {
+                font-size: 0.9rem !important;
+                font-weight: 600 !important;
+            }
+
+            .food-item .food-macros {
+                display: flex !important;
+                justify-content: space-between !important;
+                width: 100% !important;
+                font-size: 0.75rem !important;
+                padding: var(--space-sm) 0 !important;
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .food-item .food-actions {
+                display: flex !important;
+                justify-content: flex-end !important;
+                gap: var(--space-sm) !important;
+            }
+
+            .food-item .food-actions button {
+                min-width: 40px !important;
+                min-height: 40px !important;
+                padding: var(--space-sm) !important;
+            }
+
+            /* ============================================================ */
+            /* 10. SUMMARY GRID - Compact Display                           */
+            /* ============================================================ */
+
+            .summary-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: var(--space-xs) !important;
+            }
+
+            .summary-card {
+                padding: var(--space-sm) var(--space-xs) !important;
+                border-radius: var(--radius-md) !important;
+            }
+
+            .summary-value {
+                font-size: 1.1rem !important;
+                font-weight: 700 !important;
+            }
+
+            .summary-label {
+                font-size: 0.6rem !important;
+                text-transform: uppercase;
+                letter-spacing: 0.02em;
+            }
+
+            /* Total card emphasis */
+            .summary-card.total-card {
+                grid-column: span 3 !important;
+                padding: var(--space-md) !important;
+            }
+
+            .summary-card.total-card .summary-value {
+                font-size: 1.4rem !important;
+            }
+
+            /* ============================================================ */
+            /* 11. PROGRESS BARS - Clear & Readable                         */
+            /* ============================================================ */
+
+            .progress-bar {
+                height: 10px !important;
+                border-radius: var(--radius-full) !important;
+                position: relative;
+                overflow: visible !important;
+                background: var(--bg-tertiary) !important;
+            }
+
+            .progress-fill {
+                border-radius: var(--radius-full) !important;
+                position: relative;
+                min-width: 10px;
+            }
+
+            .progress-fill::after {
+                content: attr(data-percent);
+                position: absolute;
+                right: -4px;
+                top: 50%;
+                transform: translateY(-50%) translateX(100%);
+                font-size: 0.7rem;
+                font-weight: 700;
+                color: var(--text-secondary);
+                padding-left: var(--space-sm);
+                white-space: nowrap;
+            }
+
+            /* ============================================================ */
+            /* 12. WEEK PLANNER - Mobile Grid                               */
+            /* ============================================================ */
+
+            .week-selector {
+                flex-direction: column !important;
+                gap: var(--space-md) !important;
+                text-align: center;
+            }
+
+            .week-nav-btn {
+                min-height: 44px !important;
+                padding: 12px 16px !important;
+                font-size: 0.85rem !important;
+            }
+
+            .current-week {
+                font-size: 1rem !important;
+                font-weight: 600 !important;
+            }
+
+            .this-week-btn {
+                width: 100% !important;
+            }
+
+            .week-grid {
+                grid-template-columns: 1fr !important;
+                gap: var(--space-md) !important;
+            }
+
+            .day-card {
+                padding: var(--space-lg) !important;
+                border-radius: var(--radius-xl) !important;
+            }
+
+            /* ============================================================ */
+            /* 13. TRACKING TAB - Chart & Stats                             */
+            /* ============================================================ */
+
+            #tracking .card {
+                padding: var(--space-lg) !important;
+            }
+
+            /* Chart container */
+            #tracking canvas {
+                max-height: 250px !important;
+            }
+
+            /* Stats grid */
+            #tracking .grid-2,
+            #tracking div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr 1fr !important;
+                gap: var(--space-sm) !important;
+            }
+
+            /* ============================================================ */
+            /* 14. FOOD DATABASE - Clean List                               */
+            /* ============================================================ */
+
+            #foods .card {
+                padding: var(--space-lg) !important;
+            }
+
+            /* Search bar */
+            #foods input[type="text"],
+            #foods-search,
+            input[placeholder*="Rechercher"] {
+                font-size: 16px !important;
+                padding: 14px 16px !important;
+            }
+
+            /* Filter select */
+            #foods select {
+                font-size: 16px !important;
+            }
+
+            /* Food list items */
+            #food-list .food-item,
+            .food-list .food-item {
+                padding: var(--space-md) !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: var(--space-sm) !important;
+                border-radius: var(--radius-lg) !important;
+            }
+
+            #food-list .food-item .food-name,
+            .food-list .food-item .food-name {
+                font-size: 0.95rem !important;
+                font-weight: 600 !important;
+            }
+
+            #food-list .food-item .food-macros,
+            .food-list .food-item .food-macros {
+                width: 100% !important;
+                justify-content: space-between !important;
+                font-size: 0.75rem !important;
+            }
+
+            #food-list .food-item .food-actions,
+            .food-list .food-item .food-actions {
+                width: 100% !important;
+                justify-content: flex-end !important;
+                padding-top: var(--space-sm) !important;
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            /* Pagination */
+            .food-pagination,
+            #food-list + div {
+                flex-wrap: wrap !important;
+                gap: var(--space-sm) !important;
+            }
+
+            .food-pagination button,
+            #food-list + div button {
+                min-height: 44px !important;
+                padding: 10px 14px !important;
+                font-size: 0.8rem !important;
+            }
+
+            /* ============================================================ */
+            /* 15. MODALS - Full-Screen Mobile                              */
+            /* ============================================================ */
+
+            .modal {
+                align-items: flex-end !important;
+                padding: 0 !important;
+            }
+
+            .modal-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                max-height: 90vh !important;
+                border-radius: var(--radius-2xl) var(--radius-2xl) 0 0 !important;
+                padding: var(--space-xl) !important;
+                margin: 0 !important;
+            }
+
+            .modal-header {
+                margin-bottom: var(--space-xl) !important;
+            }
+
+            .modal-header h3 {
+                font-size: 1.2rem !important;
+            }
+
+            .modal-close {
+                width: 40px !important;
+                height: 40px !important;
+                border-radius: var(--radius-full) !important;
+            }
+
+            /* ============================================================ */
+            /* 16. TOAST NOTIFICATIONS - Mobile Position                    */
+            /* ============================================================ */
+
+            .toast {
+                bottom: 100px !important; /* Above navbar */
+                left: var(--space-lg) !important;
+                right: var(--space-lg) !important;
+                max-width: calc(100% - 32px) !important;
+                border-radius: var(--radius-xl) !important;
+            }
+
+            /* ============================================================ */
+            /* 17. OVERLAY & DISABLED STATES                                */
+            /* ============================================================ */
+
             .section-disabled-overlay {
-                z-index: 50 !important; /* Plus bas que la navbar (z-index: 1000) */
-                bottom: 85px !important; /* Laisser de l'espace pour la navbar */
+                z-index: 50 !important;
+                bottom: 80px !important;
+            }
+
+            /* ============================================================ */
+            /* 18. TYPOGRAPHY - Mobile Scale                                */
+            /* ============================================================ */
+
+            h1 { font-size: 1.5rem !important; line-height: 1.3 !important; }
+            h2 { font-size: 1.2rem !important; line-height: 1.35 !important; }
+            h3 { font-size: 1rem !important; line-height: 1.4 !important; }
+
+            p, .info-text {
+                font-size: 0.9rem !important;
+                line-height: 1.5 !important;
+            }
+
+            /* ============================================================ */
+            /* 19. SETTINGS TAB - Clean Sections                            */
+            /* ============================================================ */
+
+            #settings .card {
+                padding: var(--space-lg) !important;
+                margin-bottom: var(--space-md) !important;
+            }
+
+            #settings h2 {
+                font-size: 1rem !important;
+            }
+
+            /* Toggle switches */
+            #settings input[type="checkbox"] {
+                width: 48px !important;
+                height: 28px !important;
+            }
+
+            /* ============================================================ */
+            /* 20. CALCULATOR TAB - Optimized Form                          */
+            /* ============================================================ */
+
+            #calculator .card {
+                padding: var(--space-lg) !important;
+            }
+
+            /* Date of birth selects - stack on small screens */
+            #calculator div[style*="grid-template-columns: 1fr 2fr 1fr"] {
+                grid-template-columns: 1fr 1fr 1fr !important;
+                gap: var(--space-sm) !important;
+            }
+
+            /* Results grid */
+            #calculator .grid-2 {
+                grid-template-columns: 1fr 1fr !important;
+            }
+
+            /* Main grid - single column */
+            #calculator > div[style*="grid-template-columns: repeat"] {
+                grid-template-columns: 1fr !important;
+                gap: var(--space-lg) !important;
+            }
+
+            /* Macros results */
+            #macro-result {
+                padding: var(--space-lg) !important;
+            }
+
+            #macro-result .grid-2 {
+                grid-template-columns: 1fr 1fr !important;
+                gap: var(--space-sm) !important;
+            }
+
+            /* ============================================================ */
+            /* 21. HIDE NUMBER INPUT SPINNERS                               */
+            /* ============================================================ */
+
+            input[type="number"]::-webkit-outer-spin-button,
+            input[type="number"]::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            input[type="number"] {
+                -moz-appearance: textfield;
+            }
+
+            /* ============================================================ */
+            /* 22. STREAK BADGE - Mobile Size                               */
+            /* ============================================================ */
+
+            .streak-badge {
+                font-size: 0.75rem !important;
+                padding: 4px 10px !important;
+            }
+
+            /* ============================================================ */
+            /* 23. ALERT BOXES - Full Width                                 */
+            /* ============================================================ */
+
+            #profile-alert,
+            div[style*="border-left: 4px solid"] {
+                padding: var(--space-md) !important;
+                border-radius: var(--radius-lg) !important;
+                margin-bottom: var(--space-lg) !important;
+            }
+
+            /* ============================================================ */
+            /* 24. MEAL TEMPLATES - Mobile Layout                           */
+            /* ============================================================ */
+
+            #meal-templates .card {
+                padding: var(--space-lg) !important;
+            }
+
+            .template-card {
+                padding: var(--space-md) !important;
+                border-radius: var(--radius-lg) !important;
+            }
+
+            /* ============================================================ */
+            /* 25. SCROLLBAR - Hidden on Mobile                             */
+            /* ============================================================ */
+
+            ::-webkit-scrollbar {
+                width: 0 !important;
+                height: 0 !important;
+            }
+
+            * {
+                scrollbar-width: none !important;
             }
         }
 
@@ -1631,7 +1813,7 @@
         .mobile-drawer {
             display: none;
             position: fixed;
-            bottom: 85px; /* Au-dessus de la navbar */
+            bottom: 80px; /* Au-dessus de la navbar */
             left: 0;
             right: 0;
             background: var(--bg-secondary);
