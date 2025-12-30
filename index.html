@@ -996,7 +996,7 @@
             font-size: 1rem;
             font-weight: 600;
             border: none;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             cursor: pointer;
             transition: all 0.25s ease;
         }
@@ -1015,15 +1015,16 @@
             gap: 8px;
             padding: 14px 20px;
             background: transparent;
-            color: var(--text-secondary);
+            color: var(--accent-main);
             font-size: 1rem;
-            font-weight: 500;
-            border: none;
+            font-weight: 600;
+            border: 2px solid var(--accent-main);
+            border-radius: var(--radius-md);
             cursor: pointer;
-            transition: color 0.2s;
+            transition: var(--transition-normal);
         }
 
-        .home-btn-ghost:hover { color: var(--accent-main); }
+        .home-btn-ghost:hover { background: rgba(16, 185, 129, 0.1); }
         .home-btn-ghost i { width: 18px; height: 18px; }
 
         /* 3D Plate Scene */
@@ -1077,58 +1078,58 @@
             transition: transform 0.3s ease;
         }
 
-        .home-food-item:hover { transform: scale(1.1); }
-        .home-food-item i { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+        .home-food-item:hover { transform: scale(1.15); }
 
         .home-food-protein {
             width: 72px; height: 72px;
-            background: linear-gradient(135deg, #f87171, #dc2626);
+            background: rgba(248, 113, 113, 0.15);
+            border: 2px solid rgba(248, 113, 113, 0.3);
             top: 15px; left: 50%; transform: translateX(-50%);
+            font-size: 36px;
         }
-        .home-food-protein i { width: 32px; height: 32px; color: white; }
 
         .home-food-carbs {
             width: 64px; height: 64px;
-            background: linear-gradient(135deg, #60a5fa, #2563eb);
+            background: rgba(96, 165, 250, 0.15);
+            border: 2px solid rgba(96, 165, 250, 0.3);
             bottom: 40px; left: 25px;
+            font-size: 30px;
         }
-        .home-food-carbs i { width: 28px; height: 28px; color: white; }
 
         .home-food-veggies {
             width: 68px; height: 68px;
-            background: linear-gradient(135deg, #4ade80, #16a34a);
+            background: rgba(74, 222, 128, 0.15);
+            border: 2px solid rgba(74, 222, 128, 0.3);
             bottom: 40px; right: 25px;
+            font-size: 32px;
         }
-        .home-food-veggies i { width: 30px; height: 30px; color: white; }
 
         .home-food-center {
             width: 50px; height: 50px;
-            background: linear-gradient(135deg, #fbbf24, #d97706);
+            background: rgba(251, 191, 36, 0.15);
+            border: 2px solid rgba(251, 191, 36, 0.3);
             top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 26px;
         }
-        .home-food-center i { width: 22px; height: 22px; color: white; }
 
         /* Floating elements */
         .home-float {
             position: absolute;
-            border-radius: 14px;
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
             animation: homeFloat 5s ease-in-out infinite;
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .home-float i { color: white; }
-
-        .home-float-1 { width: 52px; height: 52px; background: linear-gradient(135deg, #fb7185, #e11d48); top: 10px; right: 10px; animation-delay: 0s; }
-        .home-float-1 i { width: 24px; height: 24px; }
-        .home-float-2 { width: 48px; height: 48px; background: linear-gradient(135deg, #a78bfa, #7c3aed); bottom: 30px; right: 40px; animation-delay: 1.2s; }
-        .home-float-2 i { width: 22px; height: 22px; }
-        .home-float-3 { width: 50px; height: 50px; background: linear-gradient(135deg, #fb923c, #ea580c); top: 50px; left: 0; animation-delay: 0.6s; }
-        .home-float-3 i { width: 24px; height: 24px; }
-        .home-float-4 { width: 46px; height: 46px; background: linear-gradient(135deg, #34d399, #059669); bottom: 10px; left: 30px; animation-delay: 1.8s; }
-        .home-float-4 i { width: 20px; height: 20px; }
+        .home-float-1 { width: 52px; height: 52px; font-size: 26px; top: 10px; right: 10px; animation-delay: 0s; }
+        .home-float-2 { width: 48px; height: 48px; font-size: 24px; bottom: 30px; right: 40px; animation-delay: 1.2s; }
+        .home-float-3 { width: 50px; height: 50px; font-size: 26px; top: 50px; left: 0; animation-delay: 0.6s; }
+        .home-float-4 { width: 46px; height: 46px; font-size: 22px; bottom: 10px; left: 30px; animation-delay: 1.8s; }
 
         @keyframes homeFloat {
             0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -1141,7 +1142,7 @@
             background: rgba(25, 25, 25, 0.95);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
+            border-radius: var(--radius-lg);
             padding: 12px 16px;
             display: flex;
             align-items: center;
@@ -1152,7 +1153,7 @@
 
         .home-info-icon {
             width: 38px; height: 38px;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1181,7 +1182,7 @@
         .home-feature {
             background: var(--bg-secondary);
             border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 16px;
+            border-radius: var(--radius-lg);
             padding: var(--space-lg);
             text-align: center;
             cursor: pointer;
@@ -1197,7 +1198,7 @@
         .home-feature-icon {
             width: 50px; height: 50px;
             margin: 0 auto var(--space-md);
-            border-radius: 14px;
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1232,17 +1233,12 @@
             .home-plate { width: 200px; height: 200px; }
             .home-plate-inner { width: 160px; height: 160px; }
 
-            .home-food-protein { width: 50px; height: 50px; top: 10px; }
-            .home-food-protein i { width: 22px; height: 22px; }
-            .home-food-carbs { width: 44px; height: 44px; bottom: 28px; left: 18px; }
-            .home-food-carbs i { width: 20px; height: 20px; }
-            .home-food-veggies { width: 46px; height: 46px; bottom: 28px; right: 18px; }
-            .home-food-veggies i { width: 20px; height: 20px; }
-            .home-food-center { width: 34px; height: 34px; }
-            .home-food-center i { width: 16px; height: 16px; }
+            .home-food-protein { width: 50px; height: 50px; top: 10px; font-size: 24px; }
+            .home-food-carbs { width: 44px; height: 44px; bottom: 28px; left: 18px; font-size: 20px; }
+            .home-food-veggies { width: 46px; height: 46px; bottom: 28px; right: 18px; font-size: 22px; }
+            .home-food-center { width: 34px; height: 34px; font-size: 16px; }
 
-            .home-float { width: 38px !important; height: 38px !important; border-radius: 10px; }
-            .home-float i { width: 18px !important; height: 18px !important; }
+            .home-float { width: 38px !important; height: 38px !important; border-radius: var(--radius-md); font-size: 18px !important; }
             .home-info { display: none; }
 
             .home-features {
@@ -3919,11 +3915,11 @@
                     <!-- 3D Plate -->
                     <div class="home-plate-scene" id="home-plate-scene">
                         <div class="home-plate-container" id="home-plate-container">
-                            <!-- Floating food icons -->
-                            <div class="home-float home-float-1"><i data-lucide="apple"></i></div>
-                            <div class="home-float home-float-2"><i data-lucide="grape"></i></div>
-                            <div class="home-float home-float-3"><i data-lucide="carrot"></i></div>
-                            <div class="home-float home-float-4"><i data-lucide="leaf"></i></div>
+                            <!-- Floating food emojis -->
+                            <div class="home-float home-float-1">🍎</div>
+                            <div class="home-float home-float-2">🍇</div>
+                            <div class="home-float home-float-3">🥕</div>
+                            <div class="home-float home-float-4">🥬</div>
 
                             <!-- Info cards -->
                             <div class="home-info home-info-1">
@@ -3941,13 +3937,13 @@
                                 </div>
                             </div>
 
-                            <!-- Main plate -->
+                            <!-- Main plate with realistic food -->
                             <div class="home-plate">
                                 <div class="home-plate-inner">
-                                    <div class="home-food-item home-food-protein"><i data-lucide="beef"></i></div>
-                                    <div class="home-food-item home-food-carbs"><i data-lucide="wheat"></i></div>
-                                    <div class="home-food-item home-food-veggies"><i data-lucide="salad"></i></div>
-                                    <div class="home-food-item home-food-center"><i data-lucide="droplet"></i></div>
+                                    <div class="home-food-item home-food-protein">🥩</div>
+                                    <div class="home-food-item home-food-carbs">🍚</div>
+                                    <div class="home-food-item home-food-veggies">🥗</div>
+                                    <div class="home-food-item home-food-center">🥑</div>
                                 </div>
                             </div>
                         </div>
