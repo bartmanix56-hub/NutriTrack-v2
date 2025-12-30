@@ -628,14 +628,6 @@
             box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2);
         }
 
-        .progress-fill::after {
-            content: attr(data-percent);
-            position: absolute;
-            right: 8px;
-            color: white !important;
-            font-weight: 600;
-        }
-
         .progress-fill.protein { background: var(--accent-protein); }
         .progress-fill.carbs { background: var(--accent-carbs); }
         .progress-fill.fat { background: var(--accent-fat); }
@@ -1187,43 +1179,48 @@
                 font-size: 1.1rem !important;
             }
 
-            /* ===== NAVIGATION SEMAINE PREMIUM ===== */
+            /* ===== NAVIGATION SEMAINE MOBILE-FIRST ===== */
             .week-selector {
-                flex-direction: column !important;
-                gap: 10px !important;
-                margin-bottom: 16px !important;
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                gap: 8px !important;
+                margin-bottom: 12px !important;
+                padding: 0 !important;
             }
 
             .current-week {
-                font-size: 0.95rem !important;
-                order: -1 !important;
-            }
-
-            .week-nav-btn {
-                padding: 10px 16px !important;
                 font-size: 0.85rem !important;
-                border-radius: 8px !important;
+                font-weight: 600 !important;
+                text-align: center !important;
+                flex: 1 !important;
+                order: 0 !important;
             }
 
-            /* Boutons navigation semaine avec icônes */
+            /* Boutons flèches compacts */
             .week-nav-btn {
-                font-size: 0.75rem !important;
-                display: inline-flex !important;
+                width: 40px !important;
+                height: 40px !important;
+                min-width: 40px !important;
+                padding: 0 !important;
+                font-size: 0 !important;
+                display: flex !important;
                 align-items: center !important;
-                gap: 4px !important;
-                padding: 8px 12px !important;
+                justify-content: center !important;
+                border-radius: var(--radius-md) !important;
             }
 
             .week-nav-btn i,
             .week-nav-btn svg {
-                width: 14px !important;
-                height: 14px !important;
-                flex-shrink: 0;
+                width: 20px !important;
+                height: 20px !important;
             }
 
             .week-nav-btn.this-week-btn {
-                font-size: 0.85rem !important;
-                padding: 8px 20px !important;
+                width: auto !important;
+                font-size: 0.75rem !important;
+                padding: 8px 16px !important;
             }
 
             /* ===== PARAMÈTRES ESPACEMENT ===== */
@@ -1290,6 +1287,30 @@
             .add-food-btn {
                 font-size: 0.7rem !important;
                 padding: 8px 6px !important;
+            }
+
+            /* ===== MODALS MOBILE ===== */
+            .modal-close {
+                width: 44px !important;
+                height: 44px !important;
+                font-size: 1.5rem !important;
+                top: var(--space-md) !important;
+                right: var(--space-md) !important;
+                z-index: 1000 !important;
+            }
+
+            .modal-content {
+                max-height: 90vh !important;
+            }
+
+            /* Bouton Ajouter aliment à droite sur mobile (base d'aliments) */
+            #foods .card > div[style*="display: flex"][style*="justify-content: space-between"] {
+                flex-direction: column !important;
+                gap: var(--space-sm) !important;
+            }
+
+            #foods .card > div[style*="display: flex"][style*="justify-content: space-between"] > .btn {
+                align-self: flex-end !important;
             }
 
             /* ===== NAVIGATION DATE (REPAS) ===== */
@@ -1708,42 +1729,33 @@
 
             /* ===== HEADER MOBILE PREMIUM ===== */
             .app-header {
-                padding: var(--space-md) var(--space-md) var(--space-sm) !important;
+                padding: var(--space-sm) var(--space-md) !important;
                 position: relative !important;
             }
 
-            /* Username visible mais réduit */
+            /* Username masqué sur mobile */
             .header-username {
-                display: flex !important;
-                position: absolute !important;
-                top: 8px !important;
-                left: 12px !important;
-                min-width: auto !important;
-                height: auto !important;
-                padding: 4px 10px !important;
-                font-size: 0.75rem !important;
-                background: var(--bg-tertiary) !important;
-                border: none !important;
-                box-shadow: none !important;
+                display: none !important;
             }
 
-            /* Winstreak bien positionné (coin droit) */
+            /* Winstreak discret en haut à droite */
             #streak-display {
                 position: absolute !important;
-                top: 6px !important;
+                top: 8px !important;
                 right: 12px !important;
                 left: auto !important;
+                z-index: 10;
             }
 
             #streak-display .streak-badge {
-                font-size: 0.75rem !important;
-                padding: 4px 10px !important;
+                font-size: 0.7rem !important;
+                padding: 3px 8px !important;
             }
 
             .header-main-row {
                 flex-direction: column !important;
-                gap: var(--space-xs) !important;
-                padding-top: 28px !important; /* Espace pour username/streak */
+                gap: 2px !important;
+                padding-top: 0 !important;
             }
 
             /* Logo + NutriTrack centrés */
@@ -1782,22 +1794,10 @@
                 opacity: 0.8;
             }
 
-            /* ===== FIX PROGRESS BARS - Afficher pourcentages ===== */
-            .progress-fill::after {
-                content: attr(data-percent);
-                position: absolute;
-                right: 8px;
-                top: 50%;
-                transform: translateY(-50%);
-                font-size: 0.7rem;
-                font-weight: 700;
-                color: rgba(0,0,0,0.7);
-                text-shadow: 0 0 2px rgba(255,255,255,0.5);
-            }
-
+            /* Progress bars sans pourcentage - plus sobre */
             .progress-bar {
                 position: relative;
-                overflow: visible !important;
+                overflow: hidden !important;
             }
 
             .progress-fill {
@@ -5993,12 +5993,9 @@
         function showInstallButton() {
             const installCard = document.getElementById('pwa-install-card');
             const landingInstallBtn = document.getElementById('landing-install-btn');
-            const drawerInstallBtn = document.getElementById('drawer-install-btn');
-            // Afficher uniquement dans: Settings, Landing page, et Menu Plus (drawer)
-            // Footer désactivé pour éviter l'intrusion
+            // Afficher uniquement dans: Settings et Landing page
             if (installCard) installCard.style.display = 'block';
             if (landingInstallBtn) landingInstallBtn.style.display = 'inline-flex';
-            if (drawerInstallBtn) drawerInstallBtn.style.display = 'flex';
         }
 
         function hideInstallButton() {
@@ -8744,7 +8741,16 @@ Solutions possibles :
             const weekStart = new Date(currentWeekStart);
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekEnd.getDate() + 6);
-            document.getElementById('current-week').textContent = 'Semaine du ' + formatDate(weekStart) + ' au ' + formatDate(weekEnd);
+            // Format condensé sur mobile
+            const isMobile = window.innerWidth <= 768;
+            const startDay = weekStart.getDate();
+            const endDay = weekEnd.getDate();
+            const startMonth = weekStart.toLocaleDateString('fr-FR', { month: 'short' });
+            const endMonth = weekEnd.toLocaleDateString('fr-FR', { month: 'short' });
+            const weekText = isMobile
+                ? `${startDay} ${startMonth} → ${endDay} ${endMonth}`
+                : `Semaine du ${formatDate(weekStart)} au ${formatDate(weekEnd)}`;
+            document.getElementById('current-week').textContent = weekText;
 
             const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
             const weekGrid = document.getElementById('week-grid');
@@ -10239,8 +10245,15 @@ Solutions possibles :
         let userHeight = null;
 
         function loadAdvancedTracking() {
-            const saved = localStorage.getItem('advancedTrackingData');
-            if (saved) advancedTrackingData = JSON.parse(saved);
+            // Charger depuis trackingData comme source principale
+            const trackingSaved = localStorage.getItem('trackingData');
+            if (trackingSaved) {
+                advancedTrackingData = JSON.parse(trackingSaved);
+            } else {
+                // Fallback vers advancedTrackingData si trackingData n'existe pas
+                const saved = localStorage.getItem('advancedTrackingData');
+                if (saved) advancedTrackingData = JSON.parse(saved);
+            }
 
             // Récupérer la taille depuis le champ dans le calculateur
             const heightField = document.getElementById('height');
@@ -10388,51 +10401,64 @@ Solutions possibles :
 
             let data, label, color;
 
+            // Couleurs sémantiques pour chaque métrique
+            const METRIC_COLORS = {
+                weight: '#FF6B6B',     // Corail - mesure corporelle principale
+                bodyfat: '#FFB347',    // Orange - à réduire idéalement
+                muscle: '#10B981',     // Vert - croissance positive
+                imc: '#8B5CF6',        // Violet - indicateur calculé
+                water: '#38BDF8',      // Bleu ciel - hydratation
+                bone: '#94A3B8',       // Gris ardoise - structure
+                proteinPct: '#F97316', // Orange vif - protéines
+                bodyAge: '#F472B6',    // Rose - âge métabolique
+                visceral: '#EF4444'    // Rouge - attention santé
+            };
+
             switch(type) {
                 case 'weight':
                     data = sorted.map(e => e.weight);
                     label = 'Poids (kg)';
-                    color = '#ff6b6b';
+                    color = METRIC_COLORS.weight;
                     break;
                 case 'bodyfat':
                     data = sorted.map(e => e.bodyfat || 0);
                     label = 'Graisse (%)';
-                    color = '#ffe66d';
+                    color = METRIC_COLORS.bodyfat;
                     break;
                 case 'muscle':
                     data = sorted.map(e => e.muscle || 0);
                     label = 'Muscle (kg)';
-                    color = '#10b981';
+                    color = METRIC_COLORS.muscle;
                     break;
                 case 'imc':
                     data = sorted.map(e => e.imc || 0);
                     label = 'IMC';
-                    color = '#a28cff';
+                    color = METRIC_COLORS.imc;
                     break;
                 case 'water':
                     data = sorted.map(e => e.water || 0);
                     label = 'Eau (%)';
-                    color = '#4ecdc4';
+                    color = METRIC_COLORS.water;
                     break;
                 case 'bone':
                     data = sorted.map(e => e.bone || 0);
                     label = 'Os (kg)';
-                    color = '#d1d5db';
+                    color = METRIC_COLORS.bone;
                     break;
                 case 'proteinPct':
                     data = sorted.map(e => e.proteinPct || 0);
                     label = 'Protéines (%)';
-                    color = '#ff6b6b';
+                    color = METRIC_COLORS.proteinPct;
                     break;
                 case 'bodyAge':
                     data = sorted.map(e => e.bodyAge || 0);
                     label = 'Âge corporel';
-                    color = '#ffa07a';
+                    color = METRIC_COLORS.bodyAge;
                     break;
                 case 'visceral':
                     data = sorted.map(e => e.visceral || 0);
                     label = 'Viscérale';
-                    color = '#ff4444';
+                    color = METRIC_COLORS.visceral;
                     break;
                 default:
                     alert('Type de graphique inconnu');
