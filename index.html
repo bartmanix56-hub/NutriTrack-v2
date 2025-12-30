@@ -1612,6 +1612,12 @@
             .section-disabled-overlay {
                 z-index: 50 !important; /* Plus bas que la navbar (z-index: 1000) */
                 bottom: 85px !important; /* Laisser de l'espace pour la navbar */
+                pointer-events: none !important; /* Laisser passer les clics vers la navbar */
+            }
+
+            /* Seul le message reste cliquable */
+            .section-disabled-message {
+                pointer-events: all !important;
             }
         }
 
@@ -4981,6 +4987,17 @@
                 transform: translateX(-50%);
                 margin-left: 0;
                 margin-top: var(--space-sm);
+            }
+
+            /* FIX: Overlay ne doit pas bloquer la navbar mobile */
+            .section-disabled-overlay {
+                z-index: 50 !important;
+                bottom: 85px !important;
+                pointer-events: none !important;
+            }
+
+            .section-disabled-message {
+                pointer-events: all !important;
             }
         }
     </style>
