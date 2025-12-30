@@ -906,504 +906,356 @@
         /* ===== HOME TAB ===== */
         #home {
             padding: 0;
+            overflow: hidden;
         }
-
-        /* Hero badges */
-        .home-badges {
-            display: flex;
-            gap: var(--space-sm);
-            flex-wrap: wrap;
-            margin-bottom: var(--space-lg);
-        }
-
-        .home-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 20px;
-            padding: 6px 14px;
-            font-size: 0.8rem;
-            color: var(--accent-main);
-            font-weight: 600;
-        }
-
-        .home-badge i { width: 14px; height: 14px; }
 
         /* Hero section */
         .home-hero {
-            text-align: center;
-            padding: var(--space-3xl) var(--space-xl);
-            margin-bottom: var(--space-2xl);
-        }
-
-        .home-hero h1 {
-            font-size: 3rem;
-            font-weight: 900;
-            color: var(--text-primary);
-            margin: 0 0 var(--space-lg) 0;
-            line-height: 1.1;
-            letter-spacing: -1px;
-        }
-
-        .home-hero h1 span { color: var(--accent-main); }
-
-        .home-hero-subtitle {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            margin: 0 auto var(--space-xl);
-            max-width: 600px;
-            line-height: 1.6;
-        }
-
-        .home-hero-buttons {
+            position: relative;
+            min-height: 520px;
             display: flex;
-            gap: var(--space-md);
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: var(--space-xl);
+            align-items: center;
+            padding: var(--space-2xl);
+            overflow: hidden;
         }
+
+        /* Organic background shapes */
+        .home-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .home-bg-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.12;
+        }
+
+        .home-bg-blob-1 { width: 600px; height: 600px; background: #10b981; top: -250px; right: -150px; }
+        .home-bg-blob-2 { width: 400px; height: 400px; background: #38bdf8; bottom: -100px; left: -100px; }
+        .home-bg-blob-3 { width: 300px; height: 300px; background: #f87171; top: 40%; left: 25%; }
+
+        /* Hero grid */
+        .home-hero-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-3xl);
+            align-items: center;
+            width: 100%;
+        }
+
+        .home-hero-text { max-width: 480px; }
+
+        .home-hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-main);
+            margin-bottom: var(--space-lg);
+        }
+
+        .home-hero-label i { width: 16px; height: 16px; }
+
+        .home-hero-text h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 0 0 var(--space-md) 0;
+            line-height: 1.15;
+        }
+
+        .home-hero-text h1 span { color: var(--accent-main); }
+
+        .home-hero-text > p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin: 0 0 var(--space-xl) 0;
+        }
+
+        .home-hero-buttons { display: flex; gap: var(--space-md); flex-wrap: wrap; }
 
         .home-btn-primary {
             display: inline-flex;
             align-items: center;
-            gap: var(--space-sm);
-            padding: 16px 32px;
+            gap: 10px;
+            padding: 14px 24px;
             background: var(--accent-main);
             color: white;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             border: none;
-            border-radius: var(--radius-lg);
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
         }
 
         .home-btn-primary:hover {
             background: #059669;
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.35);
         }
 
-        .home-btn-primary i { width: 22px; height: 22px; }
+        .home-btn-primary i { width: 18px; height: 18px; }
 
-        .home-btn-secondary {
+        .home-btn-ghost {
             display: inline-flex;
             align-items: center;
-            gap: var(--space-sm);
-            padding: 16px 32px;
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-lg);
+            gap: 8px;
+            padding: 14px 20px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: color 0.2s;
         }
 
-        .home-btn-secondary:hover {
-            background: var(--bg-secondary);
-            border-color: var(--accent-main);
-            color: var(--accent-main);
-        }
+        .home-btn-ghost:hover { color: var(--accent-main); }
+        .home-btn-ghost i { width: 18px; height: 18px; }
 
-        .home-btn-secondary i { width: 22px; height: 22px; }
-
-        .home-hint {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin: 0;
-        }
-
-        /* 3D Mockup */
-        .home-mockup-container {
-            perspective: 1500px;
-            margin: var(--space-3xl) auto;
-            max-width: 900px;
-        }
-
-        .home-mockup-tilt {
-            transform-style: preserve-3d;
-            transition: transform 0.15s ease-out;
-            will-change: transform;
-        }
-
-        .home-mockup {
-            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
-            border: 2px solid rgba(16, 185, 129, 0.4);
-            border-radius: 20px;
-            padding: 0;
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
-            overflow: hidden;
-        }
-
-        .home-mockup-inner {
-            display: grid;
-            grid-template-columns: 70px 1fr;
-            min-height: 420px;
-        }
-
-        .home-mockup-sidebar {
-            background: #0a0a0a;
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .home-mockup-nav-item {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+        /* 3D Plate Scene */
+        .home-plate-scene {
+            perspective: 1000px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            position: relative;
+            height: 420px;
         }
 
-        .home-mockup-nav-item.active {
-            background: rgba(16, 185, 129, 0.15);
+        .home-plate-container {
+            transform-style: preserve-3d;
+            transition: transform 0.12s ease-out;
+            position: relative;
         }
 
-        .home-mockup-nav-item i {
-            width: 20px;
-            height: 20px;
-            color: rgba(255, 255, 255, 0.4);
+        .home-plate {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: linear-gradient(160deg, #252525 0%, #151515 100%);
+            box-shadow:
+                0 40px 80px rgba(0, 0, 0, 0.5),
+                0 0 0 10px #1c1c1c,
+                0 0 0 12px rgba(255, 255, 255, 0.03),
+                inset 0 4px 20px rgba(255, 255, 255, 0.05);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .home-mockup-nav-item.active i {
-            color: var(--accent-main);
+        .home-plate-inner {
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            border: 1px dashed rgba(255, 255, 255, 0.08);
+            position: relative;
         }
 
-        .home-mockup-content {
-            padding: 28px;
+        /* Food items on plate */
+        .home-food-item {
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
         }
 
-        .home-mockup-header {
-            margin-bottom: 24px;
-        }
+        .home-food-item:hover { transform: scale(1.1); }
+        .home-food-item i { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
 
-        .home-mockup-title {
-            height: 28px;
-            width: 200px;
-            background: linear-gradient(90deg, var(--accent-main) 0%, rgba(16, 185, 129, 0.3) 100%);
-            border-radius: 6px;
-            margin-bottom: 10px;
+        .home-food-protein {
+            width: 72px; height: 72px;
+            background: linear-gradient(135deg, #f87171, #dc2626);
+            top: 15px; left: 50%; transform: translateX(-50%);
         }
+        .home-food-protein i { width: 32px; height: 32px; color: white; }
 
-        .home-mockup-subtitle {
-            height: 14px;
-            width: 140px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 4px;
+        .home-food-carbs {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
+            bottom: 40px; left: 25px;
         }
+        .home-food-carbs i { width: 28px; height: 28px; color: white; }
 
-        .home-mockup-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
+        .home-food-veggies {
+            width: 68px; height: 68px;
+            background: linear-gradient(135deg, #4ade80, #16a34a);
+            bottom: 40px; right: 25px;
         }
+        .home-food-veggies i { width: 30px; height: 30px; color: white; }
 
-        .home-mockup-card {
+        .home-food-center {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+        .home-food-center i { width: 22px; height: 22px; color: white; }
+
+        /* Floating elements */
+        .home-float {
+            position: absolute;
             border-radius: 14px;
-            padding: 18px;
-            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            animation: homeFloat 5s ease-in-out infinite;
         }
 
-        .home-mockup-card.protein {
-            background: rgba(248, 113, 113, 0.1);
-            border: 1px solid rgba(248, 113, 113, 0.3);
+        .home-float i { color: white; }
+
+        .home-float-1 { width: 52px; height: 52px; background: linear-gradient(135deg, #fb7185, #e11d48); top: 10px; right: 10px; animation-delay: 0s; }
+        .home-float-1 i { width: 24px; height: 24px; }
+        .home-float-2 { width: 48px; height: 48px; background: linear-gradient(135deg, #a78bfa, #7c3aed); bottom: 30px; right: 40px; animation-delay: 1.2s; }
+        .home-float-2 i { width: 22px; height: 22px; }
+        .home-float-3 { width: 50px; height: 50px; background: linear-gradient(135deg, #fb923c, #ea580c); top: 50px; left: 0; animation-delay: 0.6s; }
+        .home-float-3 i { width: 24px; height: 24px; }
+        .home-float-4 { width: 46px; height: 46px; background: linear-gradient(135deg, #34d399, #059669); bottom: 10px; left: 30px; animation-delay: 1.8s; }
+        .home-float-4 i { width: 20px; height: 20px; }
+
+        @keyframes homeFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(4deg); }
         }
 
-        .home-mockup-card.carbs {
-            background: rgba(56, 189, 248, 0.1);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-        }
-
-        .home-mockup-card.fat {
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-        }
-
-        .home-mockup-card-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-        }
-
-        .home-mockup-card.protein .home-mockup-card-icon { background: rgba(248, 113, 113, 0.2); }
-        .home-mockup-card.carbs .home-mockup-card-icon { background: rgba(56, 189, 248, 0.2); }
-        .home-mockup-card.fat .home-mockup-card-icon { background: rgba(251, 191, 36, 0.2); }
-
-        .home-mockup-card-value {
-            height: 20px;
-            width: 60%;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-            margin-bottom: 8px;
-        }
-
-        .home-mockup-card-label {
-            height: 10px;
-            width: 80%;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 4px;
-        }
-
-        .home-mockup-progress {
-            margin-top: 20px;
-            padding: 18px;
-            background: rgba(255, 255, 255, 0.03);
+        /* Info cards */
+        .home-info {
+            position: absolute;
+            background: rgba(25, 25, 25, 0.95);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 14px;
-        }
-
-        .home-mockup-progress-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 12px;
-        }
-
-        .home-mockup-progress-fill {
-            height: 100%;
-            width: 72%;
-            background: linear-gradient(90deg, var(--accent-main) 0%, #34d399 100%);
-            border-radius: 4px;
-        }
-
-        .home-mockup-progress-text {
+            padding: 12px 16px;
             display: flex;
-            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            animation: homeFloat 6s ease-in-out infinite;
         }
 
-        .home-mockup-progress-label {
-            height: 12px;
-            width: 100px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
+        .home-info-icon {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .home-mockup-progress-value {
-            height: 12px;
-            width: 60px;
-            background: rgba(16, 185, 129, 0.4);
-            border-radius: 4px;
-        }
+        .home-info-icon i { width: 18px; height: 18px; color: white; }
 
-        /* Stats section */
-        .home-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-lg);
-            margin-bottom: var(--space-3xl);
+        .home-info-text span { display: block; }
+        .home-info-value { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+        .home-info-label { font-size: 0.7rem; color: var(--text-muted); }
+
+        .home-info-1 { top: 20px; left: -60px; animation-delay: 0.5s; }
+        .home-info-1 .home-info-icon { background: var(--accent-main); }
+
+        .home-info-2 { bottom: 40px; right: -40px; animation-delay: 2s; }
+        .home-info-2 .home-info-icon { background: var(--accent-protein); }
+
+        /* Features */
+        .home-features {
             padding: var(--space-xl);
-            background: var(--bg-secondary);
-            border-radius: var(--radius-xl);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .home-stat {
-            text-align: center;
-            padding: var(--space-md);
-        }
-
-        .home-stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--accent-main);
-            line-height: 1;
-            margin-bottom: var(--space-xs);
-        }
-
-        .home-stat-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        /* Features grid */
-        .home-section-header {
-            text-align: center;
-            margin-bottom: var(--space-2xl);
-        }
-
-        .home-section-header h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0 0 var(--space-sm) 0;
-        }
-
-        .home-section-header p {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-
-        .home-features-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-lg);
-            margin-bottom: var(--space-2xl);
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
         }
 
-        .home-feature-card {
+        .home-feature {
             background: var(--bg-secondary);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: var(--space-lg);
+            text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
         }
 
-        .home-feature-card:hover {
-            border-color: rgba(16, 185, 129, 0.4);
+        .home-feature:hover {
             transform: translateY(-4px);
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(16, 185, 129, 0.25);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
         }
 
         .home-feature-icon {
-            width: 56px;
-            height: 56px;
-            background: var(--accent-main);
-            border-radius: var(--radius-lg);
+            width: 50px; height: 50px;
+            margin: 0 auto var(--space-md);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: var(--space-lg);
         }
 
-        .home-feature-icon i {
-            width: 28px;
-            height: 28px;
-            color: white;
-        }
+        .home-feature-icon i { width: 24px; height: 24px; color: white; }
 
-        .home-feature-card h3 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0 0 var(--space-sm) 0;
-        }
+        .home-feature:nth-child(1) .home-feature-icon { background: linear-gradient(135deg, #10b981, #059669); }
+        .home-feature:nth-child(2) .home-feature-icon { background: linear-gradient(135deg, #f87171, #dc2626); }
+        .home-feature:nth-child(3) .home-feature-icon { background: linear-gradient(135deg, #60a5fa, #2563eb); }
+        .home-feature:nth-child(4) .home-feature-icon { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
 
-        .home-feature-card p {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            margin: 0;
-            line-height: 1.6;
-        }
-
-        /* CTA section */
-        .home-cta {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: var(--radius-xl);
-            padding: var(--space-3xl);
-            text-align: center;
-        }
-
-        .home-cta h3 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0 0 var(--space-md) 0;
-        }
-
-        .home-cta p {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            margin: 0 0 var(--space-xl) 0;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+        .home-feature h3 { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin: 0 0 4px 0; }
+        .home-feature p { font-size: 0.8rem; color: var(--text-secondary); margin: 0; line-height: 1.4; }
 
         /* ===== HOME MOBILE ===== */
         @media (max-width: 768px) {
-            .home-hero {
-                padding: var(--space-xl) var(--space-md);
-            }
+            .home-hero { min-height: auto; padding: var(--space-lg) var(--space-md); }
 
-            .home-badges {
-                justify-content: center;
-            }
-
-            .home-hero h1 {
-                font-size: 2rem;
-            }
-
-            .home-hero-subtitle {
-                font-size: 1rem;
-            }
-
-            .home-hero-buttons {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .home-btn-primary,
-            .home-btn-secondary {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .home-mockup-container {
-                margin: var(--space-xl) auto;
-                padding: 0 var(--space-sm);
-            }
-
-            .home-mockup {
-                border-radius: 16px;
-            }
-
-            .home-mockup-inner {
+            .home-hero-grid {
                 grid-template-columns: 1fr;
-                min-height: auto;
+                gap: var(--space-lg);
+                text-align: center;
             }
 
-            .home-mockup-sidebar {
-                display: none;
+            .home-hero-text { max-width: 100%; order: 2; }
+            .home-hero-text h1 { font-size: 1.7rem; }
+            .home-hero-text > p { font-size: 0.95rem; }
+            .home-hero-buttons { justify-content: center; }
+
+            .home-plate-scene { order: 1; height: 280px; }
+            .home-plate { width: 200px; height: 200px; }
+            .home-plate-inner { width: 160px; height: 160px; }
+
+            .home-food-protein { width: 50px; height: 50px; top: 10px; }
+            .home-food-protein i { width: 22px; height: 22px; }
+            .home-food-carbs { width: 44px; height: 44px; bottom: 28px; left: 18px; }
+            .home-food-carbs i { width: 20px; height: 20px; }
+            .home-food-veggies { width: 46px; height: 46px; bottom: 28px; right: 18px; }
+            .home-food-veggies i { width: 20px; height: 20px; }
+            .home-food-center { width: 34px; height: 34px; }
+            .home-food-center i { width: 16px; height: 16px; }
+
+            .home-float { width: 38px !important; height: 38px !important; border-radius: 10px; }
+            .home-float i { width: 18px !important; height: 18px !important; }
+            .home-info { display: none; }
+
+            .home-features {
+                grid-template-columns: repeat(2, 1fr);
+                padding: var(--space-md);
+                gap: var(--space-sm);
             }
 
-            .home-mockup-content {
-                padding: 20px;
-            }
-
-            .home-mockup-cards {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .home-stats {
-                grid-template-columns: 1fr;
-                gap: var(--space-md);
-            }
-
-            .home-stat-value {
-                font-size: 2rem;
-            }
-
-            .home-section-header h2 {
-                font-size: 1.5rem;
-            }
-
-            .home-features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .home-cta {
-                padding: var(--space-xl);
-            }
-
-            .home-cta h3 {
-                font-size: 1.4rem;
-            }
+            .home-feature { padding: var(--space-md); }
+            .home-feature-icon { width: 44px; height: 44px; }
+            .home-feature-icon i { width: 20px; height: 20px; }
+            .home-feature h3 { font-size: 0.85rem; }
+            .home-feature p { font-size: 0.75rem; }
         }
 
         /* Responsive - Bottom navbar mobile style iOS/Android */
@@ -4036,189 +3888,127 @@
 
             <!-- Hero Section -->
             <section class="home-hero">
-                <div class="home-badges">
-                    <span class="home-badge">
-                        <i data-lucide="shield-check"></i> 100% Gratuit
-                    </span>
-                    <span class="home-badge">
-                        <i data-lucide="lock"></i> Données privées
-                    </span>
-                    <span class="home-badge">
-                        <i data-lucide="wifi-off"></i> Fonctionne hors ligne
-                    </span>
+                <!-- Background blobs -->
+                <div class="home-bg">
+                    <div class="home-bg-blob home-bg-blob-1"></div>
+                    <div class="home-bg-blob home-bg-blob-2"></div>
+                    <div class="home-bg-blob home-bg-blob-3"></div>
                 </div>
 
-                <h1>Prends le contrôle de ton <span>alimentation</span></h1>
+                <div class="home-hero-grid">
+                    <!-- Text -->
+                    <div class="home-hero-text">
+                        <div class="home-hero-label">
+                            <i data-lucide="sparkles"></i>
+                            Ton assistant nutrition
+                        </div>
+                        <h1>Mange mieux,<br><span>simplement.</span></h1>
+                        <p>Compose ton assiette idéale. Calcule tes macros, suis tes repas et atteins tes objectifs sans te prendre la tête.</p>
+                        <div class="home-hero-buttons">
+                            <button class="home-btn-primary" onclick="switchToTab('calculator')">
+                                <i data-lucide="play"></i>
+                                Commencer
+                            </button>
+                            <button class="home-btn-ghost" onclick="switchToTab('meals')">
+                                <i data-lucide="utensils"></i>
+                                Logger un repas
+                            </button>
+                        </div>
+                    </div>
 
-                <p class="home-hero-subtitle">
-                    Calcule tes macros, suis tes repas et atteins tes objectifs nutritionnels. Simple, précis, et respectueux de ta vie privée.
-                </p>
+                    <!-- 3D Plate -->
+                    <div class="home-plate-scene" id="home-plate-scene">
+                        <div class="home-plate-container" id="home-plate-container">
+                            <!-- Floating food icons -->
+                            <div class="home-float home-float-1"><i data-lucide="apple"></i></div>
+                            <div class="home-float home-float-2"><i data-lucide="grape"></i></div>
+                            <div class="home-float home-float-3"><i data-lucide="carrot"></i></div>
+                            <div class="home-float home-float-4"><i data-lucide="leaf"></i></div>
 
-                <div class="home-hero-buttons">
-                    <button class="home-btn-primary" onclick="switchToTab('calculator')">
-                        <i data-lucide="rocket"></i>
-                        <span>Commencer maintenant</span>
-                    </button>
-                    <button class="home-btn-secondary" onclick="switchToTab('meals')">
-                        <i data-lucide="utensils"></i>
-                        <span>Logger un repas</span>
-                    </button>
-                </div>
-
-                <p class="home-hint">Aucune inscription • Tes données restent sur ton appareil</p>
-            </section>
-
-            <!-- 3D Interactive Mockup -->
-            <div class="home-mockup-container" id="home-mockup-container">
-                <div class="home-mockup-tilt" id="home-mockup-tilt">
-                    <div class="home-mockup">
-                        <div class="home-mockup-inner">
-                            <div class="home-mockup-sidebar">
-                                <div class="home-mockup-nav-item active">
-                                    <i data-lucide="home"></i>
-                                </div>
-                                <div class="home-mockup-nav-item">
-                                    <i data-lucide="utensils"></i>
-                                </div>
-                                <div class="home-mockup-nav-item">
-                                    <i data-lucide="calculator"></i>
-                                </div>
-                                <div class="home-mockup-nav-item">
-                                    <i data-lucide="calendar"></i>
-                                </div>
-                                <div class="home-mockup-nav-item">
-                                    <i data-lucide="line-chart"></i>
+                            <!-- Info cards -->
+                            <div class="home-info home-info-1">
+                                <div class="home-info-icon"><i data-lucide="flame"></i></div>
+                                <div class="home-info-text">
+                                    <span class="home-info-value">1 850 kcal</span>
+                                    <span class="home-info-label">Objectif du jour</span>
                                 </div>
                             </div>
-                            <div class="home-mockup-content">
-                                <div class="home-mockup-header">
-                                    <div class="home-mockup-title"></div>
-                                    <div class="home-mockup-subtitle"></div>
+                            <div class="home-info home-info-2">
+                                <div class="home-info-icon"><i data-lucide="beef"></i></div>
+                                <div class="home-info-text">
+                                    <span class="home-info-value">142g</span>
+                                    <span class="home-info-label">Protéines</span>
                                 </div>
-                                <div class="home-mockup-cards">
-                                    <div class="home-mockup-card protein">
-                                        <div class="home-mockup-card-icon"></div>
-                                        <div class="home-mockup-card-value"></div>
-                                        <div class="home-mockup-card-label"></div>
-                                    </div>
-                                    <div class="home-mockup-card carbs">
-                                        <div class="home-mockup-card-icon"></div>
-                                        <div class="home-mockup-card-value"></div>
-                                        <div class="home-mockup-card-label"></div>
-                                    </div>
-                                    <div class="home-mockup-card fat">
-                                        <div class="home-mockup-card-icon"></div>
-                                        <div class="home-mockup-card-value"></div>
-                                        <div class="home-mockup-card-label"></div>
-                                    </div>
-                                </div>
-                                <div class="home-mockup-progress">
-                                    <div class="home-mockup-progress-bar">
-                                        <div class="home-mockup-progress-fill"></div>
-                                    </div>
-                                    <div class="home-mockup-progress-text">
-                                        <div class="home-mockup-progress-label"></div>
-                                        <div class="home-mockup-progress-value"></div>
-                                    </div>
+                            </div>
+
+                            <!-- Main plate -->
+                            <div class="home-plate">
+                                <div class="home-plate-inner">
+                                    <div class="home-food-item home-food-protein"><i data-lucide="beef"></i></div>
+                                    <div class="home-food-item home-food-carbs"><i data-lucide="wheat"></i></div>
+                                    <div class="home-food-item home-food-veggies"><i data-lucide="salad"></i></div>
+                                    <div class="home-food-item home-food-center"><i data-lucide="droplet"></i></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Stats Section -->
-            <div class="home-stats">
-                <div class="home-stat">
-                    <div class="home-stat-value">116+</div>
-                    <div class="home-stat-label">Aliments dans la base</div>
+            <!-- Features -->
+            <div class="home-features">
+                <div class="home-feature" onclick="switchToTab('calculator')">
+                    <div class="home-feature-icon"><i data-lucide="target"></i></div>
+                    <h3>Calculateur</h3>
+                    <p>Tes besoins personnalisés</p>
                 </div>
-                <div class="home-stat">
-                    <div class="home-stat-value">100%</div>
-                    <div class="home-stat-label">Gratuit, sans pub</div>
+                <div class="home-feature" onclick="switchToTab('meals')">
+                    <div class="home-feature-icon"><i data-lucide="utensils"></i></div>
+                    <h3>Repas</h3>
+                    <p>Suivi en temps réel</p>
                 </div>
-                <div class="home-stat">
-                    <div class="home-stat-value">0</div>
-                    <div class="home-stat-label">Données envoyées</div>
+                <div class="home-feature" onclick="switchToTab('tracking')">
+                    <div class="home-feature-icon"><i data-lucide="trending-up"></i></div>
+                    <h3>Progression</h3>
+                    <p>Graphiques détaillés</p>
                 </div>
-            </div>
-
-            <!-- Features Section -->
-            <div class="home-section-header">
-                <h2>Tout ce dont tu as besoin</h2>
-                <p>Des outils puissants pour un suivi nutritionnel simple et efficace</p>
-            </div>
-
-            <div class="home-features-grid">
-                <div class="home-feature-card" onclick="switchToTab('calculator')">
-                    <div class="home-feature-icon">
-                        <i data-lucide="target"></i>
-                    </div>
-                    <h3>Calculateur intelligent</h3>
-                    <p>Formules scientifiques (Mifflin-St Jeor) pour calculer tes besoins selon ton profil et tes objectifs.</p>
+                <div class="home-feature" onclick="switchToTab('planner')">
+                    <div class="home-feature-icon"><i data-lucide="calendar"></i></div>
+                    <h3>Planning</h3>
+                    <p>Organise ta semaine</p>
                 </div>
-                <div class="home-feature-card" onclick="switchToTab('meals')">
-                    <div class="home-feature-icon">
-                        <i data-lucide="utensils"></i>
-                    </div>
-                    <h3>Suivi des repas</h3>
-                    <p>Ajoute tes aliments en quelques taps. Visualise tes macros en temps réel avec des cercles visuels.</p>
-                </div>
-                <div class="home-feature-card" onclick="switchToTab('tracking')">
-                    <div class="home-feature-icon">
-                        <i data-lucide="trending-up"></i>
-                    </div>
-                    <h3>Graphiques de progression</h3>
-                    <p>Suis ton poids, ton bodyfat et tes mesures. Visualise ta progression sur la durée.</p>
-                </div>
-            </div>
-
-            <!-- CTA Section -->
-            <div class="home-cta">
-                <h3>Prêt à transformer ta nutrition ?</h3>
-                <p>Commence dès maintenant à suivre tes macros et atteindre tes objectifs.</p>
-                <button class="home-btn-primary" onclick="switchToTab('calculator')">
-                    <i data-lucide="zap"></i>
-                    <span>Calculer mes macros</span>
-                </button>
             </div>
 
             <!-- 3D Tilt Script -->
             <script>
             (function() {
-                const container = document.getElementById('home-mockup-container');
-                const tilt = document.getElementById('home-mockup-tilt');
-                if (!container || !tilt) return;
+                const scene = document.getElementById('home-plate-scene');
+                const container = document.getElementById('home-plate-container');
+                if (!scene || !container) return;
 
-                let mouseX = 0, mouseY = 0, currentX = 0, currentY = 0;
-                let isTouch = false;
+                let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
 
                 function handleMove(clientX, clientY) {
-                    const rect = container.getBoundingClientRect();
-                    mouseX = (clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
-                    mouseY = (clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
+                    const rect = scene.getBoundingClientRect();
+                    targetX = ((clientX - rect.left) / rect.width - 0.5) * 2;
+                    targetY = ((clientY - rect.top) / rect.height - 0.5) * 2;
                 }
 
-                container.addEventListener('mousemove', (e) => {
-                    if (!isTouch) handleMove(e.clientX, e.clientY);
-                });
-
-                container.addEventListener('touchmove', (e) => {
-                    isTouch = true;
+                scene.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+                scene.addEventListener('touchmove', (e) => {
                     if (e.touches.length === 1) {
+                        e.preventDefault();
                         handleMove(e.touches[0].clientX, e.touches[0].clientY);
                     }
-                });
+                }, { passive: false });
 
-                container.addEventListener('mouseleave', () => { mouseX = 0; mouseY = 0; });
-                container.addEventListener('touchend', () => { mouseX = 0; mouseY = 0; });
+                scene.addEventListener('mouseleave', () => { targetX = 0; targetY = 0; });
+                scene.addEventListener('touchend', () => { targetX = 0; targetY = 0; });
 
                 function animate() {
-                    currentX += (mouseX - currentX) * 0.08;
-                    currentY += (mouseY - currentY) * 0.08;
-                    const rotateY = currentX * 12;
-                    const rotateX = -currentY * 8;
-                    tilt.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg) translateZ(10px)`;
+                    currentX += (targetX - currentX) * 0.08;
+                    currentY += (targetY - currentY) * 0.08;
+                    container.style.transform = `rotateY(${currentX * 15}deg) rotateX(${-currentY * 12}deg)`;
                     requestAnimationFrame(animate);
                 }
                 animate();
