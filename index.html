@@ -1086,99 +1086,186 @@
             }
 
             /* ============================================
-               MOBILE PREMIUM UI - Hero Headers Uniformes
+               🎨 MOBILE PREMIUM UI - REFONTE COMPLÈTE
                ============================================ */
 
-            /* Hero headers - Container */
+            /* ===== HERO HEADERS UNIFORMES ===== */
+            /* Container - alignement gauche, padding compact */
             .tab-content > div:first-child[style*="background: linear-gradient"] {
                 padding: 16px !important;
                 margin-bottom: 16px !important;
                 border-radius: 12px !important;
             }
 
-            /* Hero headers - Flex container intérieur */
+            /* Flex container - alignement gauche (pas center!) */
             .tab-content > div:first-child[style*="background: linear-gradient"] > div[style*="display: flex"] {
                 gap: 12px !important;
                 margin-bottom: 0 !important;
+                justify-content: flex-start !important;
             }
 
-            /* Hero headers - Icône container (carré uniforme) */
-            .tab-content > div:first-child[style*="background: linear-gradient"] > div > div:first-child[style*="width: 60px"] {
-                width: 48px !important;
-                min-width: 48px !important;
-                height: 48px !important;
-                min-height: 48px !important;
+            /* Icône container - carré uniforme 44x44 */
+            .tab-content > div:first-child[style*="background: linear-gradient"] > div > div:first-child[style*="width: 60px"],
+            .tab-content > div:first-child[style*="background: linear-gradient"] > div > div:first-child[style*="font-size: 3rem"] {
+                width: 44px !important;
+                min-width: 44px !important;
+                height: 44px !important;
+                min-height: 44px !important;
                 border-radius: 10px !important;
                 flex-shrink: 0 !important;
+                font-size: 1.5rem !important;
             }
 
-            /* Hero headers - Icône SVG */
+            /* Icône SVG dans hero */
             .tab-content > div:first-child[style*="background: linear-gradient"] > div > div:first-child i,
             .tab-content > div:first-child[style*="background: linear-gradient"] > div > div:first-child svg {
-                width: 26px !important;
-                height: 26px !important;
+                width: 24px !important;
+                height: 24px !important;
             }
 
-            /* Hero headers - Titre H1 */
+            /* Titre H1 hero */
             .tab-content > div:first-child[style*="background: linear-gradient"] h1 {
-                font-size: 1.35rem !important;
+                font-size: 1.25rem !important;
                 line-height: 1.2 !important;
                 margin: 0 !important;
+                text-align: left !important;
             }
 
-            /* Hero headers - Sous-titre */
+            /* Sous-titre hero */
             .tab-content > div:first-child[style*="background: linear-gradient"] p {
-                font-size: 0.8rem !important;
-                line-height: 1.4 !important;
-                margin-top: 4px !important;
+                font-size: 0.75rem !important;
+                line-height: 1.3 !important;
+                margin-top: 2px !important;
+                text-align: left !important;
             }
 
-            /* ============================================
-               MOBILE PREMIUM UI - Paramètres Espacement
-               ============================================ */
+            /* ===== WIDGET "IL TE RESTE À MANGER" ===== */
+            #remaining-widget {
+                padding: 12px !important;
+                margin-bottom: 16px !important;
+            }
 
-            /* Bannière sécurité - espacement correct */
+            #remaining-widget > div {
+                flex-direction: column !important;
+                gap: 12px !important;
+            }
+
+            /* Header du widget */
+            #remaining-widget > div > div:first-child {
+                width: 100% !important;
+            }
+
+            #remaining-widget > div > div:first-child > div:first-child {
+                width: 36px !important;
+                height: 36px !important;
+            }
+
+            #remaining-widget > div > div:first-child > div:first-child i {
+                width: 20px !important;
+                height: 20px !important;
+            }
+
+            /* Grille macros du widget - 2x2 au lieu de 4 colonnes */
+            #remaining-widget > div > div:last-child {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+
+            #remaining-widget > div > div:last-child > div {
+                padding: 8px !important;
+                background: rgba(0,0,0,0.2) !important;
+                border-radius: 8px !important;
+            }
+
+            #remaining-widget > div > div:last-child > div > div:first-child {
+                font-size: 0.65rem !important;
+            }
+
+            #remaining-widget > div > div:last-child > div > div:last-child {
+                font-size: 1.1rem !important;
+            }
+
+            /* ===== NAVIGATION SEMAINE PREMIUM ===== */
+            .week-selector {
+                flex-direction: column !important;
+                gap: 10px !important;
+                margin-bottom: 16px !important;
+            }
+
+            .current-week {
+                font-size: 0.95rem !important;
+                order: -1 !important;
+            }
+
+            .week-nav-btn {
+                padding: 10px 16px !important;
+                font-size: 0.85rem !important;
+                border-radius: 8px !important;
+            }
+
+            /* Cacher le texte long, montrer juste les flèches */
+            .week-nav-btn {
+                font-size: 0 !important;
+            }
+
+            .week-nav-btn::before {
+                font-size: 0.9rem !important;
+            }
+
+            .week-selector > .week-nav-btn:first-child::before {
+                content: '← Semaine préc.' !important;
+                font-size: 0.8rem !important;
+            }
+
+            .week-selector > .week-nav-btn:last-child::before {
+                content: 'Semaine suiv. →' !important;
+                font-size: 0.8rem !important;
+            }
+
+            .week-nav-btn.this-week-btn {
+                font-size: 0.85rem !important;
+                padding: 8px 20px !important;
+            }
+
+            /* ===== PARAMÈTRES ESPACEMENT ===== */
             #settings > div:nth-child(2) {
                 margin-top: 0 !important;
                 margin-bottom: 16px !important;
             }
 
-            /* Grille paramètres - espacement uniforme */
             #settings > div[style*="display: grid"] {
                 gap: 12px !important;
                 margin-bottom: 16px !important;
             }
 
-            /* Cards paramètres - padding compact */
             #settings .card {
-                padding: 16px !important;
+                padding: 14px !important;
             }
 
-            /* Titres de section dans cards */
             #settings .card h3 {
-                font-size: 1.1rem !important;
-            }
-
-            /* ============================================
-               MOBILE PREMIUM UI - Typographie Hiérarchie
-               ============================================ */
-
-            /* H2 - Titres de section */
-            .tab-content h2 {
-                font-size: 1.15rem !important;
-                line-height: 1.3 !important;
-            }
-
-            /* H3 - Titres de cards */
-            .tab-content .card h3 {
                 font-size: 1rem !important;
+            }
+
+            /* ===== TYPOGRAPHIE PREMIUM ===== */
+            /* Titres de section */
+            .tab-content h2 {
+                font-size: 1.1rem !important;
+                line-height: 1.3 !important;
+                margin-bottom: 12px !important;
+            }
+
+            /* Titres de cards */
+            .tab-content .card h3 {
+                font-size: 0.95rem !important;
                 line-height: 1.3 !important;
             }
 
             /* Body text */
             .tab-content p,
             .tab-content .card p {
-                font-size: 0.875rem !important;
+                font-size: 0.85rem !important;
                 line-height: 1.5 !important;
             }
 
@@ -1186,20 +1273,40 @@
             .info-text,
             .tab-content [style*="font-size: 0.85rem"],
             .tab-content [style*="font-size: 0.9rem"] {
-                font-size: 0.8rem !important;
+                font-size: 0.75rem !important;
                 line-height: 1.4 !important;
             }
 
             /* Labels */
             .tab-content label {
-                font-size: 0.85rem !important;
+                font-size: 0.8rem !important;
             }
 
-            /* Boutons - taille tactile minimum */
+            /* ===== BOUTONS TACTILES ===== */
             .tab-content .btn {
                 min-height: 44px !important;
-                font-size: 0.9rem !important;
-                padding: 10px 16px !important;
+                font-size: 0.85rem !important;
+                padding: 10px 14px !important;
+            }
+
+            /* Boutons d'action repas */
+            .add-food-btn {
+                font-size: 0.7rem !important;
+                padding: 8px 6px !important;
+            }
+
+            /* ===== NAVIGATION DATE (REPAS) ===== */
+            .date-navigation-title {
+                font-size: 1rem !important;
+            }
+
+            .date-nav-btn {
+                min-width: 40px !important;
+                min-height: 40px !important;
+            }
+
+            .today-btn-text {
+                font-size: 0.75rem !important;
             }
 
             /* GRILLES - Une seule colonne sur mobile */
@@ -1602,18 +1709,45 @@
                 height: 1.3em !important;
             }
 
-            /* Header mobile allégé : cacher username, thème et sync */
-            .header-username,
-            .header-right {
+            /* Header mobile allégé : cacher username et thème */
+            .header-username {
                 display: none !important;
             }
 
             .header-main-row {
-                justify-content: center !important;
+                justify-content: space-between !important;
+                padding: 0 4px !important;
+            }
+
+            /* Garder sync indicator compact sur mobile */
+            .header-right {
+                min-width: auto !important;
+                gap: 4px !important;
+            }
+
+            .header-right .header-btn {
+                display: none !important; /* Cacher thème sur mobile */
+            }
+
+            #sync-indicator {
+                height: 28px !important;
+                padding: 0 10px !important;
+                font-size: 0.7rem !important;
+                border-radius: 14px !important;
+            }
+
+            #sync-indicator .sync-dot {
+                width: 6px !important;
+                height: 6px !important;
             }
 
             .app-header .subtitle {
-                font-size: 0.85rem !important;
+                font-size: 0.8rem !important;
+                margin-top: 4px !important;
+            }
+
+            .header-title {
+                font-size: 1.3rem !important;
             }
 
             /* ===== FIX PROGRESS BARS - Afficher pourcentages ===== */
@@ -3495,7 +3629,7 @@
 
                     <div style="display: flex; gap: var(--space-lg); margin-bottom: var(--space-xl); flex-wrap: wrap;">
                         <button class="btn" onclick="exportMacrosAsImage()" style="flex: 1; min-width: 200px; display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
-                            📸 Télécharger en image
+                            <i data-lucide="camera" style="width: 18px; height: 18px;"></i> Télécharger en image
                         </button>
                         <button class="btn" onclick="document.querySelector('[data-tab=&quot;meals&quot;]').click(); window.scrollTo({top: 0, behavior: 'smooth'});" style="flex: 1; min-width: 200px; background: var(--accent-purple); display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
                             <i data-lucide="calendar" style="width: 18px; height: 18px;"></i> Aller à Mes Repas
@@ -6215,9 +6349,9 @@ Solutions possibles :
             document.getElementById('results').style.display = 'block';
             if (typeof lucide !== "undefined") lucide.createIcons();
 
-            // Sauvegarder dans localStorage
+            // Sauvegarder dans localStorage (incluant IMC)
             localStorage.setItem('macroTargets', JSON.stringify({
-                protein, carbs, fat, calories: totalCal, bmr: Math.round(bmr), tdee: Math.round(tdee)
+                protein, carbs, fat, calories: totalCal, bmr: Math.round(bmr), tdee: Math.round(tdee), imc: imc.toFixed(1)
             }));
 
             // Mettre à jour les sections disponibles
@@ -9578,6 +9712,23 @@ Solutions possibles :
                             document.getElementById('tdee-display').textContent = targets.tdee.toLocaleString('fr-FR') + ' kcal';
                         }
 
+                        // IMC - Restaurer au chargement
+                        if (targets.imc && document.getElementById('imc-display-blur')) {
+                            const imc = parseFloat(targets.imc);
+                            let imcCategory, imcColor;
+                            if (imc < 18.5) { imcCategory = 'Maigreur'; imcColor = 'var(--accent-carbs)'; }
+                            else if (imc < 25) { imcCategory = 'Corpulence normale'; imcColor = 'var(--accent-main)'; }
+                            else if (imc < 30) { imcCategory = 'Surpoids'; imcColor = 'var(--accent-fat)'; }
+                            else { imcCategory = 'Obésité'; imcColor = 'var(--accent-danger)'; }
+
+                            document.getElementById('imc-display-blur').textContent = targets.imc;
+                            document.getElementById('imc-display-blur').style.color = imcColor;
+                            if (document.getElementById('imc-category-blur')) {
+                                document.getElementById('imc-category-blur').textContent = imcCategory;
+                                document.getElementById('imc-category-blur').style.color = imcColor;
+                            }
+                        }
+
                         // Macro targets (grammes)
                         if (document.getElementById('targetProtein')) document.getElementById('targetProtein').textContent = Math.round(targets.protein);
                         if (document.getElementById('targetCarbs')) document.getElementById('targetCarbs').textContent = Math.round(targets.carbs);
@@ -10375,7 +10526,7 @@ Solutions possibles :
     <!-- Export Warning Modal -->
     <div id="export-warning-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10001; justify-content: center; align-items: center; padding: var(--space-xl);">
         <div style="background: var(--bg-secondary); border: 2px solid var(--accent-fat); border-radius: var(--radius-lg); max-width: 500px; width: 100%; padding: var(--space-3xl); box-shadow: var(--shadow-lg); text-align: center;">
-            <div style="font-size: 3rem; margin-bottom: var(--space-lg);">📸</div>
+            <div style="width: 64px; height: 64px; margin: 0 auto var(--space-lg); background: var(--accent-fat); border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="camera" style="width: 32px; height: 32px; color: white;"></i></div>
 
             <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--text-primary);">
                 Attention
