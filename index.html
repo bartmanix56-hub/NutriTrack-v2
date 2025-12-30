@@ -1150,8 +1150,49 @@
 
             .input-group input,
             .input-group select {
-                padding: 12px !important;
+                padding: 10px !important;
                 font-size: 16px !important; /* Empêche zoom iOS */
+            }
+
+            /* Section Suivi - inputs plus compacts */
+            #tracking .input-group {
+                margin-bottom: var(--space-sm) !important;
+            }
+
+            #tracking .input-group input {
+                padding: 10px 12px !important;
+            }
+
+            #tracking .info-text {
+                font-size: 0.75rem !important;
+                margin-top: 4px !important;
+            }
+
+            #tracking .grid-2 {
+                gap: var(--space-md) !important;
+            }
+
+            /* Date picker - jour plus étroit */
+            #tracking .input-group > div[style*="grid-template-columns"] {
+                grid-template-columns: 0.8fr 1.2fr 1fr !important;
+            }
+
+            /* Fix icônes Lucide dans boutons tracking */
+            #tracking .delete-btn,
+            #tracking .icon-btn {
+                min-width: 40px !important;
+                min-height: 40px !important;
+            }
+
+            #tracking .delete-btn i,
+            #tracking .icon-btn i,
+            #tracking-list .delete-btn i,
+            #tracking .delete-btn svg,
+            #tracking .icon-btn svg,
+            #tracking-list .delete-btn svg {
+                width: 20px !important;
+                height: 20px !important;
+                display: block !important;
             }
 
             /* Boutons objectifs plus compacts */
@@ -1482,29 +1523,18 @@
                 height: 1.3em !important;
             }
 
-            .header-username {
-                height: 36px !important;
-                padding: 0 var(--space-md) !important;
-                font-size: 0.8rem !important;
-                max-width: 110px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
+            /* Header mobile allégé : cacher username, thème et sync */
+            .header-username,
+            .header-right {
+                display: none !important;
             }
 
-            .header-subtitle-row {
-                flex-direction: column;
-                gap: var(--space-sm) !important;
+            .header-main-row {
+                justify-content: center !important;
             }
 
-            .header-subtitle-row .subtitle {
+            .app-header .subtitle {
                 font-size: 0.85rem !important;
-            }
-
-            #sync-indicator {
-                height: 28px !important;
-                padding: 0 10px !important;
-                font-size: 0.7rem !important;
             }
 
             /* ===== FIX PROGRESS BARS - Afficher pourcentages ===== */
@@ -2894,9 +2924,17 @@
             .header-main-row {
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                gap: var(--space-xl);
+                justify-content: space-between;
+                gap: var(--space-lg);
                 margin-bottom: var(--space-sm);
+            }
+
+            .header-right {
+                display: flex;
+                align-items: center;
+                gap: var(--space-sm);
+                min-width: 150px;
+                justify-content: flex-end;
             }
 
             .header-btn {
@@ -2945,55 +2983,48 @@
             }
 
             .header-username {
-                min-width: 44px;
+                min-width: 150px;
                 height: 44px;
                 background: var(--bg-secondary);
-                padding: 0 var(--space-xl);
+                padding: 0 var(--space-lg);
                 border-radius: var(--radius-full);
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 color: var(--text-primary);
                 font-size: 0.95rem;
                 display: flex;
                 align-items: center;
-                justify-content: center;
+                justify-content: flex-start;
                 gap: var(--space-sm);
                 box-shadow: var(--shadow-sm);
             }
 
-            .header-subtitle-row {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: var(--space-lg);
-                flex-wrap: wrap;
-            }
-
-            .header-subtitle-row .subtitle {
+            .app-header .subtitle {
                 margin: 0;
+                text-align: center;
             }
         </style>
 
         <header class="app-header">
-            <!-- Ligne principale: Switch | NutriTrack | Prénom -->
+            <!-- Ligne principale: Prénom | NutriTrack | Local/Cloud + Thème -->
             <div class="header-main-row">
-                <button class="header-btn" onclick="toggleTheme()" title="Changer le thème">
-                    <i data-lucide="moon" id="theme-icon" style="width: 20px; height: 20px;"></i>
-                </button>
+                <div id="username-display" class="header-username"></div>
                 <h1 class="header-title">
                     <img src="logo.svg" alt="Logo" class="header-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
                     <span class="header-logo-fallback"><i data-lucide="target" style="width: 1em; height: 1em; color: white;"></i></span>
                     NutriTrack
                 </h1>
-                <div id="username-display" class="header-username"></div>
-            </div>
-            <!-- Sous-titre avec sync indicator -->
-            <div class="header-subtitle-row">
-                <p class="subtitle">Prends le contrôle de ton alimentation</p>
-                <div id="sync-indicator" onclick="switchToTab('settings')" title="Statut de synchronisation">
-                    <span class="sync-dot"></span>
-                    <span id="sync-indicator-text">Local</span>
+                <div class="header-right">
+                    <div id="sync-indicator" onclick="switchToTab('settings')" title="Statut de synchronisation">
+                        <span class="sync-dot"></span>
+                        <span id="sync-indicator-text">Local</span>
+                    </div>
+                    <button class="header-btn" onclick="toggleTheme()" title="Changer le thème">
+                        <i data-lucide="moon" id="theme-icon" style="width: 20px; height: 20px;"></i>
+                    </button>
                 </div>
             </div>
+            <!-- Sous-titre -->
+            <p class="subtitle">Prends le contrôle de ton alimentation</p>
         </header>
 
         <!-- App Layout with Sidebar -->
@@ -4567,32 +4598,6 @@
                         </button>
                     </div>
 
-                    <!-- Apparence -->
-                    <div class="card">
-                        <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
-                            <i data-lucide="palette" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
-                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0;">Apparence</h3>
-                        </div>
-
-                        <div style="margin-bottom: var(--space-md);">
-                            <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: var(--space-md);">Thème</label>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
-                                <button id="theme-dark-btn" onclick="setTheme('dark')" class="btn" style="background: var(--accent-ui); color: white; display: flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: var(--space-md);">
-                                    <i data-lucide="moon" style="width: 18px; height: 18px;"></i>
-                                    <span>Sombre</span>
-                                </button>
-                                <button id="theme-light-btn" onclick="setTheme('light')" class="btn" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: var(--space-md);">
-                                    <i data-lucide="sun" style="width: 18px; height: 18px;"></i>
-                                    <span>Clair</span>
-                                </button>
-                            </div></div>
-
-                        <div style="padding: var(--space-md); background: rgba(5, 150, 105, 0.1); border-radius: var(--radius-md); border-left: 3px solid var(--accent-ui);">
-                            <div style="display: flex; align-items: start; gap: var(--space-sm);">
-                                <i data-lucide="info" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 2px;"></i>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Ton choix est sauvegardé automatiquement</span>
-                            </div></div></div>
-
                     <!-- Notifications -->
                     <div class="card">
                         <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
@@ -4629,6 +4634,32 @@
                             <div style="display: flex; align-items: start; gap: var(--space-sm);">
                                 <i data-lucide="info" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 2px;"></i>
                                 <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Les notifications nécessitent l'autorisation de ton navigateur</span>
+                            </div></div></div>
+
+                    <!-- Apparence -->
+                    <div class="card">
+                        <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
+                            <i data-lucide="palette" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
+                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0;">Apparence</h3>
+                        </div>
+
+                        <div style="margin-bottom: var(--space-md);">
+                            <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: var(--space-md);">Thème</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
+                                <button id="theme-dark-btn" onclick="setTheme('dark')" class="btn" style="background: var(--accent-ui); color: white; display: flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: var(--space-md);">
+                                    <i data-lucide="moon" style="width: 18px; height: 18px;"></i>
+                                    <span>Sombre</span>
+                                </button>
+                                <button id="theme-light-btn" onclick="setTheme('light')" class="btn" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: var(--space-md);">
+                                    <i data-lucide="sun" style="width: 18px; height: 18px;"></i>
+                                    <span>Clair</span>
+                                </button>
+                            </div></div>
+
+                        <div style="padding: var(--space-md); background: rgba(5, 150, 105, 0.1); border-radius: var(--radius-md); border-left: 3px solid var(--accent-ui);">
+                            <div style="display: flex; align-items: start; gap: var(--space-sm);">
+                                <i data-lucide="info" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 2px;"></i>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Ton choix est sauvegardé automatiquement</span>
                             </div></div></div>
 
                     <!-- Installation PWA -->
