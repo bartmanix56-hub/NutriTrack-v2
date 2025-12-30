@@ -1085,42 +1085,225 @@
                 margin: 0 !important;
             }
 
-            /* Hero headers compacts sur mobile */
-            #calculator > div:first-child,
-            #settings > div:first-child,
-            #meals > div:first-child,
-            #planner > div:first-child,
-            #tracking > div:first-child,
-            #foods > div:first-child,
-            #meal-templates > div:first-child,
-            #guide > div:first-child {
-                padding: var(--space-lg) !important;
-                margin-bottom: var(--space-lg) !important;
-                border-radius: var(--radius-lg) !important;
+            /* ============================================
+               🎨 MOBILE PREMIUM UI - REFONTE COMPLÈTE
+               ============================================ */
+
+            /* ===== HERO HEADERS UNIFORMES ===== */
+            /* Container - alignement gauche, padding compact */
+            .tab-content > div:first-child[style*="background: linear-gradient"] {
+                padding: 16px !important;
+                margin-bottom: 16px !important;
+                border-radius: 12px !important;
             }
 
-            /* Icône hero plus petite */
-            #calculator > div:first-child > div:first-child > div:first-child,
-            #settings > div:first-child > div > div:first-child {
-                width: 48px !important;
-                height: 48px !important;
+            /* Flex container - alignement gauche (pas center!) */
+            .tab-content > div:first-child[style*="background: linear-gradient"] > div[style*="display: flex"] {
+                gap: 12px !important;
+                margin-bottom: 0 !important;
+                justify-content: flex-start !important;
             }
 
-            #calculator > div:first-child > div:first-child > div:first-child i,
-            #settings > div:first-child > div > div:first-child i {
-                width: 28px !important;
-                height: 28px !important;
+            /* Icône container - carré uniforme 44x44 */
+            .tab-content > div:first-child[style*="background: linear-gradient"] > div > div:first-child[style*="width: 60px"],
+            .tab-content > div:first-child[style*="background: linear-gradient"] > div > div:first-child[style*="font-size: 3rem"] {
+                width: 44px !important;
+                min-width: 44px !important;
+                height: 44px !important;
+                min-height: 44px !important;
+                border-radius: 10px !important;
+                flex-shrink: 0 !important;
+                font-size: 1.5rem !important;
             }
 
-            /* Titres hero plus petits */
-            #calculator > div:first-child h1,
-            #settings > div:first-child h1 {
-                font-size: 1.4rem !important;
+            /* Icône SVG dans hero */
+            .tab-content > div:first-child[style*="background: linear-gradient"] > div > div:first-child i,
+            .tab-content > div:first-child[style*="background: linear-gradient"] > div > div:first-child svg {
+                width: 24px !important;
+                height: 24px !important;
             }
 
-            #calculator > div:first-child p,
-            #settings > div:first-child p {
+            /* Titre H1 hero */
+            .tab-content > div:first-child[style*="background: linear-gradient"] h1 {
+                font-size: 1.25rem !important;
+                line-height: 1.2 !important;
+                margin: 0 !important;
+                text-align: left !important;
+            }
+
+            /* Sous-titre hero */
+            .tab-content > div:first-child[style*="background: linear-gradient"] p {
+                font-size: 0.75rem !important;
+                line-height: 1.3 !important;
+                margin-top: 2px !important;
+                text-align: left !important;
+            }
+
+            /* ===== WIDGET "IL TE RESTE À MANGER" ===== */
+            #remaining-widget {
+                padding: 12px !important;
+                margin-bottom: 16px !important;
+            }
+
+            #remaining-widget > div {
+                flex-direction: column !important;
+                gap: 12px !important;
+            }
+
+            /* Header du widget */
+            #remaining-widget > div > div:first-child {
+                width: 100% !important;
+            }
+
+            #remaining-widget > div > div:first-child > div:first-child {
+                width: 36px !important;
+                height: 36px !important;
+            }
+
+            #remaining-widget > div > div:first-child > div:first-child i {
+                width: 20px !important;
+                height: 20px !important;
+            }
+
+            /* Grille macros du widget - 2x2 au lieu de 4 colonnes */
+            #remaining-widget > div > div:last-child {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+
+            #remaining-widget > div > div:last-child > div {
+                padding: 8px !important;
+                background: rgba(0,0,0,0.2) !important;
+                border-radius: 8px !important;
+            }
+
+            #remaining-widget > div > div:last-child > div > div:first-child {
+                font-size: 0.65rem !important;
+            }
+
+            #remaining-widget > div > div:last-child > div > div:last-child {
+                font-size: 1.1rem !important;
+            }
+
+            /* ===== NAVIGATION SEMAINE PREMIUM ===== */
+            .week-selector {
+                flex-direction: column !important;
+                gap: 10px !important;
+                margin-bottom: 16px !important;
+            }
+
+            .current-week {
+                font-size: 0.95rem !important;
+                order: -1 !important;
+            }
+
+            .week-nav-btn {
+                padding: 10px 16px !important;
                 font-size: 0.85rem !important;
+                border-radius: 8px !important;
+            }
+
+            /* Boutons navigation semaine avec icônes */
+            .week-nav-btn {
+                font-size: 0.75rem !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 4px !important;
+                padding: 8px 12px !important;
+            }
+
+            .week-nav-btn i,
+            .week-nav-btn svg {
+                width: 14px !important;
+                height: 14px !important;
+                flex-shrink: 0;
+            }
+
+            .week-nav-btn.this-week-btn {
+                font-size: 0.85rem !important;
+                padding: 8px 20px !important;
+            }
+
+            /* ===== PARAMÈTRES ESPACEMENT ===== */
+            #settings > div:nth-child(2) {
+                margin-top: 0 !important;
+                margin-bottom: 16px !important;
+            }
+
+            #settings > div[style*="display: grid"] {
+                gap: 12px !important;
+                margin-bottom: 16px !important;
+            }
+
+            #settings .card {
+                padding: 14px !important;
+            }
+
+            #settings .card h3 {
+                font-size: 1rem !important;
+            }
+
+            /* ===== TYPOGRAPHIE PREMIUM ===== */
+            /* Titres de section */
+            .tab-content h2 {
+                font-size: 1.1rem !important;
+                line-height: 1.3 !important;
+                margin-bottom: 12px !important;
+            }
+
+            /* Titres de cards */
+            .tab-content .card h3 {
+                font-size: 0.95rem !important;
+                line-height: 1.3 !important;
+            }
+
+            /* Body text */
+            .tab-content p,
+            .tab-content .card p {
+                font-size: 0.85rem !important;
+                line-height: 1.5 !important;
+            }
+
+            /* Captions / Info text */
+            .info-text,
+            .tab-content [style*="font-size: 0.85rem"],
+            .tab-content [style*="font-size: 0.9rem"] {
+                font-size: 0.75rem !important;
+                line-height: 1.4 !important;
+            }
+
+            /* Labels */
+            .tab-content label {
+                font-size: 0.8rem !important;
+            }
+
+            /* ===== BOUTONS TACTILES ===== */
+            .tab-content .btn {
+                min-height: 44px !important;
+                font-size: 0.85rem !important;
+                padding: 10px 14px !important;
+            }
+
+            /* Boutons d'action repas */
+            .add-food-btn {
+                font-size: 0.7rem !important;
+                padding: 8px 6px !important;
+            }
+
+            /* ===== NAVIGATION DATE (REPAS) ===== */
+            .date-navigation-title {
+                font-size: 1rem !important;
+            }
+
+            .date-nav-btn {
+                min-width: 40px !important;
+                min-height: 40px !important;
+            }
+
+            .today-btn-text {
+                font-size: 0.75rem !important;
             }
 
             /* GRILLES - Une seule colonne sur mobile */
@@ -1150,8 +1333,49 @@
 
             .input-group input,
             .input-group select {
-                padding: 12px !important;
+                padding: 10px !important;
                 font-size: 16px !important; /* Empêche zoom iOS */
+            }
+
+            /* Section Suivi - inputs plus compacts */
+            #tracking .input-group {
+                margin-bottom: var(--space-sm) !important;
+            }
+
+            #tracking .input-group input {
+                padding: 10px 12px !important;
+            }
+
+            #tracking .info-text {
+                font-size: 0.75rem !important;
+                margin-top: 4px !important;
+            }
+
+            #tracking .grid-2 {
+                gap: var(--space-md) !important;
+            }
+
+            /* Date picker - jour plus étroit */
+            #tracking .input-group > div[style*="grid-template-columns"] {
+                grid-template-columns: 0.8fr 1.2fr 1fr !important;
+            }
+
+            /* Fix icônes Lucide dans boutons tracking */
+            #tracking .delete-btn,
+            #tracking .icon-btn {
+                min-width: 40px !important;
+                min-height: 40px !important;
+            }
+
+            #tracking .delete-btn i,
+            #tracking .icon-btn i,
+            #tracking-list .delete-btn i,
+            #tracking .delete-btn svg,
+            #tracking .icon-btn svg,
+            #tracking-list .delete-btn svg {
+                width: 20px !important;
+                height: 20px !important;
+                display: block !important;
             }
 
             /* Boutons objectifs plus compacts */
@@ -1482,29 +1706,80 @@
                 height: 1.3em !important;
             }
 
+            /* ===== HEADER MOBILE PREMIUM ===== */
+            .app-header {
+                padding: var(--space-md) var(--space-md) var(--space-sm) !important;
+                position: relative !important;
+            }
+
+            /* Username visible mais réduit */
             .header-username {
-                height: 36px !important;
-                padding: 0 var(--space-md) !important;
-                font-size: 0.8rem !important;
-                max-width: 110px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
+                display: flex !important;
+                position: absolute !important;
+                top: 8px !important;
+                left: 12px !important;
+                min-width: auto !important;
+                height: auto !important;
+                padding: 4px 10px !important;
+                font-size: 0.75rem !important;
+                background: var(--bg-tertiary) !important;
+                border: none !important;
+                box-shadow: none !important;
             }
 
-            .header-subtitle-row {
-                flex-direction: column;
-                gap: var(--space-sm) !important;
+            /* Winstreak bien positionné (coin droit) */
+            #streak-display {
+                position: absolute !important;
+                top: 6px !important;
+                right: 12px !important;
+                left: auto !important;
             }
 
-            .header-subtitle-row .subtitle {
-                font-size: 0.85rem !important;
+            #streak-display .streak-badge {
+                font-size: 0.75rem !important;
+                padding: 4px 10px !important;
+            }
+
+            .header-main-row {
+                flex-direction: column !important;
+                gap: var(--space-xs) !important;
+                padding-top: 28px !important; /* Espace pour username/streak */
+            }
+
+            /* Logo + NutriTrack centrés */
+            .header-title {
+                font-size: 1.4rem !important;
+                order: 1 !important;
+            }
+
+            /* Sync indicator sous le titre, centré */
+            .header-right {
+                order: 2 !important;
+                min-width: auto !important;
+                justify-content: center !important;
+                width: 100% !important;
+            }
+
+            .header-right .header-btn {
+                display: none !important; /* Cacher thème sur mobile */
             }
 
             #sync-indicator {
-                height: 28px !important;
+                height: 24px !important;
                 padding: 0 10px !important;
-                font-size: 0.7rem !important;
+                font-size: 0.65rem !important;
+                border-radius: 12px !important;
+            }
+
+            #sync-indicator .sync-dot {
+                width: 5px !important;
+                height: 5px !important;
+            }
+
+            .app-header .subtitle {
+                font-size: 0.75rem !important;
+                margin-top: 2px !important;
+                opacity: 0.8;
             }
 
             /* ===== FIX PROGRESS BARS - Afficher pourcentages ===== */
@@ -1554,24 +1829,28 @@
                 gap: var(--space-sm) !important;
             }
 
+            /* Masquer le titre redondant sur mobile */
             .date-navigation-title {
-                font-size: 1rem !important;
-                justify-content: center;
-                text-align: center;
+                display: none !important;
             }
 
             .date-navigation-controls {
-                display: grid !important;
-                grid-template-columns: 48px 1fr 48px !important;
-                grid-template-rows: auto auto !important;
-                gap: var(--space-sm) !important;
+                display: flex !important;
                 align-items: center;
+                justify-content: center;
+                gap: var(--space-sm) !important;
             }
 
             .date-navigation-center {
-                grid-column: 2;
-                grid-row: 1;
                 min-width: auto !important;
+                flex: 1;
+                text-align: center;
+            }
+
+            /* Date texte plus visible */
+            .date-navigation-center .current-date {
+                font-size: 1.1rem;
+                font-weight: 700;
             }
 
             .date-nav-btn {
@@ -1607,11 +1886,159 @@
                 font-size: 1rem !important;
             }
 
+            /* ===== PAGE REPAS TYPES - Mobile Premium ===== */
+            #meal-templates > div[style*="grid-template-columns: 1fr 1fr"] {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: var(--space-lg) !important;
+            }
+
+            #meal-templates .meal-card {
+                border-radius: var(--radius-lg) !important;
+            }
+
+            /* Form compact */
+            #meal-templates .input-group label {
+                font-size: 0.85rem !important;
+            }
+
+            #meal-templates input[type="text"],
+            #meal-templates textarea {
+                padding: var(--space-sm) var(--space-md) !important;
+                font-size: 0.9rem !important;
+            }
+
+            #meal-templates textarea {
+                min-height: 80px !important;
+            }
+
+            /* Templates list compact */
+            #meal-templates .card h2 {
+                font-size: 1.1rem !important;
+                margin-bottom: var(--space-sm) !important;
+            }
+
+            /* Bouton enregistrer */
+            #meal-templates .btn[onclick*="saveNewMealTemplate"] {
+                padding: var(--space-md) !important;
+                font-size: 0.9rem !important;
+            }
+
+            /* Macros grid dans templates */
+            #meal-templates div[style*="grid-template-columns: repeat(3, 1fr)"] {
+                padding: var(--space-sm) !important;
+                gap: var(--space-xs) !important;
+            }
+
+            /* ===== PAGE SUIVI - Mobile Premium ===== */
+            #tracking .card {
+                padding: var(--space-lg) !important;
+            }
+
+            #tracking h2 {
+                font-size: 1.1rem !important;
+            }
+
+            #tracking h3 {
+                font-size: 1.15rem !important;
+                margin-bottom: var(--space-md) !important;
+            }
+
+            /* Boutons de charts en grille */
+            #tracking-history > div[style*="display: flex"][style*="flex-wrap"] {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: var(--space-xs) !important;
+            }
+
+            #tracking-history .btn-secondary {
+                padding: var(--space-sm) var(--space-xs) !important;
+                font-size: 0.75rem !important;
+                white-space: nowrap;
+            }
+
+            /* Canvas chart plus compact */
+            #tracking-chart {
+                max-height: 250px !important;
+                padding: var(--space-md) !important;
+            }
+
+            /* Form inputs compact */
+            #tracking .grid-2 {
+                gap: var(--space-md) !important;
+            }
+
+            #tracking .input-group {
+                margin-bottom: var(--space-sm) !important;
+            }
+
+            #tracking .input-group label {
+                font-size: 0.85rem !important;
+                margin-bottom: var(--space-xs) !important;
+            }
+
+            #tracking .info-text {
+                font-size: 0.7rem !important;
+            }
+
+            /* ===== PAGE BASE D'ALIMENTS - Mobile Premium ===== */
+            #foods .card {
+                padding: var(--space-lg) !important;
+            }
+
+            /* Boutons filtres par catégorie en grille */
+            #foods > .card > div[style*="display: flex"][style*="flex-wrap: wrap"] {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: var(--space-xs) !important;
+            }
+
+            #foods .filter-btn {
+                padding: var(--space-xs) var(--space-sm) !important;
+                font-size: 0.7rem !important;
+                white-space: nowrap;
+                justify-content: center;
+            }
+
+            /* Cards aliments premium */
+            #foodDatabase .food-item {
+                background: var(--bg-tertiary) !important;
+                border-radius: var(--radius-lg) !important;
+                padding: var(--space-md) !important;
+                margin-bottom: var(--space-sm) !important;
+                border: 1px solid rgba(255,255,255,0.05) !important;
+            }
+
+            #foodDatabase .food-item .food-name {
+                font-weight: 600 !important;
+                margin-bottom: var(--space-xs) !important;
+            }
+
+            #foodDatabase .food-item .food-macros {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: var(--space-xs) !important;
+                padding: var(--space-sm) !important;
+                background: var(--bg-secondary) !important;
+                border-radius: var(--radius-md) !important;
+            }
+
+            #foodDatabase .food-item .food-macros span {
+                text-align: center !important;
+                font-size: 0.7rem !important;
+            }
+
             /* ===== FIX BLUR OVERLAY Z-INDEX ===== */
             /* Ne pas couvrir la navbar mobile */
             .section-disabled-overlay {
                 z-index: 50 !important; /* Plus bas que la navbar (z-index: 1000) */
                 bottom: 85px !important; /* Laisser de l'espace pour la navbar */
+                pointer-events: none !important; /* Laisser passer les clics vers la navbar */
+            }
+
+            /* Seul le message reste cliquable */
+            .section-disabled-message {
+                pointer-events: all !important;
             }
         }
 
@@ -2888,9 +3315,17 @@
             .header-main-row {
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                gap: var(--space-xl);
+                justify-content: space-between;
+                gap: var(--space-lg);
                 margin-bottom: var(--space-sm);
+            }
+
+            .header-right {
+                display: flex;
+                align-items: center;
+                gap: var(--space-sm);
+                min-width: 150px;
+                justify-content: flex-end;
             }
 
             .header-btn {
@@ -2939,55 +3374,48 @@
             }
 
             .header-username {
-                min-width: 44px;
+                min-width: 150px;
                 height: 44px;
                 background: var(--bg-secondary);
-                padding: 0 var(--space-xl);
+                padding: 0 var(--space-lg);
                 border-radius: var(--radius-full);
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 color: var(--text-primary);
                 font-size: 0.95rem;
                 display: flex;
                 align-items: center;
-                justify-content: center;
+                justify-content: flex-start;
                 gap: var(--space-sm);
                 box-shadow: var(--shadow-sm);
             }
 
-            .header-subtitle-row {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: var(--space-lg);
-                flex-wrap: wrap;
-            }
-
-            .header-subtitle-row .subtitle {
+            .app-header .subtitle {
                 margin: 0;
+                text-align: center;
             }
         </style>
 
         <header class="app-header">
-            <!-- Ligne principale: Switch | NutriTrack | Prénom -->
+            <!-- Ligne principale: Prénom | NutriTrack | Local/Cloud + Thème -->
             <div class="header-main-row">
-                <button class="header-btn" onclick="toggleTheme()" title="Changer le thème">
-                    <i data-lucide="moon" id="theme-icon" style="width: 20px; height: 20px;"></i>
-                </button>
+                <div id="username-display" class="header-username"></div>
                 <h1 class="header-title">
                     <img src="logo.svg" alt="Logo" class="header-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
                     <span class="header-logo-fallback"><i data-lucide="target" style="width: 1em; height: 1em; color: white;"></i></span>
                     NutriTrack
                 </h1>
-                <div id="username-display" class="header-username"></div>
-            </div>
-            <!-- Sous-titre avec sync indicator -->
-            <div class="header-subtitle-row">
-                <p class="subtitle">Prends le contrôle de ton alimentation</p>
-                <div id="sync-indicator" onclick="switchToTab('settings')" title="Statut de synchronisation">
-                    <span class="sync-dot"></span>
-                    <span id="sync-indicator-text">Local</span>
+                <div class="header-right">
+                    <div id="sync-indicator" onclick="switchToTab('settings')" title="Statut de synchronisation">
+                        <span class="sync-dot"></span>
+                        <span id="sync-indicator-text">Local</span>
+                    </div>
+                    <button class="header-btn" onclick="toggleTheme()" title="Changer le thème">
+                        <i data-lucide="moon" id="theme-icon" style="width: 20px; height: 20px;"></i>
+                    </button>
                 </div>
             </div>
+            <!-- Sous-titre -->
+            <p class="subtitle">Prends le contrôle de ton alimentation</p>
         </header>
 
         <!-- App Layout with Sidebar -->
@@ -3379,7 +3807,7 @@
 
                     <div style="display: flex; gap: var(--space-lg); margin-bottom: var(--space-xl); flex-wrap: wrap;">
                         <button class="btn" onclick="exportMacrosAsImage()" style="flex: 1; min-width: 200px; display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
-                            📸 Télécharger en image
+                            <i data-lucide="camera" style="width: 18px; height: 18px;"></i> Télécharger en image
                         </button>
                         <button class="btn" onclick="document.querySelector('[data-tab=&quot;meals&quot;]').click(); window.scrollTo({top: 0, behavior: 'smooth'});" style="flex: 1; min-width: 200px; background: var(--accent-purple); display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
                             <i data-lucide="calendar" style="width: 18px; height: 18px;"></i> Aller à Mes Repas
@@ -3750,9 +4178,9 @@
 
             <div class="card">
                 <div class="week-selector">
-                    <button class="week-nav-btn" onclick="changeWeek(-1)">← Semaine précédente</button>
+                    <button class="week-nav-btn" onclick="changeWeek(-1)"><i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i> Semaine préc.</button>
                     <div class="current-week" id="current-week">Semaine du 15 Déc 2025</div>
-                    <button class="week-nav-btn" onclick="changeWeek(1)">Semaine suivante →</button>
+                    <button class="week-nav-btn" onclick="changeWeek(1)">Semaine suiv. <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i></button>
                 </div>
                 <div style="text-align: center; margin-bottom: var(--space-xl);">
                     <button class="week-nav-btn this-week-btn" onclick="goToCurrentWeek()">Cette semaine</button>
@@ -4561,32 +4989,6 @@
                         </button>
                     </div>
 
-                    <!-- Apparence -->
-                    <div class="card">
-                        <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
-                            <i data-lucide="palette" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
-                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0;">Apparence</h3>
-                        </div>
-
-                        <div style="margin-bottom: var(--space-md);">
-                            <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: var(--space-md);">Thème</label>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
-                                <button id="theme-dark-btn" onclick="setTheme('dark')" class="btn" style="background: var(--accent-ui); color: white; display: flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: var(--space-md);">
-                                    <i data-lucide="moon" style="width: 18px; height: 18px;"></i>
-                                    <span>Sombre</span>
-                                </button>
-                                <button id="theme-light-btn" onclick="setTheme('light')" class="btn" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: var(--space-md);">
-                                    <i data-lucide="sun" style="width: 18px; height: 18px;"></i>
-                                    <span>Clair</span>
-                                </button>
-                            </div></div>
-
-                        <div style="padding: var(--space-md); background: rgba(5, 150, 105, 0.1); border-radius: var(--radius-md); border-left: 3px solid var(--accent-ui);">
-                            <div style="display: flex; align-items: start; gap: var(--space-sm);">
-                                <i data-lucide="info" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 2px;"></i>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Ton choix est sauvegardé automatiquement</span>
-                            </div></div></div>
-
                     <!-- Notifications -->
                     <div class="card">
                         <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
@@ -4623,6 +5025,32 @@
                             <div style="display: flex; align-items: start; gap: var(--space-sm);">
                                 <i data-lucide="info" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 2px;"></i>
                                 <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Les notifications nécessitent l'autorisation de ton navigateur</span>
+                            </div></div></div>
+
+                    <!-- Apparence -->
+                    <div class="card">
+                        <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
+                            <i data-lucide="palette" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
+                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0;">Apparence</h3>
+                        </div>
+
+                        <div style="margin-bottom: var(--space-md);">
+                            <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: var(--space-md);">Thème</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
+                                <button id="theme-dark-btn" onclick="setTheme('dark')" class="btn" style="background: var(--accent-ui); color: white; display: flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: var(--space-md);">
+                                    <i data-lucide="moon" style="width: 18px; height: 18px;"></i>
+                                    <span>Sombre</span>
+                                </button>
+                                <button id="theme-light-btn" onclick="setTheme('light')" class="btn" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: var(--space-md);">
+                                    <i data-lucide="sun" style="width: 18px; height: 18px;"></i>
+                                    <span>Clair</span>
+                                </button>
+                            </div></div>
+
+                        <div style="padding: var(--space-md); background: rgba(5, 150, 105, 0.1); border-radius: var(--radius-md); border-left: 3px solid var(--accent-ui);">
+                            <div style="display: flex; align-items: start; gap: var(--space-sm);">
+                                <i data-lucide="info" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 2px;"></i>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Ton choix est sauvegardé automatiquement</span>
                             </div></div></div>
 
                     <!-- Installation PWA -->
@@ -4981,6 +5409,17 @@
                 transform: translateX(-50%);
                 margin-left: 0;
                 margin-top: var(--space-sm);
+            }
+
+            /* FIX: Overlay ne doit pas bloquer la navbar mobile */
+            .section-disabled-overlay {
+                z-index: 50 !important;
+                bottom: 85px !important;
+                pointer-events: none !important;
+            }
+
+            .section-disabled-message {
+                pointer-events: all !important;
             }
         }
     </style>
@@ -5402,12 +5841,16 @@
             <i data-lucide="download" style="width: 22px; height: 22px;"></i>
             Installer l'application
         </button>
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 16px;">
-            <a href="#" onclick="switchToTab('privacy'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;">Confidentialité</a>
-            <a href="#" onclick="switchToTab('terms'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;">CGU</a>
-            <a href="#" onclick="switchToTab('legal'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;">Mentions légales</a>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 12px;">
+            <a href="#" onclick="switchToTab('about'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;">À propos</a>
+            <a href="#" onclick="switchToTab('health-warning'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;">Santé</a>
+            <a href="#" onclick="switchToTab('privacy'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;">Confidentialité</a>
         </div>
-        <p style="color: var(--text-muted); font-size: 0.75rem; margin: 0;">© 2025 NutriTrack • v3.0</p>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 16px;">
+            <a href="#" onclick="switchToTab('terms'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;">CGU</a>
+            <a href="#" onclick="switchToTab('legal'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;">Mentions légales</a>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.7rem; margin: 0;">© 2025 NutriTrack • v3.0</p>
     </footer>
 
     <!-- Food Search Modal -->
@@ -5550,11 +5993,11 @@
         function showInstallButton() {
             const installCard = document.getElementById('pwa-install-card');
             const landingInstallBtn = document.getElementById('landing-install-btn');
-            const footerInstallBtn = document.getElementById('footer-install-btn');
             const drawerInstallBtn = document.getElementById('drawer-install-btn');
+            // Afficher uniquement dans: Settings, Landing page, et Menu Plus (drawer)
+            // Footer désactivé pour éviter l'intrusion
             if (installCard) installCard.style.display = 'block';
             if (landingInstallBtn) landingInstallBtn.style.display = 'inline-flex';
-            if (footerInstallBtn) footerInstallBtn.style.display = 'flex';
             if (drawerInstallBtn) drawerInstallBtn.style.display = 'flex';
         }
 
@@ -5679,11 +6122,11 @@
             }
         }
 
-        // Tab switching
-        document.querySelectorAll('.sidebar-btn').forEach(btn => {
+        // Tab switching - EXCLURE le bouton Plus qui n'a pas de data-tab
+        document.querySelectorAll('.sidebar-btn[data-tab]').forEach(btn => {
             btn.addEventListener('click', () => {
                 const tab = btn.dataset.tab;
-                switchToTab(tab);
+                if (tab) switchToTab(tab);
             });
         });
 
@@ -5700,7 +6143,7 @@
             const tabContent = document.getElementById(tab);
             if (tabContent)  { tabContent.classList.add('active'); }
 
-            if (tab === 'planner')  { renderWeeklyPlan(); } else if (tab === 'tracking')  { renderTrackingList(); } else if (tab === 'meal-templates')  { renderMealTemplatesList(); }
+            if (tab === 'planner')  { renderWeeklyPlan(); } else if (tab === 'tracking')  { renderTrackingList(); } else if (tab === 'meal-templates')  { renderMealTemplatesList(); } else if (tab === 'settings')  { if (typeof updateSettingsStats === 'function') updateSettingsStats(); }
 
             // Scroll to top
             window.scrollTo({top: 0, behavior: 'smooth'});
@@ -6088,9 +6531,9 @@ Solutions possibles :
             document.getElementById('results').style.display = 'block';
             if (typeof lucide !== "undefined") lucide.createIcons();
 
-            // Sauvegarder dans localStorage
+            // Sauvegarder dans localStorage (incluant IMC)
             localStorage.setItem('macroTargets', JSON.stringify({
-                protein, carbs, fat, calories: totalCal, bmr: Math.round(bmr), tdee: Math.round(tdee)
+                protein, carbs, fat, calories: totalCal, bmr: Math.round(bmr), tdee: Math.round(tdee), imc: imc.toFixed(1)
             }));
 
             // Mettre à jour les sections disponibles
@@ -8447,6 +8890,14 @@ Solutions possibles :
             // Supprimer ancienne entrée de cette date
             trackingData = trackingData.filter(e => e.date !== date);
 
+            // Calculer l'IMC automatiquement si poids et taille disponibles
+            let imc = null;
+            const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+            if (weight && profile.height) {
+                const heightM = profile.height / 100;
+                imc = parseFloat((weight / (heightM * heightM)).toFixed(1));
+            }
+
             // Ajouter nouvelle entrée
             trackingData.push({
                 date,
@@ -8458,6 +8909,7 @@ Solutions possibles :
                 water: water || null,
                 bodyAge: bodyAge || null,
                 visceral: visceral || null,
+                imc: imc,
                 notes: notes || ''
             });
 
@@ -9451,6 +9903,23 @@ Solutions possibles :
                             document.getElementById('tdee-display').textContent = targets.tdee.toLocaleString('fr-FR') + ' kcal';
                         }
 
+                        // IMC - Restaurer au chargement
+                        if (targets.imc && document.getElementById('imc-display-blur')) {
+                            const imc = parseFloat(targets.imc);
+                            let imcCategory, imcColor;
+                            if (imc < 18.5) { imcCategory = 'Maigreur'; imcColor = 'var(--accent-carbs)'; }
+                            else if (imc < 25) { imcCategory = 'Corpulence normale'; imcColor = 'var(--accent-main)'; }
+                            else if (imc < 30) { imcCategory = 'Surpoids'; imcColor = 'var(--accent-fat)'; }
+                            else { imcCategory = 'Obésité'; imcColor = 'var(--accent-danger)'; }
+
+                            document.getElementById('imc-display-blur').textContent = targets.imc;
+                            document.getElementById('imc-display-blur').style.color = imcColor;
+                            if (document.getElementById('imc-category-blur')) {
+                                document.getElementById('imc-category-blur').textContent = imcCategory;
+                                document.getElementById('imc-category-blur').style.color = imcColor;
+                            }
+                        }
+
                         // Macro targets (grammes)
                         if (document.getElementById('targetProtein')) document.getElementById('targetProtein').textContent = Math.round(targets.protein);
                         if (document.getElementById('targetCarbs')) document.getElementById('targetCarbs').textContent = Math.round(targets.carbs);
@@ -9881,11 +10350,18 @@ Solutions possibles :
 
             // Filter data that has the requested metric
             const validData = advancedTrackingData.filter(entry => {
-                if (type === 'weight') return entry.weight != null;
-                if (type === 'bodyFat') return entry.bodyFat != null;
-                if (type === 'muscleMass') return entry.muscleMass != null;
-                if (type === 'photos') return entry.photos && entry.photos.length > 0;
-                return false;
+                switch(type) {
+                    case 'weight': return entry.weight != null && entry.weight > 0;
+                    case 'bodyfat': return entry.bodyfat != null && entry.bodyfat > 0;
+                    case 'muscle': return entry.muscle != null && entry.muscle > 0;
+                    case 'imc': return entry.imc != null && entry.imc > 0;
+                    case 'water': return entry.water != null && entry.water > 0;
+                    case 'bone': return entry.bone != null && entry.bone > 0;
+                    case 'proteinPct': return entry.proteinPct != null && entry.proteinPct > 0;
+                    case 'bodyAge': return entry.bodyAge != null && entry.bodyAge > 0;
+                    case 'visceral': return entry.visceral != null && entry.visceral > 0;
+                    default: return false;
+                }
             });
 
             if (validData.length < 2) {
@@ -10248,7 +10724,7 @@ Solutions possibles :
     <!-- Export Warning Modal -->
     <div id="export-warning-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10001; justify-content: center; align-items: center; padding: var(--space-xl);">
         <div style="background: var(--bg-secondary); border: 2px solid var(--accent-fat); border-radius: var(--radius-lg); max-width: 500px; width: 100%; padding: var(--space-3xl); box-shadow: var(--shadow-lg); text-align: center;">
-            <div style="font-size: 3rem; margin-bottom: var(--space-lg);">📸</div>
+            <div style="width: 64px; height: 64px; margin: 0 auto var(--space-lg); background: var(--accent-fat); border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="camera" style="width: 32px; height: 32px; color: white;"></i></div>
 
             <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--text-primary);">
                 Attention
@@ -11215,9 +11691,29 @@ Solutions possibles :
     <!-- Firebase SDK -->
     <script type="module">
         // ===== FIREBASE CONFIGURATION =====
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        // Vérification du protocole - Firebase nécessite http/https
+        const isValidProtocol = ['http:', 'https:'].includes(window.location.protocol);
+
+        // En mode file://, désactiver Firebase proprement
+        if (!isValidProtocol) {
+            console.info('ℹ️ NutriTrack fonctionne en mode LOCAL (file://). La sync cloud nécessite un serveur web.');
+            console.info('   💡 Pour activer Firebase: npx serve . ou python -m http.server');
+            // Fonctions placeholder pour éviter les erreurs
+            window.firebaseSignIn = () => {
+                alert('La synchronisation cloud nécessite un serveur web.\n\nLancez: npx serve ou python -m http.server');
+            };
+            window.firebaseSignOut = () => {};
+            window.firebaseForceSync = () => {};
+            window.firebaseRestoreFromCloud = () => {};
+            window.firebaseDeleteAccount = () => {};
+        }
+
+        // Charger Firebase uniquement si protocole valide
+        if (isValidProtocol) {
+
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+        const { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+        const { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
 
         const firebaseConfig = {
             apiKey: "AIzaSyCL2SvQ2c784ZyA2Pr-Qtv2F1wnnDByGkc",
@@ -11659,6 +12155,8 @@ Solutions possibles :
 
         // Log initialization
         console.log('🔥 Firebase NutriTrack initialisé');
+
+        } // Fin du if (isValidProtocol)
     </script>
 </body>
 </html>
