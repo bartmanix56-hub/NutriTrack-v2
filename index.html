@@ -903,6 +903,252 @@
             20%, 40%, 60%, 80% { transform: translateX(10px); }
         }
 
+        /* ===== HOME TAB STYLES ===== */
+        .home-hero {
+            background: linear-gradient(135deg, var(--accent-ui) 0%, var(--accent-main) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            margin-bottom: var(--space-xl);
+            text-align: center;
+        }
+
+        .home-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            margin: 0 0 var(--space-xs) 0;
+            letter-spacing: -0.02em;
+        }
+
+        .home-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin: 0;
+        }
+
+        .home-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-lg);
+        }
+
+        .home-card-primary {
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .home-card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .home-card-icon {
+            width: 22px;
+            height: 22px;
+            color: var(--accent-ui);
+        }
+
+        .home-card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .home-macros-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .home-macro-item {
+            text-align: center;
+        }
+
+        .home-macro-ring {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-xs);
+            background: var(--bg-tertiary);
+            border: 3px solid var(--bg-tertiary);
+        }
+
+        .home-macro-ring.protein { border-color: var(--accent-protein); }
+        .home-macro-ring.carbs { border-color: var(--accent-carbs); }
+        .home-macro-ring.fat { border-color: var(--accent-fat); }
+
+        .home-macro-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .home-macro-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .home-action-btn {
+            width: 100%;
+            padding: var(--space-md) var(--space-xl);
+            background: var(--accent-ui);
+            border: none;
+            border-radius: var(--radius-lg);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            transition: all 0.2s ease;
+        }
+
+        .home-action-btn:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        .home-action-btn i {
+            width: 20px;
+            height: 20px;
+        }
+
+        .home-quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .home-quick-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            padding: var(--space-lg);
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .home-quick-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--accent-ui);
+        }
+
+        .home-quick-btn i {
+            width: 24px;
+            height: 24px;
+            color: var(--accent-ui);
+        }
+
+        .home-quick-btn span {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .home-tip {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-md);
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .home-tip-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--accent-main);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .home-tip p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* ===== HOME MOBILE RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .home-hero {
+                padding: var(--space-xl);
+                margin-bottom: var(--space-md);
+            }
+
+            .home-title {
+                font-size: 1.5rem;
+            }
+
+            .home-subtitle {
+                font-size: 0.85rem;
+            }
+
+            .home-card {
+                padding: var(--space-lg);
+                margin-bottom: var(--space-md);
+            }
+
+            .home-macros-grid {
+                gap: var(--space-sm);
+                margin-bottom: var(--space-lg);
+            }
+
+            .home-macro-ring {
+                width: 50px;
+                height: 50px;
+            }
+
+            .home-macro-value {
+                font-size: 0.85rem;
+            }
+
+            .home-macro-label {
+                font-size: 0.65rem;
+            }
+
+            .home-quick-actions {
+                gap: var(--space-sm);
+            }
+
+            .home-quick-btn {
+                padding: var(--space-md);
+            }
+
+            .home-quick-btn i {
+                width: 20px;
+                height: 20px;
+            }
+
+            .home-quick-btn span {
+                font-size: 0.75rem;
+            }
+
+            .home-tip {
+                padding: var(--space-md) !important;
+            }
+
+            .home-tip p {
+                font-size: 0.8rem;
+            }
+        }
+
         /* Responsive - Bottom navbar mobile style iOS/Android */
         @media (max-width: 768px) {
             body {
@@ -3430,7 +3676,11 @@
                 <div class="sidebar-group-title">
                     Principal
                 </div>
-                <button class="sidebar-btn active" data-tab="calculator">
+                <button class="sidebar-btn active" data-tab="home">
+                    <span class="sidebar-icon"><i data-lucide="home"></i></span>
+                    <span class="sidebar-label">Accueil</span>
+                </button>
+                <button class="sidebar-btn" data-tab="calculator">
                     <span class="sidebar-icon"><i data-lucide="calculator"></i></span>
                     <span class="sidebar-label">Calculateur</span>
                 </button>
@@ -3524,8 +3774,79 @@
             <!-- Main Content Area -->
             <main class="main-content">
 
+        <!-- HOME TAB - Dashboard Principal -->
+        <div id="home" class="tab-content active">
+            <!-- Hero compact mobile-first -->
+            <div class="home-hero">
+                <div class="home-hero-content">
+                    <h1 class="home-title">NutriTrack</h1>
+                    <p class="home-subtitle">Ton coach nutrition personnel</p>
+                </div>
+            </div>
+
+            <!-- Widget Objectifs du jour -->
+            <div class="home-card home-card-primary" id="home-daily-goals">
+                <div class="home-card-header">
+                    <i data-lucide="target" class="home-card-icon"></i>
+                    <span class="home-card-title">Aujourd'hui</span>
+                </div>
+                <div class="home-macros-grid" id="home-macros-summary">
+                    <div class="home-macro-item">
+                        <div class="home-macro-ring protein">
+                            <span class="home-macro-value" id="home-cal-value">--</span>
+                        </div>
+                        <span class="home-macro-label">kcal</span>
+                    </div>
+                    <div class="home-macro-item">
+                        <div class="home-macro-ring protein">
+                            <span class="home-macro-value" id="home-p-value">--</span>
+                        </div>
+                        <span class="home-macro-label">Prot.</span>
+                    </div>
+                    <div class="home-macro-item">
+                        <div class="home-macro-ring carbs">
+                            <span class="home-macro-value" id="home-c-value">--</span>
+                        </div>
+                        <span class="home-macro-label">Gluc.</span>
+                    </div>
+                    <div class="home-macro-item">
+                        <div class="home-macro-ring fat">
+                            <span class="home-macro-value" id="home-f-value">--</span>
+                        </div>
+                        <span class="home-macro-label">Lip.</span>
+                    </div>
+                </div>
+                <button class="home-action-btn" onclick="switchToTab('meals')">
+                    <i data-lucide="utensils"></i>
+                    <span>Logger un repas</span>
+                </button>
+            </div>
+
+            <!-- Accès rapides -->
+            <div class="home-quick-actions">
+                <button class="home-quick-btn" onclick="switchToTab('calculator')">
+                    <i data-lucide="calculator"></i>
+                    <span>Calculateur</span>
+                </button>
+                <button class="home-quick-btn" onclick="switchToTab('tracking')">
+                    <i data-lucide="line-chart"></i>
+                    <span>Suivi</span>
+                </button>
+                <button class="home-quick-btn" onclick="switchToTab('planner')">
+                    <i data-lucide="calendar"></i>
+                    <span>Semaine</span>
+                </button>
+            </div>
+
+            <!-- Tip du jour -->
+            <div class="home-card home-tip">
+                <i data-lucide="lightbulb" class="home-tip-icon"></i>
+                <p id="home-tip-text">Configure tes macros dans le Calculateur pour un suivi personnalisé.</p>
+            </div>
+        </div>
+
         <!-- Calculator Tab -->
-        <div id="calculator" class="tab-content active">
+        <div id="calculator" class="tab-content">
             <!-- Hero Header -->
             <div style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); border-radius: var(--radius-xl); padding: var(--space-3xl); margin-bottom: var(--space-3xl); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);">
                 <div style="display: flex; align-items: center; gap: var(--space-lg); margin-bottom: var(--space-lg);">
@@ -6020,6 +6341,59 @@
         // Exécuter au chargement
         document.addEventListener('DOMContentLoaded', checkMobileInstall);
 
+        // ===== HOME TAB UPDATE =====
+        function updateHomeTab() {
+            // Récupérer les macros du jour
+            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const today = getDateKey(new Date());
+            const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            const todayMeals = allMeals[today] || {};
+
+            // Calculer consommation du jour
+            let totalP = 0, totalC = 0, totalF = 0, totalCal = 0;
+            ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
+                if (todayMeals[mealType] && todayMeals[mealType].foods) {
+                    todayMeals[mealType].foods.forEach(food => {
+                        totalP += food.protein || 0;
+                        totalC += food.carbs || 0;
+                        totalF += food.fat || 0;
+                        totalCal += food.calories || 0;
+                    });
+                }
+            });
+
+            // Afficher les valeurs
+            const calEl = document.getElementById('home-cal-value');
+            const pEl = document.getElementById('home-p-value');
+            const cEl = document.getElementById('home-c-value');
+            const fEl = document.getElementById('home-f-value');
+
+            if (calEl) calEl.textContent = Math.round(totalCal);
+            if (pEl) pEl.textContent = Math.round(totalP) + 'g';
+            if (cEl) cEl.textContent = Math.round(totalC) + 'g';
+            if (fEl) fEl.textContent = Math.round(totalF) + 'g';
+
+            // Tip dynamique
+            const tipEl = document.getElementById('home-tip-text');
+            if (tipEl) {
+                if (!targets.calories) {
+                    tipEl.textContent = 'Configure tes macros dans le Calculateur pour un suivi personnalisé.';
+                } else if (totalCal === 0) {
+                    tipEl.textContent = 'Commence à logger tes repas pour suivre ta progression !';
+                } else if (totalCal >= targets.calories) {
+                    tipEl.textContent = 'Objectif calorique atteint pour aujourd\'hui ! 🎯';
+                } else {
+                    const remaining = targets.calories - totalCal;
+                    tipEl.textContent = `Il te reste ${Math.round(remaining)} kcal à consommer aujourd'hui.`;
+                }
+            }
+        }
+
+        // Appeler au chargement initial
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(updateHomeTab, 100);
+        });
+
         async function installPWA() {
             // Détecter iOS
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -6140,7 +6514,8 @@
             const tabContent = document.getElementById(tab);
             if (tabContent)  { tabContent.classList.add('active'); }
 
-            if (tab === 'planner')  { renderWeeklyPlan(); } else if (tab === 'tracking')  { renderTrackingList(); } else if (tab === 'meal-templates')  { renderMealTemplatesList(); } else if (tab === 'settings')  { if (typeof updateSettingsStats === 'function') updateSettingsStats(); }
+            if (tab === 'home') { if (typeof updateHomeTab === 'function') updateHomeTab(); }
+            else if (tab === 'planner')  { renderWeeklyPlan(); } else if (tab === 'tracking')  { renderTrackingList(); } else if (tab === 'meal-templates')  { renderMealTemplatesList(); } else if (tab === 'settings')  { if (typeof updateSettingsStats === 'function') updateSettingsStats(); }
 
             // Scroll to top
             window.scrollTo({top: 0, behavior: 'smooth'});
