@@ -903,104 +903,320 @@
             20%, 40%, 60%, 80% { transform: translateX(10px); }
         }
 
-        /* ===== HOME TAB STYLES ===== */
-        .home-hero {
-            background: linear-gradient(135deg, var(--accent-ui) 0%, var(--accent-main) 100%);
+        /* ===== HOME TAB STYLES - DESKTOP PREMIUM ===== */
+        #home {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .mobile-only { display: none; }
+
+        /* --- HERO SECTION --- */
+        .home-hero-section {
+            margin-bottom: var(--space-2xl);
+        }
+
+        .home-hero-visual {
+            position: relative;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.15);
             border-radius: var(--radius-xl);
-            padding: var(--space-2xl);
-            margin-bottom: var(--space-xl);
-            text-align: center;
+            padding: var(--space-3xl);
+            overflow: hidden;
         }
 
-        .home-title {
-            font-size: 2rem;
-            font-weight: 800;
-            color: white;
-            margin: 0 0 var(--space-xs) 0;
-            letter-spacing: -0.02em;
+        .home-hero-decoration {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
         }
 
-        .home-subtitle {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.85);
-            margin: 0;
+        .hero-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
         }
 
-        .home-card {
-            background: var(--bg-secondary);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            margin-bottom: var(--space-lg);
+        .hero-blob-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-main);
+            top: -100px;
+            right: -50px;
         }
 
-        .home-card-primary {
-            border: 1px solid rgba(16, 185, 129, 0.2);
+        .hero-blob-2 {
+            width: 200px;
+            height: 200px;
+            background: var(--accent-ui);
+            bottom: -80px;
+            left: 20%;
         }
 
-        .home-card-header {
+        .home-hero-content {
+            position: relative;
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
+            justify-content: space-between;
+            gap: var(--space-3xl);
+        }
+
+        .home-hero-text {
+            flex: 1;
+        }
+
+        .home-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--accent-main);
+            padding: var(--space-xs) var(--space-md);
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 600;
             margin-bottom: var(--space-lg);
         }
 
-        .home-card-icon {
-            width: 22px;
-            height: 22px;
-            color: var(--accent-ui);
+        .home-hero-badge i {
+            width: 16px;
+            height: 16px;
         }
 
-        .home-card-title {
-            font-size: 1.1rem;
-            font-weight: 700;
+        .home-hero-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.2;
             color: var(--text-primary);
+            margin: 0 0 var(--space-md) 0;
         }
 
-        .home-macros-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: var(--space-md);
-            margin-bottom: var(--space-xl);
+        .home-hero-brand {
+            background: linear-gradient(135deg, var(--accent-main) 0%, var(--accent-ui) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .home-macro-item {
-            text-align: center;
+        .home-hero-tagline {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            margin: 0;
+            line-height: 1.5;
         }
 
-        .home-macro-ring {
-            width: 60px;
-            height: 60px;
+        .home-hero-illustration {
+            flex-shrink: 0;
+        }
+
+        .hero-icon-container {
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, var(--accent-main) 0%, var(--accent-ui) 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto var(--space-xs);
-            background: var(--bg-tertiary);
-            border: 3px solid var(--bg-tertiary);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
         }
 
-        .home-macro-ring.protein { border-color: var(--accent-protein); }
-        .home-macro-ring.carbs { border-color: var(--accent-carbs); }
-        .home-macro-ring.fat { border-color: var(--accent-fat); }
+        .hero-main-icon {
+            width: 70px;
+            height: 70px;
+            color: white;
+        }
 
-        .home-macro-value {
-            font-size: 1rem;
+        /* --- SUMMARY SECTION --- */
+        .home-summary-section {
+            margin-bottom: var(--space-2xl);
+        }
+
+        .home-summary-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+        }
+
+        .home-summary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-xl);
+        }
+
+        .home-summary-title-row {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .home-summary-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--accent-ui);
+        }
+
+        .home-summary-title {
+            font-size: 1.3rem;
             font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .home-summary-date {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Progress container */
+        .home-progress-container {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3xl);
+            margin-bottom: var(--space-xl);
+        }
+
+        .home-progress-ring {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            flex-shrink: 0;
+        }
+
+        .home-progress-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .home-progress-ring .progress-bg {
+            fill: none;
+            stroke: var(--bg-tertiary);
+            stroke-width: 8;
+        }
+
+        .home-progress-ring .progress-fill-ring {
+            fill: none;
+            stroke: var(--accent-main);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .progress-center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-value {
+            font-size: 2rem;
+            font-weight: 800;
             color: var(--text-primary);
         }
 
-        .home-macro-label {
-            font-size: 0.75rem;
+        .progress-label {
+            font-size: 0.8rem;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
-        .home-action-btn {
+        .home-calories-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xl);
+        }
+
+        .calories-consumed,
+        .calories-remaining {
+            text-align: center;
+            flex: 1;
+        }
+
+        .calories-number {
+            display: block;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: var(--space-xs);
+        }
+
+        .calories-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .calories-divider {
+            width: 1px;
+            height: 60px;
+            background: var(--bg-tertiary);
+        }
+
+        /* Macros mini */
+        .home-macros-mini {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+            padding: var(--space-lg);
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .macro-mini-item {
+            text-align: center;
+        }
+
+        .macro-mini-value {
+            display: block;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .macro-mini-label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: var(--space-sm);
+        }
+
+        .macro-mini-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .macro-mini-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .macro-mini-item.protein .macro-mini-fill { background: var(--accent-protein); }
+        .macro-mini-item.carbs .macro-mini-fill { background: var(--accent-carbs); }
+        .macro-mini-item.fat .macro-mini-fill { background: var(--accent-fat); }
+
+        /* Primary CTA */
+        .home-cta-primary {
             width: 100%;
-            padding: var(--space-md) var(--space-xl);
-            background: var(--accent-ui);
+            padding: var(--space-lg) var(--space-xl);
+            background: linear-gradient(135deg, var(--accent-main) 0%, var(--accent-ui) 100%);
             border: none;
             border-radius: var(--radius-lg);
             color: white;
@@ -1014,71 +1230,121 @@
             transition: all 0.2s ease;
         }
 
-        .home-action-btn:hover {
+        .home-cta-primary:hover {
             filter: brightness(1.1);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
         }
 
-        .home-action-btn i {
-            width: 20px;
-            height: 20px;
+        .home-cta-primary i {
+            width: 22px;
+            height: 22px;
         }
 
-        .home-quick-actions {
+        /* --- QUICK ACCESS SECTION --- */
+        .home-quick-section {
+            margin-bottom: var(--space-2xl);
+        }
+
+        .home-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 var(--space-lg) 0;
+        }
+
+        .home-quick-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-md);
-            margin-bottom: var(--space-lg);
+            gap: var(--space-lg);
         }
 
-        .home-quick-btn {
+        .home-feature-card {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: var(--space-sm);
-            padding: var(--space-lg);
+            gap: var(--space-lg);
+            padding: var(--space-xl);
             background: var(--bg-secondary);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: var(--radius-lg);
-            color: var(--text-primary);
+            border-radius: var(--radius-xl);
             cursor: pointer;
             transition: all 0.2s ease;
+            text-align: left;
         }
 
-        .home-quick-btn:hover {
+        .home-feature-card:hover {
             background: var(--bg-tertiary);
-            border-color: var(--accent-ui);
+            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateY(-2px);
         }
 
-        .home-quick-btn i {
+        .feature-icon-wrap {
+            width: 50px;
+            height: 50px;
+            background: rgba(16, 185, 129, 0.15);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-icon-wrap i {
             width: 24px;
             height: 24px;
-            color: var(--accent-ui);
-        }
-
-        .home-quick-btn span {
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .home-tip {
-            display: flex;
-            align-items: flex-start;
-            gap: var(--space-md);
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        .home-tip-icon {
-            width: 20px;
-            height: 20px;
             color: var(--accent-main);
-            flex-shrink: 0;
-            margin-top: 2px;
         }
 
-        .home-tip p {
+        .feature-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .feature-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .feature-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* --- TIP SECTION --- */
+        .home-tip-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .home-tip-card {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-lg);
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            border-radius: var(--radius-lg);
+        }
+
+        .tip-icon-wrap {
+            width: 36px;
+            height: 36px;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .tip-icon-wrap i {
+            width: 18px;
+            height: 18px;
+            color: var(--accent-main);
+        }
+
+        .tip-text {
             margin: 0;
             font-size: 0.9rem;
             color: var(--text-secondary);
@@ -1087,64 +1353,212 @@
 
         /* ===== HOME MOBILE RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .home-hero {
-                padding: var(--space-xl);
-                margin-bottom: var(--space-md);
+            #home {
+                max-width: 100%;
+                padding: 0 var(--space-sm);
             }
 
-            .home-title {
-                font-size: 1.5rem;
-            }
+            .mobile-only { display: inline; }
 
-            .home-subtitle {
-                font-size: 0.85rem;
-            }
-
-            .home-card {
-                padding: var(--space-lg);
-                margin-bottom: var(--space-md);
-            }
-
-            .home-macros-grid {
-                gap: var(--space-sm);
+            /* --- HERO MOBILE --- */
+            .home-hero-section {
                 margin-bottom: var(--space-lg);
             }
 
-            .home-macro-ring {
-                width: 50px;
-                height: 50px;
+            .home-hero-visual {
+                padding: var(--space-xl);
             }
 
-            .home-macro-value {
-                font-size: 0.85rem;
+            .hero-blob-1 {
+                width: 150px;
+                height: 150px;
+                top: -50px;
+                right: -30px;
             }
 
-            .home-macro-label {
+            .hero-blob-2 {
+                width: 100px;
+                height: 100px;
+                bottom: -40px;
+                left: 10%;
+            }
+
+            .home-hero-content {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--space-lg);
+            }
+
+            .home-hero-badge {
+                font-size: 0.75rem;
+                padding: var(--space-xs) var(--space-sm);
+            }
+
+            .home-hero-title {
+                font-size: 1.6rem;
+            }
+
+            .home-hero-title br { display: none; }
+
+            .home-hero-tagline {
+                font-size: 0.95rem;
+            }
+
+            .hero-icon-container {
+                width: 90px;
+                height: 90px;
+            }
+
+            .hero-main-icon {
+                width: 45px;
+                height: 45px;
+            }
+
+            /* --- SUMMARY MOBILE --- */
+            .home-summary-section {
+                margin-bottom: var(--space-lg);
+            }
+
+            .home-summary-card {
+                padding: var(--space-lg);
+            }
+
+            .home-summary-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-xs);
+                margin-bottom: var(--space-lg);
+            }
+
+            .home-summary-title {
+                font-size: 1.1rem;
+            }
+
+            .home-summary-date {
+                font-size: 0.8rem;
+            }
+
+            /* Progress mobile */
+            .home-progress-container {
+                flex-direction: column;
+                gap: var(--space-lg);
+            }
+
+            .home-progress-ring {
+                width: 130px;
+                height: 130px;
+                margin: 0 auto;
+            }
+
+            .progress-value {
+                font-size: 1.6rem;
+            }
+
+            .progress-label {
+                font-size: 0.7rem;
+            }
+
+            .home-calories-info {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .calories-number {
+                font-size: 1.6rem;
+            }
+
+            .calories-label {
+                font-size: 0.75rem;
+            }
+
+            .calories-divider {
+                height: 40px;
+            }
+
+            /* Macros mobile */
+            .home-macros-mini {
+                padding: var(--space-md);
+                gap: var(--space-md);
+            }
+
+            .macro-mini-value {
+                font-size: 1.1rem;
+            }
+
+            .macro-mini-label {
                 font-size: 0.65rem;
             }
 
-            .home-quick-actions {
-                gap: var(--space-sm);
+            /* CTA mobile */
+            .home-cta-primary {
+                padding: var(--space-md) var(--space-lg);
+                font-size: 0.95rem;
             }
 
-            .home-quick-btn {
-                padding: var(--space-md);
-            }
-
-            .home-quick-btn i {
+            .home-cta-primary i {
                 width: 20px;
                 height: 20px;
             }
 
-            .home-quick-btn span {
-                font-size: 0.75rem;
+            /* --- QUICK ACCESS MOBILE --- */
+            .home-quick-section {
+                margin-bottom: var(--space-lg);
             }
 
-            .home-tip {
-                padding: var(--space-md) !important;
+            .home-section-title {
+                font-size: 1rem;
+                margin-bottom: var(--space-md);
             }
 
-            .home-tip p {
+            .home-quick-grid {
+                gap: var(--space-sm);
+            }
+
+            .home-feature-card {
+                flex-direction: column;
+                text-align: center;
+                padding: var(--space-md);
+                gap: var(--space-sm);
+            }
+
+            .feature-icon-wrap {
+                width: 44px;
+                height: 44px;
+            }
+
+            .feature-icon-wrap i {
+                width: 20px;
+                height: 20px;
+            }
+
+            .feature-title {
+                font-size: 0.85rem;
+            }
+
+            .feature-desc {
+                display: none;
+            }
+
+            /* --- TIP MOBILE --- */
+            .home-tip-section {
+                margin-bottom: var(--space-md);
+            }
+
+            .home-tip-card {
+                padding: var(--space-md);
+            }
+
+            .tip-icon-wrap {
+                width: 32px;
+                height: 32px;
+            }
+
+            .tip-icon-wrap i {
+                width: 16px;
+                height: 16px;
+            }
+
+            .tip-text {
                 font-size: 0.8rem;
             }
         }
@@ -3776,73 +4190,141 @@
 
         <!-- HOME TAB - Dashboard Principal -->
         <div id="home" class="tab-content active">
-            <!-- Hero compact mobile-first -->
-            <div class="home-hero">
-                <div class="home-hero-content">
-                    <h1 class="home-title">NutriTrack</h1>
-                    <p class="home-subtitle">Ton coach nutrition personnel</p>
-                </div>
-            </div>
 
-            <!-- Widget Objectifs du jour -->
-            <div class="home-card home-card-primary" id="home-daily-goals">
-                <div class="home-card-header">
-                    <i data-lucide="target" class="home-card-icon"></i>
-                    <span class="home-card-title">Aujourd'hui</span>
-                </div>
-                <div class="home-macros-grid" id="home-macros-summary">
-                    <div class="home-macro-item">
-                        <div class="home-macro-ring protein">
-                            <span class="home-macro-value" id="home-cal-value">--</span>
-                        </div>
-                        <span class="home-macro-label">kcal</span>
+            <!-- ===== HERO SECTION ===== -->
+            <section class="home-hero-section">
+                <div class="home-hero-visual">
+                    <!-- Decorative elements -->
+                    <div class="home-hero-decoration">
+                        <div class="hero-blob hero-blob-1"></div>
+                        <div class="hero-blob hero-blob-2"></div>
                     </div>
-                    <div class="home-macro-item">
-                        <div class="home-macro-ring protein">
-                            <span class="home-macro-value" id="home-p-value">--</span>
+                    <!-- Content -->
+                    <div class="home-hero-content">
+                        <div class="home-hero-text">
+                            <span class="home-hero-badge">
+                                <i data-lucide="sparkles"></i>
+                                <span>Ton coach nutrition</span>
+                            </span>
+                            <h1 class="home-hero-title">Bienvenue sur<br><span class="home-hero-brand">NutriTrack</span></h1>
+                            <p class="home-hero-tagline">Atteins tes objectifs nutritionnels,<br class="mobile-only"> simplement.</p>
                         </div>
-                        <span class="home-macro-label">Prot.</span>
-                    </div>
-                    <div class="home-macro-item">
-                        <div class="home-macro-ring carbs">
-                            <span class="home-macro-value" id="home-c-value">--</span>
+                        <div class="home-hero-illustration">
+                            <div class="hero-icon-container">
+                                <i data-lucide="salad" class="hero-main-icon"></i>
+                            </div>
                         </div>
-                        <span class="home-macro-label">Gluc.</span>
-                    </div>
-                    <div class="home-macro-item">
-                        <div class="home-macro-ring fat">
-                            <span class="home-macro-value" id="home-f-value">--</span>
-                        </div>
-                        <span class="home-macro-label">Lip.</span>
                     </div>
                 </div>
-                <button class="home-action-btn" onclick="switchToTab('meals')">
-                    <i data-lucide="utensils"></i>
-                    <span>Logger un repas</span>
-                </button>
-            </div>
+            </section>
 
-            <!-- Accès rapides -->
-            <div class="home-quick-actions">
-                <button class="home-quick-btn" onclick="switchToTab('calculator')">
-                    <i data-lucide="calculator"></i>
-                    <span>Calculateur</span>
-                </button>
-                <button class="home-quick-btn" onclick="switchToTab('tracking')">
-                    <i data-lucide="line-chart"></i>
-                    <span>Suivi</span>
-                </button>
-                <button class="home-quick-btn" onclick="switchToTab('planner')">
-                    <i data-lucide="calendar"></i>
-                    <span>Semaine</span>
-                </button>
-            </div>
+            <!-- ===== DAILY SUMMARY CARD ===== -->
+            <section class="home-summary-section">
+                <div class="home-summary-card">
+                    <div class="home-summary-header">
+                        <div class="home-summary-title-row">
+                            <i data-lucide="calendar-check" class="home-summary-icon"></i>
+                            <h2 class="home-summary-title">Aujourd'hui</h2>
+                        </div>
+                        <span class="home-summary-date" id="home-today-date"></span>
+                    </div>
 
-            <!-- Tip du jour -->
-            <div class="home-card home-tip">
-                <i data-lucide="lightbulb" class="home-tip-icon"></i>
-                <p id="home-tip-text">Configure tes macros dans le Calculateur pour un suivi personnalisé.</p>
-            </div>
+                    <!-- Progress indicator -->
+                    <div class="home-progress-container">
+                        <div class="home-progress-ring">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="progress-bg" cx="50" cy="50" r="42"/>
+                                <circle class="progress-fill-ring" id="home-progress-ring" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"/>
+                            </svg>
+                            <div class="progress-center">
+                                <span class="progress-value" id="home-progress-percent">--</span>
+                                <span class="progress-label">complété</span>
+                            </div>
+                        </div>
+                        <div class="home-calories-info">
+                            <div class="calories-consumed">
+                                <span class="calories-number" id="home-cal-consumed">0</span>
+                                <span class="calories-label">kcal consommées</span>
+                            </div>
+                            <div class="calories-divider"></div>
+                            <div class="calories-remaining">
+                                <span class="calories-number" id="home-cal-remaining">--</span>
+                                <span class="calories-label">kcal restantes</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Macros mini display -->
+                    <div class="home-macros-mini">
+                        <div class="macro-mini-item protein">
+                            <span class="macro-mini-value" id="home-p-consumed">0g</span>
+                            <span class="macro-mini-label">Protéines</span>
+                            <div class="macro-mini-bar"><div class="macro-mini-fill" id="home-p-bar"></div></div>
+                        </div>
+                        <div class="macro-mini-item carbs">
+                            <span class="macro-mini-value" id="home-c-consumed">0g</span>
+                            <span class="macro-mini-label">Glucides</span>
+                            <div class="macro-mini-bar"><div class="macro-mini-fill" id="home-c-bar"></div></div>
+                        </div>
+                        <div class="macro-mini-item fat">
+                            <span class="macro-mini-value" id="home-f-consumed">0g</span>
+                            <span class="macro-mini-label">Lipides</span>
+                            <div class="macro-mini-bar"><div class="macro-mini-fill" id="home-f-bar"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Primary CTA -->
+                    <button class="home-cta-primary" onclick="switchToTab('meals')">
+                        <i data-lucide="plus-circle"></i>
+                        <span>Logger mon repas</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ===== QUICK ACCESS SECTION ===== -->
+            <section class="home-quick-section">
+                <h3 class="home-section-title">Accès rapides</h3>
+                <div class="home-quick-grid">
+                    <button class="home-feature-card" onclick="switchToTab('calculator')">
+                        <div class="feature-icon-wrap">
+                            <i data-lucide="calculator"></i>
+                        </div>
+                        <div class="feature-text">
+                            <span class="feature-title">Calculateur</span>
+                            <span class="feature-desc">Ajuste tes objectifs</span>
+                        </div>
+                    </button>
+                    <button class="home-feature-card" onclick="switchToTab('tracking')">
+                        <div class="feature-icon-wrap">
+                            <i data-lucide="trending-up"></i>
+                        </div>
+                        <div class="feature-text">
+                            <span class="feature-title">Suivi</span>
+                            <span class="feature-desc">Visualise ta progression</span>
+                        </div>
+                    </button>
+                    <button class="home-feature-card" onclick="switchToTab('planner')">
+                        <div class="feature-icon-wrap">
+                            <i data-lucide="calendar-days"></i>
+                        </div>
+                        <div class="feature-text">
+                            <span class="feature-title">Semaine</span>
+                            <span class="feature-desc">Planifie tes repas</span>
+                        </div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ===== TIP SECTION ===== -->
+            <section class="home-tip-section">
+                <div class="home-tip-card">
+                    <div class="tip-icon-wrap">
+                        <i data-lucide="lightbulb"></i>
+                    </div>
+                    <p class="tip-text" id="home-tip-text">Configure tes macros dans le Calculateur pour un suivi personnalisé.</p>
+                </div>
+            </section>
+
         </div>
 
         <!-- Calculator Tab -->
@@ -6362,16 +6844,59 @@
                 }
             });
 
-            // Afficher les valeurs
-            const calEl = document.getElementById('home-cal-value');
-            const pEl = document.getElementById('home-p-value');
-            const cEl = document.getElementById('home-c-value');
-            const fEl = document.getElementById('home-f-value');
+            // Date du jour
+            const dateEl = document.getElementById('home-today-date');
+            if (dateEl) {
+                const todayDate = new Date();
+                const options = { weekday: 'long', day: 'numeric', month: 'long' };
+                dateEl.textContent = todayDate.toLocaleDateString('fr-FR', options);
+            }
 
-            if (calEl) calEl.textContent = Math.round(totalCal);
-            if (pEl) pEl.textContent = Math.round(totalP) + 'g';
-            if (cEl) cEl.textContent = Math.round(totalC) + 'g';
-            if (fEl) fEl.textContent = Math.round(totalF) + 'g';
+            // Progress ring (SVG)
+            const progressRing = document.getElementById('home-progress-ring');
+            const progressPercent = document.getElementById('home-progress-percent');
+            const targetCal = targets.calories || 2000;
+            const percent = Math.min(100, Math.round((totalCal / targetCal) * 100));
+
+            if (progressRing) {
+                // Circonférence = 2 * PI * r = 2 * 3.14159 * 42 ≈ 264
+                const circumference = 2 * Math.PI * 42;
+                const offset = circumference - (percent / 100) * circumference;
+                progressRing.style.strokeDasharray = circumference;
+                progressRing.style.strokeDashoffset = offset;
+            }
+            if (progressPercent) {
+                progressPercent.textContent = percent + '%';
+            }
+
+            // Calories consommées et restantes
+            const calConsumed = document.getElementById('home-cal-consumed');
+            const calRemaining = document.getElementById('home-cal-remaining');
+            if (calConsumed) calConsumed.textContent = Math.round(totalCal);
+            if (calRemaining) {
+                const remaining = Math.max(0, targetCal - totalCal);
+                calRemaining.textContent = Math.round(remaining);
+            }
+
+            // Macros consommées
+            const pConsumed = document.getElementById('home-p-consumed');
+            const cConsumed = document.getElementById('home-c-consumed');
+            const fConsumed = document.getElementById('home-f-consumed');
+            if (pConsumed) pConsumed.textContent = Math.round(totalP) + 'g';
+            if (cConsumed) cConsumed.textContent = Math.round(totalC) + 'g';
+            if (fConsumed) fConsumed.textContent = Math.round(totalF) + 'g';
+
+            // Barres de progression macros
+            const pBar = document.getElementById('home-p-bar');
+            const cBar = document.getElementById('home-c-bar');
+            const fBar = document.getElementById('home-f-bar');
+            const targetP = targets.protein || 150;
+            const targetC = targets.carbs || 250;
+            const targetF = targets.fat || 65;
+
+            if (pBar) pBar.style.width = Math.min(100, (totalP / targetP) * 100) + '%';
+            if (cBar) cBar.style.width = Math.min(100, (totalC / targetC) * 100) + '%';
+            if (fBar) fBar.style.width = Math.min(100, (totalF / targetF) * 100) + '%';
 
             // Tip dynamique
             const tipEl = document.getElementById('home-tip-text');
@@ -6381,7 +6906,7 @@
                 } else if (totalCal === 0) {
                     tipEl.textContent = 'Commence à logger tes repas pour suivre ta progression !';
                 } else if (totalCal >= targets.calories) {
-                    tipEl.textContent = 'Objectif calorique atteint pour aujourd\'hui ! 🎯';
+                    tipEl.textContent = 'Objectif calorique atteint pour aujourd\'hui !';
                 } else {
                     const remaining = targets.calories - totalCal;
                     tipEl.textContent = `Il te reste ${Math.round(remaining)} kcal à consommer aujourd'hui.`;
