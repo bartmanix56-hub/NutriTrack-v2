@@ -908,52 +908,71 @@
             padding: 0;
         }
 
-        /* Hero - same style as other tabs */
-        .home-hero {
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-            border-radius: var(--radius-xl);
-            padding: var(--space-3xl);
-            margin-bottom: var(--space-2xl);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-3xl);
+        /* Hero badges */
+        .home-badges {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-lg);
+        }
+
+        .home-badge {
+            display: inline-flex;
             align-items: center;
-        }
-
-        .home-hero-text h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin: 0 0 var(--space-md) 0;
-            color: var(--text-primary);
-            line-height: 1.2;
-        }
-
-        .home-hero-text h1 span {
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
             color: var(--accent-main);
+            font-weight: 600;
         }
 
-        .home-hero-text p {
-            font-size: 1.1rem;
+        .home-badge i { width: 14px; height: 14px; }
+
+        /* Hero section */
+        .home-hero {
+            text-align: center;
+            padding: var(--space-3xl) var(--space-xl);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .home-hero h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin: 0 0 var(--space-lg) 0;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .home-hero h1 span { color: var(--accent-main); }
+
+        .home-hero-subtitle {
+            font-size: 1.2rem;
             color: var(--text-secondary);
-            margin: 0 0 var(--space-xl) 0;
+            margin: 0 auto var(--space-xl);
+            max-width: 600px;
             line-height: 1.6;
         }
 
         .home-hero-buttons {
             display: flex;
             gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: var(--space-xl);
         }
 
         .home-btn-primary {
             display: inline-flex;
             align-items: center;
             gap: var(--space-sm);
-            padding: var(--space-md) var(--space-xl);
+            padding: 16px 32px;
             background: var(--accent-main);
             color: white;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
             border: none;
             border-radius: var(--radius-lg);
@@ -963,20 +982,20 @@
 
         .home-btn-primary:hover {
             background: #059669;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4);
         }
 
-        .home-btn-primary i { width: 20px; height: 20px; }
+        .home-btn-primary i { width: 22px; height: 22px; }
 
         .home-btn-secondary {
             display: inline-flex;
             align-items: center;
             gap: var(--space-sm);
-            padding: var(--space-md) var(--space-xl);
+            padding: 16px 32px;
             background: var(--bg-tertiary);
             color: var(--text-primary);
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--radius-lg);
@@ -987,144 +1006,251 @@
         .home-btn-secondary:hover {
             background: var(--bg-secondary);
             border-color: var(--accent-main);
-        }
-
-        .home-btn-secondary i { width: 20px; height: 20px; }
-
-        /* Phone mockup illustration */
-        .home-hero-visual {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .home-phone-mockup {
-            width: 220px;
-            height: 440px;
-            background: var(--bg-tertiary);
-            border-radius: 32px;
-            border: 3px solid #333;
-            padding: 12px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-            position: relative;
-        }
-
-        .home-phone-mockup::before {
-            content: '';
-            position: absolute;
-            top: 16px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 6px;
-            background: #333;
-            border-radius: 3px;
-        }
-
-        .home-phone-screen {
-            width: 100%;
-            height: 100%;
-            background: var(--bg-primary);
-            border-radius: 20px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .home-phone-header {
-            padding: 24px 16px 12px;
-            text-align: center;
-        }
-
-        .home-phone-header span {
-            font-size: 0.7rem;
-            font-weight: 600;
             color: var(--accent-main);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
-        .home-phone-stats {
-            padding: 8px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        .home-btn-secondary i { width: 22px; height: 22px; }
+
+        .home-hint {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
         }
 
-        .home-phone-stat {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            background: var(--bg-secondary);
-            border-radius: var(--radius-md);
+        /* 3D Mockup */
+        .home-mockup-container {
+            perspective: 1500px;
+            margin: var(--space-3xl) auto;
+            max-width: 900px;
         }
 
-        .home-phone-stat-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .home-mockup-tilt {
+            transform-style: preserve-3d;
+            transition: transform 0.15s ease-out;
+            will-change: transform;
         }
 
-        .home-phone-stat-icon i { width: 14px; height: 14px; color: white; }
-
-        .home-phone-stat-icon.calories { background: var(--accent-main); }
-        .home-phone-stat-icon.protein { background: var(--accent-protein); }
-        .home-phone-stat-icon.carbs { background: var(--accent-carbs); }
-        .home-phone-stat-icon.fat { background: var(--accent-fat); }
-
-        .home-phone-stat-info { flex: 1; }
-        .home-phone-stat-label { font-size: 0.6rem; color: var(--text-secondary); display: block; }
-        .home-phone-stat-value { font-size: 0.8rem; font-weight: 700; color: var(--text-primary); }
-
-        .home-phone-stat-bar {
-            width: 40px;
-            height: 4px;
-            background: var(--bg-tertiary);
-            border-radius: 2px;
+        .home-mockup {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            border: 2px solid rgba(16, 185, 129, 0.4);
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
             overflow: hidden;
         }
 
-        .home-phone-stat-bar div {
-            height: 100%;
-            border-radius: 2px;
+        .home-mockup-inner {
+            display: grid;
+            grid-template-columns: 70px 1fr;
+            min-height: 420px;
         }
 
-        .home-phone-nav {
-            margin-top: auto;
-            padding: 12px;
-            display: flex;
-            justify-content: space-around;
-            border-top: 1px solid var(--bg-tertiary);
-        }
-
-        .home-phone-nav-item {
+        .home-mockup-sidebar {
+            background: #0a0a0a;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            gap: 6px;
         }
 
-        .home-phone-nav-item i { width: 16px; height: 16px; color: var(--text-muted); }
-        .home-phone-nav-item.active i { color: var(--accent-main); }
-        .home-phone-nav-item span { font-size: 0.5rem; color: var(--text-muted); }
-        .home-phone-nav-item.active span { color: var(--accent-main); }
+        .home-mockup-nav-item {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
 
-        /* Features section */
-        .home-section-title {
-            font-size: 1.3rem;
+        .home-mockup-nav-item.active {
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .home-mockup-nav-item i {
+            width: 20px;
+            height: 20px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .home-mockup-nav-item.active i {
+            color: var(--accent-main);
+        }
+
+        .home-mockup-content {
+            padding: 28px;
+        }
+
+        .home-mockup-header {
+            margin-bottom: 24px;
+        }
+
+        .home-mockup-title {
+            height: 28px;
+            width: 200px;
+            background: linear-gradient(90deg, var(--accent-main) 0%, rgba(16, 185, 129, 0.3) 100%);
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .home-mockup-subtitle {
+            height: 14px;
+            width: 140px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+
+        .home-mockup-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .home-mockup-card {
+            border-radius: 14px;
+            padding: 18px;
+            transition: all 0.3s;
+        }
+
+        .home-mockup-card.protein {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+        }
+
+        .home-mockup-card.carbs {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .home-mockup-card.fat {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .home-mockup-card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .home-mockup-card.protein .home-mockup-card-icon { background: rgba(248, 113, 113, 0.2); }
+        .home-mockup-card.carbs .home-mockup-card-icon { background: rgba(56, 189, 248, 0.2); }
+        .home-mockup-card.fat .home-mockup-card-icon { background: rgba(251, 191, 36, 0.2); }
+
+        .home-mockup-card-value {
+            height: 20px;
+            width: 60%;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .home-mockup-card-label {
+            height: 10px;
+            width: 80%;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+
+        .home-mockup-progress {
+            margin-top: 20px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+        }
+
+        .home-mockup-progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .home-mockup-progress-fill {
+            height: 100%;
+            width: 72%;
+            background: linear-gradient(90deg, var(--accent-main) 0%, #34d399 100%);
+            border-radius: 4px;
+        }
+
+        .home-mockup-progress-text {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .home-mockup-progress-label {
+            height: 12px;
+            width: 100px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .home-mockup-progress-value {
+            height: 12px;
+            width: 60px;
+            background: rgba(16, 185, 129, 0.4);
+            border-radius: 4px;
+        }
+
+        /* Stats section */
+        .home-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-3xl);
+            padding: var(--space-xl);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .home-stat {
+            text-align: center;
+            padding: var(--space-md);
+        }
+
+        .home-stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent-main);
+            line-height: 1;
+            margin-bottom: var(--space-xs);
+        }
+
+        .home-stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Features grid */
+        .home-section-header {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .home-section-header h2 {
+            font-size: 2rem;
             font-weight: 700;
             color: var(--text-primary);
-            margin: 0 0 var(--space-lg) 0;
+            margin: 0 0 var(--space-sm) 0;
+        }
+
+        .home-section-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin: 0;
         }
 
         .home-features-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
         }
 
         .home-feature-card {
@@ -1133,68 +1259,92 @@
             border-radius: var(--radius-xl);
             padding: var(--space-xl);
             cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: flex-start;
-            gap: var(--space-lg);
+            transition: all 0.3s ease;
         }
 
         .home-feature-card:hover {
-            border-color: rgba(16, 185, 129, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
         }
 
         .home-feature-icon {
-            width: 48px;
-            height: 48px;
+            width: 56px;
+            height: 56px;
             background: var(--accent-main);
             border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+            margin-bottom: var(--space-lg);
         }
 
         .home-feature-icon i {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             color: white;
         }
 
-        .home-feature-text h3 {
-            font-size: 1rem;
+        .home-feature-card h3 {
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--text-primary);
-            margin: 0 0 var(--space-xs) 0;
+            margin: 0 0 var(--space-sm) 0;
         }
 
-        .home-feature-text p {
-            font-size: 0.85rem;
+        .home-feature-card p {
+            font-size: 0.95rem;
             color: var(--text-secondary);
             margin: 0;
-            line-height: 1.4;
+            line-height: 1.6;
+        }
+
+        /* CTA section */
+        .home-cta {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-xl);
+            padding: var(--space-3xl);
+            text-align: center;
+        }
+
+        .home-cta h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 var(--space-md) 0;
+        }
+
+        .home-cta p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin: 0 0 var(--space-xl) 0;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* ===== HOME MOBILE ===== */
         @media (max-width: 768px) {
             .home-hero {
-                grid-template-columns: 1fr;
-                padding: var(--space-xl);
-                text-align: center;
-                gap: var(--space-xl);
+                padding: var(--space-xl) var(--space-md);
             }
 
-            .home-hero-text h1 {
-                font-size: 1.8rem;
+            .home-badges {
+                justify-content: center;
             }
 
-            .home-hero-text p {
+            .home-hero h1 {
+                font-size: 2rem;
+            }
+
+            .home-hero-subtitle {
                 font-size: 1rem;
             }
 
             .home-hero-buttons {
                 flex-direction: column;
+                align-items: stretch;
             }
 
             .home-btn-primary,
@@ -1203,33 +1353,56 @@
                 justify-content: center;
             }
 
-            .home-hero-visual {
-                order: -1;
+            .home-mockup-container {
+                margin: var(--space-xl) auto;
+                padding: 0 var(--space-sm);
             }
 
-            .home-phone-mockup {
-                width: 180px;
-                height: 360px;
-                border-radius: 28px;
+            .home-mockup {
+                border-radius: 16px;
             }
 
-            .home-features-grid {
+            .home-mockup-inner {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+
+            .home-mockup-sidebar {
+                display: none;
+            }
+
+            .home-mockup-content {
+                padding: 20px;
+            }
+
+            .home-mockup-cards {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .home-stats {
                 grid-template-columns: 1fr;
                 gap: var(--space-md);
             }
 
-            .home-feature-card {
-                padding: var(--space-lg);
+            .home-stat-value {
+                font-size: 2rem;
             }
 
-            .home-feature-icon {
-                width: 44px;
-                height: 44px;
+            .home-section-header h2 {
+                font-size: 1.5rem;
             }
 
-            .home-feature-icon i {
-                width: 22px;
-                height: 22px;
+            .home-features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .home-cta {
+                padding: var(--space-xl);
+            }
+
+            .home-cta h3 {
+                font-size: 1.4rem;
             }
         }
 
@@ -3863,131 +4036,194 @@
 
             <!-- Hero Section -->
             <section class="home-hero">
-                <div class="home-hero-text">
-                    <h1>Ta nutrition,<br><span>simplifiée.</span></h1>
-                    <p>Calcule tes besoins, suis tes repas et atteins tes objectifs. Le tout dans une interface simple et efficace.</p>
-                    <div class="home-hero-buttons">
-                        <button class="home-btn-primary" onclick="switchToTab('calculator')">
-                            <i data-lucide="rocket"></i>
-                            <span>Commencer</span>
-                        </button>
-                        <button class="home-btn-secondary" onclick="switchToTab('meals')">
-                            <i data-lucide="utensils"></i>
-                            <span>Logger un repas</span>
-                        </button>
-                    </div>
+                <div class="home-badges">
+                    <span class="home-badge">
+                        <i data-lucide="shield-check"></i> 100% Gratuit
+                    </span>
+                    <span class="home-badge">
+                        <i data-lucide="lock"></i> Données privées
+                    </span>
+                    <span class="home-badge">
+                        <i data-lucide="wifi-off"></i> Fonctionne hors ligne
+                    </span>
                 </div>
 
-                <div class="home-hero-visual">
-                    <div class="home-phone-mockup">
-                        <div class="home-phone-screen">
-                            <div class="home-phone-header">
-                                <span>NutriTrack</span>
-                            </div>
-                            <div class="home-phone-stats">
-                                <div class="home-phone-stat">
-                                    <div class="home-phone-stat-icon calories">
-                                        <i data-lucide="flame"></i>
-                                    </div>
-                                    <div class="home-phone-stat-info">
-                                        <span class="home-phone-stat-label">Calories</span>
-                                        <span class="home-phone-stat-value">1 850 kcal</span>
-                                    </div>
-                                    <div class="home-phone-stat-bar">
-                                        <div style="width: 75%; background: var(--accent-main);"></div>
-                                    </div>
-                                </div>
-                                <div class="home-phone-stat">
-                                    <div class="home-phone-stat-icon protein">
-                                        <i data-lucide="beef"></i>
-                                    </div>
-                                    <div class="home-phone-stat-info">
-                                        <span class="home-phone-stat-label">Protéines</span>
-                                        <span class="home-phone-stat-value">142g</span>
-                                    </div>
-                                    <div class="home-phone-stat-bar">
-                                        <div style="width: 85%; background: var(--accent-protein);"></div>
-                                    </div>
-                                </div>
-                                <div class="home-phone-stat">
-                                    <div class="home-phone-stat-icon carbs">
-                                        <i data-lucide="wheat"></i>
-                                    </div>
-                                    <div class="home-phone-stat-info">
-                                        <span class="home-phone-stat-label">Glucides</span>
-                                        <span class="home-phone-stat-value">180g</span>
-                                    </div>
-                                    <div class="home-phone-stat-bar">
-                                        <div style="width: 65%; background: var(--accent-carbs);"></div>
-                                    </div>
-                                </div>
-                                <div class="home-phone-stat">
-                                    <div class="home-phone-stat-icon fat">
-                                        <i data-lucide="droplet"></i>
-                                    </div>
-                                    <div class="home-phone-stat-info">
-                                        <span class="home-phone-stat-label">Lipides</span>
-                                        <span class="home-phone-stat-value">58g</span>
-                                    </div>
-                                    <div class="home-phone-stat-bar">
-                                        <div style="width: 70%; background: var(--accent-fat);"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="home-phone-nav">
-                                <div class="home-phone-nav-item active">
+                <h1>Prends le contrôle de ton <span>alimentation</span></h1>
+
+                <p class="home-hero-subtitle">
+                    Calcule tes macros, suis tes repas et atteins tes objectifs nutritionnels. Simple, précis, et respectueux de ta vie privée.
+                </p>
+
+                <div class="home-hero-buttons">
+                    <button class="home-btn-primary" onclick="switchToTab('calculator')">
+                        <i data-lucide="rocket"></i>
+                        <span>Commencer maintenant</span>
+                    </button>
+                    <button class="home-btn-secondary" onclick="switchToTab('meals')">
+                        <i data-lucide="utensils"></i>
+                        <span>Logger un repas</span>
+                    </button>
+                </div>
+
+                <p class="home-hint">Aucune inscription • Tes données restent sur ton appareil</p>
+            </section>
+
+            <!-- 3D Interactive Mockup -->
+            <div class="home-mockup-container" id="home-mockup-container">
+                <div class="home-mockup-tilt" id="home-mockup-tilt">
+                    <div class="home-mockup">
+                        <div class="home-mockup-inner">
+                            <div class="home-mockup-sidebar">
+                                <div class="home-mockup-nav-item active">
                                     <i data-lucide="home"></i>
-                                    <span>Home</span>
                                 </div>
-                                <div class="home-phone-nav-item">
+                                <div class="home-mockup-nav-item">
                                     <i data-lucide="utensils"></i>
-                                    <span>Repas</span>
                                 </div>
-                                <div class="home-phone-nav-item">
+                                <div class="home-mockup-nav-item">
                                     <i data-lucide="calculator"></i>
-                                    <span>Calcul</span>
                                 </div>
-                                <div class="home-phone-nav-item">
-                                    <i data-lucide="settings"></i>
-                                    <span>Plus</span>
+                                <div class="home-mockup-nav-item">
+                                    <i data-lucide="calendar"></i>
+                                </div>
+                                <div class="home-mockup-nav-item">
+                                    <i data-lucide="line-chart"></i>
+                                </div>
+                            </div>
+                            <div class="home-mockup-content">
+                                <div class="home-mockup-header">
+                                    <div class="home-mockup-title"></div>
+                                    <div class="home-mockup-subtitle"></div>
+                                </div>
+                                <div class="home-mockup-cards">
+                                    <div class="home-mockup-card protein">
+                                        <div class="home-mockup-card-icon"></div>
+                                        <div class="home-mockup-card-value"></div>
+                                        <div class="home-mockup-card-label"></div>
+                                    </div>
+                                    <div class="home-mockup-card carbs">
+                                        <div class="home-mockup-card-icon"></div>
+                                        <div class="home-mockup-card-value"></div>
+                                        <div class="home-mockup-card-label"></div>
+                                    </div>
+                                    <div class="home-mockup-card fat">
+                                        <div class="home-mockup-card-icon"></div>
+                                        <div class="home-mockup-card-value"></div>
+                                        <div class="home-mockup-card-label"></div>
+                                    </div>
+                                </div>
+                                <div class="home-mockup-progress">
+                                    <div class="home-mockup-progress-bar">
+                                        <div class="home-mockup-progress-fill"></div>
+                                    </div>
+                                    <div class="home-mockup-progress-text">
+                                        <div class="home-mockup-progress-label"></div>
+                                        <div class="home-mockup-progress-value"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="home-stats">
+                <div class="home-stat">
+                    <div class="home-stat-value">116+</div>
+                    <div class="home-stat-label">Aliments dans la base</div>
+                </div>
+                <div class="home-stat">
+                    <div class="home-stat-value">100%</div>
+                    <div class="home-stat-label">Gratuit, sans pub</div>
+                </div>
+                <div class="home-stat">
+                    <div class="home-stat-value">0</div>
+                    <div class="home-stat-label">Données envoyées</div>
+                </div>
+            </div>
 
             <!-- Features Section -->
-            <h2 class="home-section-title">Fonctionnalités</h2>
+            <div class="home-section-header">
+                <h2>Tout ce dont tu as besoin</h2>
+                <p>Des outils puissants pour un suivi nutritionnel simple et efficace</p>
+            </div>
+
             <div class="home-features-grid">
                 <div class="home-feature-card" onclick="switchToTab('calculator')">
                     <div class="home-feature-icon">
                         <i data-lucide="target"></i>
                     </div>
-                    <div class="home-feature-text">
-                        <h3>Calculateur de macros</h3>
-                        <p>Définis tes objectifs caloriques et macronutriments personnalisés</p>
+                    <h3>Calculateur intelligent</h3>
+                    <p>Formules scientifiques (Mifflin-St Jeor) pour calculer tes besoins selon ton profil et tes objectifs.</p>
+                </div>
+                <div class="home-feature-card" onclick="switchToTab('meals')">
+                    <div class="home-feature-icon">
+                        <i data-lucide="utensils"></i>
                     </div>
+                    <h3>Suivi des repas</h3>
+                    <p>Ajoute tes aliments en quelques taps. Visualise tes macros en temps réel avec des cercles visuels.</p>
                 </div>
                 <div class="home-feature-card" onclick="switchToTab('tracking')">
                     <div class="home-feature-icon">
                         <i data-lucide="trending-up"></i>
                     </div>
-                    <div class="home-feature-text">
-                        <h3>Suivi avancé</h3>
-                        <p>Visualise ta progression avec des graphiques détaillés</p>
-                    </div>
-                </div>
-                <div class="home-feature-card" onclick="switchToTab('planner')">
-                    <div class="home-feature-icon">
-                        <i data-lucide="calendar-days"></i>
-                    </div>
-                    <div class="home-feature-text">
-                        <h3>Planning semaine</h3>
-                        <p>Organise et planifie tes repas à l'avance</p>
-                    </div>
+                    <h3>Graphiques de progression</h3>
+                    <p>Suis ton poids, ton bodyfat et tes mesures. Visualise ta progression sur la durée.</p>
                 </div>
             </div>
+
+            <!-- CTA Section -->
+            <div class="home-cta">
+                <h3>Prêt à transformer ta nutrition ?</h3>
+                <p>Commence dès maintenant à suivre tes macros et atteindre tes objectifs.</p>
+                <button class="home-btn-primary" onclick="switchToTab('calculator')">
+                    <i data-lucide="zap"></i>
+                    <span>Calculer mes macros</span>
+                </button>
+            </div>
+
+            <!-- 3D Tilt Script -->
+            <script>
+            (function() {
+                const container = document.getElementById('home-mockup-container');
+                const tilt = document.getElementById('home-mockup-tilt');
+                if (!container || !tilt) return;
+
+                let mouseX = 0, mouseY = 0, currentX = 0, currentY = 0;
+                let isTouch = false;
+
+                function handleMove(clientX, clientY) {
+                    const rect = container.getBoundingClientRect();
+                    mouseX = (clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
+                    mouseY = (clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
+                }
+
+                container.addEventListener('mousemove', (e) => {
+                    if (!isTouch) handleMove(e.clientX, e.clientY);
+                });
+
+                container.addEventListener('touchmove', (e) => {
+                    isTouch = true;
+                    if (e.touches.length === 1) {
+                        handleMove(e.touches[0].clientX, e.touches[0].clientY);
+                    }
+                });
+
+                container.addEventListener('mouseleave', () => { mouseX = 0; mouseY = 0; });
+                container.addEventListener('touchend', () => { mouseX = 0; mouseY = 0; });
+
+                function animate() {
+                    currentX += (mouseX - currentX) * 0.08;
+                    currentY += (mouseY - currentY) * 0.08;
+                    const rotateY = currentX * 12;
+                    const rotateX = -currentY * 8;
+                    tilt.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg) translateZ(10px)`;
+                    requestAnimationFrame(animate);
+                }
+                animate();
+            })();
+            </script>
 
         </div>
 
