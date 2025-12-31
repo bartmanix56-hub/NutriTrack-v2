@@ -8225,6 +8225,45 @@ Solutions possibles :
             return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
         }
 
+        function getDayPlanFromMeals(dateKey) {
+            // Get actual meal data from allDailyMeals instead of weeklyPlan cache
+            const savedMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            const dayMeals = savedMeals[dateKey];
+
+            if (!dayMeals) {
+                return {
+                    breakfast: 'Non planifié',
+                    lunch: 'Non planifié',
+                    snack: 'Non planifié',
+                    dinner: 'Non planifié',
+                    totalCal: 0
+                };
+            }
+
+            const getMealSummary = (mealData) => {
+                if (!mealData || !mealData.foods || mealData.foods.length === 0) {
+                    return 'Non planifié';
+                }
+                return mealData.foods.map(f => f.name).join(', ');
+            };
+
+            const getMealCalories = (mealData) => {
+                if (!mealData || !mealData.foods) return 0;
+                return mealData.foods.reduce((sum, f) => sum + (f.calories || 0), 0);
+            };
+
+            const totalCal = getMealCalories(dayMeals.breakfast) + getMealCalories(dayMeals.lunch) +
+                            getMealCalories(dayMeals.snack) + getMealCalories(dayMeals.dinner);
+
+            return {
+                breakfast: getMealSummary(dayMeals.breakfast),
+                lunch: getMealSummary(dayMeals.lunch),
+                snack: getMealSummary(dayMeals.snack),
+                dinner: getMealSummary(dayMeals.dinner),
+                totalCal: Math.round(totalCal)
+            };
+        }
+
         function renderWeeklyPlan() {
             const weekStart = new Date(currentWeekStart);
             document.getElementById('current-week').textContent = `Semaine du ${formatDate(weekStart)}`;
@@ -8235,14 +8274,8 @@ Solutions possibles :
             weekGrid.innerHTML = days.map((day, index) => {
                 const date = new Date(weekStart);
                 date.setDate(date.getDate() + index);
-                const dateKey = getDateKey(date); // Utilise la date locale, pas UTC
-                const dayPlan = weeklyPlan[dateKey] || {
-                    breakfast: 'Non planifié',
-                    lunch: 'Non planifié',
-                    snack: 'Non planifié',
-                    dinner: 'Non planifié',
-                    totalCal: 0
-                };
+                const dateKey = getDateKey(date);
+                const dayPlan = getDayPlanFromMeals(dateKey);
 
                 return `
                     <div class="day-card">
@@ -8266,7 +8299,7 @@ Solutions possibles :
                         <div class="day-total-cal">${dayPlan.totalCal} kcal</div></div>
                 `;
             }).join('');
-            
+
             // Reinitialize Lucide icons after dynamic content
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
@@ -12222,41 +12255,53 @@ Solutions possibles :
             setTimeout(() => container.remove(), 8000);
         }
 
-        // ===== STREAK COUNTER =====
+        // ===== STREAK COUNTER (based on achieving calorie goal) =====
         function calculateStreak() {
-            const trackingData = JSON.parse(localStorage.getItem('trackingData') || '[]');
             const allDailyMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            const macroTargets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const targetCalories = macroTargets.calories || 0;
 
-            // Combiner les dates de tracking et de repas
-            const trackedDates = new Set();
-            trackingData.forEach(t => trackedDates.add(t.date));
-            Object.keys(allDailyMeals).forEach(date => {
-                const meals = allDailyMeals[date];
-                const hasFood = Object.values(meals).some(m => m.foods && m.foods.length > 0);
-                if (hasFood) trackedDates.add(date);
+            // If no calorie target set, no streak possible
+            if (targetCalories === 0) return 0;
+
+            // Get dates where calorie goal was achieved (within 90-110% tolerance)
+            const achievedDates = new Set();
+            const tolerance = 0.10; // 10% tolerance
+
+            Object.entries(allDailyMeals).forEach(([date, meals]) => {
+                let totalCalories = 0;
+                ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
+                    if (meals[mealType] && meals[mealType].foods) {
+                        totalCalories += meals[mealType].foods.reduce((sum, f) => sum + (f.calories || 0), 0);
+                    }
+                });
+
+                // Check if within tolerance (90% to 110% of target)
+                const minCal = targetCalories * (1 - tolerance);
+                const maxCal = targetCalories * (1 + tolerance);
+                if (totalCalories >= minCal && totalCalories <= maxCal) {
+                    achievedDates.add(date);
+                }
             });
 
-            if (trackedDates.size === 0) return 0;
+            if (achievedDates.size === 0) return 0;
 
-            // Trier les dates
-            const sortedDates = Array.from(trackedDates).sort().reverse();
-
-            // Calculer le streak depuis aujourd'hui
+            // Calculate streak from today/yesterday
             const today = getDateKey(new Date());
             const yesterday = getDateKey(new Date(Date.now() - 86400000));
 
-            // Vérifier si le streak est actif (aujourd'hui ou hier)
-            if (!trackedDates.has(today) && !trackedDates.has(yesterday)) return 0;
+            // Check if streak is active (today or yesterday)
+            if (!achievedDates.has(today) && !achievedDates.has(yesterday)) return 0;
 
             let streak = 0;
             let checkDate = new Date();
 
-            // Si pas de données aujourd'hui, commencer à hier
-            if (!trackedDates.has(today)) {
+            // If no achievement today, start from yesterday
+            if (!achievedDates.has(today)) {
                 checkDate = new Date(Date.now() - 86400000);
             }
 
-            while (trackedDates.has(getDateKey(checkDate))) {
+            while (achievedDates.has(getDateKey(checkDate))) {
                 streak++;
                 checkDate = new Date(checkDate.getTime() - 86400000);
             }
@@ -12274,13 +12319,13 @@ Solutions possibles :
             }
 
             if (!streakEl) {
-                // Créer l'élément dans le header
-                const header = document.querySelector('#main-app header');
-                if (header) {
-                    streakEl = document.createElement('div');
+                // Insert after the title, not overlapping username
+                const headerTitle = document.querySelector('.header-title');
+                if (headerTitle) {
+                    streakEl = document.createElement('span');
                     streakEl.id = 'streak-display';
-                    streakEl.style.cssText = 'position: absolute; top: 20px; left: 20px;';
-                    header.appendChild(streakEl);
+                    streakEl.style.cssText = 'margin-left: var(--space-md);';
+                    headerTitle.appendChild(streakEl);
                 }
             }
 
