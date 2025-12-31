@@ -2942,7 +2942,7 @@
             font-size: 1.3rem;
             font-weight: 700;
             color: var(--text-primary);
-            display: flex;
+            display: none; /* Caché sur PC - affiché via les contrôles de navigation */
             align-items: center;
             gap: var(--space-sm);
             margin: 0;
@@ -3099,6 +3099,179 @@
 
         .btn-secondary:active {
             transform: scale(0.98);
+        }
+
+        /* État actif pour les boutons toggle de graphique */
+        .chart-toggle-btn.active {
+            background: var(--accent-main);
+            color: white;
+            border-color: var(--accent-main);
+        }
+
+        /* Historique de suivi compact */
+        .tracking-compact-entry {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-sm);
+            overflow: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .tracking-compact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md) var(--space-lg);
+            cursor: pointer;
+            gap: var(--space-md);
+        }
+
+        .tracking-compact-header:hover {
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .tracking-compact-date {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .tracking-compact-summary {
+            display: flex;
+            gap: var(--space-lg);
+            flex-wrap: wrap;
+            flex: 1;
+            justify-content: flex-start;
+            margin-left: var(--space-xl);
+        }
+
+        .tracking-compact-metric {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: 0.85rem;
+        }
+
+        .tracking-compact-metric span:first-child {
+            color: var(--text-secondary);
+        }
+
+        .tracking-compact-metric span:last-child {
+            font-weight: 600;
+        }
+
+        .tracking-compact-actions {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+
+        .tracking-compact-toggle {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+
+        .tracking-compact-toggle:hover {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-main);
+        }
+
+        .tracking-compact-toggle.expanded {
+            transform: rotate(180deg);
+        }
+
+        .tracking-compact-details {
+            display: none;
+            padding: 0 var(--space-lg) var(--space-lg);
+            border-top: 1px solid rgba(128, 128, 128, 0.1);
+        }
+
+        .tracking-compact-details.show {
+            display: block;
+        }
+
+        .tracking-compact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+        }
+
+        .tracking-compact-grid-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .tracking-compact-grid-item .label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tracking-compact-grid-item .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* Pagination suivi */
+        .tracking-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+            padding: var(--space-md);
+        }
+
+        .tracking-pagination-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(128, 128, 128, 0.2);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+
+        .tracking-pagination-btn:hover:not(:disabled) {
+            background: var(--accent-main);
+            border-color: var(--accent-main);
+            color: white;
+        }
+
+        .tracking-pagination-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .tracking-pagination-info {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .tracking-compact-summary {
+                display: none;
+            }
+
+            .tracking-compact-header {
+                padding: var(--space-sm) var(--space-md);
+            }
         }
 
         /* Type 3: Bouton Ghost (minimal) */
@@ -4959,7 +5132,8 @@
                 <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);"><i data-lucide="plus-circle" style="width: 22px; height: 22px;"></i><span>Nouvelle mesure</span></h2>
 
                 <p class="info-text" style="margin-bottom: var(--space-xl); font-size: 0.85rem;">
-                    Les champs marqués d'un astérisque (<span style="color: var(--accent-danger);">*</span>) sont obligatoires
+                    Les champs marqués d'un astérisque (<span style="color: var(--accent-danger);">*</span>) sont obligatoires.
+                    <a href="#" onclick="switchToTab('health-warning'); setTimeout(() => document.getElementById('metrics-explainer')?.scrollIntoView({behavior: 'smooth'}), 300); return false;" style="color: var(--accent-main); text-decoration: underline; font-weight: 600;"><i data-lucide="info" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> En savoir plus sur les métriques</a>
                 </p>
 
                 <div class="input-group" style="max-width: 500px;">
@@ -5047,16 +5221,16 @@
                 <div id="tracking-history" style="margin-top: 40px;">
                     <h3 style="margin-bottom: 20px; font-size: 1.5rem;">Historique & Graphiques</h3>
 
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
-                        <button class="btn-secondary btn" onclick="showChart('weight')">Poids</button>
-                        <button class="btn-secondary btn" onclick="showChart('bodyfat')">Graisse</button>
-                        <button class="btn-secondary btn" onclick="showChart('muscle')">Muscle</button>
-                        <button class="btn-secondary btn" onclick="showChart('imc')">IMC</button>
-                        <button class="btn-secondary btn" onclick="showChart('water')">Eau</button>
-                        <button class="btn-secondary btn" onclick="showChart('bone')">Os</button>
-                        <button class="btn-secondary btn" onclick="showChart('proteinPct')">Protéines</button>
-                        <button class="btn-secondary btn" onclick="showChart('bodyAge')">Âge</button>
-                        <button class="btn-secondary btn" onclick="showChart('visceral')">Viscérale</button>
+                    <div id="chart-buttons" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="weight" onclick="toggleChart('weight')">Poids</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="bodyfat" onclick="toggleChart('bodyfat')">Graisse</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="muscle" onclick="toggleChart('muscle')">Muscle</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="imc" onclick="toggleChart('imc')">IMC</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="water" onclick="toggleChart('water')">Eau</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="bone" onclick="toggleChart('bone')">Masse Osseuse</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="proteinPct" onclick="toggleChart('proteinPct')">Protéines</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="bodyAge" onclick="toggleChart('bodyAge')">Âge Corporel</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="visceral" onclick="toggleChart('visceral')">Graisse Viscérale</button>
                     </div>
 
                     <canvas id="tracking-chart" style="max-height: 400px; display: none; margin-bottom: 30px; background: var(--bg-tertiary); padding: var(--space-xl); border-radius: var(--radius-md);"></canvas>
@@ -6371,7 +6545,66 @@
                 <li>Obsession pour la nourriture ou les chiffres</li>
                 <li>Perte de poids trop rapide</li>
             </ul>
-        </div></div></div>
+        </div>
+
+        <!-- Section explicative des métriques de suivi corporel -->
+        <div class="card" id="metrics-explainer" style="margin-top: var(--space-2xl);">
+            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);"><i data-lucide="activity" style="width: 24px; height: 24px; color: var(--accent-main);"></i> Comprendre les Métriques de Suivi Corporel</h2>
+
+            <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
+                Les balances avec analyse corporelle utilisent la bio-impédancemétrie (BIA) pour estimer différentes composantes de ton corps. Voici ce que chaque métrique signifie :
+            </p>
+
+            <div style="display: grid; gap: var(--space-lg);">
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-protein); margin-bottom: var(--space-sm);">Poids (kg)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Le poids total de ton corps. Varie naturellement de 1-2kg au cours de la journée en fonction de l'hydratation, des repas et d'autres facteurs. Pesez-vous idéalement le matin, à jeun, pour plus de cohérence.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-carbs); margin-bottom: var(--space-sm);">Taux de Graisse (%)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Pourcentage de masse grasse par rapport au poids total. Valeurs moyennes : Hommes 15-25%, Femmes 20-30%. Un taux trop bas peut être aussi problématique qu'un taux trop élevé.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-main); margin-bottom: var(--space-sm);">Masse Musculaire (kg)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Poids total des muscles squelettiques. Plus de muscles = métabolisme de base plus élevé. La préservation musculaire est essentielle lors d'une perte de poids.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-secondary); margin-bottom: var(--space-sm);">Masse Osseuse (kg)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Poids estimé du squelette. Valeur généralement stable chez l'adulte (2-4kg selon la morphologie). L'exercice en charge et une alimentation riche en calcium et vitamine D favorisent la santé osseuse.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-protein); margin-bottom: var(--space-sm);">Protéines (%)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Pourcentage de protéines dans le corps. Valeur normale entre 16-20%. Les protéines sont essentielles pour la réparation musculaire et le système immunitaire.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: #38BDF8; margin-bottom: var(--space-sm);">Eau (%)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Pourcentage d'eau corporelle totale. Valeurs normales : Hommes 50-65%, Femmes 45-60%. Une bonne hydratation est cruciale pour le métabolisme et la performance physique.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-danger); margin-bottom: var(--space-sm);">Graisse Viscérale (niveau)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Graisse entourant les organes internes. Échelle de 1 à 59 selon les fabricants. Niveau sain : 1-12. Au-delà de 13, risque accru de maladies cardiovasculaires et diabète. Cette métrique est particulièrement importante pour la santé.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-purple); margin-bottom: var(--space-sm);">Âge Corporel (années)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Estimation de l'âge "métabolique" basée sur ta composition corporelle. Un âge corporel inférieur à ton âge réel suggère une bonne condition physique. Cette valeur peut être améliorée avec l'exercice et une alimentation équilibrée.</p>
+                </div>
+            </div>
+
+            <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--accent-main); border-radius: var(--radius-md); padding: var(--space-xl); margin-top: var(--space-xl);">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-main); margin-bottom: var(--space-sm);"><i data-lucide="lightbulb" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Conseil</h3>
+                <p style="margin: 0; line-height: 1.8; color: var(--text-primary);">
+                    Les mesures par bio-impédancemétrie sont des <strong>estimations</strong> et peuvent varier selon l'hydratation, le moment de la journée et le modèle de balance. Pour un suivi précis, mesure-toi toujours dans les mêmes conditions (même heure, même niveau d'hydratation).
+                </p>
+            </div>
+        </div>
+    </div></div>
 
     <!-- Footer Desktop (caché sur mobile) -->
     <footer class="footer-desktop" style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding: 48px 24px; margin-top: 80px;">
@@ -9664,94 +9897,118 @@ Solutions possibles :
             }
         }
 
-       function renderTrackingList() {
-    const container = document.getElementById('tracking-list');
+       // Variables pour la pagination du tracking
+        let trackingCurrentPage = 1;
+        const trackingPerPage = 5;
 
-    // Charger les données depuis localStorage
-    const saved = localStorage.getItem('trackingData');
-    const data = saved ? JSON.parse(saved) : [];
+        function renderTrackingList() {
+            const container = document.getElementById('tracking-list');
 
-    if (data.length === 0) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
-                <div style="font-size: 4rem; margin-bottom: var(--space-lg); opacity: 0.5;"><i data-lucide="bar-chart-2" style="width: 48px; height: 48px;"></i></div>
-                <div style="font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-sm);">Aucun suivi pour le moment</div>
-                <div style="font-size: 0.95rem; line-height: 1.6;">Enregistre ta première mesure ci-dessus pour commencer à suivre ton évolution corporelle</div></div>
-        `;
-        return;
-    }
+            // Charger les données depuis localStorage
+            const saved = localStorage.getItem('trackingData');
+            const data = saved ? JSON.parse(saved) : [];
 
-    // Afficher du plus récent au plus ancien
-    const sortedData = data.slice().reverse();
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
+                        <div style="font-size: 4rem; margin-bottom: var(--space-lg); opacity: 0.5;"><i data-lucide="bar-chart-2" style="width: 48px; height: 48px;"></i></div>
+                        <div style="font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-sm);">Aucun suivi pour le moment</div>
+                        <div style="font-size: 0.95rem; line-height: 1.6;">Enregistre ta première mesure ci-dessus pour commencer à suivre ton évolution corporelle</div></div>
+                `;
+                return;
+            }
 
-    container.innerHTML = sortedData.map(entry => `
-        <div class="card" style="margin-bottom: var(--space-lg);">
-            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: var(--space-lg);">
-                <div style="flex: 1;">
-                    <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: var(--space-lg); color: var(--text-primary);">
-                        ${new Date(entry.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+            // Afficher du plus récent au plus ancien
+            const sortedData = data.slice().reverse();
+
+            // Calculer la pagination
+            const totalPages = Math.ceil(sortedData.length / trackingPerPage);
+            if (trackingCurrentPage > totalPages) trackingCurrentPage = totalPages;
+            if (trackingCurrentPage < 1) trackingCurrentPage = 1;
+
+            const startIndex = (trackingCurrentPage - 1) * trackingPerPage;
+            const endIndex = startIndex + trackingPerPage;
+            const pageData = sortedData.slice(startIndex, endIndex);
+
+            // Générer le HTML compact
+            let html = '<div class="tracking-entries-list">';
+
+            pageData.forEach((entry, index) => {
+                const entryId = `tracking-entry-${startIndex + index}`;
+                const dateStr = new Date(entry.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+
+                // Métriques principales pour le résumé
+                const summaryMetrics = [];
+                if (entry.weight) summaryMetrics.push(`<span>Poids:</span> <span style="color: var(--accent-protein);">${entry.weight}kg</span>`);
+                if (entry.bodyfat) summaryMetrics.push(`<span>Graisse:</span> <span style="color: var(--accent-carbs);">${entry.bodyfat}%</span>`);
+                if (entry.muscle) summaryMetrics.push(`<span>Muscle:</span> <span style="color: var(--accent-main);">${entry.muscle}kg</span>`);
+
+                html += `
+                    <div class="tracking-compact-entry" id="${entryId}">
+                        <div class="tracking-compact-header" onclick="toggleTrackingEntry('${entryId}')">
+                            <span class="tracking-compact-date">${dateStr}</span>
+                            <div class="tracking-compact-summary">
+                                ${summaryMetrics.map(m => `<div class="tracking-compact-metric">${m}</div>`).join('')}
+                            </div>
+                            <div class="tracking-compact-actions">
+                                <button class="icon-btn" style="width: 32px; height: 32px; padding: 0;" onclick="event.stopPropagation(); editTracking('${entry.date}')"><i data-lucide="pencil" style="width: 14px; height: 14px;"></i></button>
+                                <button class="delete-btn" style="width: 32px; height: 32px; padding: 0;" onclick="event.stopPropagation(); deleteTracking('${entry.date}')"><i data-lucide="trash-2" style="width: 14px; height: 14px;"></i></button>
+                                <button class="tracking-compact-toggle" id="${entryId}-toggle"><i data-lucide="chevron-down" style="width: 16px; height: 16px;"></i></button>
+                            </div>
+                        </div>
+                        <div class="tracking-compact-details" id="${entryId}-details">
+                            <div class="tracking-compact-grid">
+                                ${entry.weight ? `<div class="tracking-compact-grid-item"><span class="label">Poids</span><span class="value" style="color: var(--accent-protein);">${entry.weight} kg</span></div>` : ''}
+                                ${entry.bodyfat ? `<div class="tracking-compact-grid-item"><span class="label">Taux de graisse</span><span class="value" style="color: var(--accent-carbs);">${entry.bodyfat}%</span></div>` : ''}
+                                ${entry.muscle ? `<div class="tracking-compact-grid-item"><span class="label">Masse musculaire</span><span class="value" style="color: var(--accent-main);">${entry.muscle} kg</span></div>` : ''}
+                                ${entry.bone ? `<div class="tracking-compact-grid-item"><span class="label">Masse osseuse</span><span class="value" style="color: var(--text-secondary);">${entry.bone} kg</span></div>` : ''}
+                                ${entry.proteinPct ? `<div class="tracking-compact-grid-item"><span class="label">Protéines</span><span class="value" style="color: var(--accent-protein);">${entry.proteinPct}%</span></div>` : ''}
+                                ${entry.water ? `<div class="tracking-compact-grid-item"><span class="label">Eau</span><span class="value" style="color: var(--accent-carbs);">${entry.water}%</span></div>` : ''}
+                                ${entry.visceral ? `<div class="tracking-compact-grid-item"><span class="label">Graisse viscérale</span><span class="value" style="color: var(--accent-danger);">${entry.visceral}</span></div>` : ''}
+                                ${entry.bodyAge ? `<div class="tracking-compact-grid-item"><span class="label">Âge corporel</span><span class="value" style="color: var(--accent-purple);">${entry.bodyAge} ans</span></div>` : ''}
+                            </div>
+                            ${entry.notes ? `<div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid rgba(128,128,128,0.1);"><span class="label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Notes</span><p style="margin: var(--space-xs) 0 0; color: var(--text-primary); font-size: 0.9rem;">${entry.notes}</p></div>` : ''}
+                        </div>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-lg);">
-                        ${entry.weight ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Poids</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-protein);">${entry.weight} kg</span>
-                            </div>
-                        ` : ''}
-                        ${entry.bodyfat ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Taux de graisse</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-carbs);">${entry.bodyfat}%</span>
-                            </div>
-                        ` : ''}
-                        ${entry.muscle ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Masse musculaire</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-main);">${entry.muscle} kg</span>
-                            </div>
-                        ` : ''}
-                        ${entry.bone ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Masse osseuse</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--text-secondary);">${entry.bone} kg</span>
-                            </div>
-                        ` : ''}
-                        ${entry.proteinPct ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Protéines</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-protein);">${entry.proteinPct}%</span>
-                            </div>
-                        ` : ''}
-                        ${entry.water ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Eau</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-carbs);">${entry.water}%</span>
-                            </div>
-                        ` : ''}
-                        ${entry.visceral ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Graisse viscérale</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-danger);">${entry.visceral}</span>
-                            </div>
-                        ` : ''}
-                        ${entry.bodyAge ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Âge corporel</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-purple);">${entry.bodyAge} ans</span>
-                            </div>
-                        ` : ''}
-                    </div></div>
-                <div style="display: flex; gap: var(--space-sm); align-items: center; flex-shrink: 0;">
-                    <button class="icon-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="editTracking('${entry.date}')"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>
-                    <button class="delete-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="deleteTracking('${entry.date}')"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i></button>
-                </div></div>
-            ${entry.notes ? `
-                <div style="margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid rgba(255,255,255,0.1);">
-                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: var(--space-sm); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Notes</div>
-                    <div style="color: var(--text-primary); line-height: 1.6;">${entry.notes}</div></div>
-            ` : ''}
-        </div>
-    `).join('');
+                `;
+            });
+
+            html += '</div>';
+
+            // Ajouter la pagination si nécessaire
+            if (totalPages > 1) {
+                html += `
+                    <div class="tracking-pagination">
+                        <button class="tracking-pagination-btn" onclick="changeTrackingPage(-1)" ${trackingCurrentPage === 1 ? 'disabled' : ''}>
+                            <i data-lucide="chevron-left" style="width: 18px; height: 18px;"></i>
+                        </button>
+                        <span class="tracking-pagination-info">${trackingCurrentPage} / ${totalPages}</span>
+                        <button class="tracking-pagination-btn" onclick="changeTrackingPage(1)" ${trackingCurrentPage === totalPages ? 'disabled' : ''}>
+                            <i data-lucide="chevron-right" style="width: 18px; height: 18px;"></i>
+                        </button>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+
+            // Initialiser les icônes Lucide pour les boutons générés dynamiquement
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function toggleTrackingEntry(entryId) {
+            const details = document.getElementById(`${entryId}-details`);
+            const toggle = document.getElementById(`${entryId}-toggle`);
+
+            if (details && toggle) {
+                details.classList.toggle('show');
+                toggle.classList.toggle('expanded');
+            }
+        }
+
+        function changeTrackingPage(delta) {
+            trackingCurrentPage += delta;
+            renderTrackingList();
         }
 
         function deleteTracking(date) {
@@ -11153,6 +11410,36 @@ Solutions possibles :
             } catch (error) {
                 console.error('Error creating chart:', error);
                 alert('Erreur lors de la création du graphique: ' + error.message);
+            }
+        }
+
+        // Variable pour tracker le graphique actif
+        let activeChartType = null;
+
+        function toggleChart(type) {
+            const canvas = document.getElementById('tracking-chart');
+            const allButtons = document.querySelectorAll('.chart-toggle-btn');
+
+            // Si on clique sur le même type et le graphique est visible, on le cache
+            if (activeChartType === type && canvas && canvas.style.display !== 'none') {
+                // Cacher le graphique
+                canvas.style.display = 'none';
+                if (trackingChart) {
+                    trackingChart.destroy();
+                    trackingChart = null;
+                }
+                // Retirer l'état actif de tous les boutons
+                allButtons.forEach(btn => btn.classList.remove('active'));
+                activeChartType = null;
+            } else {
+                // Retirer l'état actif de tous les boutons
+                allButtons.forEach(btn => btn.classList.remove('active'));
+                // Ajouter l'état actif au bouton cliqué
+                const clickedBtn = document.querySelector(`.chart-toggle-btn[data-chart="${type}"]`);
+                if (clickedBtn) clickedBtn.classList.add('active');
+                // Afficher le graphique
+                activeChartType = type;
+                showChart(type);
             }
         }
 
