@@ -1160,113 +1160,94 @@
         .home-feature h3 { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin: 0 0 4px 0; }
         .home-feature p { font-size: 0.8rem; color: var(--text-secondary); margin: 0; line-height: 1.4; }
 
-        /* Why NutriTrack Section */
-        .home-why-section {
-            padding: var(--space-2xl) var(--space-xl);
-        }
-
-        .home-why-section h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-align: center;
-            margin: 0 0 var(--space-xl) 0;
-        }
-
-        .home-why-section h2 span { color: var(--accent-main); }
-
-        .home-why-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: var(--space-md);
-        }
-
-        .home-why-card {
-            background: var(--bg-secondary);
-            border: 1px solid rgba(128, 128, 128, 0.1);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            text-align: center;
-            transition: all 0.25s ease;
-        }
-
-        .home-why-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .home-why-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto var(--space-md);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .home-why-icon i { width: 24px; height: 24px; color: white; }
-
-        .home-why-card h3 {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0 0 var(--space-sm) 0;
-        }
-
-        .home-why-card p {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin: 0;
-            line-height: 1.5;
-        }
-
-        /* Tips Section */
+        /* Tips Carousel */
         .home-tips-section {
-            padding: var(--space-xl);
+            padding: var(--space-lg);
             background: var(--bg-secondary);
             margin: 0 var(--space-xl) var(--space-xl);
             border-radius: var(--radius-xl);
             border: 1px solid rgba(128, 128, 128, 0.1);
         }
 
-        .home-tips-section h2 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
+        .home-tip-card {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            padding: var(--space-md);
+        }
+
+        .home-tip-icon {
+            width: 52px;
+            height: 52px;
+            min-width: 52px;
+            border-radius: var(--radius-lg);
+            background: var(--accent-main);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: var(--space-sm);
-            margin: 0 0 var(--space-lg) 0;
+            transition: background 0.3s ease;
         }
 
-        .home-tips-section h2 i { width: 20px; height: 20px; color: var(--accent-fat); }
+        .home-tip-icon i { width: 26px; height: 26px; color: white; }
 
-        .home-tips-grid {
+        .home-tip-body { flex: 1; }
+
+        .home-tip-category {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--accent-main);
+            margin-bottom: 4px;
+        }
+
+        .home-tip-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .home-tip-text strong { color: var(--text-primary); }
+
+        .home-tip-nav {
             display: flex;
+            align-items: center;
             justify-content: center;
-            gap: var(--space-xl);
-            flex-wrap: wrap;
+            gap: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid rgba(128, 128, 128, 0.1);
         }
 
-        .home-tip {
+        .home-tip-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(128, 128, 128, 0.2);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .home-tip-btn:hover {
+            background: var(--accent-main);
+            border-color: var(--accent-main);
+            color: white;
+        }
+
+        .home-tip-btn i { width: 18px; height: 18px; }
+
+        .home-tip-counter {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            min-width: 50px;
             text-align: center;
         }
-
-        .home-tip-number {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--accent-main);
-        }
-
-        .home-tip p {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin: var(--space-xs) 0 0;
-        }
-
-        .home-tip p strong { color: var(--text-primary); }
 
         /* ===== HOME MOBILE ===== */
         @media (max-width: 768px) {
@@ -1301,19 +1282,11 @@
             .home-feature h3 { font-size: 0.85rem; }
             .home-feature p { font-size: 0.75rem; }
 
-            .home-why-section { padding: var(--space-lg) var(--space-md); }
-            .home-why-section h2 { font-size: 1.2rem; }
-            .home-why-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
-            .home-why-card { padding: var(--space-md); }
-            .home-why-icon { width: 40px; height: 40px; }
-            .home-why-icon i { width: 20px; height: 20px; }
-            .home-why-card h3 { font-size: 0.85rem; }
-            .home-why-card p { font-size: 0.75rem; }
-
-            .home-tips-section { margin: 0 var(--space-md) var(--space-lg); padding: var(--space-lg); }
-            .home-tips-grid { gap: var(--space-lg); }
-            .home-tip-number { font-size: 1.4rem; }
-            .home-tip p { font-size: 0.8rem; }
+            .home-tips-section { margin: 0 var(--space-md) var(--space-lg); padding: var(--space-md); }
+            .home-tip-card { flex-direction: column; text-align: center; gap: var(--space-md); }
+            .home-tip-icon { width: 44px; height: 44px; min-width: 44px; }
+            .home-tip-icon i { width: 22px; height: 22px; }
+            .home-tip-text { font-size: 0.85rem; }
         }
 
         /* Responsive - Bottom navbar mobile style iOS/Android */
@@ -4029,63 +4002,67 @@
                 </div>
             </div>
 
-            <!-- Why NutriTrack Section -->
-            <div class="home-why-section">
-                <h2>Pourquoi <span>NutriTrack</span> ?</h2>
-                <div class="home-why-grid">
-                    <div class="home-why-card">
-                        <div class="home-why-icon" style="background: linear-gradient(135deg, var(--accent-main), #059669);">
-                            <i data-lucide="shield-check"></i>
-                        </div>
-                        <h3>100% Gratuit</h3>
-                        <p>Aucun abonnement, aucune pub. Toutes les fonctionnalités sont accessibles sans limite.</p>
+            <!-- Nutrition Tips Carousel -->
+            <div class="home-tips-section" id="home-tips-carousel">
+                <div class="home-tip-card" id="home-tip-content">
+                    <div class="home-tip-icon" id="home-tip-icon">
+                        <i data-lucide="lightbulb"></i>
                     </div>
-                    <div class="home-why-card">
-                        <div class="home-why-icon" style="background: linear-gradient(135deg, var(--accent-protein), #dc2626);">
-                            <i data-lucide="lock"></i>
-                        </div>
-                        <h3>Vie privée respectée</h3>
-                        <p>Tes données restent sur ton appareil. Connexion Google optionnelle pour la synchro.</p>
+                    <div class="home-tip-body">
+                        <span class="home-tip-category" id="home-tip-category">Astuce</span>
+                        <p class="home-tip-text" id="home-tip-text">Chargement...</p>
                     </div>
-                    <div class="home-why-card">
-                        <div class="home-why-icon" style="background: linear-gradient(135deg, var(--accent-carbs), #2563eb);">
-                            <i data-lucide="zap"></i>
-                        </div>
-                        <h3>Simple & Rapide</h3>
-                        <p>Interface intuitive. Ajoute tes repas en quelques secondes grâce à la recherche intelligente.</p>
-                    </div>
-                    <div class="home-why-card">
-                        <div class="home-why-icon" style="background: linear-gradient(135deg, var(--accent-fat), #d97706);">
-                            <i data-lucide="smartphone"></i>
-                        </div>
-                        <h3>Fonctionne hors-ligne</h3>
-                        <p>Installable sur ton téléphone comme une app native. Pas besoin d'internet.</p>
-                    </div>
+                </div>
+                <div class="home-tip-nav">
+                    <button class="home-tip-btn" onclick="prevTip()"><i data-lucide="chevron-left"></i></button>
+                    <span class="home-tip-counter"><span id="home-tip-index">1</span> / <span id="home-tip-total">8</span></span>
+                    <button class="home-tip-btn" onclick="nextTip()"><i data-lucide="chevron-right"></i></button>
                 </div>
             </div>
 
-            <!-- Quick Tips Section -->
-            <div class="home-tips-section">
-                <h2><i data-lucide="lightbulb"></i> Le savais-tu ?</h2>
-                <div class="home-tips-grid">
-                    <div class="home-tip">
-                        <span class="home-tip-number">1g</span>
-                        <p>de protéine = <strong>4 kcal</strong></p>
-                    </div>
-                    <div class="home-tip">
-                        <span class="home-tip-number">1g</span>
-                        <p>de glucide = <strong>4 kcal</strong></p>
-                    </div>
-                    <div class="home-tip">
-                        <span class="home-tip-number">1g</span>
-                        <p>de lipide = <strong>9 kcal</strong></p>
-                    </div>
-                    <div class="home-tip">
-                        <span class="home-tip-number">1.6g</span>
-                        <p>protéines/kg pour la <strong>masse musculaire</strong></p>
-                    </div>
-                </div>
-            </div>
+            <script>
+            (function() {
+                const tips = [
+                    { icon: 'flame', cat: 'Calories', text: '1g de <strong>protéine</strong> = 4 kcal, 1g de <strong>glucide</strong> = 4 kcal, 1g de <strong>lipide</strong> = 9 kcal', color: 'var(--accent-main)' },
+                    { icon: 'beef', cat: 'Protéines', text: 'Vise <strong>1.6 à 2.2g de protéines par kg</strong> de poids corporel pour optimiser ta prise de muscle.', color: 'var(--accent-protein)' },
+                    { icon: 'droplets', cat: 'Hydratation', text: 'Bois au moins <strong>30ml d\'eau par kg</strong> de poids corporel. Soit ~2.4L pour 80kg.', color: 'var(--accent-carbs)' },
+                    { icon: 'moon', cat: 'Sommeil', text: 'Un manque de sommeil augmente la <strong>ghréline</strong> (hormone de la faim) et favorise la prise de gras.', color: 'var(--accent-purple)' },
+                    { icon: 'timer', cat: 'Timing', text: 'Le <strong>timing des repas</strong> importe peu. Ce qui compte c\'est le total calorique sur la journée.', color: 'var(--accent-fat)' },
+                    { icon: 'scale', cat: 'Poids', text: 'Le poids fluctue de <strong>1-2kg par jour</strong> selon l\'hydratation. Pèse-toi le matin à jeun.', color: 'var(--accent-main)' },
+                    { icon: 'salad', cat: 'Fibres', text: 'Vise <strong>25-35g de fibres/jour</strong> pour une bonne digestion et satiété prolongée.', color: 'var(--accent-main)' },
+                    { icon: 'dumbbell', cat: 'Déficit', text: 'Un déficit de <strong>500 kcal/jour</strong> = ~0.5kg perdu par semaine. Ne descends pas en dessous.', color: 'var(--accent-protein)' }
+                ];
+
+                let currentTip = Math.floor(Math.random() * tips.length);
+
+                window.showTip = function(index) {
+                    const tip = tips[index];
+                    document.getElementById('home-tip-icon').innerHTML = `<i data-lucide="${tip.icon}"></i>`;
+                    document.getElementById('home-tip-icon').style.background = tip.color;
+                    document.getElementById('home-tip-category').textContent = tip.cat;
+                    document.getElementById('home-tip-text').innerHTML = tip.text;
+                    document.getElementById('home-tip-index').textContent = index + 1;
+                    document.getElementById('home-tip-total').textContent = tips.length;
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                };
+
+                window.nextTip = function() {
+                    currentTip = (currentTip + 1) % tips.length;
+                    showTip(currentTip);
+                };
+
+                window.prevTip = function() {
+                    currentTip = (currentTip - 1 + tips.length) % tips.length;
+                    showTip(currentTip);
+                };
+
+                // Show initial tip
+                showTip(currentTip);
+
+                // Auto-rotate every 8 seconds
+                setInterval(nextTip, 8000);
+            })();
+            </script>
 
             <!-- 3D Tilt Script -->
             <script>
