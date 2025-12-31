@@ -628,14 +628,6 @@
             box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2);
         }
 
-        .progress-fill::after {
-            content: attr(data-percent);
-            position: absolute;
-            right: 8px;
-            color: white !important;
-            font-weight: 600;
-        }
-
         .progress-fill.protein { background: var(--accent-protein); }
         .progress-fill.carbs { background: var(--accent-carbs); }
         .progress-fill.fat { background: var(--accent-fat); }
@@ -909,6 +901,392 @@
             0%, 100% { transform: translateX(0); }
             10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
             20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        /* ===== HOME TAB ===== */
+        #home {
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Hero section */
+        .home-hero {
+            position: relative;
+            min-height: 520px;
+            display: flex;
+            align-items: center;
+            padding: var(--space-2xl);
+            overflow: hidden;
+        }
+
+        /* Hero grid */
+        .home-hero-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-3xl);
+            align-items: center;
+            width: 100%;
+        }
+
+        .home-hero-text { max-width: 480px; }
+
+        /* Brand section */
+        .home-hero-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: var(--space-xl);
+        }
+
+        .home-logo {
+            width: 48px;
+            height: 48px;
+        }
+
+        .home-logo-fallback {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-main);
+            border-radius: var(--radius-md);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .home-logo-fallback i {
+            width: 28px;
+            height: 28px;
+            color: white;
+        }
+
+        .home-brand-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .home-hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-main);
+            margin-bottom: var(--space-lg);
+        }
+
+        .home-hero-label i { width: 16px; height: 16px; }
+
+        .home-hero-text h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 0 0 var(--space-md) 0;
+            line-height: 1.15;
+        }
+
+        .home-hero-text h1 span { color: var(--accent-main); }
+
+        .home-hero-text > p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin: 0 0 var(--space-xl) 0;
+        }
+
+        .home-hero-buttons { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+
+        .home-btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 24px;
+            background: var(--accent-main);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .home-btn-primary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.35);
+        }
+
+        .home-btn-primary i { width: 18px; height: 18px; }
+
+        .home-btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 20px;
+            background: transparent;
+            color: var(--accent-main);
+            font-size: 1rem;
+            font-weight: 600;
+            border: 2px solid var(--accent-main);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition-normal);
+        }
+
+        .home-btn-ghost:hover { background: rgba(16, 185, 129, 0.1); }
+        .home-btn-ghost i { width: 18px; height: 18px; }
+
+        /* 3D Image Scene */
+        .home-image-scene {
+            perspective: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            height: 420px;
+        }
+
+        .home-image-container {
+            transform-style: preserve-3d;
+            transition: transform 0.12s ease-out;
+            position: relative;
+        }
+
+        /* Main food image */
+        .home-food-image {
+            width: 380px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.35));
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .home-image-container:hover .home-food-image {
+            transform: scale(1.03);
+            filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.4));
+        }
+
+        /* Info cards floating */
+        .home-info {
+            position: absolute;
+            background: var(--bg-secondary);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(128, 128, 128, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-lg);
+            animation: homeFloat 6s ease-in-out infinite;
+        }
+
+        .home-info-icon {
+            width: 38px; height: 38px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .home-info-icon i { width: 18px; height: 18px; color: white; }
+
+        .home-info-text span { display: block; }
+        .home-info-value { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+        .home-info-label { font-size: 0.7rem; color: var(--text-muted); }
+
+        .home-info-1 { top: 10px; left: -80px; animation-delay: 0.5s; }
+        .home-info-1 .home-info-icon { background: var(--accent-main); }
+
+        .home-info-2 { bottom: 30px; right: -70px; animation-delay: 2s; }
+        .home-info-2 .home-info-icon { background: var(--accent-protein); }
+
+        .home-info-3 { top: 50%; right: -90px; transform: translateY(-50%); animation-delay: 1.2s; }
+        .home-info-3 .home-info-icon { background: var(--accent-carbs); }
+
+        @keyframes homeFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Features */
+        .home-features {
+            padding: var(--space-xl);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+        }
+
+        .home-feature {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .home-feature:hover {
+            transform: translateY(-4px);
+            border-color: rgba(16, 185, 129, 0.25);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .home-feature-icon {
+            width: 50px; height: 50px;
+            margin: 0 auto var(--space-md);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .home-feature-icon i { width: 24px; height: 24px; color: white; }
+
+        .home-feature:nth-child(1) .home-feature-icon { background: linear-gradient(135deg, #10b981, #059669); }
+        .home-feature:nth-child(2) .home-feature-icon { background: linear-gradient(135deg, #f87171, #dc2626); }
+        .home-feature:nth-child(3) .home-feature-icon { background: linear-gradient(135deg, #60a5fa, #2563eb); }
+        .home-feature:nth-child(4) .home-feature-icon { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+
+        .home-feature h3 { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin: 0 0 4px 0; }
+        .home-feature p { font-size: 0.8rem; color: var(--text-secondary); margin: 0; line-height: 1.4; }
+
+        /* Tips Carousel */
+        .home-tips-section {
+            padding: var(--space-lg);
+            background: var(--bg-secondary);
+            margin: 0 var(--space-xl) var(--space-xl);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(128, 128, 128, 0.1);
+        }
+
+        .home-tip-card {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            padding: var(--space-md);
+        }
+
+        .home-tip-icon {
+            width: 52px;
+            height: 52px;
+            min-width: 52px;
+            border-radius: var(--radius-lg);
+            background: var(--accent-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .home-tip-icon i { width: 26px; height: 26px; color: white; }
+
+        .home-tip-body { flex: 1; }
+
+        .home-tip-category {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--accent-main);
+            margin-bottom: 4px;
+        }
+
+        .home-tip-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .home-tip-text strong { color: var(--text-primary); }
+
+        .home-tip-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid rgba(128, 128, 128, 0.1);
+        }
+
+        .home-tip-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(128, 128, 128, 0.2);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .home-tip-btn:hover {
+            background: var(--accent-main);
+            border-color: var(--accent-main);
+            color: white;
+        }
+
+        .home-tip-btn i { width: 18px; height: 18px; }
+
+        .home-tip-counter {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* ===== HOME MOBILE ===== */
+        @media (max-width: 768px) {
+            .home-hero { min-height: auto; padding: var(--space-lg) var(--space-md); }
+
+            .home-hero-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-lg);
+                text-align: center;
+            }
+
+            .home-hero-text { max-width: 100%; order: 2; }
+            .home-hero-text h1 { font-size: 1.7rem; }
+            .home-hero-text > p { font-size: 0.95rem; }
+            .home-hero-buttons { justify-content: center; }
+            .home-hero-brand { justify-content: center; }
+            .home-brand-name { font-size: 1.5rem; }
+
+            .home-image-scene { order: 1; height: 240px; }
+            .home-food-image { width: 200px; }
+            .home-info { display: none; }
+
+            .home-features {
+                grid-template-columns: repeat(2, 1fr);
+                padding: var(--space-md);
+                gap: var(--space-sm);
+            }
+
+            .home-feature { padding: var(--space-md); }
+            .home-feature-icon { width: 44px; height: 44px; }
+            .home-feature-icon i { width: 20px; height: 20px; }
+            .home-feature h3 { font-size: 0.85rem; }
+            .home-feature p { font-size: 0.75rem; }
+
+            .home-tips-section { margin: 0 var(--space-md) var(--space-lg); padding: var(--space-md); }
+            .home-tip-card { flex-direction: column; text-align: center; gap: var(--space-md); }
+            .home-tip-icon { width: 44px; height: 44px; min-width: 44px; }
+            .home-tip-icon i { width: 22px; height: 22px; }
+            .home-tip-text { font-size: 0.85rem; }
         }
 
         /* Responsive - Bottom navbar mobile style iOS/Android */
@@ -1187,43 +1565,48 @@
                 font-size: 1.1rem !important;
             }
 
-            /* ===== NAVIGATION SEMAINE PREMIUM ===== */
+            /* ===== NAVIGATION SEMAINE MOBILE-FIRST ===== */
             .week-selector {
-                flex-direction: column !important;
-                gap: 10px !important;
-                margin-bottom: 16px !important;
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                gap: 8px !important;
+                margin-bottom: 12px !important;
+                padding: 0 !important;
             }
 
             .current-week {
-                font-size: 0.95rem !important;
-                order: -1 !important;
-            }
-
-            .week-nav-btn {
-                padding: 10px 16px !important;
                 font-size: 0.85rem !important;
-                border-radius: 8px !important;
+                font-weight: 600 !important;
+                text-align: center !important;
+                flex: 1 !important;
+                order: 0 !important;
             }
 
-            /* Boutons navigation semaine avec icônes */
+            /* Boutons flèches compacts */
             .week-nav-btn {
-                font-size: 0.75rem !important;
-                display: inline-flex !important;
+                width: 40px !important;
+                height: 40px !important;
+                min-width: 40px !important;
+                padding: 0 !important;
+                font-size: 0 !important;
+                display: flex !important;
                 align-items: center !important;
-                gap: 4px !important;
-                padding: 8px 12px !important;
+                justify-content: center !important;
+                border-radius: var(--radius-md) !important;
             }
 
             .week-nav-btn i,
             .week-nav-btn svg {
-                width: 14px !important;
-                height: 14px !important;
-                flex-shrink: 0;
+                width: 20px !important;
+                height: 20px !important;
             }
 
             .week-nav-btn.this-week-btn {
-                font-size: 0.85rem !important;
-                padding: 8px 20px !important;
+                width: auto !important;
+                font-size: 0.75rem !important;
+                padding: 8px 16px !important;
             }
 
             /* ===== PARAMÈTRES ESPACEMENT ===== */
@@ -1290,6 +1673,30 @@
             .add-food-btn {
                 font-size: 0.7rem !important;
                 padding: 8px 6px !important;
+            }
+
+            /* ===== MODALS MOBILE ===== */
+            .modal-close {
+                width: 44px !important;
+                height: 44px !important;
+                font-size: 1.5rem !important;
+                top: var(--space-md) !important;
+                right: var(--space-md) !important;
+                z-index: 1000 !important;
+            }
+
+            .modal-content {
+                max-height: 90vh !important;
+            }
+
+            /* Bouton Ajouter aliment à droite sur mobile (base d'aliments) */
+            #foods .card > div[style*="display: flex"][style*="justify-content: space-between"] {
+                flex-direction: column !important;
+                gap: var(--space-sm) !important;
+            }
+
+            #foods .card > div[style*="display: flex"][style*="justify-content: space-between"] > .btn {
+                align-self: flex-end !important;
             }
 
             /* ===== NAVIGATION DATE (REPAS) ===== */
@@ -1708,42 +2115,33 @@
 
             /* ===== HEADER MOBILE PREMIUM ===== */
             .app-header {
-                padding: var(--space-md) var(--space-md) var(--space-sm) !important;
+                padding: var(--space-sm) var(--space-md) !important;
                 position: relative !important;
             }
 
-            /* Username visible mais réduit */
+            /* Username masqué sur mobile */
             .header-username {
-                display: flex !important;
-                position: absolute !important;
-                top: 8px !important;
-                left: 12px !important;
-                min-width: auto !important;
-                height: auto !important;
-                padding: 4px 10px !important;
-                font-size: 0.75rem !important;
-                background: var(--bg-tertiary) !important;
-                border: none !important;
-                box-shadow: none !important;
+                display: none !important;
             }
 
-            /* Winstreak bien positionné (coin droit) */
+            /* Winstreak discret en haut à droite */
             #streak-display {
                 position: absolute !important;
-                top: 6px !important;
+                top: 8px !important;
                 right: 12px !important;
                 left: auto !important;
+                z-index: 10;
             }
 
             #streak-display .streak-badge {
-                font-size: 0.75rem !important;
-                padding: 4px 10px !important;
+                font-size: 0.7rem !important;
+                padding: 3px 8px !important;
             }
 
             .header-main-row {
                 flex-direction: column !important;
-                gap: var(--space-xs) !important;
-                padding-top: 28px !important; /* Espace pour username/streak */
+                gap: 2px !important;
+                padding-top: 0 !important;
             }
 
             /* Logo + NutriTrack centrés */
@@ -1782,22 +2180,10 @@
                 opacity: 0.8;
             }
 
-            /* ===== FIX PROGRESS BARS - Afficher pourcentages ===== */
-            .progress-fill::after {
-                content: attr(data-percent);
-                position: absolute;
-                right: 8px;
-                top: 50%;
-                transform: translateY(-50%);
-                font-size: 0.7rem;
-                font-weight: 700;
-                color: rgba(0,0,0,0.7);
-                text-shadow: 0 0 2px rgba(255,255,255,0.5);
-            }
-
+            /* Progress bars sans pourcentage - plus sobre */
             .progress-bar {
                 position: relative;
-                overflow: visible !important;
+                overflow: hidden !important;
             }
 
             .progress-fill {
@@ -2556,7 +2942,7 @@
             font-size: 1.3rem;
             font-weight: 700;
             color: var(--text-primary);
-            display: flex;
+            display: none; /* Caché sur PC - affiché via les contrôles de navigation */
             align-items: center;
             gap: var(--space-sm);
             margin: 0;
@@ -2713,6 +3099,179 @@
 
         .btn-secondary:active {
             transform: scale(0.98);
+        }
+
+        /* État actif pour les boutons toggle de graphique */
+        .chart-toggle-btn.active {
+            background: var(--accent-main);
+            color: white;
+            border-color: var(--accent-main);
+        }
+
+        /* Historique de suivi compact */
+        .tracking-compact-entry {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-sm);
+            overflow: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .tracking-compact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md) var(--space-lg);
+            cursor: pointer;
+            gap: var(--space-md);
+        }
+
+        .tracking-compact-header:hover {
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .tracking-compact-date {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .tracking-compact-summary {
+            display: flex;
+            gap: var(--space-lg);
+            flex-wrap: wrap;
+            flex: 1;
+            justify-content: flex-start;
+            margin-left: var(--space-xl);
+        }
+
+        .tracking-compact-metric {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: 0.85rem;
+        }
+
+        .tracking-compact-metric span:first-child {
+            color: var(--text-secondary);
+        }
+
+        .tracking-compact-metric span:last-child {
+            font-weight: 600;
+        }
+
+        .tracking-compact-actions {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+
+        .tracking-compact-toggle {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+
+        .tracking-compact-toggle:hover {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-main);
+        }
+
+        .tracking-compact-toggle.expanded {
+            transform: rotate(180deg);
+        }
+
+        .tracking-compact-details {
+            display: none;
+            padding: 0 var(--space-lg) var(--space-lg);
+            border-top: 1px solid rgba(128, 128, 128, 0.1);
+        }
+
+        .tracking-compact-details.show {
+            display: block;
+        }
+
+        .tracking-compact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+        }
+
+        .tracking-compact-grid-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .tracking-compact-grid-item .label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tracking-compact-grid-item .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* Pagination suivi */
+        .tracking-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+            padding: var(--space-md);
+        }
+
+        .tracking-pagination-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(128, 128, 128, 0.2);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+
+        .tracking-pagination-btn:hover:not(:disabled) {
+            background: var(--accent-main);
+            border-color: var(--accent-main);
+            color: white;
+        }
+
+        .tracking-pagination-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .tracking-pagination-info {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .tracking-compact-summary {
+                display: none;
+            }
+
+            .tracking-compact-header {
+                padding: var(--space-sm) var(--space-md);
+            }
         }
 
         /* Type 3: Bouton Ghost (minimal) */
@@ -3430,7 +3989,11 @@
                 <div class="sidebar-group-title">
                     Principal
                 </div>
-                <button class="sidebar-btn active" data-tab="calculator">
+                <button class="sidebar-btn active" data-tab="home">
+                    <span class="sidebar-icon"><i data-lucide="home"></i></span>
+                    <span class="sidebar-label">Accueil</span>
+                </button>
+                <button class="sidebar-btn" data-tab="calculator">
                     <span class="sidebar-icon"><i data-lucide="calculator"></i></span>
                     <span class="sidebar-label">Calculateur</span>
                 </button>
@@ -3524,8 +4087,196 @@
             <!-- Main Content Area -->
             <main class="main-content">
 
+        <!-- HOME TAB -->
+        <div id="home" class="tab-content active">
+
+            <!-- Hero Section -->
+            <section class="home-hero">
+
+                <div class="home-hero-grid">
+                    <!-- Text with branding -->
+                    <div class="home-hero-text">
+                        <div class="home-hero-brand">
+                            <img src="logo.svg" alt="NutriTrack" class="home-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <span class="home-logo-fallback"><i data-lucide="target"></i></span>
+                            <span class="home-brand-name">NutriTrack</span>
+                        </div>
+                        <h1>Mange mieux,<br><span>simplement.</span></h1>
+                        <p>Compose ton assiette idéale. Calcule tes macros, suis tes repas et atteins tes objectifs sans te prendre la tête.</p>
+                        <div class="home-hero-buttons">
+                            <button class="home-btn-primary" onclick="switchToTab('calculator')">
+                                <i data-lucide="play"></i>
+                                Commencer
+                            </button>
+                            <button class="home-btn-ghost" onclick="switchToTab('meals')">
+                                <i data-lucide="utensils"></i>
+                                Logger un repas
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 3D Food Image -->
+                    <div class="home-image-scene" id="home-image-scene">
+                        <div class="home-image-container" id="home-image-container">
+                            <!-- Info cards -->
+                            <div class="home-info home-info-1">
+                                <div class="home-info-icon"><i data-lucide="flame"></i></div>
+                                <div class="home-info-text">
+                                    <span class="home-info-value">1 850 kcal</span>
+                                    <span class="home-info-label">Objectif du jour</span>
+                                </div>
+                            </div>
+                            <div class="home-info home-info-2">
+                                <div class="home-info-icon"><i data-lucide="beef"></i></div>
+                                <div class="home-info-text">
+                                    <span class="home-info-value">142g</span>
+                                    <span class="home-info-label">Protéines</span>
+                                </div>
+                            </div>
+                            <div class="home-info home-info-3">
+                                <div class="home-info-icon"><i data-lucide="wheat"></i></div>
+                                <div class="home-info-text">
+                                    <span class="home-info-value">185g</span>
+                                    <span class="home-info-label">Glucides</span>
+                                </div>
+                            </div>
+
+                            <!-- Food bowl image (save your PNG as food-bowl.png) -->
+                            <img src="food-bowl.png"
+                                 alt="Healthy food bowl"
+                                 class="home-food-image"
+                                 loading="eager">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features -->
+            <div class="home-features">
+                <div class="home-feature" onclick="switchToTab('calculator')">
+                    <div class="home-feature-icon"><i data-lucide="target"></i></div>
+                    <h3>Calculateur</h3>
+                    <p>Tes besoins personnalisés</p>
+                </div>
+                <div class="home-feature" onclick="switchToTab('meals')">
+                    <div class="home-feature-icon"><i data-lucide="utensils"></i></div>
+                    <h3>Repas</h3>
+                    <p>Suivi en temps réel</p>
+                </div>
+                <div class="home-feature" onclick="switchToTab('tracking')">
+                    <div class="home-feature-icon"><i data-lucide="trending-up"></i></div>
+                    <h3>Progression</h3>
+                    <p>Graphiques détaillés</p>
+                </div>
+                <div class="home-feature" onclick="switchToTab('planner')">
+                    <div class="home-feature-icon"><i data-lucide="calendar"></i></div>
+                    <h3>Planning</h3>
+                    <p>Organise ta semaine</p>
+                </div>
+            </div>
+
+            <!-- Nutrition Tips Carousel -->
+            <div class="home-tips-section" id="home-tips-carousel">
+                <div class="home-tip-card" id="home-tip-content">
+                    <div class="home-tip-icon" id="home-tip-icon">
+                        <i data-lucide="lightbulb"></i>
+                    </div>
+                    <div class="home-tip-body">
+                        <span class="home-tip-category" id="home-tip-category">Astuce</span>
+                        <p class="home-tip-text" id="home-tip-text">Chargement...</p>
+                    </div>
+                </div>
+                <div class="home-tip-nav">
+                    <button class="home-tip-btn" onclick="prevTip()"><i data-lucide="chevron-left"></i></button>
+                    <span class="home-tip-counter"><span id="home-tip-index">1</span> / <span id="home-tip-total">8</span></span>
+                    <button class="home-tip-btn" onclick="nextTip()"><i data-lucide="chevron-right"></i></button>
+                </div>
+            </div>
+
+            <script>
+            (function() {
+                const tips = [
+                    { icon: 'flame', cat: 'Calories', text: '1g de <strong>protéine</strong> = 4 kcal, 1g de <strong>glucide</strong> = 4 kcal, 1g de <strong>lipide</strong> = 9 kcal', color: 'var(--accent-main)' },
+                    { icon: 'beef', cat: 'Protéines', text: 'Vise <strong>1.6 à 2.2g de protéines par kg</strong> de poids corporel pour optimiser ta prise de muscle.', color: 'var(--accent-protein)' },
+                    { icon: 'droplets', cat: 'Hydratation', text: 'Bois au moins <strong>30ml d\'eau par kg</strong> de poids corporel. Soit ~2.4L pour 80kg.', color: 'var(--accent-carbs)' },
+                    { icon: 'moon', cat: 'Sommeil', text: 'Un manque de sommeil augmente la <strong>ghréline</strong> (hormone de la faim) et favorise la prise de gras.', color: 'var(--accent-purple)' },
+                    { icon: 'timer', cat: 'Timing', text: 'Le <strong>timing des repas</strong> importe peu. Ce qui compte c\'est le total calorique sur la journée.', color: 'var(--accent-fat)' },
+                    { icon: 'scale', cat: 'Poids', text: 'Le poids fluctue de <strong>1-2kg par jour</strong> selon l\'hydratation. Pèse-toi le matin à jeun.', color: 'var(--accent-main)' },
+                    { icon: 'salad', cat: 'Fibres', text: 'Vise <strong>25-35g de fibres/jour</strong> pour une bonne digestion et satiété prolongée.', color: 'var(--accent-main)' },
+                    { icon: 'dumbbell', cat: 'Déficit', text: 'Un déficit de <strong>500 kcal/jour</strong> = ~0.5kg perdu par semaine. Ne descends pas en dessous.', color: 'var(--accent-protein)' }
+                ];
+
+                let currentTip = Math.floor(Math.random() * tips.length);
+
+                window.showTip = function(index) {
+                    const tip = tips[index];
+                    document.getElementById('home-tip-icon').innerHTML = `<i data-lucide="${tip.icon}"></i>`;
+                    document.getElementById('home-tip-icon').style.background = tip.color;
+                    document.getElementById('home-tip-category').textContent = tip.cat;
+                    document.getElementById('home-tip-text').innerHTML = tip.text;
+                    document.getElementById('home-tip-index').textContent = index + 1;
+                    document.getElementById('home-tip-total').textContent = tips.length;
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                };
+
+                window.nextTip = function() {
+                    currentTip = (currentTip + 1) % tips.length;
+                    showTip(currentTip);
+                };
+
+                window.prevTip = function() {
+                    currentTip = (currentTip - 1 + tips.length) % tips.length;
+                    showTip(currentTip);
+                };
+
+                // Show initial tip
+                showTip(currentTip);
+
+                // Auto-rotate every 8 seconds
+                setInterval(nextTip, 8000);
+            })();
+            </script>
+
+            <!-- 3D Tilt Script -->
+            <script>
+            (function() {
+                const scene = document.getElementById('home-image-scene');
+                const container = document.getElementById('home-image-container');
+                if (!scene || !container) return;
+
+                let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+
+                function handleMove(clientX, clientY) {
+                    const rect = scene.getBoundingClientRect();
+                    targetX = ((clientX - rect.left) / rect.width - 0.5) * 2;
+                    targetY = ((clientY - rect.top) / rect.height - 0.5) * 2;
+                }
+
+                scene.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+                scene.addEventListener('touchmove', (e) => {
+                    if (e.touches.length === 1) {
+                        e.preventDefault();
+                        handleMove(e.touches[0].clientX, e.touches[0].clientY);
+                    }
+                }, { passive: false });
+
+                scene.addEventListener('mouseleave', () => { targetX = 0; targetY = 0; });
+                scene.addEventListener('touchend', () => { targetX = 0; targetY = 0; });
+
+                function animate() {
+                    currentX += (targetX - currentX) * 0.08;
+                    currentY += (targetY - currentY) * 0.08;
+                    container.style.transform = `rotateY(${currentX * 12}deg) rotateX(${-currentY * 10}deg)`;
+                    requestAnimationFrame(animate);
+                }
+                animate();
+            })();
+            </script>
+
+        </div>
+
         <!-- Calculator Tab -->
-        <div id="calculator" class="tab-content active">
+        <div id="calculator" class="tab-content">
             <!-- Hero Header -->
             <div style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); border-radius: var(--radius-xl); padding: var(--space-3xl); margin-bottom: var(--space-3xl); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);">
                 <div style="display: flex; align-items: center; gap: var(--space-lg); margin-bottom: var(--space-lg);">
@@ -4381,7 +5132,8 @@
                 <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);"><i data-lucide="plus-circle" style="width: 22px; height: 22px;"></i><span>Nouvelle mesure</span></h2>
 
                 <p class="info-text" style="margin-bottom: var(--space-xl); font-size: 0.85rem;">
-                    Les champs marqués d'un astérisque (<span style="color: var(--accent-danger);">*</span>) sont obligatoires
+                    Les champs marqués d'un astérisque (<span style="color: var(--accent-danger);">*</span>) sont obligatoires.
+                    <a href="#" onclick="switchToTab('health-warning'); setTimeout(() => document.getElementById('metrics-explainer')?.scrollIntoView({behavior: 'smooth'}), 300); return false;" style="color: var(--accent-main); text-decoration: underline; font-weight: 600;"><i data-lucide="info" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> En savoir plus sur les métriques</a>
                 </p>
 
                 <div class="input-group" style="max-width: 500px;">
@@ -4469,16 +5221,16 @@
                 <div id="tracking-history" style="margin-top: 40px;">
                     <h3 style="margin-bottom: 20px; font-size: 1.5rem;">Historique & Graphiques</h3>
 
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
-                        <button class="btn-secondary btn" onclick="showChart('weight')">Poids</button>
-                        <button class="btn-secondary btn" onclick="showChart('bodyfat')">Graisse</button>
-                        <button class="btn-secondary btn" onclick="showChart('muscle')">Muscle</button>
-                        <button class="btn-secondary btn" onclick="showChart('imc')">IMC</button>
-                        <button class="btn-secondary btn" onclick="showChart('water')">Eau</button>
-                        <button class="btn-secondary btn" onclick="showChart('bone')">Os</button>
-                        <button class="btn-secondary btn" onclick="showChart('proteinPct')">Protéines</button>
-                        <button class="btn-secondary btn" onclick="showChart('bodyAge')">Âge</button>
-                        <button class="btn-secondary btn" onclick="showChart('visceral')">Viscérale</button>
+                    <div id="chart-buttons" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="weight" onclick="toggleChart('weight')">Poids</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="bodyfat" onclick="toggleChart('bodyfat')">Graisse</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="muscle" onclick="toggleChart('muscle')">Muscle</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="imc" onclick="toggleChart('imc')">IMC</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="water" onclick="toggleChart('water')">Eau</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="bone" onclick="toggleChart('bone')">Masse Osseuse</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="proteinPct" onclick="toggleChart('proteinPct')">Protéines</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="bodyAge" onclick="toggleChart('bodyAge')">Âge Corporel</button>
+                        <button class="btn-secondary btn chart-toggle-btn" data-chart="visceral" onclick="toggleChart('visceral')">Graisse Viscérale</button>
                     </div>
 
                     <canvas id="tracking-chart" style="max-height: 400px; display: none; margin-bottom: 30px; background: var(--bg-tertiary); padding: var(--space-xl); border-radius: var(--radius-md);"></canvas>
@@ -5793,7 +6545,66 @@
                 <li>Obsession pour la nourriture ou les chiffres</li>
                 <li>Perte de poids trop rapide</li>
             </ul>
-        </div></div></div>
+        </div>
+
+        <!-- Section explicative des métriques de suivi corporel -->
+        <div class="card" id="metrics-explainer" style="margin-top: var(--space-2xl);">
+            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);"><i data-lucide="activity" style="width: 24px; height: 24px; color: var(--accent-main);"></i> Comprendre les Métriques de Suivi Corporel</h2>
+
+            <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
+                Les balances avec analyse corporelle utilisent la bio-impédancemétrie (BIA) pour estimer différentes composantes de ton corps. Voici ce que chaque métrique signifie :
+            </p>
+
+            <div style="display: grid; gap: var(--space-lg);">
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-protein); margin-bottom: var(--space-sm);">Poids (kg)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Le poids total de ton corps. Varie naturellement de 1-2kg au cours de la journée en fonction de l'hydratation, des repas et d'autres facteurs. Pesez-vous idéalement le matin, à jeun, pour plus de cohérence.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-carbs); margin-bottom: var(--space-sm);">Taux de Graisse (%)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Pourcentage de masse grasse par rapport au poids total. Valeurs moyennes : Hommes 15-25%, Femmes 20-30%. Un taux trop bas peut être aussi problématique qu'un taux trop élevé.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-main); margin-bottom: var(--space-sm);">Masse Musculaire (kg)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Poids total des muscles squelettiques. Plus de muscles = métabolisme de base plus élevé. La préservation musculaire est essentielle lors d'une perte de poids.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-secondary); margin-bottom: var(--space-sm);">Masse Osseuse (kg)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Poids estimé du squelette. Valeur généralement stable chez l'adulte (2-4kg selon la morphologie). L'exercice en charge et une alimentation riche en calcium et vitamine D favorisent la santé osseuse.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-protein); margin-bottom: var(--space-sm);">Protéines (%)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Pourcentage de protéines dans le corps. Valeur normale entre 16-20%. Les protéines sont essentielles pour la réparation musculaire et le système immunitaire.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: #38BDF8; margin-bottom: var(--space-sm);">Eau (%)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Pourcentage d'eau corporelle totale. Valeurs normales : Hommes 50-65%, Femmes 45-60%. Une bonne hydratation est cruciale pour le métabolisme et la performance physique.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-danger); margin-bottom: var(--space-sm);">Graisse Viscérale (niveau)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Graisse entourant les organes internes. Échelle de 1 à 59 selon les fabricants. Niveau sain : 1-12. Au-delà de 13, risque accru de maladies cardiovasculaires et diabète. Cette métrique est particulièrement importante pour la santé.</p>
+                </div>
+
+                <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-purple); margin-bottom: var(--space-sm);">Âge Corporel (années)</h3>
+                    <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">Estimation de l'âge "métabolique" basée sur ta composition corporelle. Un âge corporel inférieur à ton âge réel suggère une bonne condition physique. Cette valeur peut être améliorée avec l'exercice et une alimentation équilibrée.</p>
+                </div>
+            </div>
+
+            <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--accent-main); border-radius: var(--radius-md); padding: var(--space-xl); margin-top: var(--space-xl);">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-main); margin-bottom: var(--space-sm);"><i data-lucide="lightbulb" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Conseil</h3>
+                <p style="margin: 0; line-height: 1.8; color: var(--text-primary);">
+                    Les mesures par bio-impédancemétrie sont des <strong>estimations</strong> et peuvent varier selon l'hydratation, le moment de la journée et le modèle de balance. Pour un suivi précis, mesure-toi toujours dans les mêmes conditions (même heure, même niveau d'hydratation).
+                </p>
+            </div>
+        </div>
+    </div></div>
 
     <!-- Footer Desktop (caché sur mobile) -->
     <footer class="footer-desktop" style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding: 48px 24px; margin-top: 80px;">
@@ -5993,12 +6804,9 @@
         function showInstallButton() {
             const installCard = document.getElementById('pwa-install-card');
             const landingInstallBtn = document.getElementById('landing-install-btn');
-            const drawerInstallBtn = document.getElementById('drawer-install-btn');
-            // Afficher uniquement dans: Settings, Landing page, et Menu Plus (drawer)
-            // Footer désactivé pour éviter l'intrusion
+            // Afficher uniquement dans: Settings et Landing page
             if (installCard) installCard.style.display = 'block';
             if (landingInstallBtn) landingInstallBtn.style.display = 'inline-flex';
-            if (drawerInstallBtn) drawerInstallBtn.style.display = 'flex';
         }
 
         function hideInstallButton() {
@@ -6022,6 +6830,9 @@
         }
         // Exécuter au chargement
         document.addEventListener('DOMContentLoaded', checkMobileInstall);
+
+        // ===== HOME TAB =====
+        // La page d'accueil est statique - pas de mise à jour dynamique nécessaire
 
         async function installPWA() {
             // Détecter iOS
@@ -6143,7 +6954,8 @@
             const tabContent = document.getElementById(tab);
             if (tabContent)  { tabContent.classList.add('active'); }
 
-            if (tab === 'planner')  { renderWeeklyPlan(); } else if (tab === 'tracking')  { renderTrackingList(); } else if (tab === 'meal-templates')  { renderMealTemplatesList(); } else if (tab === 'settings')  { if (typeof updateSettingsStats === 'function') updateSettingsStats(); }
+            if (tab === 'home') { if (typeof updateHomeTab === 'function') updateHomeTab(); }
+            else if (tab === 'planner')  { renderWeeklyPlan(); } else if (tab === 'tracking')  { renderTrackingList(); } else if (tab === 'meal-templates')  { renderMealTemplatesList(); } else if (tab === 'settings')  { if (typeof updateSettingsStats === 'function') updateSettingsStats(); }
 
             // Scroll to top
             window.scrollTo({top: 0, behavior: 'smooth'});
@@ -7646,6 +8458,45 @@ Solutions possibles :
             return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
         }
 
+        function getDayPlanFromMeals(dateKey) {
+            // Get actual meal data from allDailyMeals instead of weeklyPlan cache
+            const savedMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            const dayMeals = savedMeals[dateKey];
+
+            if (!dayMeals) {
+                return {
+                    breakfast: 'Non planifié',
+                    lunch: 'Non planifié',
+                    snack: 'Non planifié',
+                    dinner: 'Non planifié',
+                    totalCal: 0
+                };
+            }
+
+            const getMealSummary = (mealData) => {
+                if (!mealData || !mealData.foods || mealData.foods.length === 0) {
+                    return 'Non planifié';
+                }
+                return mealData.foods.map(f => f.name).join(', ');
+            };
+
+            const getMealCalories = (mealData) => {
+                if (!mealData || !mealData.foods) return 0;
+                return mealData.foods.reduce((sum, f) => sum + (f.calories || 0), 0);
+            };
+
+            const totalCal = getMealCalories(dayMeals.breakfast) + getMealCalories(dayMeals.lunch) +
+                            getMealCalories(dayMeals.snack) + getMealCalories(dayMeals.dinner);
+
+            return {
+                breakfast: getMealSummary(dayMeals.breakfast),
+                lunch: getMealSummary(dayMeals.lunch),
+                snack: getMealSummary(dayMeals.snack),
+                dinner: getMealSummary(dayMeals.dinner),
+                totalCal: Math.round(totalCal)
+            };
+        }
+
         function renderWeeklyPlan() {
             const weekStart = new Date(currentWeekStart);
             document.getElementById('current-week').textContent = `Semaine du ${formatDate(weekStart)}`;
@@ -7656,14 +8507,8 @@ Solutions possibles :
             weekGrid.innerHTML = days.map((day, index) => {
                 const date = new Date(weekStart);
                 date.setDate(date.getDate() + index);
-                const dateKey = getDateKey(date); // Utilise la date locale, pas UTC
-                const dayPlan = weeklyPlan[dateKey] || {
-                    breakfast: 'Non planifié',
-                    lunch: 'Non planifié',
-                    snack: 'Non planifié',
-                    dinner: 'Non planifié',
-                    totalCal: 0
-                };
+                const dateKey = getDateKey(date);
+                const dayPlan = getDayPlanFromMeals(dateKey);
 
                 return `
                     <div class="day-card">
@@ -7687,7 +8532,7 @@ Solutions possibles :
                         <div class="day-total-cal">${dayPlan.totalCal} kcal</div></div>
                 `;
             }).join('');
-            
+
             // Reinitialize Lucide icons after dynamic content
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
@@ -8744,7 +9589,16 @@ Solutions possibles :
             const weekStart = new Date(currentWeekStart);
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekEnd.getDate() + 6);
-            document.getElementById('current-week').textContent = 'Semaine du ' + formatDate(weekStart) + ' au ' + formatDate(weekEnd);
+            // Format condensé sur mobile
+            const isMobile = window.innerWidth <= 768;
+            const startDay = weekStart.getDate();
+            const endDay = weekEnd.getDate();
+            const startMonth = weekStart.toLocaleDateString('fr-FR', { month: 'short' });
+            const endMonth = weekEnd.toLocaleDateString('fr-FR', { month: 'short' });
+            const weekText = isMobile
+                ? `${startDay} ${startMonth} → ${endDay} ${endMonth}`
+                : `Semaine du ${formatDate(weekStart)} au ${formatDate(weekEnd)}`;
+            document.getElementById('current-week').textContent = weekText;
 
             const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
             const weekGrid = document.getElementById('week-grid');
@@ -9043,94 +9897,118 @@ Solutions possibles :
             }
         }
 
-       function renderTrackingList() {
-    const container = document.getElementById('tracking-list');
+       // Variables pour la pagination du tracking
+        let trackingCurrentPage = 1;
+        const trackingPerPage = 5;
 
-    // Charger les données depuis localStorage
-    const saved = localStorage.getItem('trackingData');
-    const data = saved ? JSON.parse(saved) : [];
+        function renderTrackingList() {
+            const container = document.getElementById('tracking-list');
 
-    if (data.length === 0) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
-                <div style="font-size: 4rem; margin-bottom: var(--space-lg); opacity: 0.5;"><i data-lucide="bar-chart-2" style="width: 48px; height: 48px;"></i></div>
-                <div style="font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-sm);">Aucun suivi pour le moment</div>
-                <div style="font-size: 0.95rem; line-height: 1.6;">Enregistre ta première mesure ci-dessus pour commencer à suivre ton évolution corporelle</div></div>
-        `;
-        return;
-    }
+            // Charger les données depuis localStorage
+            const saved = localStorage.getItem('trackingData');
+            const data = saved ? JSON.parse(saved) : [];
 
-    // Afficher du plus récent au plus ancien
-    const sortedData = data.slice().reverse();
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
+                        <div style="font-size: 4rem; margin-bottom: var(--space-lg); opacity: 0.5;"><i data-lucide="bar-chart-2" style="width: 48px; height: 48px;"></i></div>
+                        <div style="font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-sm);">Aucun suivi pour le moment</div>
+                        <div style="font-size: 0.95rem; line-height: 1.6;">Enregistre ta première mesure ci-dessus pour commencer à suivre ton évolution corporelle</div></div>
+                `;
+                return;
+            }
 
-    container.innerHTML = sortedData.map(entry => `
-        <div class="card" style="margin-bottom: var(--space-lg);">
-            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: var(--space-lg);">
-                <div style="flex: 1;">
-                    <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: var(--space-lg); color: var(--text-primary);">
-                        ${new Date(entry.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+            // Afficher du plus récent au plus ancien
+            const sortedData = data.slice().reverse();
+
+            // Calculer la pagination
+            const totalPages = Math.ceil(sortedData.length / trackingPerPage);
+            if (trackingCurrentPage > totalPages) trackingCurrentPage = totalPages;
+            if (trackingCurrentPage < 1) trackingCurrentPage = 1;
+
+            const startIndex = (trackingCurrentPage - 1) * trackingPerPage;
+            const endIndex = startIndex + trackingPerPage;
+            const pageData = sortedData.slice(startIndex, endIndex);
+
+            // Générer le HTML compact
+            let html = '<div class="tracking-entries-list">';
+
+            pageData.forEach((entry, index) => {
+                const entryId = `tracking-entry-${startIndex + index}`;
+                const dateStr = new Date(entry.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+
+                // Métriques principales pour le résumé
+                const summaryMetrics = [];
+                if (entry.weight) summaryMetrics.push(`<span>Poids:</span> <span style="color: var(--accent-protein);">${entry.weight}kg</span>`);
+                if (entry.bodyfat) summaryMetrics.push(`<span>Graisse:</span> <span style="color: var(--accent-carbs);">${entry.bodyfat}%</span>`);
+                if (entry.muscle) summaryMetrics.push(`<span>Muscle:</span> <span style="color: var(--accent-main);">${entry.muscle}kg</span>`);
+
+                html += `
+                    <div class="tracking-compact-entry" id="${entryId}">
+                        <div class="tracking-compact-header" onclick="toggleTrackingEntry('${entryId}')">
+                            <span class="tracking-compact-date">${dateStr}</span>
+                            <div class="tracking-compact-summary">
+                                ${summaryMetrics.map(m => `<div class="tracking-compact-metric">${m}</div>`).join('')}
+                            </div>
+                            <div class="tracking-compact-actions">
+                                <button class="icon-btn" style="width: 32px; height: 32px; padding: 0;" onclick="event.stopPropagation(); editTracking('${entry.date}')"><i data-lucide="pencil" style="width: 14px; height: 14px;"></i></button>
+                                <button class="delete-btn" style="width: 32px; height: 32px; padding: 0;" onclick="event.stopPropagation(); deleteTracking('${entry.date}')"><i data-lucide="trash-2" style="width: 14px; height: 14px;"></i></button>
+                                <button class="tracking-compact-toggle" id="${entryId}-toggle"><i data-lucide="chevron-down" style="width: 16px; height: 16px;"></i></button>
+                            </div>
+                        </div>
+                        <div class="tracking-compact-details" id="${entryId}-details">
+                            <div class="tracking-compact-grid">
+                                ${entry.weight ? `<div class="tracking-compact-grid-item"><span class="label">Poids</span><span class="value" style="color: var(--accent-protein);">${entry.weight} kg</span></div>` : ''}
+                                ${entry.bodyfat ? `<div class="tracking-compact-grid-item"><span class="label">Taux de graisse</span><span class="value" style="color: var(--accent-carbs);">${entry.bodyfat}%</span></div>` : ''}
+                                ${entry.muscle ? `<div class="tracking-compact-grid-item"><span class="label">Masse musculaire</span><span class="value" style="color: var(--accent-main);">${entry.muscle} kg</span></div>` : ''}
+                                ${entry.bone ? `<div class="tracking-compact-grid-item"><span class="label">Masse osseuse</span><span class="value" style="color: var(--text-secondary);">${entry.bone} kg</span></div>` : ''}
+                                ${entry.proteinPct ? `<div class="tracking-compact-grid-item"><span class="label">Protéines</span><span class="value" style="color: var(--accent-protein);">${entry.proteinPct}%</span></div>` : ''}
+                                ${entry.water ? `<div class="tracking-compact-grid-item"><span class="label">Eau</span><span class="value" style="color: var(--accent-carbs);">${entry.water}%</span></div>` : ''}
+                                ${entry.visceral ? `<div class="tracking-compact-grid-item"><span class="label">Graisse viscérale</span><span class="value" style="color: var(--accent-danger);">${entry.visceral}</span></div>` : ''}
+                                ${entry.bodyAge ? `<div class="tracking-compact-grid-item"><span class="label">Âge corporel</span><span class="value" style="color: var(--accent-purple);">${entry.bodyAge} ans</span></div>` : ''}
+                            </div>
+                            ${entry.notes ? `<div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid rgba(128,128,128,0.1);"><span class="label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Notes</span><p style="margin: var(--space-xs) 0 0; color: var(--text-primary); font-size: 0.9rem;">${entry.notes}</p></div>` : ''}
+                        </div>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-lg);">
-                        ${entry.weight ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Poids</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-protein);">${entry.weight} kg</span>
-                            </div>
-                        ` : ''}
-                        ${entry.bodyfat ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Taux de graisse</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-carbs);">${entry.bodyfat}%</span>
-                            </div>
-                        ` : ''}
-                        ${entry.muscle ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Masse musculaire</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-main);">${entry.muscle} kg</span>
-                            </div>
-                        ` : ''}
-                        ${entry.bone ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Masse osseuse</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--text-secondary);">${entry.bone} kg</span>
-                            </div>
-                        ` : ''}
-                        ${entry.proteinPct ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Protéines</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-protein);">${entry.proteinPct}%</span>
-                            </div>
-                        ` : ''}
-                        ${entry.water ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Eau</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-carbs);">${entry.water}%</span>
-                            </div>
-                        ` : ''}
-                        ${entry.visceral ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Graisse viscérale</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-danger);">${entry.visceral}</span>
-                            </div>
-                        ` : ''}
-                        ${entry.bodyAge ? `
-                            <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Âge corporel</span>
-                                <span style="font-size: 1.3rem; font-weight: 700; color: var(--accent-purple);">${entry.bodyAge} ans</span>
-                            </div>
-                        ` : ''}
-                    </div></div>
-                <div style="display: flex; gap: var(--space-sm); align-items: center; flex-shrink: 0;">
-                    <button class="icon-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="editTracking('${entry.date}')"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>
-                    <button class="delete-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="deleteTracking('${entry.date}')"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i></button>
-                </div></div>
-            ${entry.notes ? `
-                <div style="margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid rgba(255,255,255,0.1);">
-                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: var(--space-sm); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Notes</div>
-                    <div style="color: var(--text-primary); line-height: 1.6;">${entry.notes}</div></div>
-            ` : ''}
-        </div>
-    `).join('');
+                `;
+            });
+
+            html += '</div>';
+
+            // Ajouter la pagination si nécessaire
+            if (totalPages > 1) {
+                html += `
+                    <div class="tracking-pagination">
+                        <button class="tracking-pagination-btn" onclick="changeTrackingPage(-1)" ${trackingCurrentPage === 1 ? 'disabled' : ''}>
+                            <i data-lucide="chevron-left" style="width: 18px; height: 18px;"></i>
+                        </button>
+                        <span class="tracking-pagination-info">${trackingCurrentPage} / ${totalPages}</span>
+                        <button class="tracking-pagination-btn" onclick="changeTrackingPage(1)" ${trackingCurrentPage === totalPages ? 'disabled' : ''}>
+                            <i data-lucide="chevron-right" style="width: 18px; height: 18px;"></i>
+                        </button>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+
+            // Initialiser les icônes Lucide pour les boutons générés dynamiquement
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function toggleTrackingEntry(entryId) {
+            const details = document.getElementById(`${entryId}-details`);
+            const toggle = document.getElementById(`${entryId}-toggle`);
+
+            if (details && toggle) {
+                details.classList.toggle('show');
+                toggle.classList.toggle('expanded');
+            }
+        }
+
+        function changeTrackingPage(delta) {
+            trackingCurrentPage += delta;
+            renderTrackingList();
         }
 
         function deleteTracking(date) {
@@ -10239,8 +11117,15 @@ Solutions possibles :
         let userHeight = null;
 
         function loadAdvancedTracking() {
-            const saved = localStorage.getItem('advancedTrackingData');
-            if (saved) advancedTrackingData = JSON.parse(saved);
+            // Charger depuis trackingData comme source principale
+            const trackingSaved = localStorage.getItem('trackingData');
+            if (trackingSaved) {
+                advancedTrackingData = JSON.parse(trackingSaved);
+            } else {
+                // Fallback vers advancedTrackingData si trackingData n'existe pas
+                const saved = localStorage.getItem('advancedTrackingData');
+                if (saved) advancedTrackingData = JSON.parse(saved);
+            }
 
             // Récupérer la taille depuis le champ dans le calculateur
             const heightField = document.getElementById('height');
@@ -10388,51 +11273,64 @@ Solutions possibles :
 
             let data, label, color;
 
+            // Couleurs sémantiques pour chaque métrique
+            const METRIC_COLORS = {
+                weight: '#FF6B6B',     // Corail - mesure corporelle principale
+                bodyfat: '#FFB347',    // Orange - à réduire idéalement
+                muscle: '#10B981',     // Vert - croissance positive
+                imc: '#8B5CF6',        // Violet - indicateur calculé
+                water: '#38BDF8',      // Bleu ciel - hydratation
+                bone: '#94A3B8',       // Gris ardoise - structure
+                proteinPct: '#F97316', // Orange vif - protéines
+                bodyAge: '#F472B6',    // Rose - âge métabolique
+                visceral: '#EF4444'    // Rouge - attention santé
+            };
+
             switch(type) {
                 case 'weight':
                     data = sorted.map(e => e.weight);
                     label = 'Poids (kg)';
-                    color = '#ff6b6b';
+                    color = METRIC_COLORS.weight;
                     break;
                 case 'bodyfat':
                     data = sorted.map(e => e.bodyfat || 0);
                     label = 'Graisse (%)';
-                    color = '#ffe66d';
+                    color = METRIC_COLORS.bodyfat;
                     break;
                 case 'muscle':
                     data = sorted.map(e => e.muscle || 0);
                     label = 'Muscle (kg)';
-                    color = '#10b981';
+                    color = METRIC_COLORS.muscle;
                     break;
                 case 'imc':
                     data = sorted.map(e => e.imc || 0);
                     label = 'IMC';
-                    color = '#a28cff';
+                    color = METRIC_COLORS.imc;
                     break;
                 case 'water':
                     data = sorted.map(e => e.water || 0);
                     label = 'Eau (%)';
-                    color = '#4ecdc4';
+                    color = METRIC_COLORS.water;
                     break;
                 case 'bone':
                     data = sorted.map(e => e.bone || 0);
                     label = 'Os (kg)';
-                    color = '#d1d5db';
+                    color = METRIC_COLORS.bone;
                     break;
                 case 'proteinPct':
                     data = sorted.map(e => e.proteinPct || 0);
                     label = 'Protéines (%)';
-                    color = '#ff6b6b';
+                    color = METRIC_COLORS.proteinPct;
                     break;
                 case 'bodyAge':
                     data = sorted.map(e => e.bodyAge || 0);
                     label = 'Âge corporel';
-                    color = '#ffa07a';
+                    color = METRIC_COLORS.bodyAge;
                     break;
                 case 'visceral':
                     data = sorted.map(e => e.visceral || 0);
                     label = 'Viscérale';
-                    color = '#ff4444';
+                    color = METRIC_COLORS.visceral;
                     break;
                 default:
                     alert('Type de graphique inconnu');
@@ -10512,6 +11410,36 @@ Solutions possibles :
             } catch (error) {
                 console.error('Error creating chart:', error);
                 alert('Erreur lors de la création du graphique: ' + error.message);
+            }
+        }
+
+        // Variable pour tracker le graphique actif
+        let activeChartType = null;
+
+        function toggleChart(type) {
+            const canvas = document.getElementById('tracking-chart');
+            const allButtons = document.querySelectorAll('.chart-toggle-btn');
+
+            // Si on clique sur le même type et le graphique est visible, on le cache
+            if (activeChartType === type && canvas && canvas.style.display !== 'none') {
+                // Cacher le graphique
+                canvas.style.display = 'none';
+                if (trackingChart) {
+                    trackingChart.destroy();
+                    trackingChart = null;
+                }
+                // Retirer l'état actif de tous les boutons
+                allButtons.forEach(btn => btn.classList.remove('active'));
+                activeChartType = null;
+            } else {
+                // Retirer l'état actif de tous les boutons
+                allButtons.forEach(btn => btn.classList.remove('active'));
+                // Ajouter l'état actif au bouton cliqué
+                const clickedBtn = document.querySelector(`.chart-toggle-btn[data-chart="${type}"]`);
+                if (clickedBtn) clickedBtn.classList.add('active');
+                // Afficher le graphique
+                activeChartType = type;
+                showChart(type);
             }
         }
 
@@ -11614,41 +12542,53 @@ Solutions possibles :
             setTimeout(() => container.remove(), 8000);
         }
 
-        // ===== STREAK COUNTER =====
+        // ===== STREAK COUNTER (based on achieving calorie goal) =====
         function calculateStreak() {
-            const trackingData = JSON.parse(localStorage.getItem('trackingData') || '[]');
             const allDailyMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            const macroTargets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const targetCalories = macroTargets.calories || 0;
 
-            // Combiner les dates de tracking et de repas
-            const trackedDates = new Set();
-            trackingData.forEach(t => trackedDates.add(t.date));
-            Object.keys(allDailyMeals).forEach(date => {
-                const meals = allDailyMeals[date];
-                const hasFood = Object.values(meals).some(m => m.foods && m.foods.length > 0);
-                if (hasFood) trackedDates.add(date);
+            // If no calorie target set, no streak possible
+            if (targetCalories === 0) return 0;
+
+            // Get dates where calorie goal was achieved (within 90-110% tolerance)
+            const achievedDates = new Set();
+            const tolerance = 0.10; // 10% tolerance
+
+            Object.entries(allDailyMeals).forEach(([date, meals]) => {
+                let totalCalories = 0;
+                ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
+                    if (meals[mealType] && meals[mealType].foods) {
+                        totalCalories += meals[mealType].foods.reduce((sum, f) => sum + (f.calories || 0), 0);
+                    }
+                });
+
+                // Check if within tolerance (90% to 110% of target)
+                const minCal = targetCalories * (1 - tolerance);
+                const maxCal = targetCalories * (1 + tolerance);
+                if (totalCalories >= minCal && totalCalories <= maxCal) {
+                    achievedDates.add(date);
+                }
             });
 
-            if (trackedDates.size === 0) return 0;
+            if (achievedDates.size === 0) return 0;
 
-            // Trier les dates
-            const sortedDates = Array.from(trackedDates).sort().reverse();
-
-            // Calculer le streak depuis aujourd'hui
+            // Calculate streak from today/yesterday
             const today = getDateKey(new Date());
             const yesterday = getDateKey(new Date(Date.now() - 86400000));
 
-            // Vérifier si le streak est actif (aujourd'hui ou hier)
-            if (!trackedDates.has(today) && !trackedDates.has(yesterday)) return 0;
+            // Check if streak is active (today or yesterday)
+            if (!achievedDates.has(today) && !achievedDates.has(yesterday)) return 0;
 
             let streak = 0;
             let checkDate = new Date();
 
-            // Si pas de données aujourd'hui, commencer à hier
-            if (!trackedDates.has(today)) {
+            // If no achievement today, start from yesterday
+            if (!achievedDates.has(today)) {
                 checkDate = new Date(Date.now() - 86400000);
             }
 
-            while (trackedDates.has(getDateKey(checkDate))) {
+            while (achievedDates.has(getDateKey(checkDate))) {
                 streak++;
                 checkDate = new Date(checkDate.getTime() - 86400000);
             }
@@ -11666,13 +12606,13 @@ Solutions possibles :
             }
 
             if (!streakEl) {
-                // Créer l'élément dans le header
-                const header = document.querySelector('#main-app header');
-                if (header) {
-                    streakEl = document.createElement('div');
+                // Insert after the title, not overlapping username
+                const headerTitle = document.querySelector('.header-title');
+                if (headerTitle) {
+                    streakEl = document.createElement('span');
                     streakEl.id = 'streak-display';
-                    streakEl.style.cssText = 'position: absolute; top: 20px; left: 20px;';
-                    header.appendChild(streakEl);
+                    streakEl.style.cssText = 'margin-left: var(--space-md);';
+                    headerTitle.appendChild(streakEl);
                 }
             }
 
