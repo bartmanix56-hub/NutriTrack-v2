@@ -1067,10 +1067,11 @@
             object-fit: contain;
             filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.35));
             transition: transform 0.3s ease, filter 0.3s ease;
+            transform: rotate(-8deg);
         }
 
         .home-image-container:hover .home-food-image {
-            transform: scale(1.03);
+            transform: rotate(-8deg) scale(1.03);
             filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.4));
         }
 
@@ -2393,6 +2394,11 @@
                 padding: var(--space-md) !important;
                 margin-bottom: var(--space-sm) !important;
                 border: 1px solid rgba(255,255,255,0.05) !important;
+                cursor: default !important;
+            }
+
+            #foodDatabase .food-item:hover {
+                transform: none !important;
             }
 
             #foodDatabase .food-item .food-name {
@@ -4110,7 +4116,7 @@
                             </button>
                             <button class="home-btn-ghost" onclick="switchToTab('meals')">
                                 <i data-lucide="utensils"></i>
-                                Logger un repas
+                                Entrer un repas
                             </button>
                         </div>
                     </div>
@@ -5225,7 +5231,6 @@
                         <button class="btn-secondary btn chart-toggle-btn" data-chart="weight" onclick="toggleChart('weight')">Poids</button>
                         <button class="btn-secondary btn chart-toggle-btn" data-chart="bodyfat" onclick="toggleChart('bodyfat')">Graisse</button>
                         <button class="btn-secondary btn chart-toggle-btn" data-chart="muscle" onclick="toggleChart('muscle')">Muscle</button>
-                        <button class="btn-secondary btn chart-toggle-btn" data-chart="imc" onclick="toggleChart('imc')">IMC</button>
                         <button class="btn-secondary btn chart-toggle-btn" data-chart="water" onclick="toggleChart('water')">Eau</button>
                         <button class="btn-secondary btn chart-toggle-btn" data-chart="bone" onclick="toggleChart('bone')">Masse Osseuse</button>
                         <button class="btn-secondary btn chart-toggle-btn" data-chart="proteinPct" onclick="toggleChart('proteinPct')">Protéines</button>
@@ -5753,7 +5758,7 @@
                             <div style="display: flex; align-items: center; justify-content: space-between;">
                                 <div style="flex: 1;">
                                     <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: var(--space-xs);">Rappel quotidien</div>
-                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Recevoir un rappel pour logger tes repas</div></div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Recevoir un rappel pour entrer tes repas</div></div>
                                 <label style="position: relative; display: inline-block; width: 50px; height: 26px; cursor: pointer;">
                                     <input type="checkbox" id="notification-daily" style="opacity: 0; width: 0; height: 0;">
                                     <span class="switch-bg"></span>
@@ -7648,7 +7653,7 @@ Solutions possibles :
 
             const quantity = parseFloat(document.getElementById('modal-quantity')?.value) || 100;
 
-            dailyMeals[currentMealType].push({
+            dailyMeals[currentMealType].foods.push({
                 ...food,
                 id: Date.now(),
                 quantity: quantity
@@ -9519,7 +9524,7 @@ Solutions possibles :
             const quantity = parseFloat(document.getElementById('modal-quantity').value) || 100;
             food.quantity = quantity;
 
-            dailyMeals[currentMealType].push({
+            dailyMeals[currentMealType].foods.push({
                 ...food,
                 id: Date.now(),
                 quantity: quantity
@@ -9583,7 +9588,7 @@ Solutions possibles :
             }
         }
 
-        // ===== PLANNING ÉDITABLE =====
+        // ===== PLANNING AMÉLIORÉ =====
         const origRenderPlan = renderWeeklyPlan;
         renderWeeklyPlan = function() {
             const weekStart = new Date(currentWeekStart);
@@ -9609,8 +9614,9 @@ Solutions possibles :
                 const date = new Date(weekStart);
                 date.setDate(date.getDate() + index);
                 date.setHours(0, 0, 0, 0);
-                const dateKey = getDateKey(date); // Utilise la date locale, pas UTC
-                const dayPlan = weeklyPlan[dateKey] || { breakfast: 'Non planifié', lunch: 'Non planifié', snack: 'Non planifié', dinner: 'Non planifié' };
+                const dateKey = getDateKey(date);
+                // Utiliser getDayPlanFromMeals pour lire directement depuis allDailyMeals
+                const dayPlan = getDayPlanFromMeals(dateKey);
                 const isToday = date.getTime() === today.getTime();
 
                 return `
@@ -9620,16 +9626,17 @@ Solutions possibles :
                         <div class="day-meals">
                             <div class="day-meal-item">
                                 <div class="day-meal-label">☀️ Petit-déjeuner</div>
-                                <div class="day-meal-foods" contenteditable="true" onblur="savePlanMeal('${dateKey}', 'breakfast', this.textContent)">${dayPlan.breakfast}</div></div>
+                                <div class="day-meal-foods">${dayPlan.breakfast}</div></div>
                             <div class="day-meal-item">
                                 <div class="day-meal-label"><i data-lucide="utensils" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Déjeuner</div>
-                                <div class="day-meal-foods" contenteditable="true" onblur="savePlanMeal('${dateKey}', 'lunch', this.textContent)">${dayPlan.lunch}</div></div>
+                                <div class="day-meal-foods">${dayPlan.lunch}</div></div>
                             <div class="day-meal-item">
                                 <div class="day-meal-label">🍎 Goûter</div>
-                                <div class="day-meal-foods" contenteditable="true" onblur="savePlanMeal('${dateKey}', 'snack', this.textContent)">${dayPlan.snack}</div></div>
+                                <div class="day-meal-foods">${dayPlan.snack}</div></div>
                             <div class="day-meal-item">
                                 <div class="day-meal-label">🌙 Dîner</div>
-                                <div class="day-meal-foods" contenteditable="true" onblur="savePlanMeal('${dateKey}', 'dinner', this.textContent)">${dayPlan.dinner}</div></div></div></div>
+                                <div class="day-meal-foods">${dayPlan.dinner}</div></div></div>
+                        <div class="day-total-cal">${dayPlan.totalCal} kcal</div></div>
                 `;
             }).join('');
 
@@ -11771,18 +11778,58 @@ Solutions possibles :
 
     <!-- Landing Page -->
     <!-- HOMEPAGE PROFESSIONNELLE -->
-    <div id="landing-page" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: var(--bg-primary); z-index: 10000; overflow-y: auto; -webkit-overflow-scrolling: touch; overflow-x: hidden;">
+    <div id="landing-page" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #0a2f23 0%, #0d3d2d 30%, #115c42 60%, #0a2f23 100%); z-index: 10000; overflow-y: auto; -webkit-overflow-scrolling: touch; overflow-x: hidden;">
+
+        <!-- Floating Food Elements Background -->
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 0;">
+            <!-- Broccoli Left -->
+            <div style="position: absolute; top: 15%; left: 3%; font-size: 5rem; opacity: 0.85; transform: rotate(-15deg); animation: floatSlow 8s ease-in-out infinite;">🥦</div>
+            <!-- Avocado -->
+            <div style="position: absolute; top: 35%; left: 8%; font-size: 4rem; opacity: 0.8; transform: rotate(10deg); animation: floatMedium 7s ease-in-out infinite 1s;">🥑</div>
+            <!-- Grapes Left -->
+            <div style="position: absolute; top: 60%; left: 2%; font-size: 3.5rem; opacity: 0.75; transform: rotate(-5deg); animation: floatSlow 9s ease-in-out infinite 2s;">🍇</div>
+            <!-- Chicken Right -->
+            <div style="position: absolute; top: 20%; right: 5%; font-size: 4.5rem; opacity: 0.85; transform: rotate(15deg) scaleX(-1); animation: floatMedium 6s ease-in-out infinite;">🍗</div>
+            <!-- Salad Bowl Right -->
+            <div style="position: absolute; top: 50%; right: 3%; font-size: 4rem; opacity: 0.8; transform: rotate(-10deg); animation: floatSlow 10s ease-in-out infinite 1.5s;">🥗</div>
+            <!-- Tomato -->
+            <div style="position: absolute; top: 75%; right: 8%; font-size: 3rem; opacity: 0.7; animation: floatMedium 7s ease-in-out infinite 3s;">🍅</div>
+            <!-- Carrot -->
+            <div style="position: absolute; top: 10%; left: 20%; font-size: 2.5rem; opacity: 0.6; transform: rotate(25deg); animation: floatSlow 11s ease-in-out infinite 2s;">🥕</div>
+            <!-- Apple -->
+            <div style="position: absolute; top: 80%; left: 15%; font-size: 2.5rem; opacity: 0.6; animation: floatMedium 8s ease-in-out infinite 4s;">🍎</div>
+            <!-- Egg -->
+            <div style="position: absolute; top: 5%; right: 18%; font-size: 2rem; opacity: 0.5; animation: floatSlow 9s ease-in-out infinite 1s;">🥚</div>
+            <!-- Leafy Green -->
+            <div style="position: absolute; top: 85%; right: 20%; font-size: 2.5rem; opacity: 0.6; transform: rotate(-20deg); animation: floatMedium 7s ease-in-out infinite 2.5s;">🥬</div>
+        </div>
+
+        <style>
+            @keyframes floatSlow {
+                0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+                50% { transform: translateY(-15px) rotate(var(--r, 0deg)); }
+            }
+            @keyframes floatMedium {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-20px); }
+            }
+        </style>
 
         <!-- Navigation fixe -->
-        <nav style="position: sticky; top: 0; z-index: 100; background: rgba(18, 18, 18, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+        <nav style="position: sticky; top: 0; z-index: 100; background: rgba(10, 47, 35, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
             <div style="max-width: 1200px; margin: 0 auto; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <img src="logo.svg" alt="NutriTrack" style="height: 32px; width: auto;">
-                    <span style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">NutriTrack</span>
-                </div></div>
+                    <span style="font-size: 1.5rem; font-weight: 700; color: white;">NutriTrack</span>
+                </div>
+                <button onclick="loginWithGoogleFromLanding()" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.25); cursor: pointer; background: rgba(255, 255, 255, 0.1); color: white; transition: all 0.2s ease;">
+                    <i data-lucide="user" style="width: 18px; height: 18px;"></i>
+                    Connexion
+                </button>
+            </div>
         </nav>
 
-        <div style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1;">
 
             <!-- HERO SECTION -->
             <section style="padding: 120px 0 80px; text-align: center;">
@@ -11796,30 +11843,30 @@ Solutions possibles :
                         </span>
                     </div></div>
 
-                <h1 style="font-size: 3.5rem; font-weight: 900; color: var(--text-primary); margin: 0 auto 24px; max-width: 900px; line-height: 1.1; letter-spacing: -1px;">
-                    Prends le contrôle de ton <span style="color: var(--accent-ui);">alimentation</span>
+                <h1 style="font-size: 3.5rem; font-weight: 900; color: white; margin: 0 auto 24px; max-width: 900px; line-height: 1.1; letter-spacing: -1px;">
+                    Prends le contrôle de ton <span style="color: #4ade80;">alimentation</span>
                 </h1>
 
-                <p style="font-size: 1.25rem; color: var(--text-secondary); margin: 0 auto 48px; max-width: 700px; line-height: 1.6;">
+                <p style="font-size: 1.25rem; color: rgba(255, 255, 255, 0.8); margin: 0 auto 48px; max-width: 700px; line-height: 1.6;">
                     NutriTrack t'aide à calculer tes besoins, suivre tes repas et atteindre tes objectifs nutritionnels. Simple, précis, et respectueux de ta vie privée.
                 </p>
 
                 <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-                    <button onclick="startTutorial()" style="padding: 18px 36px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: none; cursor: pointer; background: var(--accent-ui); color: white; transition: all 0.2s ease; ">
+                    <button onclick="startTutorial()" style="padding: 18px 36px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: none; cursor: pointer; background: #10b981; color: white; transition: all 0.2s ease;">
                         <i data-lucide="rocket" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i>
                         Commencer dès maintenant
                     </button>
-                    <button id="landing-install-btn" onclick="installPWA()" style="display: none; padding: 18px 36px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: 2px solid var(--accent-main); cursor: pointer; background: transparent; color: var(--accent-main); transition: all 0.2s ease;">
+                    <button id="landing-install-btn" onclick="installPWA()" style="display: none; padding: 18px 36px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: 2px solid #10b981; cursor: pointer; background: transparent; color: #10b981; transition: all 0.2s ease;">
                         <i data-lucide="download" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i>
                         Installer l'app
                     </button>
-                    <button onclick="skipToApp()" style="padding: 18px 36px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: 2px solid rgba(255, 255, 255, 0.15); cursor: pointer; background: transparent; color: var(--text-primary); transition: all 0.2s ease;">
+                    <button onclick="skipToApp()" style="padding: 18px 36px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: 2px solid rgba(255, 255, 255, 0.25); cursor: pointer; background: rgba(255, 255, 255, 0.1); color: white; transition: all 0.2s ease;">
                         <i data-lucide="skip-forward" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i>
                         Passer le tutoriel
                     </button>
                 </div>
 
-                <p style="text-align: center; font-size: 0.85rem; color: var(--text-secondary); margin-top: 32px; opacity: 0.7;">
+                <p style="text-align: center; font-size: 0.85rem; color: rgba(255, 255, 255, 0.6); margin-top: 32px;">
                     Aucune inscription obligatoire • Cloud optionnel (Plus → Paramètres) • Fonctionne hors ligne
                 </p>
 
@@ -12296,6 +12343,16 @@ Solutions possibles :
             document.documentElement.style.overflow = '';
             localStorage.setItem('hasSeenLanding', 'true');
             setTimeout(() => initV2(), 0);
+        }
+
+        // Login with Google from landing page
+        function loginWithGoogleFromLanding() {
+            // Call the Firebase sign in function
+            if (typeof window.firebaseSignIn === 'function') {
+                window.firebaseSignIn();
+            } else {
+                showToast('<i data-lucide="info" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Connexion bientôt disponible');
+            }
         }
 
         // Close tutorial and go to app
