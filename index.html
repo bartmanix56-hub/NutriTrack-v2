@@ -8873,20 +8873,28 @@ Solutions possibles :
             `).join('');
         }
 
+        // Debounce pour éviter trop d'appels Firestore
+        let searchTimeout = null;
         foodDbSearch.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
+            const query = e.target.value.trim();
 
-            // Commencer par filtrer par catégorie
-            let filtered = currentCategory === 'all' ? foodDatabase : foodDatabase.filter(food => food.category === currentCategory);
+            // Annuler le timeout précédent
+            if (searchTimeout) clearTimeout(searchTimeout);
 
-            // Puis appliquer le filtre de recherche
-            if (query.length > 0) {
-                filtered = filtered.filter(food =>
-                    food.name.toLowerCase().includes(query)
-                );
+            // Si query courte, filtrer localement immédiatement
+            if (query.length <= 3 && !/^\d+$/.test(query)) {
+                let filtered = currentCategory === 'all' ? foodDatabase : foodDatabase.filter(food => food.category === currentCategory);
+                if (query.length > 0) {
+                    filtered = filtered.filter(food => food.name.toLowerCase().includes(query.toLowerCase()));
+                }
+                renderFoodDatabase(filtered);
+                return;
             }
 
-            renderFoodDatabase(filtered);
+            // Pour les queries plus longues ou codes-barres, attendre 300ms puis chercher dans Firestore
+            searchTimeout = setTimeout(() => {
+                filterFoodDatabase(); // Cette fonction cherche dans Firestore !
+            }, 300);
         });
 
         // Close modal when clicking outside
