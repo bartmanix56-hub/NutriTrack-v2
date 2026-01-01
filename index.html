@@ -8873,20 +8873,28 @@ Solutions possibles :
             `).join('');
         }
 
+        // Debounce pour éviter trop d'appels Firestore
+        let searchTimeout = null;
         foodDbSearch.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
+            const query = e.target.value.trim();
 
-            // Commencer par filtrer par catégorie
-            let filtered = currentCategory === 'all' ? foodDatabase : foodDatabase.filter(food => food.category === currentCategory);
+            // Annuler le timeout précédent
+            if (searchTimeout) clearTimeout(searchTimeout);
 
-            // Puis appliquer le filtre de recherche
-            if (query.length > 0) {
-                filtered = filtered.filter(food =>
-                    food.name.toLowerCase().includes(query)
-                );
+            // Si query courte, filtrer localement immédiatement
+            if (query.length <= 3 && !/^\d+$/.test(query)) {
+                let filtered = currentCategory === 'all' ? foodDatabase : foodDatabase.filter(food => food.category === currentCategory);
+                if (query.length > 0) {
+                    filtered = filtered.filter(food => food.name.toLowerCase().includes(query.toLowerCase()));
+                }
+                renderFoodDatabase(filtered);
+                return;
             }
 
-            renderFoodDatabase(filtered);
+            // Pour les queries plus longues ou codes-barres, attendre 300ms puis chercher dans Firestore
+            searchTimeout = setTimeout(() => {
+                filterFoodDatabase(); // Cette fonction cherche dans Firestore !
+            }, 300);
         });
 
         // Close modal when clicking outside
@@ -9443,20 +9451,14 @@ Solutions possibles :
                 return;
             }
 
-            // Vérifier si un aliment avec ce nom existe déjà LOCALEMENT
-            const existingFood = customFoods.find(f => f.name.toLowerCase() === name.toLowerCase());
-            if (existingFood) {
-                customAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nom déjà utilisé', 'Un aliment avec ce nom existe déjà dans ta base.').then(() => {});
-                return;
-            }
-
             if (!calories || calories === 0)  { calories = Math.round(protein * 4 + carbs * 4 + fat * 9); }
 
-            // Récupérer le code-barres AVANT de le reset
+            // Récupérer le code-barres et la source
             const barcode = window.pendingBarcode || null;
             const productSource = window.pendingProductSource || null;
 
-            console.log('💾 [saveNewFood] Barcode à sauvegarder:', barcode);
+            console.log('💾 [saveNewFood] Barcode:', barcode);
+            console.log('💾 [saveNewFood] Source:', productSource);
 
             const newFood = {
                 name,
@@ -9466,53 +9468,66 @@ Solutions possibles :
                 fat,
                 fiber,
                 calories,
-                category,
-                custom: true
+                category
             };
 
-            // Ajouter le code-barres si disponible
             if (barcode) {
                 newFood.barcode = barcode;
-                console.log('💾 [saveNewFood] Barcode ajouté à newFood:', newFood.barcode);
             }
 
-            // Ajouter à la base locale
-            customFoods.push(newFood);
-            if (!foodDatabase.find(f => f.name === newFood.name)) {
-                foodDatabase.push(newFood);
+            let toastMessage = '';
+
+            // === CAS 1: Produit venant de Firestore (déjà dans la base communautaire) ===
+            if (productSource === 'firestore') {
+                console.log('💾 [saveNewFood] Produit Firestore - PAS de sauvegarde locale');
+
+                // Mettre à jour Firestore si modifications
+                if (barcode && typeof window.saveToAlimentsCommuns === 'function') {
+                    const saved = await window.saveToAlimentsCommuns(newFood);
+                    if (saved) {
+                        toastMessage = '<i data-lucide="database" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' (base communautaire)';
+                    }
+                } else {
+                    toastMessage = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' prêt !';
+                }
             }
-            localStorage.setItem('customFoods', JSON.stringify(customFoods));
-            console.log('💾 [saveNewFood] Sauvegardé localement');
+            // === CAS 2: Produit d'OpenFoodFacts ou saisie manuelle ===
+            else {
+                console.log('💾 [saveNewFood] Nouveau produit - sauvegarde locale + Firestore');
 
-            // Message par défaut
-            let toastMessage = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à ta base';
+                // Vérifier doublon local
+                const existingFood = customFoods.find(f => f.name.toLowerCase() === name.toLowerCase());
+                if (existingFood) {
+                    customAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nom déjà utilisé', 'Un aliment avec ce nom existe déjà dans ta base.').then(() => {});
+                    return;
+                }
 
-            // Sauvegarder dans Firestore aliments_communs si code-barres disponible
-            if (barcode) {
-                console.log('💾 [saveNewFood] Tentative sauvegarde Firestore...');
-                console.log('💾 [saveNewFood] saveToAlimentsCommuns existe?', typeof window.saveToAlimentsCommuns);
+                // Sauvegarder localement
+                newFood.custom = true;
+                customFoods.push(newFood);
+                if (!foodDatabase.find(f => f.name === newFood.name)) {
+                    foodDatabase.push(newFood);
+                }
+                localStorage.setItem('customFoods', JSON.stringify(customFoods));
+                console.log('💾 [saveNewFood] Sauvegardé localement');
 
-                if (typeof window.saveToAlimentsCommuns === 'function') {
+                toastMessage = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à ta base';
+
+                // Sauvegarder dans Firestore si code-barres
+                if (barcode && typeof window.saveToAlimentsCommuns === 'function') {
                     try {
                         const saved = await window.saveToAlimentsCommuns(newFood);
-                        console.log('💾 [saveNewFood] Résultat Firestore:', saved);
                         if (saved) {
-                            toastMessage = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à la base communautaire !';
-                            console.log('✅ [saveNewFood] Produit sauvegardé dans Firestore aliments_communs:', barcode);
-                        } else {
-                            console.log('❌ [saveNewFood] Échec sauvegarde Firestore');
+                            toastMessage = '<i data-lucide="cloud" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à la base communautaire !';
+                            console.log('✅ [saveNewFood] Sauvegardé dans Firestore:', barcode);
                         }
                     } catch (err) {
                         console.error('❌ [saveNewFood] Erreur Firestore:', err);
                     }
-                } else {
-                    console.log('❌ [saveNewFood] saveToAlimentsCommuns n\'existe pas encore');
                 }
-            } else {
-                console.log('💾 [saveNewFood] Pas de barcode, skip Firestore');
             }
 
-            // Reset les variables globales APRÈS avoir sauvegardé
+            // Reset
             window.pendingBarcode = null;
             window.pendingProductSource = null;
 
