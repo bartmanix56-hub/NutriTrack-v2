@@ -6873,6 +6873,18 @@
                 <button class="modal-close" onclick="closeAddFoodModal()">×</button>
                 <h2 class="modal-title">Ajouter un aliment Personnalisé</h2>
                 <p class="info-text" style="margin-bottom: var(--space-lg); font-size: 0.85rem;">Les champs marqués d'un astérisque (*) sont obligatoires</p>
+                <!-- Bouton Scanner Code-barres + Saisie manuelle -->
+                <div style="display: flex; gap: var(--space-sm); margin-bottom: var(--space-md);">
+                    <button type="button" class="btn" onclick="openBarcodeScannerFromAddModal()" style="flex: 1; background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.2);">
+                        <i data-lucide="scan-barcode" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Scanner
+                    </button>
+                    <div style="flex: 2; display: flex; gap: var(--space-xs);">
+                        <input type="text" id="manual-barcode-input" placeholder="Ou saisir code-barres" style="flex: 1; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                        <button type="button" class="btn" onclick="searchManualBarcode()" style="background: var(--accent-main); padding: var(--space-sm) var(--space-md);">
+                            <i data-lucide="search" style="width: 16px; height: 16px;"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="modal-body">
@@ -9325,6 +9337,9 @@ Solutions possibles :
             document.getElementById('new-food-fat').value = '';
             document.getElementById('new-food-fiber').value = '';
             document.getElementById('new-food-calories').value = '';
+            // Reset le champ de saisie manuelle de code-barres
+            const manualInput = document.getElementById('manual-barcode-input');
+            if (manualInput) manualInput.value = '';
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
             // Reset les variables globales du scanner
@@ -9470,6 +9485,105 @@ Solutions possibles :
         // ===== BARCODE SCANNER =====
         let html5QrCode = null;
         let scannerScannedBarcode = null;
+
+        // Ouvrir le scanner depuis le modal d'ajout d'aliment
+        function openBarcodeScannerFromAddModal() {
+            // Fermer le modal d'ajout d'abord
+            document.getElementById('addFoodModal').classList.remove('active');
+            // Puis ouvrir le scanner
+            openBarcodeScanner();
+        }
+
+        // Rechercher un code-barres saisi manuellement
+        async function searchManualBarcode() {
+            const input = document.getElementById('manual-barcode-input');
+            const barcode = input.value.trim();
+
+            if (!barcode) {
+                showToast('⚠️ Entre un code-barres');
+                return;
+            }
+
+            if (!/^\d+$/.test(barcode)) {
+                showToast('⚠️ Le code-barres doit contenir uniquement des chiffres');
+                return;
+            }
+
+            console.log('🔍 Recherche manuelle du code-barres:', barcode);
+            showToast('🔍 Recherche en cours...');
+
+            const product = await searchProductByBarcode(barcode);
+
+            if (product) {
+                console.log('✅ Produit trouvé:', product.name);
+                // Vider l'input
+                input.value = '';
+                // Pré-remplir le formulaire (le modal est déjà ouvert)
+                preFillAddFoodModalInPlace(product, barcode);
+            } else {
+                console.log('❌ Produit non trouvé');
+                showToast('❌ Produit non trouvé pour ce code-barres');
+                // Stocker quand même le barcode pour l'ajout manuel
+                window.pendingBarcode = barcode;
+                window.pendingProductSource = 'manual';
+            }
+        }
+
+        // Pré-remplir le formulaire sans ouvrir le modal (déjà ouvert)
+        function preFillAddFoodModalInPlace(product, barcode) {
+            console.log('📝 Pré-remplissage formulaire avec produit:', product);
+
+            // Stocker le code-barres et la source
+            window.pendingBarcode = barcode;
+            window.pendingProductSource = product.source;
+
+            // Pré-remplir les champs
+            document.getElementById('new-food-name').value = product.name || '';
+            document.getElementById('new-food-protein').value = product.protein || '';
+            document.getElementById('new-food-carbs').value = product.carbs || '';
+            document.getElementById('new-food-fat').value = product.fat || '';
+            document.getElementById('new-food-fiber').value = product.fiber || '';
+            document.getElementById('new-food-calories').value = product.calories || '';
+            document.getElementById('manual-barcode-input').value = '';
+
+            // Sélectionner la catégorie UNIQUEMENT si source = firestore
+            const categorySelect = document.getElementById('new-food-category');
+            if (categorySelect) {
+                if (product.source === 'firestore' && product.category) {
+                    categorySelect.value = product.category;
+                } else {
+                    categorySelect.value = '';
+                }
+            }
+
+            // Afficher message selon la source
+            const modalBody = document.querySelector('#addFoodModal .modal-body');
+            if (modalBody) {
+                const oldMsg = modalBody.querySelector('.source-message');
+                if (oldMsg) oldMsg.remove();
+
+                const message = document.createElement('div');
+                message.className = 'source-message';
+                message.style.cssText = 'padding: var(--space-md); margin-bottom: var(--space-lg); border-radius: var(--radius-md); font-size: 0.9rem;';
+
+                if (product.source === 'firestore') {
+                    message.style.background = 'rgba(16, 185, 129, 0.1)';
+                    message.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                    message.style.color = 'var(--accent-main)';
+                    message.innerHTML = '<i data-lucide="database" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> <strong>Produit trouvé dans la base communautaire</strong>';
+                } else {
+                    message.style.background = 'rgba(251, 191, 36, 0.1)';
+                    message.style.border = '1px solid rgba(251, 191, 36, 0.3)';
+                    message.style.color = '#fbbf24';
+                    message.innerHTML = '<i data-lucide="globe" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> <strong>Données d\'Open Food Facts</strong><br><span style="font-size: 0.85rem;">Vérifie les macros et <strong>choisis une catégorie</strong> avant de valider.</span>';
+                }
+
+                modalBody.insertBefore(message, modalBody.firstChild);
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+
+            showToast('✅ Produit trouvé : ' + product.name);
+        }
 
         function openBarcodeScanner() {
             // Vérifier si HTTPS (requis pour caméra sur mobile)
