@@ -857,11 +857,12 @@
 
         #barcode-reader {
             width: 100%;
-            border-radius: var(--radius-lg);
+            border-radius: 20px;
+            overflow: hidden;
         }
 
         #barcode-reader video {
-            border-radius: var(--radius-lg);
+            border-radius: 20px;
         }
 
         .scanner-status {
@@ -9503,7 +9504,22 @@ Solutions possibles :
             // Utiliser la fonction globale exposée par le module Firebase
             if (typeof window.getAlimentFromFirestore === 'function') {
                 try {
-                    return await window.getAlimentFromFirestore(barcode);
+                    const data = await window.getAlimentFromFirestore(barcode);
+                    if (data) {
+                        // Mapper les champs Firestore (proteins/fats/fibers) vers les champs locaux (protein/fat/fiber)
+                        return {
+                            name: data.name,
+                            calories: parseFloat(data.calories) || 0,
+                            protein: parseFloat(data.proteins || data.protein) || 0,
+                            carbs: parseFloat(data.carbs) || 0,
+                            fat: parseFloat(data.fats || data.fat) || 0,
+                            fiber: parseFloat(data.fibers || data.fiber) || 0,
+                            category: data.category || 'autres',
+                            barcode: barcode,
+                            unit: '100g'
+                        };
+                    }
+                    return null;
                 } catch (err) {
                     console.log('Erreur Firestore:', err);
                     return null;
@@ -9644,7 +9660,7 @@ Solutions possibles :
                 fiber: parseFloat(product.fiber) || 0,
                 calories: parseFloat(product.calories) || 0,
                 barcode: barcode,
-                category: 'autres'
+                category: product.category || 'autres'
             };
 
             // Ajouter à la base locale si pas déjà présent
@@ -9710,7 +9726,7 @@ Solutions possibles :
             });
         }
 
-        function filterFoodDatabase() {
+        async function filterFoodDatabase() {
             const query = document.getElementById('foodDbSearch').value.toLowerCase().trim();
             const filter = document.getElementById('foodFilter').value;
             const sortBy = document.getElementById('foodSort').value;
@@ -9724,6 +9740,42 @@ Solutions possibles :
                 }
             });
             let allFoods = Array.from(foodMap.values());
+
+            // RECHERCHE FIRESTORE (si query > 3 caractères ou code-barres numérique)
+            if (query && (query.length > 3 || /^\d+$/.test(query))) {
+                if (typeof window.searchAlimentsCommuns === 'function') {
+                    try {
+                        const firestoreResults = await window.searchAlimentsCommuns(query);
+
+                        // Convertir les résultats Firestore au format local et les ajouter
+                        firestoreResults.forEach(item => {
+                            const foodItem = {
+                                name: item.name,
+                                calories: parseFloat(item.calories) || 0,
+                                protein: parseFloat(item.proteins || item.protein) || 0,
+                                carbs: parseFloat(item.carbs) || 0,
+                                fat: parseFloat(item.fats || item.fat) || 0,
+                                fiber: parseFloat(item.fibers || item.fiber) || 0,
+                                category: item.category || 'autres',
+                                barcode: item.barcode || item.id,
+                                unit: '100g',
+                                custom: false,
+                                fromFirestore: true // Marquer comme provenant de Firestore
+                            };
+
+                            // Ajouter uniquement si pas déjà présent (éviter doublons)
+                            if (!foodMap.has(foodItem.name)) {
+                                foodMap.set(foodItem.name, foodItem);
+                            }
+                        });
+
+                        // Reconstruire allFoods avec les résultats Firestore
+                        allFoods = Array.from(foodMap.values());
+                    } catch (err) {
+                        console.log('Erreur recherche Firestore:', err);
+                    }
+                }
+            }
 
             // Filtrer
             let filtered = allFoods;
@@ -9781,8 +9833,9 @@ Solutions possibles :
                             return `
                                 <div class="food-item" data-food-index="${globalIndex}" style="background: rgba(0, 0, 0, 0.2);">
                                     <div>
-                                        <div class="food-name">${food.name} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''}</div>
+                                        <div class="food-name">${food.name} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''} ${food.fromFirestore ? '<i data-lucide="cloud" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-ui);"></i>' : ''}</div>
                                         ${food.custom ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Personnalisé</span>' : ''}
+                                        ${food.fromFirestore ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Base communautaire</span>' : ''}
                                     </div>
                                     <div class="food-macros">
                                         <span><div class="label">Prot</div><div class="value" style="color: var(--accent-protein)">${food.protein}g</div></span>
@@ -9810,8 +9863,9 @@ Solutions possibles :
                     return `
                         <div class="food-item" data-food-index="${globalIndex}">
                             <div>
-                                <div class="food-name">${food.name} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''}</div>
+                                <div class="food-name">${food.name} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''} ${food.fromFirestore ? '<i data-lucide="cloud" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-ui);"></i>' : ''}</div>
                                 ${food.custom ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Personnalisé</span>' : ''}
+                                ${food.fromFirestore ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Base communautaire</span>' : ''}
                             </div>
                             <div class="food-macros">
                                 <span><div class="label">Prot</div><div class="value" style="color: var(--accent-protein)">${food.protein}g</div></span>
@@ -13283,7 +13337,7 @@ Solutions possibles :
 
         const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
         const { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-        const { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection, query, getDocs, limit } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
 
         const firebaseConfig = {
             apiKey: "AIzaSyCL2SvQ2c784ZyA2Pr-Qtv2F1wnnDByGkc",
@@ -13317,8 +13371,57 @@ Solutions possibles :
             }
         };
 
+        // Fonction pour rechercher des aliments dans Firestore par texte
+        window.searchAlimentsCommuns = async function(searchText) {
+            try {
+                // Si c'est un code-barres numérique, chercher par ID de document
+                if (/^\d+$/.test(searchText)) {
+                    const result = await window.getAlimentFromFirestore(searchText);
+                    if (result) {
+                        return [{
+                            ...result,
+                            barcode: searchText,
+                            id: searchText
+                        }];
+                    }
+                    return [];
+                }
+
+                // Sinon, faire une recherche textuelle (limité à 20 résultats)
+                const q = query(collection(db, 'aliments_communs'), limit(20));
+                const querySnapshot = await getDocs(q);
+
+                const results = [];
+                const searchLower = searchText.toLowerCase();
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // Filtrer côté client par nom
+                    if (data.name && data.name.toLowerCase().includes(searchLower)) {
+                        results.push({
+                            ...data,
+                            barcode: doc.id,
+                            id: doc.id
+                        });
+                    }
+                });
+
+                return results;
+            } catch (error) {
+                console.error('Erreur recherche aliments_communs:', error);
+                return [];
+            }
+        };
+
         // Fonction pour sauvegarder un aliment dans la base partagée Firestore
         window.saveToAlimentsCommuns = async function(food) {
+            // Vérifier que l'utilisateur est connecté
+            if (!auth.currentUser) {
+                console.log('Utilisateur non connecté, impossible de sauvegarder dans aliments_communs');
+                showToast('⚠️ Connecte-toi pour sauvegarder dans la base communautaire');
+                return false;
+            }
+
             if (!food.barcode) {
                 console.log('Pas de code-barres, skip save to aliments_communs');
                 return false;
@@ -13329,12 +13432,13 @@ Solutions possibles :
                 const alimentData = {
                     name: String(food.name || 'Sans nom'),
                     calories: parseFloat(food.calories) || 0,
-                    protein: parseFloat(food.protein) || 0,
+                    proteins: parseFloat(food.protein) || 0,
                     carbs: parseFloat(food.carbs) || 0,
-                    fat: parseFloat(food.fat) || 0,
-                    fiber: parseFloat(food.fiber) || 0,
+                    fats: parseFloat(food.fat) || 0,
+                    fibers: parseFloat(food.fiber) || 0,
+                    category: String(food.category || 'autres'),
                     barcode: String(food.barcode),
-                    unit: '100g',
+                    unit: 'g',
                     updatedAt: serverTimestamp()
                 };
 
@@ -13346,6 +13450,7 @@ Solutions possibles :
                 return true;
             } catch (error) {
                 console.error('Erreur sauvegarde aliments_communs:', error);
+                showToast('❌ Erreur lors de la sauvegarde dans la base communautaire');
                 return false;
             }
         };
