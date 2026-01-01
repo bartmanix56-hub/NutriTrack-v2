@@ -9455,14 +9455,9 @@ Solutions possibles :
             if (scannerScannedBarcode === decodedText) return;
             scannerScannedBarcode = decodedText;
 
-            console.log('Code-barres scanné:', decodedText);
+            console.log('📷 Code détecté:', decodedText);
 
-            // Arrêter le scanner
-            if (html5QrCode) {
-                await html5QrCode.stop().catch(() => {});
-            }
-
-            // Afficher l'état de recherche
+            // Afficher l'état de recherche (AVANT d'arrêter le scanner pour éviter écran noir)
             const scannerContainer = document.getElementById('scanner-container');
             const scannerResult = document.getElementById('scanner-result');
 
@@ -9478,30 +9473,44 @@ Solutions possibles :
             if (typeof lucide !== 'undefined') lucide.createIcons();
 
             // Recherche en cascade : Firestore → Open Food Facts
+            console.log('🔍 Début recherche cascade Firestore → Open Food Facts');
             const product = await searchProductByBarcode(decodedText);
 
+            // Arrêter le scanner APRÈS le traitement (évite écran noir)
+            if (html5QrCode) {
+                console.log('⏹️ Arrêt du scanner');
+                await html5QrCode.stop().catch(() => {});
+            }
+
             if (product) {
+                console.log('✅ Produit trouvé, affichage des détails');
                 displayScannedProduct(product, decodedText);
             } else {
+                console.log('❌ Produit non trouvé');
                 displayProductNotFound(decodedText);
             }
         }
 
         async function searchProductByBarcode(barcode) {
+            console.log('🔍 [1/2] Recherche dans Firestore aliments_communs...');
             // Priorité 1: Chercher dans Firestore aliments_communs
             const firestoreProduct = await searchFirestoreAliments(barcode);
             if (firestoreProduct) {
-                console.log('Produit trouvé dans Firestore:', firestoreProduct);
+                console.log('✅ [1/2] Produit trouvé dans Firestore:', firestoreProduct.name);
                 return { ...firestoreProduct, source: 'firestore' };
             }
+            console.log('⏭️ [1/2] Non trouvé dans Firestore, passage à Open Food Facts...');
 
+            console.log('🔍 [2/2] Recherche dans Open Food Facts API...');
             // Priorité 2: Chercher dans Open Food Facts
             const offProduct = await searchOpenFoodFacts(barcode);
             if (offProduct) {
-                console.log('Produit trouvé dans Open Food Facts:', offProduct);
+                console.log('✅ [2/2] Produit trouvé dans Open Food Facts:', offProduct.name);
                 return { ...offProduct, source: 'openfoodfacts' };
             }
+            console.log('❌ [2/2] Non trouvé dans Open Food Facts');
 
+            console.log('💀 Aucune source n\'a retourné de résultat pour ce code-barres');
             return null;
         }
 
@@ -9646,7 +9655,33 @@ Solutions possibles :
             closeBarcodeScanner();
             // Stocker le code-barres pour l'associer au nouvel aliment
             window.pendingBarcode = barcode;
+
+            // Si on a un produit scanné avec des données (de Firestore ou OFF), pré-remplir le formulaire
+            const scannedProduct = window.lastScannedProduct;
+
             openAddFoodModal();
+
+            // Pré-remplir les champs avec les données du scan (si disponibles)
+            if (scannedProduct) {
+                console.log('📝 Pré-remplissage formulaire avec:', scannedProduct);
+
+                setTimeout(() => {
+                    document.getElementById('new-food-name').value = scannedProduct.name || '';
+                    document.getElementById('new-food-protein').value = scannedProduct.protein || '';
+                    document.getElementById('new-food-carbs').value = scannedProduct.carbs || '';
+                    document.getElementById('new-food-fat').value = scannedProduct.fat || '';
+                    document.getElementById('new-food-fiber').value = scannedProduct.fiber || '';
+                    document.getElementById('new-food-calories').value = scannedProduct.calories || '';
+
+                    // FORCER la catégorie si elle existe, sinon "autres"
+                    const categorySelect = document.getElementById('new-food-category');
+                    if (categorySelect) {
+                        const category = scannedProduct.category || 'autres';
+                        categorySelect.value = category;
+                        console.log('✅ Catégorie forcée à:', category);
+                    }
+                }, 100); // Petit délai pour s'assurer que le modal est ouvert
+            }
         }
 
         function addScannedProductToMeal(barcode) {
@@ -9749,7 +9784,41 @@ Solutions possibles :
             // RECHERCHE FIRESTORE (si query > 3 caractères ou code-barres numérique)
             if (query && (query.length > 3 || /^\d+$/.test(query))) {
                 console.log('🔥 Déclenchement recherche Firestore depuis filterFoodDatabase');
-                if (typeof window.searchAlimentsCommuns === 'function') {
+
+                // Si c'est un code-barres numérique, recherche DIRECTE par ID de document
+                if (/^\d+$/.test(query) && typeof window.getAlimentFromFirestore === 'function') {
+                    console.log('📊 Recherche DIRECTE par code-barres ID:', query);
+                    try {
+                        const directResult = await window.getAlimentFromFirestore(query);
+                        if (directResult) {
+                            console.log('✅ Trouvé par recherche directe:', directResult);
+                            const foodItem = {
+                                name: directResult.name,
+                                calories: parseFloat(directResult.calories) || 0,
+                                protein: parseFloat(directResult.proteins || directResult.protein) || 0,
+                                carbs: parseFloat(directResult.carbs) || 0,
+                                fat: parseFloat(directResult.fats || directResult.fat) || 0,
+                                fiber: parseFloat(directResult.fibers || directResult.fiber) || 0,
+                                category: directResult.category || 'autres',
+                                barcode: query,
+                                unit: '100g',
+                                custom: false,
+                                fromFirestore: true
+                            };
+
+                            if (!foodMap.has(foodItem.name)) {
+                                foodMap.set(foodItem.name, foodItem);
+                                allFoods = Array.from(foodMap.values());
+                            }
+                        } else {
+                            console.log('❌ Code-barres non trouvé par recherche directe');
+                        }
+                    } catch (err) {
+                        console.error('❌ Erreur recherche directe code-barres:', err);
+                    }
+                }
+                // Sinon recherche textuelle classique
+                else if (typeof window.searchAlimentsCommuns === 'function') {
                     try {
                         const firestoreResults = await window.searchAlimentsCommuns(query);
                         console.log('📦 Résultats Firestore reçus:', firestoreResults.length);
@@ -13467,6 +13536,19 @@ Solutions possibles :
             console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             return results;
         };
+
+        // 🚀 AUTO-TEST au chargement pour vérifier connexion Firestore
+        setTimeout(() => {
+            if (typeof window.testFirestoreSearch === 'function') {
+                console.log('\n🚀 AUTO-TEST Firestore au chargement de la page...\n');
+                // Test avec un code-barres connu (Nutella)
+                window.testFirestoreSearch('3017620422003').then(() => {
+                    console.log('\n✅ Auto-test terminé. Firebase est prêt !\n');
+                }).catch(err => {
+                    console.error('❌ Auto-test échoué:', err);
+                });
+            }
+        }, 2000); // Attendre 2s que Firebase soit complètement chargé
 
         // Fonction pour sauvegarder un aliment dans la base partagée Firestore
         window.saveToAlimentsCommuns = async function(food) {
