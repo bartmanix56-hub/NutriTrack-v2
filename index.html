@@ -9327,7 +9327,65 @@ Solutions possibles :
             document.documentElement.style.overflow = '';
         }
 
-        function saveNewFood() {
+        // Fonction pour pré-remplir le formulaire après scan
+        function preFillAddFoodModal(product, barcode) {
+            console.log('📝 Pré-remplissage formulaire avec produit:', product);
+
+            // Stocker le code-barres et la source
+            window.pendingBarcode = barcode;
+            window.pendingProductSource = product.source; // 'firestore' ou 'openfoodfacts'
+
+            // Ouvrir le modal
+            openAddFoodModal();
+
+            // Pré-remplir les champs (timeout pour s'assurer que le modal est ouvert)
+            setTimeout(() => {
+                document.getElementById('new-food-name').value = product.name || '';
+                document.getElementById('new-food-protein').value = product.protein || '';
+                document.getElementById('new-food-carbs').value = product.carbs || '';
+                document.getElementById('new-food-fat').value = product.fat || '';
+                document.getElementById('new-food-fiber').value = product.fiber || '';
+                document.getElementById('new-food-calories').value = product.calories || '';
+
+                // Sélectionner la catégorie
+                const categorySelect = document.getElementById('new-food-category');
+                if (categorySelect && product.category) {
+                    categorySelect.value = product.category;
+                }
+
+                // Afficher message selon la source
+                const modalBody = document.querySelector('#addFoodModal .modal-body');
+                if (modalBody) {
+                    // Supprimer ancien message si existe
+                    const oldMsg = modalBody.querySelector('.source-message');
+                    if (oldMsg) oldMsg.remove();
+
+                    // Ajouter nouveau message
+                    const message = document.createElement('div');
+                    message.className = 'source-message';
+                    message.style.cssText = 'padding: var(--space-md); margin-bottom: var(--space-lg); border-radius: var(--radius-md); font-size: 0.9rem;';
+
+                    if (product.source === 'firestore') {
+                        message.style.background = 'rgba(16, 185, 129, 0.1)';
+                        message.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                        message.style.color = 'var(--accent-main)';
+                        message.innerHTML = '<i data-lucide="database" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> <strong>Produit trouvé dans la base communautaire</strong>';
+                    } else {
+                        message.style.background = 'rgba(251, 191, 36, 0.1)';
+                        message.style.border = '1px solid rgba(251, 191, 36, 0.3)';
+                        message.style.color = '#fbbf24';
+                        message.innerHTML = '<i data-lucide="globe" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> <strong>Données d\'Open Food Facts</strong><br><span style="font-size: 0.85rem;">Vérifie les macros avant de valider. En validant, ce produit sera ajouté à la base communautaire.</span>';
+                    }
+
+                    modalBody.insertBefore(message, modalBody.firstChild);
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                }
+
+                console.log('✅ Formulaire pré-rempli avec succès');
+            }, 100);
+        }
+
+        async function saveNewFood() {
             const name = document.getElementById('new-food-name').value.trim();
             const category = document.getElementById('new-food-category').value;
             const protein = parseFloat(document.getElementById('new-food-protein').value) || 0;
@@ -9366,12 +9424,24 @@ Solutions possibles :
 
             closeAddFoodModal();
             filterFoodDatabase();
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à ta base');
+
+            // Message différent selon la source
+            const wasFromOFF = window.pendingProductSource === 'openfoodfacts';
+            let toastMessage = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à ta base';
 
             // Sauvegarder dans Firestore aliments_communs si code-barres disponible
             if (typeof window.saveToAlimentsCommuns === 'function' && newFood.barcode) {
-                window.saveToAlimentsCommuns(newFood);
+                const saved = await window.saveToAlimentsCommuns(newFood);
+                if (saved && wasFromOFF) {
+                    toastMessage = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à ta base ET à la base communautaire !';
+                    console.log('✅ Produit d\'OFF sauvegardé dans Firestore pour tous les utilisateurs');
+                }
             }
+
+            showToast(toastMessage);
+
+            // Reset source
+            window.pendingProductSource = null;
         }
 
         // ===== BARCODE SCANNER =====
@@ -9424,27 +9494,38 @@ Solutions possibles :
 
                 const config = {
                     fps: 10,
-                    qrbox: { width: 250, height: 150 },
-                    aspectRatio: 1.5,
+                    qrbox: { width: 250, height: 250 },
+                    aspectRatio: 1.0,
+                    // Désactiver le beep
+                    disableFlip: false,
+                    // Config pour codes-barres (pas QR codes)
+                    experimentalFeatures: {
+                        useBarCodeDetectorIfSupported: true
+                    },
+                    // Formats de codes-barres alimentaires
                     formatsToSupport: [
-                        Html5QrcodeSupportedFormats.EAN_13,
-                        Html5QrcodeSupportedFormats.EAN_8,
-                        Html5QrcodeSupportedFormats.UPC_A,
-                        Html5QrcodeSupportedFormats.UPC_E,
-                        Html5QrcodeSupportedFormats.CODE_128
+                        Html5QrcodeSupportedFormats.EAN_13,  // Le plus courant (13 chiffres)
+                        Html5QrcodeSupportedFormats.EAN_8,   // 8 chiffres
+                        Html5QrcodeSupportedFormats.UPC_A,   // USA/Canada
+                        Html5QrcodeSupportedFormats.UPC_E,   // USA/Canada compact
+                        Html5QrcodeSupportedFormats.CODE_128 // Autres
                     ]
                 };
+
+                console.log('🎥 Démarrage scanner avec config:', config);
 
                 await html5QrCode.start(
                     { facingMode: 'environment' },
                     config,
                     onBarcodeScanned,
                     (errorMessage) => {
-                        // Ignorer les erreurs de scan en continu
+                        // Ignorer les erreurs de scan en continu (ne pas polluer la console)
                     }
                 );
+
+                console.log('✅ Scanner démarré avec succès');
             } catch (err) {
-                console.error('Erreur démarrage scanner:', err);
+                console.error('❌ Erreur démarrage scanner:', err);
                 showToast('<i data-lucide="camera-off" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Impossible d\'accéder à la caméra');
                 closeBarcodeScanner();
             }
@@ -9455,9 +9536,9 @@ Solutions possibles :
             if (scannerScannedBarcode === decodedText) return;
             scannerScannedBarcode = decodedText;
 
-            console.log('📷 Code détecté:', decodedText);
+            console.log('📷 Code-barres détecté:', decodedText);
 
-            // Afficher l'état de recherche (AVANT d'arrêter le scanner pour éviter écran noir)
+            // Afficher loader
             const scannerContainer = document.getElementById('scanner-container');
             const scannerResult = document.getElementById('scanner-result');
 
@@ -9476,18 +9557,22 @@ Solutions possibles :
             console.log('🔍 Début recherche cascade Firestore → Open Food Facts');
             const product = await searchProductByBarcode(decodedText);
 
-            // Arrêter le scanner APRÈS le traitement (évite écran noir)
+            // Arrêter le scanner
             if (html5QrCode) {
                 console.log('⏹️ Arrêt du scanner');
                 await html5QrCode.stop().catch(() => {});
             }
 
+            // Fermer le modal scanner
+            closeBarcodeScanner();
+
             if (product) {
-                console.log('✅ Produit trouvé, affichage des détails');
-                displayScannedProduct(product, decodedText);
+                console.log('✅ Produit trouvé, pré-remplissage formulaire');
+                // Pré-remplir le formulaire d'ajout d'aliment
+                preFillAddFoodModal(product, decodedText);
             } else {
-                console.log('❌ Produit non trouvé');
-                displayProductNotFound(decodedText);
+                console.log('❌ Produit non trouvé dans aucune source');
+                showToast('❌ Produit non trouvé. Code-barres : ' + decodedText);
             }
         }
 
