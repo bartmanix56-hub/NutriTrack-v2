@@ -5918,13 +5918,19 @@
                             </div>
 
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-bottom: var(--space-md);">
-                                <button onclick="firebaseForceSync()" class="btn" style="background: var(--accent-ui); color: white; display: flex; align-items: center; justify-content: center; gap: var(--space-xs);">
-                                    <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i>
-                                    Sync maintenant
+                                <button onclick="firebaseForceSync()" class="btn" style="background: var(--accent-ui); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: var(--space-md);" title="Envoie tes données locales vers le cloud">
+                                    <div style="display: flex; align-items: center; gap: var(--space-xs);">
+                                        <i data-lucide="upload-cloud" style="width: 18px; height: 18px;"></i>
+                                        <span style="font-weight: 600;">Sauvegarder</span>
+                                    </div>
+                                    <span style="font-size: 0.7rem; opacity: 0.8;">Envoyer vers le cloud</span>
                                 </button>
-                                <button onclick="firebaseRestoreFromCloud()" class="btn" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; gap: var(--space-xs);">
-                                    <i data-lucide="download-cloud" style="width: 16px; height: 16px;"></i>
-                                    Restaurer
+                                <button onclick="firebaseRestoreFromCloud()" class="btn" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: var(--space-md);" title="Récupère tes données depuis le cloud (écrase les données locales)">
+                                    <div style="display: flex; align-items: center; gap: var(--space-xs);">
+                                        <i data-lucide="download-cloud" style="width: 18px; height: 18px;"></i>
+                                        <span style="font-weight: 600;">Récupérer</span>
+                                    </div>
+                                    <span style="font-size: 0.7rem; opacity: 0.7;">Télécharger depuis le cloud</span>
                                 </button>
                             </div>
 
@@ -11781,37 +11787,43 @@ Solutions possibles :
     <div id="landing-page" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #0a2f23 0%, #0d3d2d 30%, #115c42 60%, #0a2f23 100%); z-index: 10000; overflow-y: auto; -webkit-overflow-scrolling: touch; overflow-x: hidden;">
 
         <!-- Floating Food Elements Background -->
-        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 0;">
+        <div class="landing-floating-foods" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 0;">
             <!-- Broccoli Left -->
-            <div style="position: absolute; top: 15%; left: 3%; font-size: 5rem; opacity: 0.85; transform: rotate(-15deg); animation: floatSlow 8s ease-in-out infinite;">🥦</div>
+            <img src="assets/landing/broccoli.png" alt="" style="position: absolute; top: 15%; left: 3%; width: 120px; height: auto; opacity: 0.9; transform: rotate(-15deg); animation: floatSlow 8s ease-in-out infinite; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
             <!-- Avocado -->
-            <div style="position: absolute; top: 35%; left: 8%; font-size: 4rem; opacity: 0.8; transform: rotate(10deg); animation: floatMedium 7s ease-in-out infinite 1s;">🥑</div>
+            <img src="assets/landing/avocado.png" alt="" style="position: absolute; top: 35%; left: 8%; width: 100px; height: auto; opacity: 0.85; transform: rotate(10deg); animation: floatMedium 7s ease-in-out infinite 1s; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
             <!-- Grapes Left -->
-            <div style="position: absolute; top: 60%; left: 2%; font-size: 3.5rem; opacity: 0.75; transform: rotate(-5deg); animation: floatSlow 9s ease-in-out infinite 2s;">🍇</div>
+            <img src="assets/landing/grapes.png" alt="" style="position: absolute; top: 60%; left: 2%; width: 90px; height: auto; opacity: 0.8; transform: rotate(-5deg); animation: floatSlow 9s ease-in-out infinite 2s; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
             <!-- Chicken Right -->
-            <div style="position: absolute; top: 20%; right: 5%; font-size: 4.5rem; opacity: 0.85; transform: rotate(15deg) scaleX(-1); animation: floatMedium 6s ease-in-out infinite;">🍗</div>
+            <img src="assets/landing/chicken.png" alt="" style="position: absolute; top: 20%; right: 5%; width: 110px; height: auto; opacity: 0.9; transform: rotate(15deg) scaleX(-1); animation: floatMedium 6s ease-in-out infinite; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
             <!-- Salad Bowl Right -->
-            <div style="position: absolute; top: 50%; right: 3%; font-size: 4rem; opacity: 0.8; transform: rotate(-10deg); animation: floatSlow 10s ease-in-out infinite 1.5s;">🥗</div>
+            <img src="assets/landing/salad.png" alt="" style="position: absolute; top: 50%; right: 3%; width: 130px; height: auto; opacity: 0.85; transform: rotate(-10deg); animation: floatSlow 10s ease-in-out infinite 1.5s; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
             <!-- Tomato -->
-            <div style="position: absolute; top: 75%; right: 8%; font-size: 3rem; opacity: 0.7; animation: floatMedium 7s ease-in-out infinite 3s;">🍅</div>
+            <img src="assets/landing/tomato.png" alt="" style="position: absolute; top: 75%; right: 8%; width: 80px; height: auto; opacity: 0.8; animation: floatMedium 7s ease-in-out infinite 3s; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
             <!-- Carrot -->
-            <div style="position: absolute; top: 10%; left: 20%; font-size: 2.5rem; opacity: 0.6; transform: rotate(25deg); animation: floatSlow 11s ease-in-out infinite 2s;">🥕</div>
+            <img src="assets/landing/carrot.png" alt="" style="position: absolute; top: 10%; left: 20%; width: 70px; height: auto; opacity: 0.7; transform: rotate(25deg); animation: floatSlow 11s ease-in-out infinite 2s; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
             <!-- Apple -->
-            <div style="position: absolute; top: 80%; left: 15%; font-size: 2.5rem; opacity: 0.6; animation: floatMedium 8s ease-in-out infinite 4s;">🍎</div>
+            <img src="assets/landing/apple.png" alt="" style="position: absolute; top: 80%; left: 15%; width: 75px; height: auto; opacity: 0.7; animation: floatMedium 8s ease-in-out infinite 4s; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
             <!-- Egg -->
-            <div style="position: absolute; top: 5%; right: 18%; font-size: 2rem; opacity: 0.5; animation: floatSlow 9s ease-in-out infinite 1s;">🥚</div>
-            <!-- Leafy Green -->
-            <div style="position: absolute; top: 85%; right: 20%; font-size: 2.5rem; opacity: 0.6; transform: rotate(-20deg); animation: floatMedium 7s ease-in-out infinite 2.5s;">🥬</div>
+            <img src="assets/landing/egg.png" alt="" style="position: absolute; top: 5%; right: 18%; width: 60px; height: auto; opacity: 0.6; animation: floatSlow 9s ease-in-out infinite 1s; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
+            <!-- Lettuce -->
+            <img src="assets/landing/lettuce.png" alt="" style="position: absolute; top: 85%; right: 20%; width: 85px; height: auto; opacity: 0.7; transform: rotate(-20deg); animation: floatMedium 7s ease-in-out infinite 2.5s; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
         </div>
 
         <style>
             @keyframes floatSlow {
-                0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
-                50% { transform: translateY(-15px) rotate(var(--r, 0deg)); }
+                0%, 100% { transform: translateY(0) rotate(var(--r, -15deg)); }
+                50% { transform: translateY(-20px) rotate(var(--r, -15deg)); }
             }
             @keyframes floatMedium {
                 0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-20px); }
+                50% { transform: translateY(-25px); }
+            }
+            /* Cacher les images flottantes sur mobile pour performance */
+            @media (max-width: 768px) {
+                .landing-floating-foods img {
+                    display: none;
+                }
             }
         </style>
 
@@ -13123,21 +13135,53 @@ Solutions possibles :
         // ===== AUTH STATE LISTENER =====
         onAuthStateChanged(auth, (user) => {
             // Wait for DOM to be ready
-            const initUI = () => {
+            const initUI = async () => {
                 updateFirebaseUI(user);
                 if (user) {
-                    // Initial sync status
-                    loadFromFirestore(user).then(data => {
-                        if (data && data.lastSync) {
-                            const syncDate = new Date(data.lastSync).toLocaleString('fr-FR', {
-                                day: '2-digit',
-                                month: '2-digit',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            });
-                            updateSyncStatus(`Dernière sync: ${syncDate}`);
+                    // Check for new device scenario: local empty but cloud has data
+                    const cloudData = await loadFromFirestore(user);
+
+                    // Check if local data is essentially empty
+                    const hasLocalMeals = localStorage.getItem('allDailyMeals') &&
+                                          JSON.parse(localStorage.getItem('allDailyMeals') || '{}') &&
+                                          Object.keys(JSON.parse(localStorage.getItem('allDailyMeals') || '{}')).length > 0;
+                    const hasLocalTracking = localStorage.getItem('trackingData') &&
+                                             JSON.parse(localStorage.getItem('trackingData') || '[]').length > 0;
+                    const hasLocalData = hasLocalMeals || hasLocalTracking;
+
+                    if (cloudData && cloudData.lastSync) {
+                        const syncDate = new Date(cloudData.lastSync).toLocaleString('fr-FR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        updateSyncStatus(`Dernière sync: ${syncDate}`);
+
+                        // NEW DEVICE DETECTION: If no local data but cloud has data
+                        if (!hasLocalData && cloudData.allDailyMeals) {
+                            // Automatically propose to restore
+                            if (typeof customConfirm === 'function') {
+                                customConfirm(
+                                    'Données trouvées !',
+                                    `Des données ont été trouvées sur ton compte cloud (sync: ${syncDate}). Veux-tu les récupérer sur cet appareil ?`,
+                                    { confirmText: 'Oui, récupérer mes données', cancelText: 'Non, repartir de zéro', isDanger: false }
+                                ).then((restore) => {
+                                    if (restore) {
+                                        restoreDataFromCloud(cloudData);
+                                        if (typeof showToast === 'function') {
+                                            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données récupérées avec succès !');
+                                        }
+                                    } else {
+                                        // User wants fresh start - sync empty local to cloud
+                                        if (typeof showToast === 'function') {
+                                            showToast('<i data-lucide="info" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Tu repars de zéro sur cet appareil');
+                                        }
+                                    }
+                                });
+                            }
                         }
-                    });
+                    }
                 }
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             };
