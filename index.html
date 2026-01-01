@@ -6888,6 +6888,7 @@
                 <div class="input-group">
                     <label>Catégorie *</label>
                     <select id="new-food-category" style="width: 100%; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.95rem;">
+                        <option value="" disabled selected>-- Choisis une catégorie --</option>
                         <option value="proteines">🥩 Protéines</option>
                         <option value="feculents">🍚 Féculents</option>
                         <option value="legumes">🥬 Légumes</option>
@@ -9317,6 +9318,7 @@ Solutions possibles :
         function closeAddFoodModal() {
             document.getElementById('addFoodModal').classList.remove('active');
             document.getElementById('new-food-name').value = '';
+            document.getElementById('new-food-category').value = ''; // Reset catégorie
             document.getElementById('new-food-unit').value = '100g';
             document.getElementById('new-food-protein').value = '';
             document.getElementById('new-food-carbs').value = '';
@@ -9325,6 +9327,15 @@ Solutions possibles :
             document.getElementById('new-food-calories').value = '';
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
+            // Reset les variables globales du scanner
+            window.pendingBarcode = null;
+            window.pendingProductSource = null;
+            // Supprimer le message source s'il existe
+            const modalBody = document.querySelector('#addFoodModal .modal-body');
+            if (modalBody) {
+                const oldMsg = modalBody.querySelector('.source-message');
+                if (oldMsg) oldMsg.remove();
+            }
         }
 
         // Fonction pour pré-remplir le formulaire après scan
@@ -9347,10 +9358,15 @@ Solutions possibles :
                 document.getElementById('new-food-fiber').value = product.fiber || '';
                 document.getElementById('new-food-calories').value = product.calories || '';
 
-                // Sélectionner la catégorie
+                // Sélectionner la catégorie UNIQUEMENT si source = firestore (donc catégorie déjà validée)
                 const categorySelect = document.getElementById('new-food-category');
-                if (categorySelect && product.category) {
-                    categorySelect.value = product.category;
+                if (categorySelect) {
+                    if (product.source === 'firestore' && product.category) {
+                        categorySelect.value = product.category;
+                    } else {
+                        // Pour OpenFoodFacts, on force la sélection par l'utilisateur
+                        categorySelect.value = '';
+                    }
                 }
 
                 // Afficher message selon la source
@@ -9374,7 +9390,7 @@ Solutions possibles :
                         message.style.background = 'rgba(251, 191, 36, 0.1)';
                         message.style.border = '1px solid rgba(251, 191, 36, 0.3)';
                         message.style.color = '#fbbf24';
-                        message.innerHTML = '<i data-lucide="globe" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> <strong>Données d\'Open Food Facts</strong><br><span style="font-size: 0.85rem;">Vérifie les macros avant de valider. En validant, ce produit sera ajouté à la base communautaire.</span>';
+                        message.innerHTML = '<i data-lucide="globe" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> <strong>Données d\'Open Food Facts</strong><br><span style="font-size: 0.85rem;">Vérifie les macros et <strong>choisis une catégorie</strong> avant de valider. En validant, ce produit sera ajouté à la base communautaire.</span>';
                     }
 
                     modalBody.insertBefore(message, modalBody.firstChild);
@@ -9399,6 +9415,12 @@ Solutions possibles :
                 return;
             }
 
+            // Vérifier qu'une catégorie a été sélectionnée
+            if (!category) {
+                customAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Catégorie manquante', 'Veuillez choisir une catégorie pour l\'aliment.').then(() => {});
+                return;
+            }
+
             // Vérifier si un aliment avec ce nom existe déjà
             const existingFood = foodDatabase.find(f => f.name.toLowerCase() === name.toLowerCase());
             if (existingFood) {
@@ -9410,38 +9432,39 @@ Solutions possibles :
 
             // Unit is always 100g - récupérer le code-barres en attente s'il y en a un
             const barcode = window.pendingBarcode || null;
+            const productSource = window.pendingProductSource || null;
             const newFood = { name, unit: '100g', protein, carbs, fat, fiber, calories, category, custom: true };
 
             // Ajouter le code-barres si disponible
             if (barcode) {
                 newFood.barcode = barcode;
-                window.pendingBarcode = null; // Reset
             }
 
+            // Ajouter à la base locale
             customFoods.push(newFood);
             foodDatabase.push(newFood);
             localStorage.setItem('customFoods', JSON.stringify(customFoods));
 
-            closeAddFoodModal();
-            filterFoodDatabase();
-
-            // Message différent selon la source
-            const wasFromOFF = window.pendingProductSource === 'openfoodfacts';
+            // Message par défaut
             let toastMessage = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à ta base';
 
             // Sauvegarder dans Firestore aliments_communs si code-barres disponible
-            if (typeof window.saveToAlimentsCommuns === 'function' && newFood.barcode) {
+            // On sauvegarde même si c'est un produit Firestore (pour mettre à jour si l'utilisateur a modifié les valeurs)
+            if (typeof window.saveToAlimentsCommuns === 'function' && barcode) {
                 const saved = await window.saveToAlimentsCommuns(newFood);
-                if (saved && wasFromOFF) {
+                if (saved) {
                     toastMessage = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à ta base ET à la base communautaire !';
-                    console.log('✅ Produit d\'OFF sauvegardé dans Firestore pour tous les utilisateurs');
+                    console.log('✅ Produit sauvegardé dans Firestore aliments_communs:', barcode);
                 }
             }
 
-            showToast(toastMessage);
-
-            // Reset source
+            // Reset les variables globales AVANT de fermer le modal
+            window.pendingBarcode = null;
             window.pendingProductSource = null;
+
+            closeAddFoodModal();
+            filterFoodDatabase();
+            showToast(toastMessage);
         }
 
         // ===== BARCODE SCANNER =====
@@ -9661,166 +9684,6 @@ Solutions possibles :
             } catch (err) {
                 console.error('Erreur Open Food Facts:', err);
                 return null;
-            }
-        }
-
-        function displayScannedProduct(product, barcode) {
-            const scannerResult = document.getElementById('scanner-result');
-            const sourceLabel = product.source === 'firestore' ? 'Base NutriTrack' : 'Open Food Facts';
-            const sourceIcon = product.source === 'firestore' ? 'database' : 'globe';
-
-            scannerResult.innerHTML = `
-                <div class="scanned-product-card">
-                    <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm); color: var(--text-secondary); font-size: 0.8rem;">
-                        <i data-lucide="${sourceIcon}" style="width: 14px; height: 14px;"></i>
-                        <span>${sourceLabel}</span>
-                    </div>
-                    <h3>${product.name}</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: var(--space-md);">pour 100g</p>
-                    <div class="scanned-product-macros">
-                        <div class="macro-item">
-                            <div class="macro-value" style="color: var(--accent-main);">${Math.round(product.calories)}</div>
-                            <div class="macro-label">kcal</div>
-                        </div>
-                        <div class="macro-item">
-                            <div class="macro-value" style="color: var(--accent-protein);">${product.protein?.toFixed(1) || 0}</div>
-                            <div class="macro-label">Prot</div>
-                        </div>
-                        <div class="macro-item">
-                            <div class="macro-value" style="color: var(--accent-carbs);">${product.carbs?.toFixed(1) || 0}</div>
-                            <div class="macro-label">Gluc</div>
-                        </div>
-                        <div class="macro-item">
-                            <div class="macro-value" style="color: var(--accent-fat);">${product.fat?.toFixed(1) || 0}</div>
-                            <div class="macro-label">Lip</div>
-                        </div>
-                    </div>
-                    <div class="scanned-product-actions">
-                        <button class="btn" onclick="addScannedProductToMeal('${barcode}')" style="background: var(--accent-main); color: white;">
-                            <i data-lucide="plus" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Ajouter au repas
-                        </button>
-                        <button class="btn" onclick="closeBarcodeScanner()" style="background: var(--bg-tertiary); color: var(--text-primary);">
-                            Fermer
-                        </button>
-                    </div>
-                </div>
-            `;
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-
-            // Stocker le produit temporairement pour l'ajout
-            window.lastScannedProduct = product;
-        }
-
-        function displayProductNotFound(barcode) {
-            const scannerResult = document.getElementById('scanner-result');
-
-            scannerResult.innerHTML = `
-                <div style="text-align: center; padding: var(--space-lg);">
-                    <i data-lucide="package-x" style="width: 48px; height: 48px; color: var(--accent-danger); margin-bottom: var(--space-md);"></i>
-                    <h3 style="margin-bottom: var(--space-sm); color: var(--text-primary);">Produit non trouvé</h3>
-                    <p style="color: var(--text-secondary); margin-bottom: var(--space-lg); font-size: 0.9rem;">
-                        Ce produit n'existe pas encore dans notre base.<br>
-                        Tu peux l'ajouter manuellement !
-                    </p>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: var(--space-lg);">Code: ${barcode}</p>
-                    <div style="display: flex; gap: var(--space-sm);">
-                        <button class="btn" onclick="openManualAddFromScanner('${barcode}')" style="flex: 1; background: var(--accent-main); color: white;">
-                            <i data-lucide="plus" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Ajouter manuellement
-                        </button>
-                        <button class="btn" onclick="closeBarcodeScanner()" style="flex: 1; background: var(--bg-tertiary); color: var(--text-primary);">
-                            Annuler
-                        </button>
-                    </div>
-                </div>
-            `;
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-        }
-
-        function openManualAddFromScanner(barcode) {
-            closeBarcodeScanner();
-            // Stocker le code-barres pour l'associer au nouvel aliment
-            window.pendingBarcode = barcode;
-
-            // Si on a un produit scanné avec des données (de Firestore ou OFF), pré-remplir le formulaire
-            const scannedProduct = window.lastScannedProduct;
-
-            openAddFoodModal();
-
-            // Pré-remplir les champs avec les données du scan (si disponibles)
-            if (scannedProduct) {
-                console.log('📝 Pré-remplissage formulaire avec:', scannedProduct);
-
-                setTimeout(() => {
-                    document.getElementById('new-food-name').value = scannedProduct.name || '';
-                    document.getElementById('new-food-protein').value = scannedProduct.protein || '';
-                    document.getElementById('new-food-carbs').value = scannedProduct.carbs || '';
-                    document.getElementById('new-food-fat').value = scannedProduct.fat || '';
-                    document.getElementById('new-food-fiber').value = scannedProduct.fiber || '';
-                    document.getElementById('new-food-calories').value = scannedProduct.calories || '';
-
-                    // FORCER la catégorie si elle existe, sinon "autres"
-                    const categorySelect = document.getElementById('new-food-category');
-                    if (categorySelect) {
-                        const category = scannedProduct.category || 'autres';
-                        categorySelect.value = category;
-                        console.log('✅ Catégorie forcée à:', category);
-                    }
-                }, 100); // Petit délai pour s'assurer que le modal est ouvert
-            }
-        }
-
-        function addScannedProductToMeal(barcode) {
-            const product = window.lastScannedProduct;
-            if (!product) return;
-
-            closeBarcodeScanner();
-
-            // Créer l'objet aliment
-            const foodItem = {
-                name: product.name,
-                unit: '100g',
-                protein: parseFloat(product.protein) || 0,
-                carbs: parseFloat(product.carbs) || 0,
-                fat: parseFloat(product.fat) || 0,
-                fiber: parseFloat(product.fiber) || 0,
-                calories: parseFloat(product.calories) || 0,
-                barcode: barcode,
-                category: product.category || 'autres'
-            };
-
-            // Ajouter à la base locale si pas déjà présent
-            if (!foodDatabase.find(f => f.name === foodItem.name)) {
-                foodItem.custom = true;
-                customFoods.push(foodItem);
-                foodDatabase.push(foodItem);
-                localStorage.setItem('customFoods', JSON.stringify(customFoods));
-
-                // Sauvegarder dans Firestore aliments_communs
-                if (typeof window.saveToAlimentsCommuns === 'function') {
-                    window.saveToAlimentsCommuns(foodItem);
-                }
-            }
-
-            // Si un repas est sélectionné, ajouter directement
-            if (currentMealType) {
-                const quantity = 100; // Par défaut 100g
-                const scaledFood = {
-                    ...foodItem,
-                    quantity: quantity,
-                    protein: (foodItem.protein * quantity / 100),
-                    carbs: (foodItem.carbs * quantity / 100),
-                    fat: (foodItem.fat * quantity / 100),
-                    fiber: (foodItem.fiber * quantity / 100),
-                    calories: (foodItem.calories * quantity / 100)
-                };
-
-                dailyMeals[currentMealType].foods.push(scaledFood);
-                saveMeals();
-                renderMeals();
-                closeFoodModal();
-                showToast(`<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ${foodItem.name} ajouté`);
-            } else {
-                showToast(`<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ${foodItem.name} ajouté à ta base`);
             }
         }
 
