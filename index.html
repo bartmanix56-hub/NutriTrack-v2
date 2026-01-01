@@ -9355,14 +9355,17 @@ Solutions possibles :
 
         // Fonction pour pré-remplir le formulaire après scan
         function preFillAddFoodModal(product, barcode) {
-            console.log('📝 Pré-remplissage formulaire avec produit:', product);
+            console.log('📝 [preFillAddFoodModal] Produit:', product);
+            console.log('📝 [preFillAddFoodModal] Barcode reçu:', barcode);
 
-            // Stocker le code-barres et la source
+            // Stocker le code-barres et la source AVANT d'ouvrir le modal
             window.pendingBarcode = barcode;
             window.pendingProductSource = product.source; // 'firestore' ou 'openfoodfacts'
+            console.log('📝 [preFillAddFoodModal] pendingBarcode défini à:', window.pendingBarcode);
 
             // Ouvrir le modal
             openAddFoodModal();
+            console.log('📝 [preFillAddFoodModal] Modal ouvert');
 
             // Pré-remplir les champs (timeout pour s'assurer que le modal est ouvert)
             setTimeout(() => {
@@ -9425,6 +9428,10 @@ Solutions possibles :
             const fiber = parseFloat(document.getElementById('new-food-fiber').value) || 0;
             let calories = parseFloat(document.getElementById('new-food-calories').value);
 
+            console.log('💾 [saveNewFood] Début sauvegarde...');
+            console.log('💾 [saveNewFood] pendingBarcode:', window.pendingBarcode);
+            console.log('💾 [saveNewFood] pendingProductSource:', window.pendingProductSource);
+
             if (!name) {
                 customAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nom manquant', 'Veuillez entrer un nom pour l\'aliment.').then(() => {});
                 return;
@@ -9436,8 +9443,8 @@ Solutions possibles :
                 return;
             }
 
-            // Vérifier si un aliment avec ce nom existe déjà
-            const existingFood = foodDatabase.find(f => f.name.toLowerCase() === name.toLowerCase());
+            // Vérifier si un aliment avec ce nom existe déjà LOCALEMENT
+            const existingFood = customFoods.find(f => f.name.toLowerCase() === name.toLowerCase());
             if (existingFood) {
                 customAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nom déjà utilisé', 'Un aliment avec ce nom existe déjà dans ta base.').then(() => {});
                 return;
@@ -9445,35 +9452,67 @@ Solutions possibles :
 
             if (!calories || calories === 0)  { calories = Math.round(protein * 4 + carbs * 4 + fat * 9); }
 
-            // Unit is always 100g - récupérer le code-barres en attente s'il y en a un
+            // Récupérer le code-barres AVANT de le reset
             const barcode = window.pendingBarcode || null;
             const productSource = window.pendingProductSource || null;
-            const newFood = { name, unit: '100g', protein, carbs, fat, fiber, calories, category, custom: true };
+
+            console.log('💾 [saveNewFood] Barcode à sauvegarder:', barcode);
+
+            const newFood = {
+                name,
+                unit: '100g',
+                protein,
+                carbs,
+                fat,
+                fiber,
+                calories,
+                category,
+                custom: true
+            };
 
             // Ajouter le code-barres si disponible
             if (barcode) {
                 newFood.barcode = barcode;
+                console.log('💾 [saveNewFood] Barcode ajouté à newFood:', newFood.barcode);
             }
 
             // Ajouter à la base locale
             customFoods.push(newFood);
-            foodDatabase.push(newFood);
+            if (!foodDatabase.find(f => f.name === newFood.name)) {
+                foodDatabase.push(newFood);
+            }
             localStorage.setItem('customFoods', JSON.stringify(customFoods));
+            console.log('💾 [saveNewFood] Sauvegardé localement');
 
             // Message par défaut
             let toastMessage = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à ta base';
 
             // Sauvegarder dans Firestore aliments_communs si code-barres disponible
-            // On sauvegarde même si c'est un produit Firestore (pour mettre à jour si l'utilisateur a modifié les valeurs)
-            if (typeof window.saveToAlimentsCommuns === 'function' && barcode) {
-                const saved = await window.saveToAlimentsCommuns(newFood);
-                if (saved) {
-                    toastMessage = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à ta base ET à la base communautaire !';
-                    console.log('✅ Produit sauvegardé dans Firestore aliments_communs:', barcode);
+            if (barcode) {
+                console.log('💾 [saveNewFood] Tentative sauvegarde Firestore...');
+                console.log('💾 [saveNewFood] saveToAlimentsCommuns existe?', typeof window.saveToAlimentsCommuns);
+
+                if (typeof window.saveToAlimentsCommuns === 'function') {
+                    try {
+                        const saved = await window.saveToAlimentsCommuns(newFood);
+                        console.log('💾 [saveNewFood] Résultat Firestore:', saved);
+                        if (saved) {
+                            toastMessage = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à la base communautaire !';
+                            console.log('✅ [saveNewFood] Produit sauvegardé dans Firestore aliments_communs:', barcode);
+                        } else {
+                            console.log('❌ [saveNewFood] Échec sauvegarde Firestore');
+                        }
+                    } catch (err) {
+                        console.error('❌ [saveNewFood] Erreur Firestore:', err);
+                    }
+                } else {
+                    console.log('❌ [saveNewFood] saveToAlimentsCommuns n\'existe pas encore');
                 }
+            } else {
+                console.log('💾 [saveNewFood] Pas de barcode, skip Firestore');
             }
 
-            // Reset les variables globales AVANT de fermer le modal
+            // Reset les variables globales APRÈS avoir sauvegardé
             window.pendingBarcode = null;
             window.pendingProductSource = null;
 
@@ -9531,11 +9570,13 @@ Solutions possibles :
 
         // Pré-remplir le formulaire sans ouvrir le modal (déjà ouvert)
         function preFillAddFoodModalInPlace(product, barcode) {
-            console.log('📝 Pré-remplissage formulaire avec produit:', product);
+            console.log('📝 [preFillInPlace] Produit:', product);
+            console.log('📝 [preFillInPlace] Barcode reçu:', barcode);
 
             // Stocker le code-barres et la source
             window.pendingBarcode = barcode;
             window.pendingProductSource = product.source;
+            console.log('📝 [preFillInPlace] pendingBarcode défini à:', window.pendingBarcode);
 
             // Pré-remplir les champs
             document.getElementById('new-food-name').value = product.name || '';
@@ -13614,17 +13655,22 @@ Solutions possibles :
 
         // Fonction pour sauvegarder un aliment dans la base partagée Firestore
         window.saveToAlimentsCommuns = async function(food) {
+            console.log('🔥 [saveToAlimentsCommuns] Début sauvegarde Firestore');
+            console.log('🔥 [saveToAlimentsCommuns] Food reçu:', food);
+
             // Vérifier que l'utilisateur est connecté
             if (!auth.currentUser) {
-                console.log('Utilisateur non connecté, impossible de sauvegarder dans aliments_communs');
+                console.log('🔥 [saveToAlimentsCommuns] ❌ Utilisateur non connecté');
                 showToast('⚠️ Connecte-toi pour sauvegarder dans la base communautaire');
                 return false;
             }
+            console.log('🔥 [saveToAlimentsCommuns] ✅ Utilisateur connecté:', auth.currentUser.email);
 
             if (!food.barcode) {
-                console.log('Pas de code-barres, skip save to aliments_communs');
+                console.log('🔥 [saveToAlimentsCommuns] ❌ Pas de code-barres');
                 return false;
             }
+            console.log('🔥 [saveToAlimentsCommuns] ✅ Barcode:', food.barcode);
 
             try {
                 // Créer un objet léger avec les données essentielles (tous en Number)
@@ -13641,9 +13687,14 @@ Solutions possibles :
                     updatedAt: serverTimestamp()
                 };
 
+                console.log('🔥 [saveToAlimentsCommuns] Data à sauvegarder:', alimentData);
+
                 // Utiliser le code-barres comme ID du document
                 const docRef = doc(db, 'aliments_communs', food.barcode);
+                console.log('🔥 [saveToAlimentsCommuns] DocRef:', docRef.path);
+
                 await setDoc(docRef, alimentData, { merge: true });
+                console.log('🔥 [saveToAlimentsCommuns] ✅ Sauvegarde réussie !');
 
                 console.log('Aliment sauvegardé dans aliments_communs:', alimentData.name);
                 return true;
