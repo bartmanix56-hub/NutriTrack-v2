@@ -5182,7 +5182,12 @@
                 </div>
 
                 <div class="search-box">
-                    <input type="text" id="foodDbSearch" placeholder="Rechercher dans la base..." autocomplete="off">
+                    <div class="search-with-scanner">
+                        <input type="text" id="foodDbSearch" placeholder="Rechercher dans la base..." autocomplete="off">
+                        <button type="button" class="scanner-btn" onclick="openBarcodeScanner()" title="Scanner un code-barres">
+                            <i data-lucide="scan-barcode" style="width: 20px; height: 20px;"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="food-list" id="foodDatabase"></div></div></div>
@@ -9743,9 +9748,11 @@ Solutions possibles :
 
             // RECHERCHE FIRESTORE (si query > 3 caractères ou code-barres numérique)
             if (query && (query.length > 3 || /^\d+$/.test(query))) {
+                console.log('🔥 Déclenchement recherche Firestore depuis filterFoodDatabase');
                 if (typeof window.searchAlimentsCommuns === 'function') {
                     try {
                         const firestoreResults = await window.searchAlimentsCommuns(query);
+                        console.log('📦 Résultats Firestore reçus:', firestoreResults.length);
 
                         // Convertir les résultats Firestore au format local et les ajouter
                         firestoreResults.forEach(item => {
@@ -9772,8 +9779,10 @@ Solutions possibles :
                         // Reconstruire allFoods avec les résultats Firestore
                         allFoods = Array.from(foodMap.values());
                     } catch (err) {
-                        console.log('Erreur recherche Firestore:', err);
+                        console.error('❌ Erreur recherche Firestore:', err);
                     }
+                } else {
+                    console.warn('⚠️ searchAlimentsCommuns non disponible (Firebase non chargé?)');
                 }
             }
 
@@ -13374,27 +13383,35 @@ Solutions possibles :
         // Fonction pour rechercher des aliments dans Firestore par texte
         window.searchAlimentsCommuns = async function(searchText) {
             try {
+                console.log('🔍 Recherche Firestore:', searchText);
+
                 // Si c'est un code-barres numérique, chercher par ID de document
                 if (/^\d+$/.test(searchText)) {
+                    console.log('📊 Recherche par code-barres:', searchText);
                     const result = await window.getAlimentFromFirestore(searchText);
                     if (result) {
+                        console.log('✅ Trouvé dans Firestore:', result);
                         return [{
                             ...result,
                             barcode: searchText,
                             id: searchText
                         }];
                     }
+                    console.log('❌ Code-barres non trouvé dans Firestore');
                     return [];
                 }
 
-                // Sinon, faire une recherche textuelle (limité à 20 résultats)
-                const q = query(collection(db, 'aliments_communs'), limit(20));
+                // Sinon, faire une recherche textuelle (limité à 100 résultats pour meilleures chances)
+                console.log('📝 Recherche textuelle dans Firestore...');
+                const q = query(collection(db, 'aliments_communs'), limit(100));
                 const querySnapshot = await getDocs(q);
 
                 const results = [];
                 const searchLower = searchText.toLowerCase();
+                let totalDocs = 0;
 
                 querySnapshot.forEach((doc) => {
+                    totalDocs++;
                     const data = doc.data();
                     // Filtrer côté client par nom
                     if (data.name && data.name.toLowerCase().includes(searchLower)) {
@@ -13406,11 +13423,49 @@ Solutions possibles :
                     }
                 });
 
+                console.log(`📚 Recherche terminée: ${results.length} résultats trouvés sur ${totalDocs} documents scannés`);
+                if (results.length > 0) {
+                    console.log('✅ Résultats:', results.map(r => r.name));
+                }
+
                 return results;
             } catch (error) {
-                console.error('Erreur recherche aliments_communs:', error);
+                console.error('❌ Erreur recherche aliments_communs:', error);
                 return [];
             }
+        };
+
+        // 🧪 FONCTION DE TEST - Utilise dans la console: testFirestoreSearch("3017620422003") ou testFirestoreSearch("nutella")
+        window.testFirestoreSearch = async function(searchText) {
+            console.log('🧪 TEST FIRESTORE - Recherche:', searchText);
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+            if (!window.searchAlimentsCommuns) {
+                console.error('❌ searchAlimentsCommuns non disponible');
+                return;
+            }
+
+            const results = await window.searchAlimentsCommuns(searchText);
+
+            console.log('\n📊 RÉSULTATS:');
+            console.log(`   Total: ${results.length} aliment(s) trouvé(s)`);
+
+            if (results.length > 0) {
+                results.forEach((item, index) => {
+                    console.log(`\n   ${index + 1}. ${item.name}`);
+                    console.log(`      Code-barres: ${item.barcode || item.id}`);
+                    console.log(`      Calories: ${item.calories} kcal`);
+                    console.log(`      Protéines: ${item.proteins || item.protein}g`);
+                    console.log(`      Glucides: ${item.carbs}g`);
+                    console.log(`      Lipides: ${item.fats || item.fat}g`);
+                    console.log(`      Catégorie: ${item.category || 'non défini'}`);
+                });
+            } else {
+                console.log('   ❌ Aucun résultat trouvé');
+            }
+
+            console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            return results;
         };
 
         // Fonction pour sauvegarder un aliment dans la base partagée Firestore
