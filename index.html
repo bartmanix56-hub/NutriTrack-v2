@@ -3432,6 +3432,21 @@
             .tracking-compact-header {
                 padding: var(--space-sm) var(--space-md);
             }
+
+            /* Fix: Bouton ajouter un aliment aligné à droite sur mobile */
+            .food-db-header {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+            }
+            .food-db-header h2 {
+                flex: 0 1 auto;
+            }
+            .add-food-header-btn {
+                flex: 0 0 auto;
+                margin-left: auto;
+                font-size: 0.85rem !important;
+                padding: var(--space-sm) var(--space-md) !important;
+            }
         }
 
         /* Type 3: Bouton Ghost (minimal) */
@@ -5119,9 +5134,9 @@
                     </div></div></div>
 
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: var(--space-lg);">
-                    <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);"><i data-lucide="search" style="width: 22px; height: 22px;"></i><span>Rechercher</span></h2>
-                    <button class="btn" onclick="openAddFoodModal()" style="background: var(--accent-ui); color: white;"><i data-lucide="plus-circle" style="width: 18px; height: 18px;"></i> Ajouter un aliment</button>
+                <div class="food-db-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: var(--space-md);">
+                    <h2 style="font-size: 1.3rem; font-weight: 700; margin: 0; color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);"><i data-lucide="search" style="width: 22px; height: 22px;"></i><span>Rechercher</span></h2>
+                    <button class="btn add-food-header-btn" onclick="openAddFoodModal()" style="background: var(--accent-ui); color: white;"><i data-lucide="plus-circle" style="width: 18px; height: 18px;"></i> Ajouter un aliment</button>
                 </div>
                 <div style="margin-top: var(--space-md); margin-bottom: var(--space-xl); padding: var(--space-md); background: rgba(5, 150, 105, 0.1); border-radius: var(--radius-md); border-left: 3px solid var(--accent-ui);">
                     <div style="display: flex; align-items: start; gap: var(--space-sm);">
@@ -5182,12 +5197,7 @@
                 </div>
 
                 <div class="search-box">
-                    <div class="search-with-scanner">
-                        <input type="text" id="foodDbSearch" placeholder="Rechercher dans la base..." autocomplete="off">
-                        <button type="button" class="scanner-btn" onclick="openBarcodeScanner()" title="Scanner un code-barres">
-                            <i data-lucide="scan-barcode" style="width: 20px; height: 20px;"></i>
-                        </button>
-                    </div>
+                    <input type="text" id="foodDbSearch" placeholder="Rechercher dans la base..." autocomplete="off">
                 </div>
 
                 <div class="food-list" id="foodDatabase"></div></div></div>
@@ -7887,56 +7897,54 @@ Solutions possibles :
             if (modalSearchTimeout) clearTimeout(modalSearchTimeout);
 
             // Filtrer localement d'abord (résultats immédiats)
-            let filtered = foodDatabase.filter(food =>
+            let localResults = foodDatabase.filter(food =>
                 food.name.toLowerCase().includes(query)
-            ).slice(0, 15);
+            ).slice(0, 10);
 
             // Afficher les résultats locaux immédiatement
-            if (filtered.length > 0) {
-                renderModalSearchResults(filtered);
+            if (localResults.length > 0) {
+                renderModalSearchResults(localResults);
             }
 
-            // Si query > 3 caractères, chercher aussi dans Firestore (avec debounce)
-            if (query.length > 3 || /^\d+$/.test(query)) {
-                modalSearchTimeout = setTimeout(async () => {
-                    console.log('🔍 Recherche Firestore depuis modal repas:', query);
-                    if (typeof window.searchAlimentsCommuns === 'function') {
-                        try {
-                            const firestoreResults = await window.searchAlimentsCommuns(query);
-                            console.log('📦 Résultats Firestore modal:', firestoreResults.length);
+            // Chercher dans Firestore (avec debounce) - dès 2 caractères
+            modalSearchTimeout = setTimeout(async () => {
+                console.log('🔍 [QuickAdd] Recherche Firestore:', query);
+                if (typeof window.searchAlimentsCommuns === 'function') {
+                    try {
+                        const firestoreResults = await window.searchAlimentsCommuns(query);
+                        console.log('📦 [QuickAdd] Résultats Firestore:', firestoreResults.length);
 
-                            // Convertir et fusionner avec les résultats locaux
-                            const existingNames = new Set(filtered.map(f => f.name.toLowerCase()));
-                            firestoreResults.forEach(item => {
-                                if (!existingNames.has(item.name.toLowerCase())) {
-                                    filtered.push({
-                                        name: item.name,
-                                        calories: parseFloat(item.calories) || 0,
-                                        protein: parseFloat(item.proteins || item.protein) || 0,
-                                        carbs: parseFloat(item.carbs) || 0,
-                                        fat: parseFloat(item.fats || item.fat) || 0,
-                                        fiber: parseFloat(item.fibers || item.fiber) || 0,
-                                        category: item.category || 'autres',
-                                        barcode: item.barcode || item.id,
-                                        unit: '100g',
-                                        fromFirestore: true
-                                    });
-                                }
-                            });
+                        if (firestoreResults.length > 0) {
+                            // Convertir les résultats Firestore
+                            const firestoreFoods = firestoreResults.map(item => ({
+                                name: item.name,
+                                calories: parseFloat(item.calories) || 0,
+                                protein: parseFloat(item.proteins || item.protein) || 0,
+                                carbs: parseFloat(item.carbs) || 0,
+                                fat: parseFloat(item.fats || item.fat) || 0,
+                                fiber: parseFloat(item.fibers || item.fiber) || 0,
+                                category: item.category || 'autres',
+                                barcode: item.barcode || item.id,
+                                unit: '100g',
+                                fromFirestore: true
+                            }));
 
-                            if (filtered.length > 0) {
-                                renderModalSearchResults(filtered.slice(0, 15));
-                            }
-                        } catch (err) {
-                            console.error('❌ Erreur Firestore modal:', err);
+                            // Fusionner : Firestore en premier, puis local (sans doublons)
+                            const existingNames = new Set(firestoreFoods.map(f => f.name.toLowerCase()));
+                            const uniqueLocalResults = localResults.filter(f => !existingNames.has(f.name.toLowerCase()));
+                            const allResults = [...firestoreFoods, ...uniqueLocalResults].slice(0, 15);
+
+                            renderModalSearchResults(allResults);
+                        } else if (localResults.length > 0) {
+                            renderModalSearchResults(localResults);
+                        } else {
+                            modalSearchResults.style.display = 'none';
                         }
+                    } catch (err) {
+                        console.error('❌ [QuickAdd] Erreur Firestore:', err);
                     }
-                }, 300);
-            }
-
-            if (filtered.length === 0) {
-                modalSearchResults.style.display = 'none';
-            }
+                }
+            }, 300);
         });
 
         function renderModalSearchResults(foods) {
@@ -9427,7 +9435,11 @@ Solutions possibles :
 
             // Pré-remplir les champs (timeout pour s'assurer que le modal est ouvert)
             setTimeout(() => {
-                document.getElementById('new-food-name').value = product.name || '';
+                const nameInput = document.getElementById('new-food-name');
+                nameInput.value = product.name || '';
+                // Bloquer le changement de nom pour les produits OpenFoodFacts
+                nameInput.disabled = (product.source === 'openfoodfacts');
+
                 document.getElementById('new-food-protein').value = product.protein || '';
                 document.getElementById('new-food-carbs').value = product.carbs || '';
                 document.getElementById('new-food-fat').value = product.fat || '';
@@ -9644,7 +9656,11 @@ Solutions possibles :
             console.log('📝 [preFillInPlace] pendingBarcode défini à:', window.pendingBarcode);
 
             // Pré-remplir les champs
-            document.getElementById('new-food-name').value = product.name || '';
+            const nameInput = document.getElementById('new-food-name');
+            nameInput.value = product.name || '';
+            // Bloquer le changement de nom pour les produits OpenFoodFacts
+            nameInput.disabled = (product.source === 'openfoodfacts');
+
             document.getElementById('new-food-protein').value = product.protein || '';
             document.getElementById('new-food-carbs').value = product.carbs || '';
             document.getElementById('new-food-fat').value = product.fat || '';
@@ -9831,7 +9847,11 @@ Solutions possibles :
 
                     // Pré-remplir les champs
                     setTimeout(() => {
-                        document.getElementById('new-food-name').value = product.name || '';
+                        const nameInput = document.getElementById('new-food-name');
+                        nameInput.value = product.name || '';
+                        // Bloquer le changement de nom pour les produits OpenFoodFacts
+                        nameInput.disabled = (product.source === 'openfoodfacts');
+
                         document.getElementById('new-food-protein').value = product.protein || '';
                         document.getElementById('new-food-carbs').value = product.carbs || '';
                         document.getElementById('new-food-fat').value = product.fat || '';
