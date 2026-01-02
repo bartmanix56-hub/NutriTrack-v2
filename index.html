@@ -7975,6 +7975,9 @@ Solutions possibles :
         }
 
         function renderModalSearchResults(foods) {
+            const modalSearchResults = document.getElementById('modalSearchResults');
+            if (!modalSearchResults) return;
+
             modalSearchResults.innerHTML = foods.map(food => {
                 const displayName = (typeof getDisplayName === 'function') ? getDisplayName(food) : food.name;
                 return `
