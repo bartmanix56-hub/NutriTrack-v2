@@ -9779,43 +9779,112 @@ Solutions possibles :
             if (scannerScannedBarcode === decodedText) return;
             scannerScannedBarcode = decodedText;
 
-            console.log('📷 Code-barres détecté:', decodedText);
+            console.log('📷 [SCAN] Code-barres détecté:', decodedText);
 
-            // Afficher loader
-            const scannerContainer = document.getElementById('scanner-container');
-            const scannerResult = document.getElementById('scanner-result');
+            try {
+                // Afficher loader
+                const scannerContainer = document.getElementById('scanner-container');
+                const scannerResult = document.getElementById('scanner-result');
 
-            scannerContainer.style.display = 'none';
-            scannerResult.style.display = 'block';
-            scannerResult.innerHTML = `
-                <div class="scanner-result-content">
-                    <i data-lucide="loader" class="spinner" style="width: 32px; height: 32px;"></i>
-                    <p>Recherche du produit...</p>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Code: ${decodedText}</p>
-                </div>
-            `;
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+                scannerContainer.style.display = 'none';
+                scannerResult.style.display = 'block';
+                scannerResult.innerHTML = `
+                    <div class="scanner-result-content">
+                        <i data-lucide="loader" class="spinner" style="width: 32px; height: 32px;"></i>
+                        <p>Recherche du produit...</p>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">Code: ${decodedText}</p>
+                    </div>
+                `;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
 
-            // Recherche en cascade : Firestore → Open Food Facts
-            console.log('🔍 Début recherche cascade Firestore → Open Food Facts');
-            const product = await searchProductByBarcode(decodedText);
+                // Recherche en cascade : Firestore → Open Food Facts
+                console.log('📷 [SCAN] Début recherche...');
+                const product = await searchProductByBarcode(decodedText);
+                console.log('📷 [SCAN] Résultat recherche:', product);
 
-            // Arrêter le scanner
-            if (html5QrCode) {
-                console.log('⏹️ Arrêt du scanner');
-                await html5QrCode.stop().catch(() => {});
-            }
+                // Arrêter le scanner
+                if (html5QrCode) {
+                    console.log('📷 [SCAN] Arrêt du scanner');
+                    try {
+                        await html5QrCode.stop();
+                    } catch (e) {
+                        console.log('📷 [SCAN] Erreur arrêt scanner (ignorée):', e);
+                    }
+                }
 
-            // Fermer le modal scanner
-            closeBarcodeScanner();
+                // Fermer le modal scanner
+                const modal = document.getElementById('barcodeScannerModal');
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                console.log('📷 [SCAN] Modal scanner fermé');
 
-            if (product) {
-                console.log('✅ Produit trouvé, pré-remplissage formulaire');
-                // Pré-remplir le formulaire d'ajout d'aliment
-                preFillAddFoodModal(product, decodedText);
-            } else {
-                console.log('❌ Produit non trouvé dans aucune source');
-                showToast('❌ Produit non trouvé. Code-barres : ' + decodedText);
+                // Ouvrir le modal d'ajout avec les données
+                if (product) {
+                    console.log('📷 [SCAN] Produit trouvé, ouverture modal ajout');
+                    // Stocker les données AVANT d'ouvrir le modal
+                    window.pendingBarcode = decodedText;
+                    window.pendingProductSource = product.source;
+
+                    // Ouvrir le modal
+                    document.getElementById('addFoodModal').classList.add('active');
+                    document.body.style.overflow = 'hidden';
+
+                    // Pré-remplir les champs
+                    setTimeout(() => {
+                        document.getElementById('new-food-name').value = product.name || '';
+                        document.getElementById('new-food-protein').value = product.protein || '';
+                        document.getElementById('new-food-carbs').value = product.carbs || '';
+                        document.getElementById('new-food-fat').value = product.fat || '';
+                        document.getElementById('new-food-fiber').value = product.fiber || '';
+                        document.getElementById('new-food-calories').value = product.calories || '';
+                        document.getElementById('manual-barcode-input').value = '';
+
+                        // Catégorie
+                        const categorySelect = document.getElementById('new-food-category');
+                        if (product.source === 'firestore' && product.category) {
+                            categorySelect.value = product.category;
+                        } else {
+                            categorySelect.value = '';
+                        }
+
+                        // Message source
+                        const modalBody = document.querySelector('#addFoodModal .modal-body');
+                        const oldMsg = modalBody.querySelector('.source-message');
+                        if (oldMsg) oldMsg.remove();
+
+                        const message = document.createElement('div');
+                        message.className = 'source-message';
+                        message.style.cssText = 'padding: var(--space-md); margin-bottom: var(--space-lg); border-radius: var(--radius-md); font-size: 0.9rem;';
+
+                        if (product.source === 'firestore') {
+                            message.style.background = 'rgba(16, 185, 129, 0.1)';
+                            message.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                            message.style.color = 'var(--accent-main)';
+                            message.innerHTML = '✅ <strong>Produit trouvé dans la base communautaire</strong>';
+                        } else {
+                            message.style.background = 'rgba(251, 191, 36, 0.1)';
+                            message.style.border = '1px solid rgba(251, 191, 36, 0.3)';
+                            message.style.color = '#fbbf24';
+                            message.innerHTML = '🌐 <strong>Données Open Food Facts</strong><br><span style="font-size: 0.85rem;">Vérifie les macros et choisis une catégorie.</span>';
+                        }
+                        modalBody.insertBefore(message, modalBody.firstChild);
+
+                        console.log('📷 [SCAN] Formulaire pré-rempli avec:', product.name);
+                    }, 100);
+
+                    showToast('✅ Produit trouvé : ' + product.name);
+                } else {
+                    console.log('📷 [SCAN] Produit non trouvé');
+                    // Ouvrir quand même le modal avec le code-barres
+                    window.pendingBarcode = decodedText;
+                    window.pendingProductSource = 'manual';
+                    document.getElementById('addFoodModal').classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                    showToast('❌ Produit non trouvé - entre les macros manuellement');
+                }
+            } catch (err) {
+                console.error('📷 [SCAN] Erreur:', err);
+                showToast('❌ Erreur lors de la recherche');
             }
         }
 
