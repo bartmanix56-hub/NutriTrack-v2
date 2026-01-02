@@ -7874,7 +7874,8 @@ Solutions possibles :
         const modalFoodSearch = document.getElementById('modalFoodSearch');
         const modalSearchResults = document.getElementById('modalSearchResults');
 
-        modalFoodSearch.addEventListener('input', (e) => {
+        let modalSearchTimeout = null;
+        modalFoodSearch.addEventListener('input', async (e) => {
             const query = e.target.value.toLowerCase().trim();
 
             if (query.length < 2) {
@@ -7882,23 +7883,72 @@ Solutions possibles :
                 return;
             }
 
-            const filtered = foodDatabase.filter(food =>
+            // Annuler le timeout précédent
+            if (modalSearchTimeout) clearTimeout(modalSearchTimeout);
+
+            // Filtrer localement d'abord (résultats immédiats)
+            let filtered = foodDatabase.filter(food =>
                 food.name.toLowerCase().includes(query)
             ).slice(0, 15);
 
-            if (filtered.length === 0)  { modalSearchResults.style.display = 'none';
-                return; }
+            // Afficher les résultats locaux immédiatement
+            if (filtered.length > 0) {
+                renderModalSearchResults(filtered);
+            }
 
-            modalSearchResults.innerHTML = filtered.map(food => `
+            // Si query > 3 caractères, chercher aussi dans Firestore (avec debounce)
+            if (query.length > 3 || /^\d+$/.test(query)) {
+                modalSearchTimeout = setTimeout(async () => {
+                    console.log('🔍 Recherche Firestore depuis modal repas:', query);
+                    if (typeof window.searchAlimentsCommuns === 'function') {
+                        try {
+                            const firestoreResults = await window.searchAlimentsCommuns(query);
+                            console.log('📦 Résultats Firestore modal:', firestoreResults.length);
+
+                            // Convertir et fusionner avec les résultats locaux
+                            const existingNames = new Set(filtered.map(f => f.name.toLowerCase()));
+                            firestoreResults.forEach(item => {
+                                if (!existingNames.has(item.name.toLowerCase())) {
+                                    filtered.push({
+                                        name: item.name,
+                                        calories: parseFloat(item.calories) || 0,
+                                        protein: parseFloat(item.proteins || item.protein) || 0,
+                                        carbs: parseFloat(item.carbs) || 0,
+                                        fat: parseFloat(item.fats || item.fat) || 0,
+                                        fiber: parseFloat(item.fibers || item.fiber) || 0,
+                                        category: item.category || 'autres',
+                                        barcode: item.barcode || item.id,
+                                        unit: '100g',
+                                        fromFirestore: true
+                                    });
+                                }
+                            });
+
+                            if (filtered.length > 0) {
+                                renderModalSearchResults(filtered.slice(0, 15));
+                            }
+                        } catch (err) {
+                            console.error('❌ Erreur Firestore modal:', err);
+                        }
+                    }
+                }, 300);
+            }
+
+            if (filtered.length === 0) {
+                modalSearchResults.style.display = 'none';
+            }
+        });
+
+        function renderModalSearchResults(foods) {
+            modalSearchResults.innerHTML = foods.map(food => `
                 <div class="search-result-item" onclick='addFoodToMeal(${JSON.stringify(food).replace(/'/g, "&apos;")})'>
-                    <div class="search-result-name">${food.name}</div>
+                    <div class="search-result-name">${food.name}${food.fromFirestore ? ' <span style="color: var(--accent-main); font-size: 0.75rem;">☁️</span>' : ''}</div>
                     <div class="search-result-macros">
-                        P: ${food.protein}g • g: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
+                        P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
                     </div></div>
             `).join('');
-
             modalSearchResults.style.display = 'block';
-        });
+        }
 
         // Add food to specific meal
         function addFoodToMeal(food) {
