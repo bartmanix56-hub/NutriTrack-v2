@@ -8022,6 +8022,7 @@ Solutions possibles :
 
         // ===== QUICK ADD SYSTEM =====
         let favoriteFoods = [];
+        let quickAddTimeout = null; // Pour debounce Firestore
 
         function loadFavoriteFoods() {
             const saved = localStorage.getItem('favoriteFoods');
@@ -8033,11 +8034,16 @@ Solutions possibles :
         function handleQuickAddSearch(mealType, query) {
             const resultsDiv = document.getElementById(`quick-results-${mealType}`);
 
-            if (query.length < 2)  { resultsDiv.style.display = 'none';
-                return; }
+            if (query.length < 2)  {
+                resultsDiv.style.display = 'none';
+                return;
+            }
 
-            // Filter foods (favorites first, then alphabetical)
-            const filtered = foodDatabase
+            // Annuler le timeout précédent
+            if (quickAddTimeout) clearTimeout(quickAddTimeout);
+
+            // Filter foods localement d'abord (résultats immédiats)
+            const localFiltered = foodDatabase
                 .filter(food => food.name.toLowerCase().includes(query.toLowerCase()))
                 .sort((a, b) => {
                     const aFav = isFavorite(a.name);
@@ -8048,20 +8054,70 @@ Solutions possibles :
                 })
                 .slice(0, 8);
 
-            if (filtered.length === 0)  { resultsDiv.style.display = 'none';
-                return; }
+            // Afficher résultats locaux immédiatement
+            if (localFiltered.length > 0) {
+                renderQuickAddResults(mealType, localFiltered, resultsDiv);
+            }
 
-            resultsDiv.innerHTML = filtered.map(food => `
+            // Chercher dans Firestore avec debounce
+            quickAddTimeout = setTimeout(async () => {
+                if (typeof window.searchAlimentsCommuns === 'function') {
+                    try {
+                        const firestoreResults = await window.searchAlimentsCommuns(query);
+
+                        if (firestoreResults.length > 0) {
+                            // Convertir les résultats Firestore
+                            const firestoreFoods = firestoreResults.map(item => ({
+                                name: item.name,
+                                calories: parseFloat(item.calories) || 0,
+                                protein: parseFloat(item.proteins || item.protein) || 0,
+                                carbs: parseFloat(item.carbs) || 0,
+                                fat: parseFloat(item.fats || item.fat) || 0,
+                                fiber: parseFloat(item.fibers || item.fiber) || 0,
+                                category: item.category || 'autres',
+                                barcode: item.barcode || item.id,
+                                unit: '100g',
+                                fromFirestore: true
+                            }));
+
+                            // Fusionner : Firestore + local (sans doublons), favoris en premier
+                            const existingNames = new Set(firestoreFoods.map(f => f.name.toLowerCase()));
+                            const uniqueLocalResults = localFiltered.filter(f => !existingNames.has(f.name.toLowerCase()));
+                            const allResults = [...firestoreFoods, ...uniqueLocalResults]
+                                .sort((a, b) => {
+                                    const aFav = isFavorite(a.name);
+                                    const bFav = isFavorite(b.name);
+                                    if (aFav && !bFav) return -1;
+                                    if (!aFav && bFav) return 1;
+                                    return a.name.localeCompare(b.name);
+                                })
+                                .slice(0, 8);
+
+                            if (allResults.length > 0) {
+                                renderQuickAddResults(mealType, allResults, resultsDiv);
+                            }
+                        }
+                    } catch (err) {
+                        console.error('❌ [QuickAdd] Erreur Firestore:', err);
+                    }
+                }
+            }, 300);
+        }
+
+        function renderQuickAddResults(mealType, foods, resultsDiv) {
+            resultsDiv.innerHTML = foods.map(food => {
+                const displayName = (typeof getDisplayName === 'function') ? getDisplayName(food) : food.name;
+                return `
                 <div class="quick-add-item" onclick="quickAddFood('${mealType}', ${JSON.stringify(food).replace(/"/g, '&quot;')})">
                     <div class="quick-add-item-name">
                         ${isFavorite(food.name) ? '<span class="quick-add-favorite">⭐</span>' : ''}
-                        ${food.name}
+                        ${displayName}
+                        ${food.fromFirestore ? ' <span style="color: var(--accent-main); font-size: 0.75rem;">☁️</span>' : ''}
                     </div>
                     <div class="quick-add-item-macros">
-                        P: ${food.protein}g • g: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal (${food.unit})
+                        P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
                     </div></div>
-            `).join('');
-
+            `}).join('');
             resultsDiv.style.display = 'block';
         }
 
