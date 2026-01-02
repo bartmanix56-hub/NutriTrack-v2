@@ -6907,6 +6907,15 @@
                     <input type="text" id="new-food-name" placeholder="Ex: Poulet grillé maison">
                 </div>
 
+                <!-- Champ alias personnel (visible seulement pour produits OFF) -->
+                <div class="input-group" id="alias-input-group" style="display: none;">
+                    <label>Mon nom personnalisé <span style="color: var(--text-secondary); font-weight: 400;">(optionnel)</span></label>
+                    <input type="text" id="new-food-alias" placeholder="Ex: Nutella maison">
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">
+                        Ce nom s'affichera chez toi uniquement. Le nom officiel reste pour la communauté.
+                    </p>
+                </div>
+
                 <div class="input-group">
                     <label>Catégorie *</label>
                     <select id="new-food-category" style="width: 100%; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.95rem;">
@@ -7880,41 +7889,50 @@ Solutions possibles :
             document.body.style.overflow = '';
         }
 
-        // Food search in modal
-        const modalFoodSearch = document.getElementById('modalFoodSearch');
-        const modalSearchResults = document.getElementById('modalSearchResults');
-
+        // Food search in modal - Initialisé après DOMContentLoaded
         let modalSearchTimeout = null;
-        modalFoodSearch.addEventListener('input', async (e) => {
-            const query = e.target.value.toLowerCase().trim();
 
-            if (query.length < 2) {
-                modalSearchResults.style.display = 'none';
+        function initQuickAddSearch() {
+            const modalFoodSearch = document.getElementById('modalFoodSearch');
+            const modalSearchResults = document.getElementById('modalSearchResults');
+
+            if (!modalFoodSearch) {
+                console.error('❌ [QuickAdd] Element modalFoodSearch non trouvé!');
                 return;
             }
 
-            // Annuler le timeout précédent
-            if (modalSearchTimeout) clearTimeout(modalSearchTimeout);
+            console.log('✅ [QuickAdd] Initialisation recherche Quick Add');
 
-            // Filtrer localement d'abord (résultats immédiats)
-            let localResults = foodDatabase.filter(food =>
-                food.name.toLowerCase().includes(query)
-            ).slice(0, 10);
+            modalFoodSearch.addEventListener('input', async (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                console.log('🔍 [QuickAdd] Input détecté:', query);
 
-            // Afficher les résultats locaux immédiatement
-            if (localResults.length > 0) {
-                renderModalSearchResults(localResults);
-            }
+                if (query.length < 2) {
+                    modalSearchResults.style.display = 'none';
+                    return;
+                }
 
-            // Chercher dans Firestore (avec debounce) - dès 2 caractères
-            modalSearchTimeout = setTimeout(async () => {
-                console.log('🔍 [QuickAdd] Recherche Firestore:', query);
-                if (typeof window.searchAlimentsCommuns === 'function') {
-                    try {
-                        const firestoreResults = await window.searchAlimentsCommuns(query);
-                        console.log('📦 [QuickAdd] Résultats Firestore:', firestoreResults.length);
+                // Annuler le timeout précédent
+                if (modalSearchTimeout) clearTimeout(modalSearchTimeout);
 
-                        if (firestoreResults.length > 0) {
+                // Filtrer localement d'abord (résultats immédiats)
+                let localResults = foodDatabase.filter(food =>
+                    food.name.toLowerCase().includes(query)
+                ).slice(0, 10);
+
+                // Afficher les résultats locaux immédiatement
+                if (localResults.length > 0) {
+                    renderModalSearchResults(localResults);
+                }
+
+                // Chercher dans Firestore (avec debounce) - dès 2 caractères
+                modalSearchTimeout = setTimeout(async () => {
+                    console.log('🔍 [QuickAdd] Recherche Firestore:', query);
+                    if (typeof window.searchAlimentsCommuns === 'function') {
+                        try {
+                            const firestoreResults = await window.searchAlimentsCommuns(query);
+                            console.log('📦 [QuickAdd] Résultats Firestore:', firestoreResults.length);
+
                             // Convertir les résultats Firestore
                             const firestoreFoods = firestoreResults.map(item => ({
                                 name: item.name,
@@ -7934,27 +7952,38 @@ Solutions possibles :
                             const uniqueLocalResults = localResults.filter(f => !existingNames.has(f.name.toLowerCase()));
                             const allResults = [...firestoreFoods, ...uniqueLocalResults].slice(0, 15);
 
-                            renderModalSearchResults(allResults);
-                        } else if (localResults.length > 0) {
-                            renderModalSearchResults(localResults);
-                        } else {
-                            modalSearchResults.style.display = 'none';
+                            if (allResults.length > 0) {
+                                renderModalSearchResults(allResults);
+                            } else {
+                                modalSearchResults.style.display = 'none';
+                            }
+                        } catch (err) {
+                            console.error('❌ [QuickAdd] Erreur Firestore:', err);
                         }
-                    } catch (err) {
-                        console.error('❌ [QuickAdd] Erreur Firestore:', err);
+                    } else {
+                        console.warn('⚠️ [QuickAdd] searchAlimentsCommuns non disponible');
                     }
-                }
-            }, 300);
-        });
+                }, 300);
+            });
+        }
+
+        // Initialiser quand DOM prêt
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initQuickAddSearch);
+        } else {
+            initQuickAddSearch();
+        }
 
         function renderModalSearchResults(foods) {
-            modalSearchResults.innerHTML = foods.map(food => `
+            modalSearchResults.innerHTML = foods.map(food => {
+                const displayName = (typeof getDisplayName === 'function') ? getDisplayName(food) : food.name;
+                return `
                 <div class="search-result-item" onclick='addFoodToMeal(${JSON.stringify(food).replace(/'/g, "&apos;")})'>
-                    <div class="search-result-name">${food.name}${food.fromFirestore ? ' <span style="color: var(--accent-main); font-size: 0.75rem;">☁️</span>' : ''}</div>
+                    <div class="search-result-name">${displayName}${food.fromFirestore ? ' <span style="color: var(--accent-main); font-size: 0.75rem;">☁️</span>' : ''}</div>
                     <div class="search-result-macros">
                         P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
                     </div></div>
-            `).join('');
+            `}).join('');
             modalSearchResults.style.display = 'block';
         }
 
@@ -8138,7 +8167,7 @@ Solutions possibles :
                                 title="${isFavorite(food.name) ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
                             ${isFavorite(food.name) ? '⭐' : '⭐'}
                         </button>
-                        <div class="food-name">${food.name}</div>
+                        <div class="food-name">${getDisplayName(food)}</div>
                         <div class="food-quantity">
                             <input type="number" value="${food.quantity}" min="1"
                                    onchange="updateMealQuantity('${mealType}', ${food.id}, this.value)">
@@ -8903,10 +8932,21 @@ Solutions possibles :
             renderFoodDatabase(filtered);
         }
 
+        // Helper: obtenir le nom à afficher (alias ou nom original)
+        function getDisplayName(food) {
+            if (food.barcode) {
+                const aliases = JSON.parse(localStorage.getItem('foodAliases') || '{}');
+                if (aliases[food.barcode]) {
+                    return aliases[food.barcode];
+                }
+            }
+            return food.name;
+        }
+
         function renderFoodDatabase(foods = foodDatabase) {
             foodDatabaseContainer.innerHTML = foods.map(food => `
                 <div class="food-item">
-                    <div class="food-name">${food.name}</div>
+                    <div class="food-name">${getDisplayName(food)}</div>
                     <div class="food-macros">
                         <span>
                             <div class="label">Prot</div>
@@ -8939,8 +8979,8 @@ Solutions possibles :
             // Annuler le timeout précédent
             if (searchTimeout) clearTimeout(searchTimeout);
 
-            // Si query courte, filtrer localement immédiatement
-            if (query.length <= 3 && !/^\d+$/.test(query)) {
+            // Si query très courte (1 char), filtrer localement immédiatement
+            if (query.length <= 1 && !/^\d+$/.test(query)) {
                 let filtered = currentCategory === 'all' ? foodDatabase : foodDatabase.filter(food => food.category === currentCategory);
                 if (query.length > 0) {
                     filtered = filtered.filter(food => food.name.toLowerCase().includes(query.toLowerCase()));
@@ -9396,6 +9436,7 @@ Solutions possibles :
         function closeAddFoodModal() {
             document.getElementById('addFoodModal').classList.remove('active');
             document.getElementById('new-food-name').value = '';
+            document.getElementById('new-food-name').disabled = false; // Réactiver le nom
             document.getElementById('new-food-category').value = ''; // Reset catégorie
             document.getElementById('new-food-unit').value = '100g';
             document.getElementById('new-food-protein').value = '';
@@ -9403,6 +9444,11 @@ Solutions possibles :
             document.getElementById('new-food-fat').value = '';
             document.getElementById('new-food-fiber').value = '';
             document.getElementById('new-food-calories').value = '';
+            // Reset alias
+            const aliasInput = document.getElementById('new-food-alias');
+            const aliasGroup = document.getElementById('alias-input-group');
+            if (aliasInput) aliasInput.value = '';
+            if (aliasGroup) aliasGroup.style.display = 'none';
             // Reset le champ de saisie manuelle de code-barres
             const manualInput = document.getElementById('manual-barcode-input');
             if (manualInput) manualInput.value = '';
@@ -9439,6 +9485,21 @@ Solutions possibles :
                 nameInput.value = product.name || '';
                 // Bloquer le changement de nom pour les produits OpenFoodFacts
                 nameInput.disabled = (product.source === 'openfoodfacts');
+
+                // Afficher le champ alias si produit OFF
+                const aliasGroup = document.getElementById('alias-input-group');
+                const aliasInput = document.getElementById('new-food-alias');
+                if (product.source === 'openfoodfacts') {
+                    aliasGroup.style.display = 'block';
+                    // Pré-remplir avec alias existant si présent
+                    const aliases = JSON.parse(localStorage.getItem('foodAliases') || '{}');
+                    if (aliases[barcode]) {
+                        aliasInput.value = aliases[barcode];
+                    }
+                } else {
+                    aliasGroup.style.display = 'none';
+                    aliasInput.value = '';
+                }
 
                 document.getElementById('new-food-protein').value = product.protein || '';
                 document.getElementById('new-food-carbs').value = product.carbs || '';
@@ -9589,6 +9650,15 @@ Solutions possibles :
                 }
             }
 
+            // Sauvegarder l'alias si fourni (pour produits OFF)
+            const aliasInput = document.getElementById('new-food-alias');
+            if (aliasInput && aliasInput.value.trim() && barcode) {
+                const aliases = JSON.parse(localStorage.getItem('foodAliases') || '{}');
+                aliases[barcode] = aliasInput.value.trim();
+                localStorage.setItem('foodAliases', JSON.stringify(aliases));
+                console.log('💾 [saveNewFood] Alias sauvegardé:', aliasInput.value.trim(), 'pour', barcode);
+            }
+
             // Reset
             window.pendingBarcode = null;
             window.pendingProductSource = null;
@@ -9660,6 +9730,21 @@ Solutions possibles :
             nameInput.value = product.name || '';
             // Bloquer le changement de nom pour les produits OpenFoodFacts
             nameInput.disabled = (product.source === 'openfoodfacts');
+
+            // Afficher le champ alias si produit OFF
+            const aliasGroup = document.getElementById('alias-input-group');
+            const aliasInput = document.getElementById('new-food-alias');
+            if (product.source === 'openfoodfacts') {
+                aliasGroup.style.display = 'block';
+                // Pré-remplir avec alias existant si présent
+                const aliases = JSON.parse(localStorage.getItem('foodAliases') || '{}');
+                if (aliases[barcode]) {
+                    aliasInput.value = aliases[barcode];
+                }
+            } else {
+                aliasGroup.style.display = 'none';
+                aliasInput.value = '';
+            }
 
             document.getElementById('new-food-protein').value = product.protein || '';
             document.getElementById('new-food-carbs').value = product.carbs || '';
@@ -9852,6 +9937,20 @@ Solutions possibles :
                         // Bloquer le changement de nom pour les produits OpenFoodFacts
                         nameInput.disabled = (product.source === 'openfoodfacts');
 
+                        // Afficher le champ alias si produit OFF
+                        const aliasGroup = document.getElementById('alias-input-group');
+                        const aliasInput = document.getElementById('new-food-alias');
+                        if (product.source === 'openfoodfacts') {
+                            aliasGroup.style.display = 'block';
+                            const aliases = JSON.parse(localStorage.getItem('foodAliases') || '{}');
+                            if (aliases[decodedText]) {
+                                aliasInput.value = aliases[decodedText];
+                            }
+                        } else {
+                            aliasGroup.style.display = 'none';
+                            aliasInput.value = '';
+                        }
+
                         document.getElementById('new-food-protein').value = product.protein || '';
                         document.getElementById('new-food-carbs').value = product.carbs || '';
                         document.getElementById('new-food-fat').value = product.fat || '';
@@ -10038,8 +10137,8 @@ Solutions possibles :
             });
             let allFoods = Array.from(foodMap.values());
 
-            // RECHERCHE FIRESTORE (si query > 3 caractères ou code-barres numérique)
-            if (query && (query.length > 3 || /^\d+$/.test(query))) {
+            // RECHERCHE FIRESTORE (si query >= 2 caractères ou code-barres numérique)
+            if (query && (query.length >= 2 || /^\d+$/.test(query))) {
                 console.log('🔥 Déclenchement recherche Firestore depuis filterFoodDatabase');
 
                 // Si c'est un code-barres numérique, recherche DIRECTE par ID de document
@@ -10168,7 +10267,7 @@ Solutions possibles :
                             return `
                                 <div class="food-item" data-food-index="${globalIndex}" style="background: rgba(0, 0, 0, 0.2);">
                                     <div>
-                                        <div class="food-name">${food.name} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''} ${food.fromFirestore ? '<i data-lucide="cloud" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-ui);"></i>' : ''}</div>
+                                        <div class="food-name">${getDisplayName(food)} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''} ${food.fromFirestore ? '<i data-lucide="cloud" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-ui);"></i>' : ''}</div>
                                         ${food.custom ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Personnalisé</span>' : ''}
                                         ${food.fromFirestore ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Base communautaire</span>' : ''}
                                     </div>
@@ -10198,7 +10297,7 @@ Solutions possibles :
                     return `
                         <div class="food-item" data-food-index="${globalIndex}">
                             <div>
-                                <div class="food-name">${food.name} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''} ${food.fromFirestore ? '<i data-lucide="cloud" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-ui);"></i>' : ''}</div>
+                                <div class="food-name">${getDisplayName(food)} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''} ${food.fromFirestore ? '<i data-lucide="cloud" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-ui);"></i>' : ''}</div>
                                 ${food.custom ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Personnalisé</span>' : ''}
                                 ${food.fromFirestore ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Base communautaire</span>' : ''}
                             </div>
