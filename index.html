@@ -3436,7 +3436,7 @@
             /* Fix: Bouton ajouter un aliment sur mobile */
             .food-db-header {
                 flex-direction: column !important;
-                align-items: flex-start !important;
+                align-items: stretch !important;
                 gap: var(--space-sm) !important;
             }
             .food-db-header h2 {
@@ -3445,7 +3445,7 @@
             .add-food-header-btn {
                 font-size: 0.8rem !important;
                 padding: var(--space-xs) var(--space-sm) !important;
-                align-self: flex-start !important;
+                align-self: flex-end !important;
             }
         }
 
@@ -4215,6 +4215,12 @@
                 <button class="sidebar-btn" data-tab="settings">
                     <span class="sidebar-icon"><i data-lucide="settings"></i></span>
                     <span class="sidebar-label">Paramètres</span>
+                </button>
+
+                <!-- Bouton Admin (visible uniquement pour l'admin) -->
+                <button class="sidebar-btn" data-tab="admin" id="admin-sidebar-btn" style="display: none;">
+                    <span class="sidebar-icon"><i data-lucide="shield"></i></span>
+                    <span class="sidebar-label">Admin</span>
                 </button>
 
                 <!-- Bouton Plus (visible uniquement sur mobile) -->
@@ -6153,6 +6159,23 @@
                                 </label>
                             </div></div></div>
 
+                    <!-- Feedback -->
+                    <div class="card" style="border: 1px solid rgba(99, 102, 241, 0.3); background: rgba(99, 102, 241, 0.05);">
+                        <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid rgba(99, 102, 241, 0.3);">
+                            <i data-lucide="message-square" style="width: 24px; height: 24px; color: var(--accent-purple);"></i>
+                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--accent-purple); margin: 0;">Feedback</h3>
+                        </div>
+
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; margin-bottom: var(--space-lg);">
+                            Tu as trouvé un bug ? Une idée d'amélioration ? Une question ? Envoie-nous ton feedback pour nous aider à améliorer NutriTrack.
+                        </p>
+
+                        <button class="btn" onclick="openFeedbackModal()" style="background: var(--accent-purple); color: white; width: 100%;">
+                            <i data-lucide="send" style="width: 18px; height: 18px;"></i>
+                            Envoyer un feedback
+                        </button>
+                    </div>
+
                     <!-- Zone Danger -->
                     <div class="card" style="border: 2px solid var(--accent-danger); background: rgba(239, 68, 68, 0.05);">
                         <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--accent-danger);">
@@ -6664,6 +6687,79 @@
                 <strong>Hébergement :</strong> Netlify
             </p>
         </div></div>
+
+    <!-- ADMIN PANEL (visible uniquement pour l'admin) -->
+    <div id="admin" class="tab-content">
+        <div style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); border-radius: var(--radius-xl); padding: var(--space-3xl); margin-bottom: var(--space-3xl); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);">
+            <div style="display: flex; align-items: center; gap: var(--space-lg); margin-bottom: var(--space-lg);">
+                <div style="font-size: 3rem; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; background: var(--accent-purple); border-radius: var(--radius-lg);"><i data-lucide="shield" style="width: 36px; height: 36px; color: white;"></i></div>
+                <div>
+                    <h1 style="font-size: 2rem; font-weight: 700; margin: 0; color: var(--accent-purple);">
+                        Panel Admin
+                    </h1>
+                    <p style="margin: 0; margin-top: var(--space-xs); color: var(--text-secondary); font-size: 1rem;">
+                        Gestion des feedbacks utilisateurs
+                    </p>
+                </div></div></div>
+
+        <!-- Stats rapides -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md); margin-bottom: var(--space-xl);" id="admin-stats">
+            <div class="card" style="text-align: center; padding: var(--space-lg);">
+                <div style="font-size: 2rem; font-weight: 700; color: var(--accent-ui);" id="stat-total">0</div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">Total</div>
+            </div>
+            <div class="card" style="text-align: center; padding: var(--space-lg);">
+                <div style="font-size: 2rem; font-weight: 700; color: var(--accent-danger);" id="stat-bugs">0</div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">Bugs</div>
+            </div>
+            <div class="card" style="text-align: center; padding: var(--space-lg);">
+                <div style="font-size: 2rem; font-weight: 700; color: var(--accent-carbs);" id="stat-suggestions">0</div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">Suggestions</div>
+            </div>
+            <div class="card" style="text-align: center; padding: var(--space-lg);">
+                <div style="font-size: 2rem; font-weight: 700; color: var(--accent-main);" id="stat-new">0</div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">Nouveaux</div>
+            </div>
+        </div>
+
+        <!-- Filtres -->
+        <div class="card" style="margin-bottom: var(--space-xl);">
+            <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; align-items: center;">
+                <select id="admin-filter-type" onchange="loadAdminFeedbacks()" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary);">
+                    <option value="all">Tous les types</option>
+                    <option value="bug">🐛 Bugs</option>
+                    <option value="suggestion">💡 Suggestions</option>
+                    <option value="question">❓ Questions</option>
+                </select>
+                <select id="admin-filter-status" onchange="loadAdminFeedbacks()" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary);">
+                    <option value="all">Tous les statuts</option>
+                    <option value="new">🟢 Nouveaux</option>
+                    <option value="read">🔵 Lus</option>
+                    <option value="resolved">✅ Résolus</option>
+                </select>
+                <button onclick="loadAdminFeedbacks()" class="btn" style="background: var(--accent-ui); color: white;">
+                    <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i> Rafraîchir
+                </button>
+            </div>
+        </div>
+
+        <!-- Liste des feedbacks -->
+        <div class="card">
+            <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-lg); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);">
+                <i data-lucide="inbox" style="width: 22px; height: 22px;"></i>
+                <span>Feedbacks</span>
+                <span id="feedbacks-count" style="background: var(--accent-ui); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">0</span>
+            </h2>
+            <div id="admin-feedbacks-list" style="display: flex; flex-direction: column; gap: var(--space-md);">
+                <div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);">
+                    <i data-lucide="loader" style="width: 32px; height: 32px; animation: spin 1s linear infinite;"></i>
+                    <p>Chargement...</p>
+                </div>
+            </div>
+            <!-- Pagination -->
+            <div id="admin-pagination" style="display: flex; justify-content: center; gap: var(--space-md); margin-top: var(--space-xl);"></div>
+        </div>
+    </div>
 
     <!-- AVERTISSEMENT SANTÉ -->
     <div id="health-warning" class="tab-content">
@@ -12874,6 +12970,64 @@ Solutions possibles :
             </button>
         </div></div>
 
+    <!-- Modal Feedback -->
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="modal-close" onclick="closeFeedbackModal()">×</button>
+            <h2 class="modal-title" style="display: flex; align-items: center; gap: var(--space-sm);">
+                <i data-lucide="message-square" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
+                Envoyer un feedback
+            </h2>
+
+            <div class="modal-body">
+                <p style="color: var(--text-secondary); margin-bottom: var(--space-lg); font-size: 0.9rem;">
+                    Aide-nous à améliorer NutriTrack en partageant ton retour.
+                </p>
+
+                <div class="input-group">
+                    <label>Type de feedback *</label>
+                    <select id="feedback-type" onchange="toggleReproductionField()">
+                        <option value="">Sélectionner...</option>
+                        <option value="bug">🐛 Bug (quelque chose ne fonctionne pas)</option>
+                        <option value="suggestion">💡 Suggestion (amélioration, nouvelle fonctionnalité)</option>
+                        <option value="question">❓ Question (besoin d'aide)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Onglet concerné *</label>
+                    <select id="feedback-tab">
+                        <option value="">Sélectionner...</option>
+                        <option value="home">🏠 Accueil</option>
+                        <option value="calculator">🧮 Calculateur</option>
+                        <option value="meals">🍽️ Mes Repas</option>
+                        <option value="planner">📅 Planning</option>
+                        <option value="foods">🍎 Base d'Aliments</option>
+                        <option value="meal-templates">📋 Repas Types</option>
+                        <option value="tracking">📊 Suivi Corporel</option>
+                        <option value="settings">⚙️ Paramètres</option>
+                        <option value="other">🔧 Autre / Général</option>
+                    </select>
+                </div>
+
+                <div class="input-group" id="reproduction-field" style="display: none;">
+                    <label>Comment reproduire ce bug ?</label>
+                    <textarea id="feedback-reproduction" placeholder="Ex: 1. Aller dans Mes Repas, 2. Cliquer sur Quick Add, 3. Taper 'nutella'..." style="min-height: 80px;"></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Description détaillée *</label>
+                    <textarea id="feedback-description" placeholder="Décris le problème, ta suggestion ou ta question en détail..." style="min-height: 120px;"></textarea>
+                </div>
+
+                <button class="btn" onclick="submitFeedback()" style="width: 100%; background: var(--accent-ui); color: white; margin-top: var(--space-md);">
+                    <i data-lucide="send" style="width: 18px; height: 18px;"></i>
+                    Envoyer le feedback
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal RGPD -->
     <div id="rgpd-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10000; justify-content: center; align-items: flex-start; padding: 16px; padding-top: 50px; overflow-y: auto;">
         <div style="background: var(--bg-secondary); border: 2px solid var(--accent-main); border-radius: 12px; max-width: 500px; width: 100%; padding: 20px; box-shadow: var(--shadow-lg);">
@@ -14505,6 +14659,276 @@ Solutions possibles :
 
         // Log initialization
         console.log('🔥 Firebase NutriTrack initialisé');
+
+        // ===== ADMIN & FEEDBACK SYSTEM =====
+        const ADMIN_UID = 'qEuqSbWO73OwTEwL6LhEILS5djD2';
+        let adminFeedbacksCache = [];
+        let adminCurrentPage = 1;
+        const FEEDBACKS_PER_PAGE = 20;
+
+        // Check if current user is admin
+        function isAdmin() {
+            return auth.currentUser && auth.currentUser.uid === ADMIN_UID;
+        }
+
+        // Show/hide admin button based on user
+        function updateAdminVisibility() {
+            const adminBtn = document.getElementById('admin-sidebar-btn');
+            if (adminBtn) {
+                adminBtn.style.display = isAdmin() ? 'flex' : 'none';
+            }
+        }
+
+        // Call updateAdminVisibility when auth state changes
+        onAuthStateChanged(auth, (user) => {
+            updateAdminVisibility();
+            if (user && isAdmin()) {
+                console.log('👑 Admin connecté');
+            }
+        });
+
+        // ===== FEEDBACK MODAL =====
+        window.openFeedbackModal = function() {
+            document.getElementById('feedback-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        };
+
+        window.closeFeedbackModal = function() {
+            document.getElementById('feedback-modal').classList.remove('active');
+            document.body.style.overflow = '';
+            // Reset form
+            document.getElementById('feedback-type').value = '';
+            document.getElementById('feedback-tab').value = '';
+            document.getElementById('feedback-reproduction').value = '';
+            document.getElementById('feedback-description').value = '';
+            document.getElementById('reproduction-field').style.display = 'none';
+        };
+
+        window.toggleReproductionField = function() {
+            const type = document.getElementById('feedback-type').value;
+            document.getElementById('reproduction-field').style.display = type === 'bug' ? 'block' : 'none';
+        };
+
+        window.submitFeedback = async function() {
+            const type = document.getElementById('feedback-type').value;
+            const tab = document.getElementById('feedback-tab').value;
+            const reproduction = document.getElementById('feedback-reproduction').value;
+            const description = document.getElementById('feedback-description').value;
+
+            if (!type || !tab || !description.trim()) {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="alert-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Remplis tous les champs obligatoires');
+                }
+                return;
+            }
+
+            try {
+                const feedbackData = {
+                    type: type,
+                    tab: tab,
+                    reproduction: type === 'bug' ? reproduction : null,
+                    description: description.trim(),
+                    status: 'new',
+                    createdAt: serverTimestamp(),
+                    userAgent: navigator.userAgent,
+                    userId: auth.currentUser ? auth.currentUser.uid : null,
+                    userEmail: auth.currentUser ? auth.currentUser.email : null
+                };
+
+                await setDoc(doc(collection(db, 'feedbacks')), feedbackData);
+
+                closeFeedbackModal();
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Merci pour ton feedback !');
+                }
+            } catch (error) {
+                console.error('Erreur envoi feedback:', error);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Erreur lors de l\'envoi');
+                }
+            }
+        };
+
+        // ===== ADMIN FEEDBACKS =====
+        window.loadAdminFeedbacks = async function() {
+            if (!isAdmin()) return;
+
+            const container = document.getElementById('admin-feedbacks-list');
+            container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);"><i data-lucide="loader" style="width: 32px; height: 32px; animation: spin 1s linear infinite;"></i><p>Chargement...</p></div>';
+
+            try {
+                const filterType = document.getElementById('admin-filter-type').value;
+                const filterStatus = document.getElementById('admin-filter-status').value;
+
+                // Fetch all feedbacks
+                const q = query(collection(db, 'feedbacks'));
+                const querySnapshot = await getDocs(q);
+
+                let feedbacks = [];
+                querySnapshot.forEach((doc) => {
+                    feedbacks.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Sort by createdAt descending (newest first)
+                feedbacks.sort((a, b) => {
+                    const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(0);
+                    const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(0);
+                    return dateB - dateA;
+                });
+
+                // Filter by type
+                if (filterType !== 'all') {
+                    feedbacks = feedbacks.filter(f => f.type === filterType);
+                }
+
+                // Filter by status
+                if (filterStatus !== 'all') {
+                    feedbacks = feedbacks.filter(f => f.status === filterStatus);
+                }
+
+                // Update stats
+                updateAdminStats(feedbacks);
+
+                // Store in cache
+                adminFeedbacksCache = feedbacks;
+
+                // Render
+                renderAdminFeedbacks(feedbacks);
+
+            } catch (error) {
+                console.error('Erreur chargement feedbacks:', error);
+                container.innerHTML = '<div style="text-align: center; color: var(--accent-danger); padding: var(--space-3xl);"><i data-lucide="alert-circle" style="width: 32px; height: 32px;"></i><p>Erreur de chargement</p></div>';
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        };
+
+        function updateAdminStats(feedbacks) {
+            document.getElementById('stat-total').textContent = feedbacks.length;
+            document.getElementById('stat-bugs').textContent = feedbacks.filter(f => f.type === 'bug').length;
+            document.getElementById('stat-suggestions').textContent = feedbacks.filter(f => f.type === 'suggestion').length;
+            document.getElementById('stat-new').textContent = feedbacks.filter(f => f.status === 'new').length;
+            document.getElementById('feedbacks-count').textContent = feedbacks.length;
+        }
+
+        function renderAdminFeedbacks(feedbacks) {
+            const container = document.getElementById('admin-feedbacks-list');
+
+            if (feedbacks.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);"><i data-lucide="inbox" style="width: 48px; height: 48px; opacity: 0.5;"></i><p>Aucun feedback trouvé</p></div>';
+                return;
+            }
+
+            // Pagination
+            const start = (adminCurrentPage - 1) * FEEDBACKS_PER_PAGE;
+            const end = start + FEEDBACKS_PER_PAGE;
+            const paginated = feedbacks.slice(start, end);
+
+            container.innerHTML = paginated.map(feedback => {
+                const date = feedback.createdAt?.toDate ? feedback.createdAt.toDate().toLocaleString('fr-FR', {
+                    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                }) : 'Date inconnue';
+
+                const typeIcons = { bug: '🐛', suggestion: '💡', question: '❓' };
+                const typeColors = { bug: 'var(--accent-danger)', suggestion: 'var(--accent-carbs)', question: 'var(--accent-ui)' };
+                const statusIcons = { new: '🟢', read: '🔵', resolved: '✅' };
+                const tabLabels = {
+                    home: '🏠 Accueil', calculator: '🧮 Calculateur', meals: '🍽️ Mes Repas',
+                    planner: '📅 Planning', foods: '🍎 Base d\'Aliments', 'meal-templates': '📋 Repas Types',
+                    tracking: '📊 Suivi', settings: '⚙️ Paramètres', other: '🔧 Autre'
+                };
+
+                return `
+                    <div class="feedback-item" style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg); border-left: 4px solid ${typeColors[feedback.type] || 'var(--accent-ui)'};">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-md);">
+                            <div style="display: flex; gap: var(--space-sm); align-items: center; flex-wrap: wrap;">
+                                <span style="font-size: 1.2rem;">${typeIcons[feedback.type] || '📝'}</span>
+                                <span style="background: ${typeColors[feedback.type]}22; color: ${typeColors[feedback.type]}; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">${feedback.type?.toUpperCase()}</span>
+                                <span style="color: var(--text-secondary); font-size: 0.85rem;">${tabLabels[feedback.tab] || feedback.tab}</span>
+                                <span style="font-size: 0.9rem;">${statusIcons[feedback.status] || '⚪'}</span>
+                            </div>
+                            <span style="color: var(--text-secondary); font-size: 0.8rem;">${date}</span>
+                        </div>
+                        <div style="color: var(--text-primary); line-height: 1.6; margin-bottom: var(--space-md); white-space: pre-wrap;">${escapeHtml(feedback.description)}</div>
+                        ${feedback.reproduction ? `<div style="background: rgba(239, 68, 68, 0.1); padding: var(--space-sm); border-radius: var(--radius-sm); margin-bottom: var(--space-md); font-size: 0.85rem;"><strong>Reproduction:</strong> ${escapeHtml(feedback.reproduction)}</div>` : ''}
+                        <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+                            ${feedback.status === 'new' ? `<button class="btn" style="font-size: 0.8rem; padding: 4px 12px; background: var(--accent-ui);" onclick="updateFeedbackStatus('${feedback.id}', 'read')">Marquer lu</button>` : ''}
+                            ${feedback.status !== 'resolved' ? `<button class="btn" style="font-size: 0.8rem; padding: 4px 12px; background: var(--accent-main);" onclick="updateFeedbackStatus('${feedback.id}', 'resolved')">Résolu</button>` : ''}
+                            <button class="btn" style="font-size: 0.8rem; padding: 4px 12px; background: var(--accent-danger);" onclick="deleteFeedback('${feedback.id}')">Supprimer</button>
+                        </div>
+                        ${feedback.userEmail ? `<div style="margin-top: var(--space-sm); font-size: 0.75rem; color: var(--text-secondary);">👤 ${feedback.userEmail}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // Pagination controls
+            const totalPages = Math.ceil(feedbacks.length / FEEDBACKS_PER_PAGE);
+            const paginationContainer = document.getElementById('admin-pagination');
+            if (totalPages > 1) {
+                paginationContainer.innerHTML = `
+                    <button class="btn" ${adminCurrentPage === 1 ? 'disabled' : ''} onclick="adminChangePage(${adminCurrentPage - 1})" style="padding: 8px 16px;">← Précédent</button>
+                    <span style="color: var(--text-secondary);">Page ${adminCurrentPage} / ${totalPages}</span>
+                    <button class="btn" ${adminCurrentPage === totalPages ? 'disabled' : ''} onclick="adminChangePage(${adminCurrentPage + 1})" style="padding: 8px 16px;">Suivant →</button>
+                `;
+            } else {
+                paginationContainer.innerHTML = '';
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        window.adminChangePage = function(page) {
+            adminCurrentPage = page;
+            renderAdminFeedbacks(adminFeedbacksCache);
+        };
+
+        window.updateFeedbackStatus = async function(feedbackId, newStatus) {
+            if (!isAdmin()) return;
+
+            try {
+                await setDoc(doc(db, 'feedbacks', feedbackId), { status: newStatus }, { merge: true });
+                loadAdminFeedbacks();
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Statut mis à jour');
+                }
+            } catch (error) {
+                console.error('Erreur mise à jour statut:', error);
+            }
+        };
+
+        window.deleteFeedback = async function(feedbackId) {
+            if (!isAdmin()) return;
+
+            if (!confirm('Supprimer ce feedback ?')) return;
+
+            try {
+                await deleteDoc(doc(db, 'feedbacks', feedbackId));
+                loadAdminFeedbacks();
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="trash-2" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Feedback supprimé');
+                }
+            } catch (error) {
+                console.error('Erreur suppression feedback:', error);
+            }
+        };
+
+        // Load feedbacks when admin tab is opened
+        const originalSwitchToTab = window.switchToTab;
+        if (typeof originalSwitchToTab === 'function') {
+            window.switchToTab = function(tab) {
+                originalSwitchToTab(tab);
+                if (tab === 'admin' && isAdmin()) {
+                    loadAdminFeedbacks();
+                }
+            };
+        }
 
         } // Fin du if (isValidProtocol)
     </script>
