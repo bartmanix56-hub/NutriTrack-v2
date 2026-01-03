@@ -1494,7 +1494,8 @@
             .sidebar-btn[data-tab="foods"],
             .sidebar-btn[data-tab="meal-templates"],
             .sidebar-btn[data-tab="guide"],
-            .sidebar-btn[data-tab="settings"] {
+            .sidebar-btn[data-tab="settings"],
+            .sidebar-btn[data-tab="admin"] {
                 display: none !important;
             }
 
@@ -2307,13 +2308,17 @@
                 display: none !important; /* Cacher thème sur mobile */
             }
 
-            /* Afficher le bouton connexion sur mobile mais sans texte */
+            /* Bouton connexion sur mobile : sans texte, et caché quand connecté via classe */
             #header-login-btn {
-                display: flex !important;
                 padding: 6px 10px !important;
             }
 
             #header-login-btn .header-login-text {
+                display: none !important;
+            }
+
+            /* Cacher le bouton connexion sur mobile quand on est connecté */
+            body.user-connected #header-login-btn {
                 display: none !important;
             }
 
@@ -4266,6 +4271,11 @@
                 <div class="mobile-drawer-item" onclick="navigateFromDrawer('settings')">
                     <i data-lucide="settings" style="color: var(--accent-main);"></i>
                     <span>Paramètres</span>
+                </div>
+                <!-- Bouton Admin dans drawer (visible uniquement pour admin) -->
+                <div class="mobile-drawer-item" id="drawer-admin-btn" onclick="navigateFromDrawer('admin')" style="display: none; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3);">
+                    <i data-lucide="shield" style="color: var(--accent-purple);"></i>
+                    <span style="color: var(--accent-purple); font-weight: 600;">Panel Admin</span>
                 </div>
             </div>
 
@@ -6919,6 +6929,7 @@
             <div>
                 <h4 style="color: var(--text-primary); font-size: 0.85rem; font-weight: 700; margin: 0 0 16px; text-transform: uppercase; letter-spacing: 1px;">Contact</h4>
                 <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0 0 12px;">Une question ? Une suggestion ?</p>
+                <a href="#" onclick="openFeedbackModal(); return false;" style="display: block; color: var(--accent-ui); margin-bottom: 8px; font-size: 0.9rem;">Envoyer un feedback</a>
                 <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
             </div>
         </div>
@@ -7279,6 +7290,17 @@
 
         // Fonction générique pour changer de tab
         function switchToTab(tab) {
+            // Protection admin - bloquer l'accès si non admin
+            if (tab === 'admin') {
+                const ADMIN_UID = 'qEuqSbWO73OwTEwL6LhEILS5djD2';
+                if (typeof auth === 'undefined' || !auth.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+                    if (typeof showToast === 'function') {
+                        showToast('<i data-lucide="shield-x" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Accès non autorisé');
+                    }
+                    return;
+                }
+            }
+
             document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
@@ -12973,16 +12995,15 @@ Solutions possibles :
     <!-- Modal Feedback -->
     <div id="feedback-modal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
-            <button class="modal-close" onclick="closeFeedbackModal()">×</button>
-            <h2 class="modal-title" style="display: flex; align-items: center; gap: var(--space-sm);">
-                <i data-lucide="message-square" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
-                Envoyer un feedback
-            </h2>
-
-            <div class="modal-body">
-                <p style="color: var(--text-secondary); margin-bottom: var(--space-lg); font-size: 0.9rem;">
+            <div class="modal-header" style="position: relative;">
+                <button class="modal-close" onclick="closeFeedbackModal()">×</button>
+                <h2 class="modal-title">Envoyer un feedback</h2>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: var(--space-sm);">
                     Aide-nous à améliorer NutriTrack en partageant ton retour.
                 </p>
+            </div>
+
+            <div class="modal-body">
 
                 <div class="input-group">
                     <label>Type de feedback *</label>
@@ -13471,6 +13492,7 @@ Solutions possibles :
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0 0 12px;">
                             Une question ? Une suggestion ?
                         </p>
+                        <a href="#" onclick="openFeedbackModal(); return false;" style="display: block; color: var(--accent-ui); margin-bottom: 8px; font-size: 0.9rem;">Envoyer un feedback</a>
                         <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
                     </div>
                 </div>
@@ -14235,6 +14257,7 @@ Solutions possibles :
             updateSyncBanner(user);
 
             if (user) {
+                document.body.classList.add('user-connected');
                 if (notConnected) notConnected.style.display = 'none';
                 if (connected) connected.style.display = 'block';
                 // Cacher le bouton connexion du header quand connecté
@@ -14255,6 +14278,7 @@ Solutions possibles :
 
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             } else {
+                document.body.classList.remove('user-connected');
                 if (notConnected) notConnected.style.display = 'block';
                 if (connected) connected.style.display = 'none';
                 // Afficher le bouton connexion du header quand non connecté
@@ -14673,9 +14697,16 @@ Solutions possibles :
 
         // Show/hide admin button based on user
         function updateAdminVisibility() {
+            const isUserAdmin = isAdmin();
+            // Sidebar button (desktop)
             const adminBtn = document.getElementById('admin-sidebar-btn');
             if (adminBtn) {
-                adminBtn.style.display = isAdmin() ? 'flex' : 'none';
+                adminBtn.style.display = isUserAdmin ? 'flex' : 'none';
+            }
+            // Drawer button (mobile)
+            const drawerAdminBtn = document.getElementById('drawer-admin-btn');
+            if (drawerAdminBtn) {
+                drawerAdminBtn.style.display = isUserAdmin ? 'flex' : 'none';
             }
         }
 
