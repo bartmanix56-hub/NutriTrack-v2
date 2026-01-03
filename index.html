@@ -3433,19 +3433,19 @@
                 padding: var(--space-sm) var(--space-md);
             }
 
-            /* Fix: Bouton ajouter un aliment aligné à droite sur mobile */
+            /* Fix: Bouton ajouter un aliment sur mobile */
             .food-db-header {
-                flex-direction: row !important;
-                justify-content: space-between !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: var(--space-sm) !important;
             }
             .food-db-header h2 {
-                flex: 0 1 auto;
+                margin-bottom: 0 !important;
             }
             .add-food-header-btn {
-                flex: 0 0 auto;
-                margin-left: auto;
-                font-size: 0.85rem !important;
-                padding: var(--space-sm) var(--space-md) !important;
+                font-size: 0.8rem !important;
+                padding: var(--space-xs) var(--space-sm) !important;
+                align-self: flex-start !important;
             }
         }
 
@@ -5150,6 +5150,7 @@
                         <select id="foodFilter" onchange="filterFoodDatabase()">
                             <option value="all">Tous les aliments</option>
                             <option value="custom">Mes aliments personnalisés</option>
+                            <option value="community">Base communautaire ☁️</option>
                             <option value="default">Base par défaut</option>
                         </select>
                     </div>
@@ -10273,7 +10274,13 @@ Solutions possibles :
             // Filtrer
             let filtered = allFoods;
 
-            if (filter === 'custom') { filtered = filtered.filter(f => f.custom === true); } else if (filter === 'default')  { filtered = filtered.filter(f => !f.custom); }
+            if (filter === 'custom') {
+                filtered = filtered.filter(f => f.custom === true);
+            } else if (filter === 'community') {
+                filtered = filtered.filter(f => f.fromFirestore === true);
+            } else if (filter === 'default') {
+                filtered = filtered.filter(f => !f.custom && !f.fromFirestore);
+            }
 
             if (query)  { filtered = filtered.filter(f => f.name.toLowerCase().includes(query)); }
 
@@ -10340,7 +10347,7 @@ Solutions possibles :
                                         <span style="color: var(--text-secondary); font-size: 0.9rem;">pour ${food.unit}</span>
                                         <div style="display: flex; gap: var(--space-sm); align-items: center;">
                                             <button class="icon-btn" style="background: rgba(255, 230, 109, 0.2); border: 1px solid var(--accent-fat); width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${food.name.replace(/'/g, "\\'")}')"><i data-lucide="star" style="width: 16px; height: 16px; fill: var(--accent-fat); color: var(--accent-fat);"></i></button>
-                                            <button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editFoodByIndex(${globalIndex})"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>
+                                            ${food.custom ? `<button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editFoodByIndex(${globalIndex})"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>` : ''}
                                             ${food.custom ? `<button class="delete-btn" style="font-size: 1.1rem; width: 36px; height: 36px;" onclick="deleteFoodByIndex(${globalIndex})"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>` : ''}
                                         </div></div></div>
                             `;
@@ -10370,7 +10377,7 @@ Solutions possibles :
                                 <span style="color: var(--text-secondary); font-size: 0.9rem;">pour ${food.unit}</span>
                                 <div style="display: flex; gap: var(--space-sm); align-items: center;">
                                     <button class="icon-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${food.name.replace(/'/g, "\\'")}')"><i data-lucide="star" style="width: 16px; height: 16px;"></i></button>
-                                    <button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editFoodByIndex(${globalIndex})"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>
+                                    ${food.custom ? `<button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editFoodByIndex(${globalIndex})"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>` : ''}
                                     ${food.custom ? `<button class="delete-btn" style="font-size: 1.1rem; width: 36px; height: 36px;" onclick="deleteFoodByIndex(${globalIndex})"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>` : ''}
                                 </div></div></div>
                     `;
@@ -10816,9 +10823,28 @@ Solutions possibles :
 
         function setTrackingDateToToday() {
             const today = new Date();
-            document.getElementById('tracking-day').value = today.getDate();
-            document.getElementById('tracking-month').value = today.getMonth();
-            document.getElementById('tracking-year').value = today.getFullYear();
+            const daySelect = document.getElementById('tracking-day');
+            const monthSelect = document.getElementById('tracking-month');
+            const yearSelect = document.getElementById('tracking-year');
+
+            // S'assurer que les valeurs existent dans les dropdowns
+            const day = today.getDate();
+            const month = today.getMonth();
+            const year = today.getFullYear();
+
+            // Vérifier que l'option jour existe, sinon utiliser requestAnimationFrame
+            if (daySelect.querySelector(`option[value="${day}"]`)) {
+                daySelect.value = day;
+                monthSelect.value = month;
+                yearSelect.value = year;
+            } else {
+                // Attendre le prochain frame pour que le DOM soit prêt
+                requestAnimationFrame(() => {
+                    daySelect.value = day;
+                    monthSelect.value = month;
+                    yearSelect.value = year;
+                });
+            }
         }
 
         function getTrackingDateFromDropdowns() {
