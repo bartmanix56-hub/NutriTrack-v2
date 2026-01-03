@@ -7258,6 +7258,17 @@
         }
 
         function switchTab(tabName) {
+            // Protection admin - bloquer l'accès si non admin
+            if (tabName === 'admin') {
+                const ADMIN_UID = 'qEuqSbWO73OwTEwL6LhEILS5djD2';
+                if (typeof auth === 'undefined' || !auth.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+                    if (typeof showToast === 'function') {
+                        showToast('<i data-lucide="shield-x" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Accès non autorisé');
+                    }
+                    return;
+                }
+            }
+
             // Désactiver tous les onglets
             document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
