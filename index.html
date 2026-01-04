@@ -14388,7 +14388,8 @@ Solutions possibles :
 
         const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
         const { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-        const { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection, query, getDocs, limit } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection, query, getDocs, limit, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const { getMessaging, getToken, onMessage } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js');
 
         const firebaseConfig = {
             apiKey: "AIzaSyCL2SvQ2c784ZyA2Pr-Qtv2F1wnnDByGkc",
@@ -14404,6 +14405,132 @@ Solutions possibles :
         const auth = getAuth(app);
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
+
+        // ===== FIREBASE CLOUD MESSAGING (FCM) =====
+        // IMPORTANT: Remplace cette clé par ta clé VAPID de Firebase Console
+        // Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
+        const VAPID_KEY = 'BIHN84h45rQhbm5xYFPYH0sp2bZ56F9L9QBU9_lbKs_DFlvJvk7dLlj6jh1qiC21zm6To1hO3DiNm9jtN1ep12I';
+
+        let messaging = null;
+        let fcmToken = null;
+
+        // Initialiser FCM si supporté
+        async function initializeFCM() {
+            try {
+                if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+                    console.log('FCM non supporté sur ce navigateur');
+                    return;
+                }
+
+                messaging = getMessaging(app);
+
+                // Écouter les messages en foreground
+                onMessage(messaging, (payload) => {
+                    console.log('Message reçu en foreground:', payload);
+                    // Afficher notification même si app ouverte
+                    if (Notification.permission === 'granted') {
+                        new Notification(payload.notification?.title || 'NutriTrack', {
+                            body: payload.notification?.body || '',
+                            icon: '/icon-192.png'
+                        });
+                    }
+                });
+
+                console.log('FCM initialisé');
+            } catch (error) {
+                console.error('Erreur initialisation FCM:', error);
+            }
+        }
+
+        // Obtenir le token FCM et le sauvegarder
+        async function getFCMToken() {
+            if (!messaging) {
+                console.log('FCM non initialisé');
+                return null;
+            }
+
+            try {
+                // Vérifier si VAPID_KEY est configuré
+                if (VAPID_KEY === 'YOUR_VAPID_KEY_HERE') {
+                    console.warn('⚠️ VAPID_KEY non configurée - FCM désactivé');
+                    return null;
+                }
+
+                const currentToken = await getToken(messaging, { vapidKey: VAPID_KEY });
+
+                if (currentToken) {
+                    fcmToken = currentToken;
+                    console.log('Token FCM obtenu');
+                    return currentToken;
+                } else {
+                    console.log('Pas de token FCM disponible');
+                    return null;
+                }
+            } catch (error) {
+                console.error('Erreur obtention token FCM:', error);
+                return null;
+            }
+        }
+
+        // Sauvegarder le token et les préférences dans Firestore
+        async function savePushSubscription() {
+            if (!auth.currentUser) {
+                console.log('Utilisateur non connecté - subscription non sauvegardée');
+                return;
+            }
+
+            const token = await getFCMToken();
+            if (!token) return;
+
+            const schedules = window.getNotificationSchedules ? window.getNotificationSchedules() : [];
+
+            try {
+                const userDocRef = doc(db, 'users', auth.currentUser.uid);
+                await updateDoc(userDocRef, {
+                    fcmToken: token,
+                    notificationSchedules: schedules,
+                    notificationsUpdatedAt: serverTimestamp(),
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                }).catch(async () => {
+                    // Si le document n'existe pas, le créer
+                    await setDoc(userDocRef, {
+                        fcmToken: token,
+                        notificationSchedules: schedules,
+                        notificationsUpdatedAt: serverTimestamp(),
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                    }, { merge: true });
+                });
+
+                console.log('Subscription push sauvegardée dans Firestore');
+            } catch (error) {
+                console.error('Erreur sauvegarde subscription:', error);
+            }
+        }
+
+        // Supprimer la subscription
+        async function removePushSubscription() {
+            if (!auth.currentUser) return;
+
+            try {
+                const userDocRef = doc(db, 'users', auth.currentUser.uid);
+                await updateDoc(userDocRef, {
+                    fcmToken: null,
+                    notificationSchedules: []
+                });
+                console.log('Subscription push supprimée');
+            } catch (error) {
+                console.error('Erreur suppression subscription:', error);
+            }
+        }
+
+        // Exposer les fonctions globalement
+        window.initializeFCM = initializeFCM;
+        window.getFCMToken = getFCMToken;
+        window.savePushSubscription = savePushSubscription;
+        window.removePushSubscription = removePushSubscription;
+
+        // Initialiser FCM au chargement
+        initializeFCM();
 
         // ===== ALIMENTS COMMUNS (Base partagée) =====
         // Fonction pour récupérer un aliment par code-barres depuis Firestore
@@ -15377,6 +15504,11 @@ Solutions possibles :
         function saveNotificationSchedules(schedules) {
             localStorage.setItem('notification-schedules', JSON.stringify(schedules));
             scheduleUserNotifications();
+
+            // Sauvegarder aussi dans Firestore pour FCM
+            if (typeof window.savePushSubscription === 'function') {
+                window.savePushSubscription();
+            }
         }
 
         // Tester une notification
