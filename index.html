@@ -14409,7 +14409,7 @@ Solutions possibles :
         // ===== FIREBASE CLOUD MESSAGING (FCM) =====
         // IMPORTANT: Remplace cette clé par ta clé VAPID de Firebase Console
         // Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
-        const VAPID_KEY = 'YOUR_VAPID_KEY_HERE';
+        const VAPID_KEY = 'BIHN84h45rQhbm5xYFPYH0sp2bZ56F9L9QBU9_lbKs_DFlvJvk7dLlj6jh1qiC21zm6To1hO3DiNm9jtN1ep12I';
 
         let messaging = null;
         let fcmToken = null;
@@ -15455,7 +15455,7 @@ Solutions possibles :
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', async () => {
                 try {
-                    const registration = await navigator.serviceWorker.register('/sw.js');
+                    const registration = await navigator.serviceWorker.register('./sw.js');
                     window.swRegistration = registration;
 
                     // Programmer les notifications au chargement
