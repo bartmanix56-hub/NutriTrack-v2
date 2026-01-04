@@ -5032,7 +5032,7 @@
                         </div>
                         <div>
                             <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">Hydratation</div>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary);">1 verre = 250ml</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">30ml/kg · 1 verre = 250ml</div>
                         </div>
                     </div>
                     <!-- Compteur -->
@@ -5054,7 +5054,7 @@
                             <div id="water-progress" style="height: 100%; background: var(--accent-carbs); border-radius: var(--radius-full); transition: width 0.3s ease; width: 0%;"></div>
                         </div>
                         <div style="font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap;">
-                            <span id="water-ml">0</span> / 2000 ml
+                            <span id="water-ml">0</span> / <span id="water-target">2000</span> ml
                         </div>
                     </div>
                 </div>
@@ -6173,36 +6173,46 @@
                             <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0;">Notifications</h3>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; gap: var(--space-lg);">
-                            <!-- Toggle Rappel quotidien -->
-                            <div style="display: flex; align-items: center; justify-content: space-between;">
-                                <div style="flex: 1;">
-                                    <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: var(--space-xs);">Rappel quotidien</div>
-                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Recevoir un rappel pour entrer tes repas</div></div>
-                                <label style="position: relative; display: inline-block; width: 50px; height: 26px; cursor: pointer;">
-                                    <input type="checkbox" id="notification-daily" style="opacity: 0; width: 0; height: 0;">
-                                    <span class="switch-bg"></span>
-                                    <span class="switch-knob"></span>
-                                </label>
+                        <!-- Statut permission -->
+                        <div id="notification-permission-status" style="margin-bottom: var(--space-lg); padding: var(--space-md); border-radius: var(--radius-md); display: flex; align-items: center; gap: var(--space-sm);">
+                        </div>
+
+                        <!-- Bouton activer notifications -->
+                        <button id="enable-notifications-btn" onclick="requestNotificationPermission()" class="btn" style="width: 100%; margin-bottom: var(--space-xl); background: var(--accent-ui); display: none;">
+                            <i data-lucide="bell-ring" style="width: 18px; height: 18px;"></i>
+                            Activer les notifications
+                        </button>
+
+                        <!-- Programmation des rappels -->
+                        <div style="margin-bottom: var(--space-lg);">
+                            <div style="font-weight: 600; font-size: 1rem; color: var(--text-primary); margin-bottom: var(--space-md);">
+                                <i data-lucide="clock" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+                                Rappels repas
                             </div>
+                            <div id="notification-schedules" style="display: flex; flex-direction: column; gap: var(--space-md);">
+                                <!-- Les rappels seront injectés ici -->
+                            </div>
+                        </div>
 
-                            <!-- Toggle Objectifs atteints -->
-                            <div style="display: flex; align-items: center; justify-content: space-between;">
-                                <div style="flex: 1;">
-                                    <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: var(--space-xs);">Objectifs atteints</div>
-                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Célébrer quand tu atteins tes macros</div></div>
-                                <label style="position: relative; display: inline-block; width: 50px; height: 26px; cursor: pointer;">
-                                    <input type="checkbox" id="notification-goals" checked style="opacity: 0; width: 0; height: 0;">
-                                    <span class="switch-bg" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; border-radius: 26px; transition: 0.3s;"></span>
-                                    <span class="switch-knob" style="position: absolute; content: .+; height: 18px; width: 18px; left: 4px; bottom: 4px; background: white; border-radius: 50%; transition: 0.3s;"></span>
-                                </label>
-                            </div></div>
+                        <!-- Objectifs atteints -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md); margin-bottom: var(--space-lg);">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: var(--space-xs);">Objectifs atteints</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">Notification quand tu atteins tes macros</div>
+                            </div>
+                            <label style="position: relative; display: inline-block; width: 50px; height: 26px; cursor: pointer;">
+                                <input type="checkbox" id="notification-goals" checked style="opacity: 0; width: 0; height: 0;">
+                                <span class="switch-bg"></span>
+                                <span class="switch-knob"></span>
+                            </label>
+                        </div>
 
-                        <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(5, 150, 105, 0.1); border-radius: var(--radius-md); border-left: 3px solid var(--accent-ui);">
-                            <div style="display: flex; align-items: start; gap: var(--space-sm);">
-                                <i data-lucide="info" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 2px;"></i>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Les notifications nécessitent l'autorisation de ton navigateur</span>
-                            </div></div></div>
+                        <!-- Bouton test -->
+                        <button onclick="testNotification()" class="btn" style="width: 100%; background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1);">
+                            <i data-lucide="send" style="width: 16px; height: 16px;"></i>
+                            Tester les notifications
+                        </button>
+                    </div>
 
                     <!-- Apparence -->
                     <div class="card">
@@ -8796,6 +8806,51 @@ Solutions possibles :
 
             // Mettre à jour le widget "Reste du jour"
             updateRemainingWidget();
+
+            // Vérifier si objectifs atteints pour notification
+            checkGoalsReached(totals);
+        }
+
+        // Vérifier si les objectifs sont atteints et envoyer notification
+        let goalsReachedToday = localStorage.getItem('goalsReachedDate') === getDateKey(new Date());
+
+        function checkGoalsReached(totals) {
+            // Ne pas notifier si déjà fait aujourd'hui
+            if (goalsReachedToday) return;
+
+            // Vérifier si notifications objectifs activées
+            const notifGoalsEnabled = localStorage.getItem('notification-goals') !== 'false';
+            if (!notifGoalsEnabled) return;
+
+            // Récupérer les objectifs
+            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            if (!targets.calories) return;
+
+            // Vérifier si objectif calories atteint (entre 90% et 110%)
+            const caloriePercent = (totals.calories / targets.calories) * 100;
+            if (caloriePercent >= 90 && caloriePercent <= 110) {
+                goalsReachedToday = true;
+                localStorage.setItem('goalsReachedDate', getDateKey(new Date()));
+
+                // Envoyer notification
+                if (Notification.permission === 'granted') {
+                    if (window.swRegistration && window.swRegistration.active) {
+                        window.swRegistration.active.postMessage({
+                            type: 'TEST_NOTIFICATION',
+                            data: {
+                                title: 'Objectif atteint !',
+                                body: 'Bravo ! Tu as atteint ton objectif calorique du jour !',
+                                tag: 'goal-reached'
+                            }
+                        });
+                    } else {
+                        new Notification('Objectif atteint !', {
+                            body: 'Bravo ! Tu as atteint ton objectif calorique du jour !',
+                            icon: '/icon-192.png'
+                        });
+                    }
+                }
+            }
         }
 
         // Save daily meals to localStorage
@@ -9299,16 +9354,16 @@ Solutions possibles :
                         </div>
                         <div class="day-meals">
                             <div class="day-meal-item">
-                                <div class="day-meal-label">☀️ Petit-déjeuner</div>
+                                <div class="day-meal-label"><i data-lucide="sunrise" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Petit-déjeuner</div>
                                 <div class="day-meal-foods">${dayPlan.breakfast}</div></div>
                             <div class="day-meal-item">
                                 <div class="day-meal-label"><i data-lucide="utensils" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Déjeuner</div>
                                 <div class="day-meal-foods">${dayPlan.lunch}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label">🍎 Goûter</div>
+                                <div class="day-meal-label"><i data-lucide="apple" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Goûter</div>
                                 <div class="day-meal-foods">${dayPlan.snack}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label">🌙 Dîner</div>
+                                <div class="day-meal-label"><i data-lucide="moon" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Dîner</div>
                                 <div class="day-meal-foods">${dayPlan.dinner}</div></div></div>
                         <div class="day-total-cal">${dayPlan.totalCal} kcal</div></div>
                 `;
@@ -9513,6 +9568,8 @@ Solutions possibles :
                         this.value = 300;
                         showProfileAlert('Le poids maximum est de 300 kg', 'warning', true);
                     }
+                    // Mettre à jour l'objectif d'hydratation
+                    if (typeof updateWaterUI === 'function') updateWaterUI();
                 });
             }
         }
@@ -10581,6 +10638,21 @@ Solutions possibles :
             });
             let allFoods = Array.from(foodMap.values());
 
+            // CHARGER ALIMENTS COMMUNAUTAIRES si filtre "community" sélectionné (même sans recherche)
+            if (filter === 'community' && typeof window.loadCommunityFoods === 'function') {
+                try {
+                    const communityFoods = await window.loadCommunityFoods();
+                    communityFoods.forEach(item => {
+                        if (!foodMap.has(item.name)) {
+                            foodMap.set(item.name, item);
+                        }
+                    });
+                    allFoods = Array.from(foodMap.values());
+                } catch (err) {
+                    console.error('Erreur chargement aliments communautaires:', err);
+                }
+            }
+
             // RECHERCHE FIRESTORE (si query >= 2 caractères ou code-barres numérique)
             if (query && (query.length >= 2 || /^\d+$/.test(query))) {
 
@@ -11019,18 +11091,29 @@ Solutions possibles :
             saveDailyMeals();
         }
 
+        function getWaterTarget() {
+            // Objectif = 30ml par kg de poids corporel (minimum 1500ml, max 4000ml)
+            const weight = parseFloat(document.getElementById('weight')?.value) || 0;
+            if (weight > 0) {
+                return Math.min(4000, Math.max(1500, Math.round(weight * 30)));
+            }
+            return 2000; // Défaut si pas de poids renseigné
+        }
+
         function updateWaterUI() {
             const count = dailyMeals.water || 0;
             const ml = count * 250;
-            const target = 2000;
+            const target = getWaterTarget();
             const percent = Math.min(100, (ml / target) * 100);
 
             const countEl = document.getElementById('water-count');
             const mlEl = document.getElementById('water-ml');
+            const targetEl = document.getElementById('water-target');
             const progressEl = document.getElementById('water-progress');
 
             if (countEl) countEl.textContent = count;
             if (mlEl) mlEl.textContent = ml;
+            if (targetEl) targetEl.textContent = target;
             if (progressEl) progressEl.style.width = percent + '%';
         }
 
@@ -11152,16 +11235,16 @@ Solutions possibles :
                         <div class="day-date">${formatDate(date)}</div>
                         <div class="day-meals">
                             <div class="day-meal-item">
-                                <div class="day-meal-label">☀️ Petit-déjeuner</div>
+                                <div class="day-meal-label"><i data-lucide="sunrise" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Petit-déjeuner</div>
                                 <div class="day-meal-foods">${dayPlan.breakfast}</div></div>
                             <div class="day-meal-item">
                                 <div class="day-meal-label"><i data-lucide="utensils" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Déjeuner</div>
                                 <div class="day-meal-foods">${dayPlan.lunch}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label">🍎 Goûter</div>
+                                <div class="day-meal-label"><i data-lucide="apple" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Goûter</div>
                                 <div class="day-meal-foods">${dayPlan.snack}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label">🌙 Dîner</div>
+                                <div class="day-meal-label"><i data-lucide="moon" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Dîner</div>
                                 <div class="day-meal-foods">${dayPlan.dinner}</div></div></div>
                         <div class="day-total-cal">${dayPlan.totalCal} kcal</div></div>
                 `;
@@ -12611,22 +12694,8 @@ Solutions possibles :
             checkAndAutoCalculate();
 
             // ===== NOTIFICATION PREFERENCES =====
-            // Load saved notification preferences
-            const notifDaily = document.getElementById('notification-daily');
             const notifGoals = document.getElementById('notification-goals');
-
-            const savedNotifDaily = localStorage.getItem('notification-daily');
             const savedNotifGoals = localStorage.getItem('notification-goals');
-
-            if (notifDaily) {
-                notifDaily.checked = savedNotifDaily === 'true';
-                notifDaily.addEventListener('change', function() {
-                    localStorage.setItem('notification-daily', this.checked);
-                    if (this.checked && Notification.permission !== 'granted') {
-                        Notification.requestPermission();
-                    }
-                });
-            }
 
             if (notifGoals) {
                 notifGoals.checked = savedNotifGoals !== 'false'; // Default true
@@ -14391,13 +14460,44 @@ Solutions possibles :
                     }
                 });
 
-                if (results.length > 0) {
-                    console.log('✅ Résultats:', results.map(r => r.name));
-                }
-
                 return results;
             } catch (error) {
                 console.error('❌ Erreur recherche aliments_communs:', error);
+                return [];
+            }
+        };
+
+        // Charger TOUS les aliments communautaires (pour affichage dans le filtre)
+        window.loadCommunityFoods = async function() {
+            if (!db) return [];
+
+            try {
+                const q = query(collection(db, 'aliments_communs'), limit(200));
+                const querySnapshot = await getDocs(q);
+
+                const results = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.name) {
+                        results.push({
+                            name: data.name,
+                            calories: parseFloat(data.calories) || 0,
+                            protein: parseFloat(data.proteins || data.protein) || 0,
+                            carbs: parseFloat(data.carbs) || 0,
+                            fat: parseFloat(data.fats || data.fat) || 0,
+                            fiber: parseFloat(data.fibers || data.fiber) || 0,
+                            category: data.category || 'autres',
+                            barcode: doc.id,
+                            unit: '100g',
+                            custom: false,
+                            fromFirestore: true
+                        });
+                    }
+                });
+
+                return results;
+            } catch (error) {
+                console.error('Erreur chargement aliments communautaires:', error);
                 return [];
             }
         };
@@ -15220,6 +15320,247 @@ Solutions possibles :
         }
 
         } // Fin du if (isValidProtocol)
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Enregistrement du Service Worker pour les notifications
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('/sw.js');
+                    window.swRegistration = registration;
+
+                    // Programmer les notifications au chargement
+                    scheduleUserNotifications();
+                } catch (error) {
+                    console.error('SW registration failed:', error);
+                }
+            });
+        }
+
+        // Programmer les notifications selon les préférences utilisateur
+        function scheduleUserNotifications() {
+            if (!window.swRegistration || !window.swRegistration.active) {
+                // Réessayer dans 1 seconde si SW pas encore actif
+                setTimeout(scheduleUserNotifications, 1000);
+                return;
+            }
+
+            const schedules = getNotificationSchedules();
+
+            if (schedules.length > 0) {
+                window.swRegistration.active.postMessage({
+                    type: 'SCHEDULE_NOTIFICATIONS',
+                    data: { schedules }
+                });
+            }
+        }
+
+        // Récupérer les horaires de notification depuis localStorage
+        function getNotificationSchedules() {
+            const savedSchedules = localStorage.getItem('notification-schedules');
+            if (savedSchedules) {
+                return JSON.parse(savedSchedules);
+            }
+
+            // Horaires par défaut
+            return [
+                { id: 'breakfast', time: '08:00', title: 'Petit-déjeuner', body: "N'oublie pas de logger ton petit-déjeuner !", enabled: false },
+                { id: 'lunch', time: '12:30', title: 'Déjeuner', body: "C'est l'heure de logger ton déjeuner !", enabled: false },
+                { id: 'snack', time: '16:00', title: 'Goûter', body: "Un petit goûter ? Pense à le noter !", enabled: false },
+                { id: 'dinner', time: '19:30', title: 'Dîner', body: "N'oublie pas de logger ton dîner !", enabled: false }
+            ];
+        }
+
+        // Sauvegarder les horaires
+        function saveNotificationSchedules(schedules) {
+            localStorage.setItem('notification-schedules', JSON.stringify(schedules));
+            scheduleUserNotifications();
+        }
+
+        // Tester une notification
+        function testNotification() {
+            if (Notification.permission !== 'granted') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        sendTestNotification();
+                    }
+                });
+            } else {
+                sendTestNotification();
+            }
+        }
+
+        function sendTestNotification() {
+            if (window.swRegistration && window.swRegistration.active) {
+                window.swRegistration.active.postMessage({
+                    type: 'TEST_NOTIFICATION',
+                    data: {
+                        title: 'NutriTrack - Test',
+                        body: 'Les notifications fonctionnent correctement !',
+                        tag: 'test-notification'
+                    }
+                });
+            } else {
+                // Fallback sans SW
+                new Notification('NutriTrack - Test', {
+                    body: 'Les notifications fonctionnent correctement !',
+                    icon: '/icon-192.png'
+                });
+            }
+        }
+
+        // Rendre les fonctions globales
+        window.scheduleUserNotifications = scheduleUserNotifications;
+        window.getNotificationSchedules = getNotificationSchedules;
+        window.saveNotificationSchedules = saveNotificationSchedules;
+        window.testNotification = testNotification;
+
+        // ===== UI NOTIFICATIONS =====
+
+        // Demander permission notifications
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                alert('Ton navigateur ne supporte pas les notifications');
+                return;
+            }
+
+            Notification.requestPermission().then(permission => {
+                updateNotificationPermissionUI();
+                if (permission === 'granted') {
+                    showToast('<i data-lucide="bell" class="icon-inline"></i> Notifications activées !');
+                }
+            });
+        }
+        window.requestNotificationPermission = requestNotificationPermission;
+
+        // Mettre à jour l'UI selon le statut de permission
+        function updateNotificationPermissionUI() {
+            const statusEl = document.getElementById('notification-permission-status');
+            const enableBtn = document.getElementById('enable-notifications-btn');
+
+            if (!statusEl) return;
+
+            if (!('Notification' in window)) {
+                statusEl.style.background = 'rgba(239, 68, 68, 0.15)';
+                statusEl.innerHTML = '<i data-lucide="alert-triangle" style="width: 18px; height: 18px; color: #ef4444;"></i><span style="color: #ef4444; font-size: 0.9rem;">Ton navigateur ne supporte pas les notifications</span>';
+                if (enableBtn) enableBtn.style.display = 'none';
+                return;
+            }
+
+            const permission = Notification.permission;
+
+            if (permission === 'granted') {
+                statusEl.style.background = 'rgba(5, 150, 105, 0.15)';
+                statusEl.innerHTML = '<i data-lucide="check-circle" style="width: 18px; height: 18px; color: var(--accent-ui);"></i><span style="color: var(--accent-ui); font-size: 0.9rem;">Notifications activées</span>';
+                if (enableBtn) enableBtn.style.display = 'none';
+            } else if (permission === 'denied') {
+                statusEl.style.background = 'rgba(239, 68, 68, 0.15)';
+                statusEl.innerHTML = '<i data-lucide="x-circle" style="width: 18px; height: 18px; color: #ef4444;"></i><span style="color: #ef4444; font-size: 0.9rem;">Notifications bloquées - Active-les dans les paramètres du navigateur</span>';
+                if (enableBtn) enableBtn.style.display = 'none';
+            } else {
+                statusEl.style.background = 'rgba(251, 191, 36, 0.15)';
+                statusEl.innerHTML = '<i data-lucide="bell-off" style="width: 18px; height: 18px; color: #fbbf24;"></i><span style="color: #fbbf24; font-size: 0.9rem;">Notifications non activées</span>';
+                if (enableBtn) enableBtn.style.display = 'flex';
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // Icônes pour chaque repas
+        const mealIcons = {
+            breakfast: 'sunrise',
+            lunch: 'utensils',
+            snack: 'apple',
+            dinner: 'moon'
+        };
+
+        const mealLabels = {
+            breakfast: 'Petit-déjeuner',
+            lunch: 'Déjeuner',
+            snack: 'Goûter',
+            dinner: 'Dîner'
+        };
+
+        // Afficher les horaires de notification
+        function renderNotificationSchedules() {
+            const container = document.getElementById('notification-schedules');
+            if (!container) return;
+
+            const schedules = getNotificationSchedules();
+
+            container.innerHTML = schedules.map(schedule => `
+                <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                    <div style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(5, 150, 105, 0.15); border-radius: var(--radius-sm);">
+                        <i data-lucide="${mealIcons[schedule.id]}" style="width: 18px; height: 18px; color: var(--accent-ui);"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">${mealLabels[schedule.id]}</div>
+                    </div>
+                    <input type="time" value="${schedule.time}"
+                           onchange="updateScheduleTime('${schedule.id}', this.value)"
+                           style="background: var(--bg-secondary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); padding: var(--space-sm) var(--space-md); color: var(--text-primary); font-size: 0.9rem;">
+                    <label style="position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer;">
+                        <input type="checkbox" ${schedule.enabled ? 'checked' : ''}
+                               onchange="updateScheduleEnabled('${schedule.id}', this.checked)"
+                               style="opacity: 0; width: 0; height: 0;">
+                        <span class="switch-bg"></span>
+                        <span class="switch-knob"></span>
+                    </label>
+                </div>
+            `).join('');
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // Mettre à jour l'heure d'un rappel
+        function updateScheduleTime(id, time) {
+            const schedules = getNotificationSchedules();
+            const schedule = schedules.find(s => s.id === id);
+            if (schedule) {
+                schedule.time = time;
+                saveNotificationSchedules(schedules);
+            }
+        }
+        window.updateScheduleTime = updateScheduleTime;
+
+        // Activer/désactiver un rappel
+        function updateScheduleEnabled(id, enabled) {
+            const schedules = getNotificationSchedules();
+            const schedule = schedules.find(s => s.id === id);
+            if (schedule) {
+                schedule.enabled = enabled;
+                saveNotificationSchedules(schedules);
+
+                // Demander permission si activation et pas encore accordée
+                if (enabled && Notification.permission === 'default') {
+                    requestNotificationPermission();
+                }
+            }
+        }
+        window.updateScheduleEnabled = updateScheduleEnabled;
+
+        // Initialiser l'UI notifications au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            // Petit délai pour s'assurer que tout est chargé
+            setTimeout(() => {
+                updateNotificationPermissionUI();
+                renderNotificationSchedules();
+            }, 500);
+        });
+
+        // Observer les changements d'onglet pour rafraîchir l'UI
+        const originalSwitchToTabNotif = window.switchToTab;
+        if (typeof originalSwitchToTabNotif === 'function') {
+            window.switchToTab = function(tab) {
+                originalSwitchToTabNotif(tab);
+                if (tab === 'settings') {
+                    updateNotificationPermissionUI();
+                    renderNotificationSchedules();
+                }
+            };
+        }
     </script>
 </body>
 </html>
