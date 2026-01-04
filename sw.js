@@ -1,39 +1,78 @@
-// NutriTrack Service Worker - Notifications & Caching
+// NutriTrack Service Worker - FCM Push Notifications
 const CACHE_NAME = 'nutritrack-v2';
 const NOTIFICATION_TAG = 'nutritrack-reminder';
 
+// Import Firebase scripts pour le Service Worker
+importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
+
+// Configuration Firebase (même config que l'app)
+firebase.initializeApp({
+    apiKey: "AIzaSyCL2SvQ2c784ZyA2Pr-Qtv2F1wnnDByGkc",
+    authDomain: "nutritraack.firebaseapp.com",
+    projectId: "nutritraack",
+    storageBucket: "nutritraack.firebasestorage.app",
+    messagingSenderId: "133692710812",
+    appId: "1:133692710812:web:4a5937cea6e86c9b25b259"
+});
+
+// Récupérer l'instance de messaging
+const messaging = firebase.messaging();
+
+// Gérer les messages push en arrière-plan
+messaging.onBackgroundMessage((payload) => {
+    console.log('[SW] Message reçu en background:', payload);
+
+    const notificationTitle = payload.notification?.title || payload.data?.title || 'NutriTrack';
+    const notificationOptions = {
+        body: payload.notification?.body || payload.data?.body || 'Tu as une notification !',
+        icon: '/icon-192.png',
+        badge: '/icon-192.png',
+        tag: payload.data?.tag || NOTIFICATION_TAG,
+        vibrate: [200, 100, 200],
+        data: {
+            url: payload.data?.url || self.location.origin,
+            ...payload.data
+        },
+        actions: [
+            { action: 'open', title: 'Ouvrir' },
+            { action: 'dismiss', title: 'Ignorer' }
+        ]
+    };
+
+    return self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
 // Installation du Service Worker
 self.addEventListener('install', (event) => {
+    console.log('[SW] Installation');
     self.skipWaiting();
 });
 
 // Activation
 self.addEventListener('activate', (event) => {
+    console.log('[SW] Activation');
     event.waitUntil(clients.claim());
 });
 
-// Réception de messages depuis l'app
+// Réception de messages depuis l'app (pour notifications locales)
 self.addEventListener('message', (event) => {
-    const { type, data } = event.data;
+    const { type, data } = event.data || {};
 
     if (type === 'SCHEDULE_NOTIFICATIONS') {
-        // Programmer les notifications
         scheduleNotifications(data.schedules);
     } else if (type === 'CANCEL_NOTIFICATIONS') {
-        // Annuler toutes les notifications programmées
         cancelAllNotifications();
     } else if (type === 'TEST_NOTIFICATION') {
-        // Test immédiat
         showNotification(data.title, data.body, data.tag);
     }
 });
 
-// Stockage des timeouts actifs
+// Stockage des timeouts actifs pour notifications locales
 let activeTimeouts = [];
 
-// Programmer les notifications pour aujourd'hui
+// Programmer les notifications locales (fallback si FCM non dispo)
 function scheduleNotifications(schedules) {
-    // Annuler les anciennes
     cancelAllNotifications();
 
     const now = new Date();
@@ -45,7 +84,6 @@ function scheduleNotifications(schedules) {
         const scheduledTime = new Date();
         scheduledTime.setHours(hours, minutes, 0, 0);
 
-        // Si l'heure est passée, programmer pour demain
         if (scheduledTime <= now) {
             scheduledTime.setDate(scheduledTime.getDate() + 1);
         }
@@ -64,13 +102,11 @@ function scheduleNotifications(schedules) {
     });
 }
 
-// Annuler toutes les notifications programmées
 function cancelAllNotifications() {
     activeTimeouts.forEach(id => clearTimeout(id));
     activeTimeouts = [];
 }
 
-// Afficher une notification
 function showNotification(title, body, tag) {
     const options = {
         body: body,
@@ -83,54 +119,56 @@ function showNotification(title, body, tag) {
             { action: 'open', title: 'Ouvrir NutriTrack' },
             { action: 'dismiss', title: 'Ignorer' }
         ],
-        data: {
-            url: self.location.origin
-        }
+        data: { url: self.location.origin }
     };
 
-    self.registration.showNotification(title, options);
+    return self.registration.showNotification(title, options);
 }
 
 // Clic sur notification
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
 
-    if (event.action === 'dismiss') {
-        return;
-    }
+    if (event.action === 'dismiss') return;
 
-    // Ouvrir ou focus l'app
+    const urlToOpen = event.notification.data?.url || self.location.origin;
+
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
-            // Si une fenêtre est déjà ouverte, la focus
             for (const client of clientList) {
                 if (client.url.includes(self.location.origin) && 'focus' in client) {
                     return client.focus();
                 }
             }
-            // Sinon ouvrir une nouvelle fenêtre
             if (clients.openWindow) {
-                return clients.openWindow('/');
+                return clients.openWindow(urlToOpen);
             }
         })
     );
 });
 
-// Fermeture de notification
-self.addEventListener('notificationclose', (event) => {
-    // Analytics ou autre action si besoin
-});
+// Push event (fallback si onBackgroundMessage ne fonctionne pas)
+self.addEventListener('push', (event) => {
+    console.log('[SW] Push event reçu');
 
-// Periodic Background Sync (si supporté - Chrome Android)
-self.addEventListener('periodicsync', (event) => {
-    if (event.tag === 'nutritrack-check-reminders') {
-        event.waitUntil(checkAndSendReminders());
+    let data = {};
+    if (event.data) {
+        try {
+            data = event.data.json();
+        } catch (e) {
+            data = { title: 'NutriTrack', body: event.data.text() };
+        }
     }
-});
 
-// Vérifier et envoyer les rappels programmés
-async function checkAndSendReminders() {
-    // Cette fonction sera appelée périodiquement par le navigateur
-    // Récupérer les horaires depuis IndexedDB ou envoyer un message à l'app
-    // Pour l'instant, simple placeholder
-}
+    const title = data.notification?.title || data.title || 'NutriTrack';
+    const options = {
+        body: data.notification?.body || data.body || 'Nouvelle notification',
+        icon: '/icon-192.png',
+        badge: '/icon-192.png',
+        tag: data.tag || NOTIFICATION_TAG,
+        vibrate: [200, 100, 200],
+        data: { url: data.url || self.location.origin }
+    };
+
+    event.waitUntil(self.registration.showNotification(title, options));
+});
