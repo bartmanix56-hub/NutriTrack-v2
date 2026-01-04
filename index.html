@@ -7089,6 +7089,10 @@
                         <i data-lucide="camera" style="width: 24px; height: 24px;"></i>
                         <span>Positionnez le code-barres devant la caméra</span>
                     </div>
+                    <!-- Bouton Flash -->
+                    <button id="scanner-flash-btn" onclick="toggleScannerFlash()" style="display: none; position: absolute; bottom: 16px; right: 16px; width: 48px; height: 48px; border-radius: 50%; background: rgba(0, 0, 0, 0.6); border: 2px solid rgba(255, 255, 255, 0.3); color: white; cursor: pointer; z-index: 10;">
+                        <i data-lucide="zap" style="width: 24px; height: 24px;"></i>
+                    </button>
                 </div>
                 <div id="scanner-result" style="display: none;">
                     <div class="scanner-result-content">
@@ -7260,8 +7264,7 @@
         function switchTab(tabName) {
             // Protection admin - bloquer l'accès si non admin
             if (tabName === 'admin') {
-                const ADMIN_UID = 'qEuqSbWO73OwTEwL6LhEILS5djD2';
-                if (typeof auth === 'undefined' || !auth.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+                if (typeof window.isAdmin !== 'function' || !window.isAdmin()) {
                     if (typeof showToast === 'function') {
                         showToast('<i data-lucide="shield-x" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Accès non autorisé');
                     }
@@ -7303,8 +7306,7 @@
         function switchToTab(tab) {
             // Protection admin - bloquer l'accès si non admin
             if (tab === 'admin') {
-                const ADMIN_UID = 'qEuqSbWO73OwTEwL6LhEILS5djD2';
-                if (typeof auth === 'undefined' || !auth.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+                if (typeof window.isAdmin !== 'function' || !window.isAdmin()) {
                     if (typeof showToast === 'function') {
                         showToast('<i data-lucide="shield-x" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Accès non autorisé');
                     }
@@ -9859,6 +9861,8 @@ Solutions possibles :
 
         // ===== BARCODE SCANNER =====
         let html5QrCode = null;
+        let scannerVideoTrack = null;
+        let scannerFlashOn = false;
         let scannerScannedBarcode = null;
 
         // Ouvrir le scanner depuis le modal d'ajout d'aliment
@@ -10011,11 +10015,44 @@ Solutions possibles :
             modal.classList.remove('active');
             document.body.style.overflow = '';
 
+            // Reset flash
+            scannerFlashOn = false;
+            scannerVideoTrack = null;
+            const flashBtn = document.getElementById('scanner-flash-btn');
+            if (flashBtn) {
+                flashBtn.style.display = 'none';
+                flashBtn.style.background = 'rgba(0, 0, 0, 0.6)';
+            }
+
             // Arrêter le scanner
             if (html5QrCode) {
                 html5QrCode.stop().then(() => {
                     html5QrCode.clear();
                 }).catch(err => console.log('Erreur arrêt scanner:', err));
+            }
+        }
+
+        // Toggle flash/torche du scanner
+        async function toggleScannerFlash() {
+            if (!scannerVideoTrack) return;
+
+            try {
+                scannerFlashOn = !scannerFlashOn;
+                await scannerVideoTrack.applyConstraints({
+                    advanced: [{ torch: scannerFlashOn }]
+                });
+
+                // Mise à jour visuelle du bouton
+                const flashBtn = document.getElementById('scanner-flash-btn');
+                if (flashBtn) {
+                    flashBtn.style.background = scannerFlashOn ? 'rgba(250, 204, 21, 0.8)' : 'rgba(0, 0, 0, 0.6)';
+                    flashBtn.style.color = scannerFlashOn ? '#000' : '#fff';
+                }
+
+                console.log(scannerFlashOn ? '🔦 Flash activé' : '🔦 Flash désactivé');
+            } catch (err) {
+                console.error('Erreur toggle flash:', err);
+                showToast('<i data-lucide="zap-off" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Impossible d\'activer le flash');
             }
         }
 
@@ -10057,6 +10094,30 @@ Solutions possibles :
                 );
 
                 console.log('✅ Scanner démarré avec succès');
+
+                // Vérifier si le flash/torche est disponible
+                try {
+                    const videoElement = document.querySelector('#barcode-reader video');
+                    if (videoElement && videoElement.srcObject) {
+                        const tracks = videoElement.srcObject.getVideoTracks();
+                        if (tracks.length > 0) {
+                            scannerVideoTrack = tracks[0];
+                            const capabilities = scannerVideoTrack.getCapabilities();
+                            if (capabilities.torch) {
+                                // Afficher le bouton flash
+                                const flashBtn = document.getElementById('scanner-flash-btn');
+                                if (flashBtn) {
+                                    flashBtn.style.display = 'flex';
+                                    flashBtn.style.alignItems = 'center';
+                                    flashBtn.style.justifyContent = 'center';
+                                }
+                                console.log('🔦 Flash disponible');
+                            }
+                        }
+                    }
+                } catch (flashErr) {
+                    console.log('Flash non disponible:', flashErr);
+                }
             } catch (err) {
                 console.error('❌ Erreur démarrage scanner:', err);
                 showToast('<i data-lucide="camera-off" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Impossible d\'accéder à la caméra');
@@ -14705,6 +14766,8 @@ Solutions possibles :
         function isAdmin() {
             return auth.currentUser && auth.currentUser.uid === ADMIN_UID;
         }
+        // Expose globally for access from other scopes
+        window.isAdmin = isAdmin;
 
         // Show/hide admin button based on user
         function updateAdminVisibility() {
