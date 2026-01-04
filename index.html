@@ -4198,7 +4198,6 @@
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body style="opacity: 0; transition: opacity 0.3s; overflow: hidden;">
     <!-- Login Screen -->
@@ -5021,6 +5020,44 @@
                         <div style="text-align: center;">
                             <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Calories</div>
                             <div style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);" id="remaining-cal">0 kcal</div></div></div></div>
+            </div>
+
+            <!-- Widget Eau / Hydratation -->
+            <div id="water-widget" style="background: var(--bg-tertiary); border-radius: var(--radius-xl); padding: var(--space-lg) var(--space-xl); margin-bottom: var(--space-2xl); border: 1px solid rgba(56, 189, 248, 0.2);">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-md);">
+                    <!-- Icône et titre -->
+                    <div style="display: flex; align-items: center; gap: var(--space-md);">
+                        <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(56, 189, 248, 0.15); border-radius: var(--radius-md);">
+                            <i data-lucide="droplets" style="width: 22px; height: 22px; color: var(--accent-carbs);"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">Hydratation</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">1 verre = 250ml</div>
+                        </div>
+                    </div>
+                    <!-- Compteur -->
+                    <div style="display: flex; align-items: center; gap: var(--space-md);">
+                        <button onclick="updateWater(-1)" class="btn-ghost" style="width: 36px; height: 36px; padding: 0; border-radius: 50%;">
+                            <i data-lucide="minus" style="width: 18px; height: 18px;"></i>
+                        </button>
+                        <div style="text-align: center; min-width: 80px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-carbs);" id="water-count">0</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">verres</div>
+                        </div>
+                        <button onclick="updateWater(1)" class="btn" style="width: 36px; height: 36px; padding: 0; border-radius: 50%; background: var(--accent-carbs);">
+                            <i data-lucide="plus" style="width: 18px; height: 18px;"></i>
+                        </button>
+                    </div>
+                    <!-- Progression -->
+                    <div style="display: flex; align-items: center; gap: var(--space-md); min-width: 180px;">
+                        <div style="flex: 1; height: 8px; background: rgba(56, 189, 248, 0.15); border-radius: var(--radius-full); overflow: hidden;">
+                            <div id="water-progress" style="height: 100%; background: var(--accent-carbs); border-radius: var(--radius-full); transition: width 0.3s ease; width: 0%;"></div>
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap;">
+                            <span id="water-ml">0</span> / 2000 ml
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Grid 2x2 des repas -->
@@ -7311,7 +7348,8 @@
             breakfast: { foods: [], recipe: '' },
             lunch: { foods: [], recipe: '' },
             snack: { foods: [], recipe: '' },
-            dinner: { foods: [], recipe: '' }
+            dinner: { foods: [], recipe: '' },
+            water: 0
         };
 
         let weeklyPlan = {};
@@ -8226,11 +8264,9 @@ Solutions possibles :
                 return;
             }
 
-            console.log('✅ [QuickAdd] Initialisation recherche Quick Add');
 
             modalFoodSearch.addEventListener('input', async (e) => {
                 const query = e.target.value.toLowerCase().trim();
-                console.log('🔍 [QuickAdd] Input détecté:', query);
 
                 if (query.length < 2) {
                     modalSearchResults.style.display = 'none';
@@ -8252,11 +8288,9 @@ Solutions possibles :
 
                 // Chercher dans Firestore (avec debounce) - dès 2 caractères
                 modalSearchTimeout = setTimeout(async () => {
-                    console.log('🔍 [QuickAdd] Recherche Firestore:', query);
                     if (typeof window.searchAlimentsCommuns === 'function') {
                         try {
                             const firestoreResults = await window.searchAlimentsCommuns(query);
-                            console.log('📦 [QuickAdd] Résultats Firestore:', firestoreResults.length);
 
                             // Convertir les résultats Firestore
                             const firestoreFoods = firestoreResults.map(item => ({
@@ -8730,8 +8764,8 @@ Solutions possibles :
         function updateDayTotals() {
             let totals = { protein: 0, carbs: 0, fat: 0, fiber: 0, calories: 0 };
 
-            Object.keys(dailyMeals).forEach(mealType => {
-                const foods = dailyMeals[mealType].foods || [];
+            ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
+                const foods = dailyMeals[mealType]?.foods || [];
                 foods.forEach(food => {
                     const multiplier = food.quantity / 100;
                     totals.protein += food.protein * multiplier;
@@ -8741,6 +8775,9 @@ Solutions possibles :
                     totals.calories += food.calories * multiplier;
                 });
             });
+
+            // Mise à jour eau
+            if (typeof updateWaterUI === 'function') updateWaterUI();
 
             document.getElementById('day-protein').textContent = totals.protein.toFixed(1);
             document.getElementById('day-carbs').textContent = totals.carbs.toFixed(1);
@@ -9036,9 +9073,11 @@ Solutions possibles :
                     breakfast: { foods: [], recipe: '' },
                     lunch: { foods: [], recipe: '' },
                     snack: { foods: [], recipe: '' },
-                    dinner: { foods: [], recipe: '' }
+                    dinner: { foods: [], recipe: '' },
+                    water: 0
                 };
             }
+            if (typeof allDailyMeals[dateKey].water !== 'number') allDailyMeals[dateKey].water = 0;
             dailyMeals = allDailyMeals[dateKey];
 
             // Rafraîchir l'affichage
@@ -9179,10 +9218,13 @@ Solutions possibles :
             const saved = localStorage.getItem('dailyMeals');
             if (saved) {
                 dailyMeals = JSON.parse(saved);
+                // Assurer que water existe
+                if (typeof dailyMeals.water !== 'number') dailyMeals.water = 0;
                 Object.keys(dailyMeals).forEach(mealType => {
-                    renderMeal(mealType);
+                    if (mealType !== 'water') renderMeal(mealType);
                 });
                 updateDayTotals();
+                updateWaterUI();
             }
         }
 
@@ -9851,17 +9893,13 @@ Solutions possibles :
 
         // Fonction pour pré-remplir le formulaire après scan
         function preFillAddFoodModal(product, barcode) {
-            console.log('📝 [preFillAddFoodModal] Produit:', product);
-            console.log('📝 [preFillAddFoodModal] Barcode reçu:', barcode);
 
             // Stocker le code-barres et la source AVANT d'ouvrir le modal
             window.pendingBarcode = barcode;
             window.pendingProductSource = product.source; // 'firestore' ou 'openfoodfacts'
-            console.log('📝 [preFillAddFoodModal] pendingBarcode défini à:', window.pendingBarcode);
 
             // Ouvrir le modal
             openAddFoodModal();
-            console.log('📝 [preFillAddFoodModal] Modal ouvert');
 
             // Pré-remplir les champs (timeout pour s'assurer que le modal est ouvert)
             setTimeout(() => {
@@ -9930,7 +9968,6 @@ Solutions possibles :
                     if (typeof lucide !== 'undefined') lucide.createIcons();
                 }
 
-                console.log('✅ Formulaire pré-rempli avec succès');
             }, 100);
         }
 
@@ -9943,9 +9980,6 @@ Solutions possibles :
             const fiber = parseFloat(document.getElementById('new-food-fiber').value) || 0;
             let calories = parseFloat(document.getElementById('new-food-calories').value);
 
-            console.log('💾 [saveNewFood] Début sauvegarde...');
-            console.log('💾 [saveNewFood] pendingBarcode:', window.pendingBarcode);
-            console.log('💾 [saveNewFood] pendingProductSource:', window.pendingProductSource);
 
             if (!name) {
                 customAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Nom manquant', 'Veuillez entrer un nom pour l\'aliment.').then(() => {});
@@ -9964,8 +9998,6 @@ Solutions possibles :
             const barcode = window.pendingBarcode || null;
             const productSource = window.pendingProductSource || null;
 
-            console.log('💾 [saveNewFood] Barcode:', barcode);
-            console.log('💾 [saveNewFood] Source:', productSource);
 
             const newFood = {
                 name,
@@ -9986,7 +10018,6 @@ Solutions possibles :
 
             // === CAS 1: Produit venant de Firestore (déjà dans la base communautaire) ===
             if (productSource === 'firestore') {
-                console.log('💾 [saveNewFood] Produit Firestore - PAS de sauvegarde locale');
 
                 // Mettre à jour Firestore si modifications
                 if (barcode && typeof window.saveToAlimentsCommuns === 'function') {
@@ -10000,7 +10031,6 @@ Solutions possibles :
             }
             // === CAS 2: Produit d'OpenFoodFacts ou saisie manuelle ===
             else {
-                console.log('💾 [saveNewFood] Nouveau produit - sauvegarde locale + Firestore');
 
                 // Vérifier doublon local
                 const existingFood = customFoods.find(f => f.name.toLowerCase() === name.toLowerCase());
@@ -10016,7 +10046,6 @@ Solutions possibles :
                     foodDatabase.push(newFood);
                 }
                 localStorage.setItem('customFoods', JSON.stringify(customFoods));
-                console.log('💾 [saveNewFood] Sauvegardé localement');
 
                 toastMessage = '<i data-lucide="check-circle" class="icon-inline"></i> ' + name + ' ajouté à ta base';
 
@@ -10026,7 +10055,6 @@ Solutions possibles :
                         const saved = await window.saveToAlimentsCommuns(newFood);
                         if (saved) {
                             toastMessage = '<i data-lucide="cloud" class="icon-inline"></i> ' + name + ' ajouté à la base communautaire !';
-                            console.log('✅ [saveNewFood] Sauvegardé dans Firestore:', barcode);
                         }
                     } catch (err) {
                         console.error('❌ [saveNewFood] Erreur Firestore:', err);
@@ -10040,7 +10068,6 @@ Solutions possibles :
                 const aliases = JSON.parse(localStorage.getItem('foodAliases') || '{}');
                 aliases[barcode] = aliasInput.value.trim();
                 localStorage.setItem('foodAliases', JSON.stringify(aliases));
-                console.log('💾 [saveNewFood] Alias sauvegardé:', aliasInput.value.trim(), 'pour', barcode);
             }
 
             // Reset
@@ -10081,19 +10108,16 @@ Solutions possibles :
                 return;
             }
 
-            console.log('🔍 Recherche manuelle du code-barres:', barcode);
             showToast('🔍 Recherche en cours...');
 
             const product = await searchProductByBarcode(barcode);
 
             if (product) {
-                console.log('✅ Produit trouvé:', product.name);
                 // Vider l'input
                 input.value = '';
                 // Pré-remplir le formulaire (le modal est déjà ouvert)
                 preFillAddFoodModalInPlace(product, barcode);
             } else {
-                console.log('❌ Produit non trouvé');
                 showToast('❌ Produit non trouvé pour ce code-barres');
                 // Stocker quand même le barcode pour l'ajout manuel
                 window.pendingBarcode = barcode;
@@ -10103,13 +10127,10 @@ Solutions possibles :
 
         // Pré-remplir le formulaire sans ouvrir le modal (déjà ouvert)
         function preFillAddFoodModalInPlace(product, barcode) {
-            console.log('📝 [preFillInPlace] Produit:', product);
-            console.log('📝 [preFillInPlace] Barcode reçu:', barcode);
 
             // Stocker le code-barres et la source
             window.pendingBarcode = barcode;
             window.pendingProductSource = product.source;
-            console.log('📝 [preFillInPlace] pendingBarcode défini à:', window.pendingBarcode);
 
             // Pré-remplir les champs
             const nameInput = document.getElementById('new-food-name');
@@ -10242,7 +10263,6 @@ Solutions possibles :
                     flashBtn.style.color = scannerFlashOn ? '#000' : '#fff';
                 }
 
-                console.log(scannerFlashOn ? '🔦 Flash activé' : '🔦 Flash désactivé');
             } catch (err) {
                 console.error('Erreur toggle flash:', err);
                 showToast('<i data-lucide="zap-off" class="icon-inline"></i> Impossible d\'activer le flash', 'error');
@@ -10275,7 +10295,6 @@ Solutions possibles :
                     ]
                 };
 
-                console.log('🎥 Démarrage scanner avec config:', config);
 
                 await html5QrCode.start(
                     { facingMode: 'environment' },
@@ -10286,7 +10305,6 @@ Solutions possibles :
                     }
                 );
 
-                console.log('✅ Scanner démarré avec succès');
 
                 // Vérifier si le flash/torche est disponible
                 try {
@@ -10304,7 +10322,6 @@ Solutions possibles :
                                     flashBtn.style.alignItems = 'center';
                                     flashBtn.style.justifyContent = 'center';
                                 }
-                                console.log('🔦 Flash disponible');
                             }
                         }
                     }
@@ -10323,7 +10340,6 @@ Solutions possibles :
             if (scannerScannedBarcode === decodedText) return;
             scannerScannedBarcode = decodedText;
 
-            console.log('📷 [SCAN] Code-barres détecté:', decodedText);
 
             try {
                 // Afficher loader
@@ -10342,17 +10358,13 @@ Solutions possibles :
                 if (typeof lucide !== 'undefined') lucide.createIcons();
 
                 // Recherche en cascade : Firestore → Open Food Facts
-                console.log('📷 [SCAN] Début recherche...');
                 const product = await searchProductByBarcode(decodedText);
-                console.log('📷 [SCAN] Résultat recherche:', product);
 
                 // Arrêter le scanner
                 if (html5QrCode) {
-                    console.log('📷 [SCAN] Arrêt du scanner');
                     try {
                         await html5QrCode.stop();
                     } catch (e) {
-                        console.log('📷 [SCAN] Erreur arrêt scanner (ignorée):', e);
                     }
                 }
 
@@ -10360,11 +10372,9 @@ Solutions possibles :
                 const modal = document.getElementById('barcodeScannerModal');
                 modal.classList.remove('active');
                 document.body.style.overflow = '';
-                console.log('📷 [SCAN] Modal scanner fermé');
 
                 // Ouvrir le modal d'ajout avec les données
                 if (product) {
-                    console.log('📷 [SCAN] Produit trouvé, ouverture modal ajout');
                     // Stocker les données AVANT d'ouvrir le modal
                     window.pendingBarcode = decodedText;
                     window.pendingProductSource = product.source;
@@ -10431,12 +10441,10 @@ Solutions possibles :
                         }
                         modalBody.insertBefore(message, modalBody.firstChild);
 
-                        console.log('📷 [SCAN] Formulaire pré-rempli avec:', product.name);
                     }, 100);
 
                     showToast('✅ Produit trouvé : ' + product.name);
                 } else {
-                    console.log('📷 [SCAN] Produit non trouvé');
                     // Ouvrir quand même le modal avec le code-barres
                     window.pendingBarcode = decodedText;
                     window.pendingProductSource = 'manual';
@@ -10451,25 +10459,18 @@ Solutions possibles :
         }
 
         async function searchProductByBarcode(barcode) {
-            console.log('🔍 [1/2] Recherche dans Firestore aliments_communs...');
             // Priorité 1: Chercher dans Firestore aliments_communs
             const firestoreProduct = await searchFirestoreAliments(barcode);
             if (firestoreProduct) {
-                console.log('✅ [1/2] Produit trouvé dans Firestore:', firestoreProduct.name);
                 return { ...firestoreProduct, source: 'firestore' };
             }
-            console.log('⏭️ [1/2] Non trouvé dans Firestore, passage à Open Food Facts...');
 
-            console.log('🔍 [2/2] Recherche dans Open Food Facts API...');
             // Priorité 2: Chercher dans Open Food Facts
             const offProduct = await searchOpenFoodFacts(barcode);
             if (offProduct) {
-                console.log('✅ [2/2] Produit trouvé dans Open Food Facts:', offProduct.name);
                 return { ...offProduct, source: 'openfoodfacts' };
             }
-            console.log('❌ [2/2] Non trouvé dans Open Food Facts');
 
-            console.log('💀 Aucune source n\'a retourné de résultat pour ce code-barres');
             return null;
         }
 
@@ -10582,15 +10583,12 @@ Solutions possibles :
 
             // RECHERCHE FIRESTORE (si query >= 2 caractères ou code-barres numérique)
             if (query && (query.length >= 2 || /^\d+$/.test(query))) {
-                console.log('🔥 Déclenchement recherche Firestore depuis filterFoodDatabase');
 
                 // Si c'est un code-barres numérique, recherche DIRECTE par ID de document
                 if (/^\d+$/.test(query) && typeof window.getAlimentFromFirestore === 'function') {
-                    console.log('📊 Recherche DIRECTE par code-barres ID:', query);
                     try {
                         const directResult = await window.getAlimentFromFirestore(query);
                         if (directResult) {
-                            console.log('✅ Trouvé par recherche directe:', directResult);
                             const foodItem = {
                                 name: directResult.name,
                                 calories: parseFloat(directResult.calories) || 0,
@@ -10610,7 +10608,6 @@ Solutions possibles :
                                 allFoods = Array.from(foodMap.values());
                             }
                         } else {
-                            console.log('❌ Code-barres non trouvé par recherche directe');
                         }
                     } catch (err) {
                         console.error('❌ Erreur recherche directe code-barres:', err);
@@ -10620,7 +10617,6 @@ Solutions possibles :
                 else if (typeof window.searchAlimentsCommuns === 'function') {
                     try {
                         const firestoreResults = await window.searchAlimentsCommuns(query);
-                        console.log('📦 Résultats Firestore reçus:', firestoreResults.length);
 
                         // Convertir les résultats Firestore au format local et les ajouter
                         firestoreResults.forEach(item => {
@@ -11013,6 +11009,29 @@ Solutions possibles :
             localStorage.setItem('allDailyMeals', JSON.stringify(allDailyMeals));
             // Mettre à jour le streak en temps réel
             if (typeof updateStreakDisplay === 'function') updateStreakDisplay();
+        }
+
+        // ===== GESTION HYDRATATION (EAU) =====
+        function updateWater(delta) {
+            if (typeof dailyMeals.water !== 'number') dailyMeals.water = 0;
+            dailyMeals.water = Math.max(0, dailyMeals.water + delta);
+            updateWaterUI();
+            saveDailyMeals();
+        }
+
+        function updateWaterUI() {
+            const count = dailyMeals.water || 0;
+            const ml = count * 250;
+            const target = 2000;
+            const percent = Math.min(100, (ml / target) * 100);
+
+            const countEl = document.getElementById('water-count');
+            const mlEl = document.getElementById('water-ml');
+            const progressEl = document.getElementById('water-progress');
+
+            if (countEl) countEl.textContent = count;
+            if (mlEl) mlEl.textContent = ml;
+            if (progressEl) progressEl.style.width = percent + '%';
         }
 
         // Wrapper les fonctions existantes
@@ -14337,26 +14356,21 @@ Solutions possibles :
         // Fonction pour rechercher des aliments dans Firestore par texte
         window.searchAlimentsCommuns = async function(searchText) {
             try {
-                console.log('🔍 Recherche Firestore:', searchText);
 
                 // Si c'est un code-barres numérique, chercher par ID de document
                 if (/^\d+$/.test(searchText)) {
-                    console.log('📊 Recherche par code-barres:', searchText);
                     const result = await window.getAlimentFromFirestore(searchText);
                     if (result) {
-                        console.log('✅ Trouvé dans Firestore:', result);
                         return [{
                             ...result,
                             barcode: searchText,
                             id: searchText
                         }];
                     }
-                    console.log('❌ Code-barres non trouvé dans Firestore');
                     return [];
                 }
 
                 // Sinon, faire une recherche textuelle (limité à 100 résultats pour meilleures chances)
-                console.log('📝 Recherche textuelle dans Firestore...');
                 const q = query(collection(db, 'aliments_communs'), limit(100));
                 const querySnapshot = await getDocs(q);
 
@@ -14377,7 +14391,6 @@ Solutions possibles :
                     }
                 });
 
-                console.log(`📚 Recherche terminée: ${results.length} résultats trouvés sur ${totalDocs} documents scannés`);
                 if (results.length > 0) {
                     console.log('✅ Résultats:', results.map(r => r.name));
                 }
@@ -14391,8 +14404,6 @@ Solutions possibles :
 
         // 🧪 FONCTION DE TEST - Utilise dans la console: testFirestoreSearch("3017620422003") ou testFirestoreSearch("nutella")
         window.testFirestoreSearch = async function(searchText) {
-            console.log('🧪 TEST FIRESTORE - Recherche:', searchText);
-            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
             if (!window.searchAlimentsCommuns) {
                 console.error('❌ searchAlimentsCommuns non disponible');
@@ -14401,34 +14412,22 @@ Solutions possibles :
 
             const results = await window.searchAlimentsCommuns(searchText);
 
-            console.log('\n📊 RÉSULTATS:');
-            console.log(`   Total: ${results.length} aliment(s) trouvé(s)`);
 
             if (results.length > 0) {
                 results.forEach((item, index) => {
                     console.log(`\n   ${index + 1}. ${item.name}`);
-                    console.log(`      Code-barres: ${item.barcode || item.id}`);
-                    console.log(`      Calories: ${item.calories} kcal`);
-                    console.log(`      Protéines: ${item.proteins || item.protein}g`);
-                    console.log(`      Glucides: ${item.carbs}g`);
-                    console.log(`      Lipides: ${item.fats || item.fat}g`);
-                    console.log(`      Catégorie: ${item.category || 'non défini'}`);
                 });
             } else {
-                console.log('   ❌ Aucun résultat trouvé');
             }
 
-            console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             return results;
         };
 
         // 🚀 AUTO-TEST au chargement pour vérifier connexion Firestore
         setTimeout(() => {
             if (typeof window.testFirestoreSearch === 'function') {
-                console.log('\n🚀 AUTO-TEST Firestore au chargement de la page...\n');
                 // Test avec un code-barres connu (Nutella)
                 window.testFirestoreSearch('3017620422003').then(() => {
-                    console.log('\n✅ Auto-test terminé. Firebase est prêt !\n');
                 }).catch(err => {
                     console.error('❌ Auto-test échoué:', err);
                 });
@@ -14437,22 +14436,16 @@ Solutions possibles :
 
         // Fonction pour sauvegarder un aliment dans la base partagée Firestore
         window.saveToAlimentsCommuns = async function(food) {
-            console.log('🔥 [saveToAlimentsCommuns] Début sauvegarde Firestore');
-            console.log('🔥 [saveToAlimentsCommuns] Food reçu:', food);
 
             // Vérifier que l'utilisateur est connecté
             if (!auth.currentUser) {
-                console.log('🔥 [saveToAlimentsCommuns] ❌ Utilisateur non connecté');
                 showToast('⚠️ Connecte-toi pour sauvegarder dans la base communautaire');
                 return false;
             }
-            console.log('🔥 [saveToAlimentsCommuns] ✅ Utilisateur connecté:', auth.currentUser.email);
 
             if (!food.barcode) {
-                console.log('🔥 [saveToAlimentsCommuns] ❌ Pas de code-barres');
                 return false;
             }
-            console.log('🔥 [saveToAlimentsCommuns] ✅ Barcode:', food.barcode);
 
             try {
                 // Créer un objet léger avec les données essentielles (tous en Number)
@@ -14469,14 +14462,11 @@ Solutions possibles :
                     updatedAt: serverTimestamp()
                 };
 
-                console.log('🔥 [saveToAlimentsCommuns] Data à sauvegarder:', alimentData);
 
                 // Utiliser le code-barres comme ID du document
                 const docRef = doc(db, 'aliments_communs', food.barcode);
-                console.log('🔥 [saveToAlimentsCommuns] DocRef:', docRef.path);
 
                 await setDoc(docRef, alimentData, { merge: true });
-                console.log('🔥 [saveToAlimentsCommuns] ✅ Sauvegarde réussie !');
 
                 console.log('Aliment sauvegardé dans aliments_communs:', alimentData.name);
                 return true;
@@ -14950,7 +14940,6 @@ Solutions possibles :
         });
 
         // Log initialization
-        console.log('🔥 Firebase NutriTrack initialisé');
 
         // ===== ADMIN & FEEDBACK SYSTEM =====
         const ADMIN_UID = 'qEuqSbWO73OwTEwL6LhEILS5djD2';
@@ -14984,7 +14973,6 @@ Solutions possibles :
         onAuthStateChanged(auth, (user) => {
             updateAdminVisibility();
             if (user && isAdmin()) {
-                console.log('👑 Admin connecté');
             }
         });
 
