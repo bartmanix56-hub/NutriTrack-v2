@@ -61,6 +61,13 @@
             --accent-danger: #ef4444;     /* Rouge - erreurs/suppression */
             --accent-purple: #a855f7;     /* Violet - planning/semaine */
 
+            /* Couleurs sémantiques (rôles clairs) */
+            --color-success: #10b981;     /* Confirmation, validation, ajout */
+            --color-warning: #f59e0b;     /* Attention, avertissement */
+            --color-info: #3b82f6;        /* Information, aide */
+            --color-danger: #ef4444;      /* Erreur, suppression, danger */
+            --color-neutral: #6b7280;     /* Actions secondaires, annuler */
+
             /* Espacements (système 4px) */
             --space-xs: 4px;
             --space-sm: 8px;
@@ -3160,13 +3167,17 @@
             min-width: 200px; }
 
         textarea {
-            background: var(--bg-tertiary) !important;
-            color: var(--text-primary) !important;
-            resize: none !important; /* Bloqué */
-            min-height: 120px;
-            height: 120px;
-            width: 100% !important;
-            max-width: 100% !important;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-md) var(--space-lg);
+            font-size: 0.95rem;
+            font-family: 'DM Sans', sans-serif;
+            resize: vertical;
+            min-height: 100px;
+            width: 100%;
+            transition: var(--transition-normal);
         }
 
         .tracking-entry {
@@ -3264,6 +3275,180 @@
 
         .btn-secondary:active {
             transform: scale(0.98);
+        }
+
+        /* Type 3: Bouton Danger */
+        .btn-danger {
+            background: var(--color-danger);
+            border: none;
+            color: white;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+
+        .btn-danger:hover {
+            filter: brightness(1.1);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger:active {
+            transform: scale(0.98);
+        }
+
+        /* Type 4: Bouton Danger Outline */
+        .btn-danger-outline {
+            background: transparent;
+            color: var(--color-danger);
+            border: 2px solid var(--color-danger);
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+
+        .btn-danger-outline:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Type 5: Bouton Ghost (transparent) */
+        .btn-ghost {
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Type 6: Bouton Warning */
+        .btn-warning {
+            background: var(--color-warning);
+            border: none;
+            color: #000;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+
+        .btn-warning:hover {
+            filter: brightness(1.1);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Type 7: Bouton Info */
+        .btn-info {
+            background: var(--color-info);
+            border: none;
+            color: white;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+
+        .btn-info:hover {
+            filter: brightness(1.1);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Tailles de boutons */
+        .btn-sm {
+            padding: var(--space-xs) var(--space-sm);
+            font-size: 0.8rem;
+        }
+
+        .btn-lg {
+            padding: var(--space-lg) var(--space-xl);
+            font-size: 1.1rem;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        /* ===== CLASSES UTILITAIRES ALERTES ===== */
+
+        .alert-box {
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            border-left: 4px solid;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: var(--color-danger);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-left-color: var(--color-warning);
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.1);
+            border-left-color: var(--color-info);
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-left-color: var(--color-success);
+        }
+
+        /* ===== TAILLES D'ICÔNES STANDARDISÉES ===== */
+
+        .icon-xs { width: 14px; height: 14px; }
+        .icon-sm { width: 16px; height: 16px; }
+        .icon-md { width: 20px; height: 20px; }
+        .icon-lg { width: 24px; height: 24px; }
+        .icon-xl { width: 32px; height: 32px; }
+        .icon-2xl { width: 48px; height: 48px; }
+
+        /* Icône inline dans texte/bouton */
+        .icon-inline {
+            display: inline;
+            vertical-align: middle;
+            width: 18px;
+            height: 18px;
         }
 
         /* État actif pour les boutons toggle de graphique */
@@ -3760,7 +3945,7 @@
             position: fixed;
             top: 80px;
             right: 20px;
-            background: var(--accent-main);
+            background: var(--color-success);
             color: white;
             padding: 16px 24px;
             border-radius: var(--radius-md);
@@ -3772,11 +3957,19 @@
             animation: slideInRight 0.3s ease, slideOutRight 0.3s ease 2.7s;
             opacity: 0;
             pointer-events: all;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            font-weight: 500;
+            max-width: 400px;
         }
 
         .toast.show  { opacity: 1; }
+
+        /* Variantes de toast */
+        .toast.toast-success { background: var(--color-success); }
+        .toast.toast-error { background: var(--color-danger); }
+        .toast.toast-warning { background: var(--color-warning); color: #000; }
+        .toast.toast-info { background: var(--color-info); }
 
         @keyframes slideInRight {
             from { transform: translateX(400px); opacity: 0; }
@@ -3916,7 +4109,7 @@
         }
 
         .sidebar-btn.disabled::after {
-            content: "<i data-lucide="lock" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Disponible après le calcul des besoins";
+            content: "<i data-lucide="lock" class="icon-inline"></i> Disponible après le calcul des besoins";
             position: absolute;
             left: 100%;
             top: 50%;
@@ -4487,7 +4680,7 @@
 
             <!-- Alert box for warnings -->
             <div id="profile-alert" style="display: none; padding: var(--space-xl); background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--accent-danger); border-radius: var(--radius-lg); margin-bottom: var(--space-2xl); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);">
-                <div style="font-weight: 700; color: var(--accent-danger); margin-bottom: var(--space-sm); font-size: 1.1rem;"><i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Attention</div>
+                <div style="font-weight: 700; color: var(--accent-danger); margin-bottom: var(--space-sm); font-size: 1.1rem;"><i data-lucide="alert-triangle" class="icon-inline"></i> Attention</div>
                 <div id="profile-alert-message" style="color: var(--text-secondary); font-size: 1rem; line-height: 1.6;"></div></div>
 
             <!-- Main Grid -->
@@ -4619,7 +4812,7 @@
                             <input type="number" id="fatCoeff" placeholder="ex: 0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'cut')" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                             <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 0.8-1.0 g/kg • Minimum : 0.6 g/kg</p>
                             <div id="fat-warning-cut" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(255, 230, 109, 0.1); border-left: 3px solid var(--accent-fat); border-radius: var(--radius-sm);">
-                                <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Attention</div>
+                                <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" class="icon-inline"></i> Attention</div>
                                 <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">Valeur élevée : peut réduire les glucides et impacter la performance.</div></div></div>
 
                         <!-- Info box lipides -->
@@ -4627,7 +4820,7 @@
                             <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
                                 <strong style="color: var(--text-primary);">ℹ️ À propos des lipides</strong><br>
                                 Les lipides sont essentiels à la santé hormonale, mais consomment beaucoup de calories. Des valeurs trop élevées peuvent réduire les glucides disponibles et impacter la performance. À l'inverse, une consommation trop faible peut entraîner fatigue et baisse hormonale.<br><br>
-                                <strong style="color: var(--text-primary);"><i data-lucide="lightbulb" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Recommandations</strong><br>
+                                <strong style="color: var(--text-primary);"><i data-lucide="lightbulb" class="icon-inline"></i> Recommandations</strong><br>
                                 Les valeurs proposées (0.8-1.0 g/kg) sont adaptées à la majorité des personnes actives et peuvent être ajustées selon ta réponse individuelle.
                             </div></div></div>
 
@@ -4657,7 +4850,7 @@
                                 <input type="number" id="fatCoeffBulk" placeholder="ex: 0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'bulk')" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
                                 <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 0.8-1.0 g/kg • Minimum : 0.6 g/kg</p>
                                 <div id="fat-warning-bulk" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(255, 230, 109, 0.1); border-left: 3px solid var(--accent-fat); border-radius: var(--radius-sm);">
-                                    <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Attention</div>
+                                    <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" class="icon-inline"></i> Attention</div>
                                     <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">Valeur élevée : peut réduire les glucides et impacter la performance.</div></div></div>
 
                             <!-- Info box lipides -->
@@ -4665,7 +4858,7 @@
                                 <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
                                     <strong style="color: var(--text-primary);">ℹ️ À propos des lipides</strong><br>
                                     Les lipides sont essentiels à la santé hormonale, mais consomment beaucoup de calories. Des valeurs trop élevées peuvent réduire les glucides disponibles et impacter la performance. À l'inverse, une consommation trop faible peut entraîner fatigue et baisse hormonale.<br><br>
-                                    <strong style="color: var(--text-primary);"><i data-lucide="lightbulb" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Recommandations</strong><br>
+                                    <strong style="color: var(--text-primary);"><i data-lucide="lightbulb" class="icon-inline"></i> Recommandations</strong><br>
                                     Les valeurs proposées (0.8-1.0 g/kg) sont adaptées à la majorité des personnes actives et peuvent être ajustées selon ta réponse individuelle.
                                 </div></div></div></div></div></div>
 
@@ -5084,7 +5277,7 @@
 
                     <!-- Disclaimer macros -->
                     <div style="margin-top: var(--space-lg); padding: var(--space-lg); background: rgba(78, 205, 196, 0.1); border-left: 3px solid var(--accent-carbs); border-radius: var(--radius-sm); font-size: 1rem; color: var(--text-secondary); line-height: 1.6;">
-                        <i data-lucide="lightbulb" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> <strong>Astuce :</strong> Les glucides et lipides peuvent varier au quotidien (minimum 80% de l'objectif). Seules les protéines doivent être atteintes chaque jour pour préserver la masse musculaire.
+                        <i data-lucide="lightbulb" class="icon-inline"></i> <strong>Astuce :</strong> Les glucides et lipides peuvent varier au quotidien (minimum 80% de l'objectif). Seules les protéines doivent être atteintes chaque jour pour préserver la masse musculaire.
                     </div>
 
                     <!-- Feedback émotionnel journalier -->
@@ -5450,7 +5643,7 @@
                 </div></div></div>
 
         <div class="card">
-            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="lock" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Engagement de Confidentialité</h2>
+            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="lock" class="icon-inline"></i> Engagement de Confidentialité</h2>
 
             <div style="background: rgba(5, 150, 105, 0.1); border-left: 3px solid rgba(16, 185, 129, 0.4); border-radius: var(--radius-md); padding: var(--space-xl); margin-bottom: var(--space-2xl);">
                 <p style="margin: 0; font-size: 1.05rem; line-height: 1.8; color: var(--text-primary); font-weight: 500;">
@@ -5471,15 +5664,15 @@
                 </ul>
             </div>
 
-            <h3 style="font-size: 1.3rem; font-weight: 700; margin: var(--space-2xl) 0 var(--space-lg) 0; color: var(--text-primary);"><i data-lucide="save" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Où sont stockées mes données ?</h3>
+            <h3 style="font-size: 1.3rem; font-weight: 700; margin: var(--space-2xl) 0 var(--space-lg) 0; color: var(--text-primary);"><i data-lucide="save" class="icon-inline"></i> Où sont stockées mes données ?</h3>
             <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-xl); margin-bottom: var(--space-xl);">
                 <p style="margin: 0 0 var(--space-md) 0; color: var(--text-secondary); line-height: 1.7;"><strong>Mode Local (par défaut) :</strong> Tes données sont stockées dans le localStorage de ton navigateur.</p>
                 <p style="margin: 0 0 var(--space-md) 0; color: var(--text-secondary); line-height: 1.7;"><strong>Mode Connecté (optionnel) :</strong> Si tu te connectes avec Google, tes données sont également synchronisées sur Firebase Firestore (serveurs Google Cloud sécurisés).</p>
                 <ul style="margin: var(--space-md) 0; padding-left: var(--space-xl); color: var(--text-secondary); line-height: 1.8;">
-                    <li><strong><i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Accès offline</strong> : L'application fonctionne sans connexion internet</li>
-                    <li><strong><i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Synchronisation sécurisée</strong> : Données chiffrées en transit (HTTPS/TLS)</li>
-                    <li><strong><i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Contrôle total</strong> : Tu peux exporter, supprimer ou te déconnecter à tout moment</li>
-                    <li><strong><i data-lucide="cloud" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Multi-appareils</strong> : Connecte-toi avec Google pour retrouver tes données partout</li>
+                    <li><strong><i data-lucide="check-circle" class="icon-inline"></i> Accès offline</strong> : L'application fonctionne sans connexion internet</li>
+                    <li><strong><i data-lucide="check-circle" class="icon-inline"></i> Synchronisation sécurisée</strong> : Données chiffrées en transit (HTTPS/TLS)</li>
+                    <li><strong><i data-lucide="check-circle" class="icon-inline"></i> Contrôle total</strong> : Tu peux exporter, supprimer ou te déconnecter à tout moment</li>
+                    <li><strong><i data-lucide="cloud" class="icon-inline"></i> Multi-appareils</strong> : Connecte-toi avec Google pour retrouver tes données partout</li>
                 </ul>
             </div>
 
@@ -5498,11 +5691,11 @@
             <h3 style="font-size: 1.3rem; font-weight: 700; margin: var(--space-2xl) 0 var(--space-lg) 0; color: var(--text-primary);">🚫 Ce que nous ne faisons PAS</h3>
             <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-xl); margin-bottom: var(--space-xl);">
                 <ul style="margin: 0; padding-left: var(--space-xl); color: var(--text-secondary); line-height: 1.8;">
-                    <li><i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nous ne collectons aucune donnée analytique</li>
-                    <li><i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nous n'utilisons aucun cookie de tracking</li>
-                    <li><i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nous ne vendons jamais tes données</li>
-                    <li><i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nous n'avons pas accès à tes informations personnelles</li>
-                    <li><i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nous ne suivons pas ton activité</li>
+                    <li><i data-lucide="x-circle" class="icon-inline"></i> Nous ne collectons aucune donnée analytique</li>
+                    <li><i data-lucide="x-circle" class="icon-inline"></i> Nous n'utilisons aucun cookie de tracking</li>
+                    <li><i data-lucide="x-circle" class="icon-inline"></i> Nous ne vendons jamais tes données</li>
+                    <li><i data-lucide="x-circle" class="icon-inline"></i> Nous n'avons pas accès à tes informations personnelles</li>
+                    <li><i data-lucide="x-circle" class="icon-inline"></i> Nous ne suivons pas ton activité</li>
                 </ul>
             </div>
 
@@ -5517,7 +5710,7 @@
                 </ul>
             </div>
 
-            <h3 style="font-size: 1.3rem; font-weight: 700; margin: var(--space-2xl) 0 var(--space-lg) 0; color: var(--text-primary);"><i data-lucide="lightbulb" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Gestion de tes données</h3>
+            <h3 style="font-size: 1.3rem; font-weight: 700; margin: var(--space-2xl) 0 var(--space-lg) 0; color: var(--text-primary);"><i data-lucide="lightbulb" class="icon-inline"></i> Gestion de tes données</h3>
             <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-xl); margin-bottom: var(--space-xl);">
                 <p style="margin: 0 0 var(--space-md) 0; color: var(--text-secondary); line-height: 1.7;">Tu as un contrôle total sur tes données :</p>
                 <ul style="margin: var(--space-md) 0; padding-left: var(--space-xl); color: var(--text-secondary); line-height: 1.8;">
@@ -5703,7 +5896,7 @@
 
                 <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-lg); color: var(--accent-ui);"><i data-lucide="lock" style="width: 18px; height: 18px;"></i> Journée Clôturée</h3>
                 <p style="color: var(--text-secondary); line-height: 1.8;">
-                    Tu peux <strong>clôturer une journée</strong> pour la verrouiller (badge <i data-lucide="lock" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>). Utile pour éviter les modifications accidentelles des jours passés.
+                    Tu peux <strong>clôturer une journée</strong> pour la verrouiller (badge <i data-lucide="lock" class="icon-inline"></i>). Utile pour éviter les modifications accidentelles des jours passés.
                 </p>
             </div>
 
@@ -5735,7 +5928,7 @@
 
                 <div style="background: rgba(255, 159, 64, 0.1); border-radius: var(--radius-md); padding: var(--space-lg); border-left: 4px solid var(--accent-fat);">
                     <p style="color: var(--text-secondary); line-height: 1.8; margin: 0;">
-                        <strong style="color: var(--accent-fat);"><i data-lucide="lightbulb" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Astuce :</strong> Les aliments personnalisés sont sauvegardés en local (localStorage) et persistent même après fermeture du navigateur.
+                        <strong style="color: var(--accent-fat);"><i data-lucide="lightbulb" class="icon-inline"></i> Astuce :</strong> Les aliments personnalisés sont sauvegardés en local (localStorage) et persistent même après fermeture du navigateur.
                     </p>
                 </div></div>
 
@@ -5749,7 +5942,7 @@
                     Gagne du temps en créant des <strong>repas types</strong> réutilisables. Idéal si tu manges souvent les mêmes combinaisons d'aliments.
                 </p>
 
-                <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-lg); color: var(--accent-ui);"><i data-lucide="plus" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Créer un Repas Type</h3>
+                <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-lg); color: var(--accent-ui);"><i data-lucide="plus" class="icon-inline"></i> Créer un Repas Type</h3>
                 <ol style="line-height: 1.8; color: var(--text-secondary); margin-left: var(--space-xl); margin-bottom: var(--space-2xl);">
                     <li style="margin-bottom: var(--space-sm);">Entre un <strong>nom descriptif</strong> (ex: "Petit-déj protéiné", "Déjeuner rapide")</li>
                     <li style="margin-bottom: var(--space-sm);">Clique "+ Ajouter des aliments"</li>
@@ -5846,7 +6039,7 @@
                     <div style="background: var(--bg-tertiary); padding: var(--space-xl); border-radius: var(--radius-md); border-left: 4px solid var(--accent-danger);">
                         <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: var(--space-md);"><i data-lucide="lock" style="width: 18px; height: 18px;"></i> Clôture tes journées</h3>
                         <p style="color: var(--text-secondary); line-height: 1.8; margin: 0;">
-                            Journée terminée ? Clôture-la dans Mes Repas (badge <i data-lucide="lock" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> apparaît). Ça t'évite de modifier accidentellement les jours passés en naviguant.
+                            Journée terminée ? Clôture-la dans Mes Repas (badge <i data-lucide="lock" class="icon-inline"></i> apparaît). Ça t'évite de modifier accidentellement les jours passés en naviguant.
                         </p>
                     </div></div></div>
 
@@ -6124,8 +6317,8 @@
                                 </button>
                             </div>
 
-                            <button onclick="firebaseSignOut()" class="btn" style="width: 100%; background: transparent; color: var(--accent-danger); border: 1px solid var(--accent-danger); display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
-                                <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
+                            <button onclick="firebaseSignOut()" class="btn-danger-outline btn-full">
+                                <i data-lucide="log-out" class="icon-sm"></i>
                                 Déconnexion
                             </button>
                         </div>
@@ -6193,17 +6386,17 @@
                             <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--accent-danger); margin: 0;">Zone Dangereuse</h3>
                         </div>
 
-                        <div style="padding: var(--space-lg); background: rgba(239, 68, 68, 0.1); border-radius: var(--radius-md); margin-bottom: var(--space-md); border-left: 3px solid var(--accent-danger);">
+                        <div class="alert-box alert-danger">
                             <div style="font-weight: 700; font-size: 1rem; color: var(--text-primary); margin-bottom: var(--space-xs);">Réinitialisation complète</div>
                             <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: var(--space-md);">
                                 Supprime définitivement tous tes repas, aliments, suivis et paramètres. Cette action est irréversible.
                             </div>
                             <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                                <i data-lucide="lightbulb" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Pense à exporter tes données avant
+                                <i data-lucide="lightbulb" class="icon-inline"></i> Pense à exporter tes données avant
                             </div></div>
 
-                        <button class="btn" onclick="resetAllData()" style="width: 100%; background: var(--accent-danger); color: white; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
-                            <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
+                        <button class="btn btn-danger btn-full" onclick="resetAllData()">
+                            <i data-lucide="trash-2" class="icon-inline"></i>
                             Tout supprimer
                         </button>
                     </div></div>
@@ -6348,7 +6541,7 @@
         }
 
         .sidebar-btn.disabled::after {
-            content: "<i data-lucide="lock" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Disponible après le calcul des besoins";
+            content: "<i data-lucide="lock" class="icon-inline"></i> Disponible après le calcul des besoins";
             position: absolute;
             left: 100%;
             top: 50%;
@@ -6446,7 +6639,7 @@
                 </div></div></div>
 
         <div class="card">
-            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="heart" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Notre Mission</h2>
+            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="heart" class="icon-inline"></i> Notre Mission</h2>
 
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
                 NutriTrack est une application web gratuite créée avec passion pour t'aider à atteindre tes objectifs nutritionnels. Que tu sois en prise de masse, en sèche, ou simplement soucieux de ton alimentation, NutriTrack te fournit les outils nécessaires pour suivre tes macros, planifier tes repas et progresser vers tes objectifs.
@@ -6458,22 +6651,22 @@
                 </p>
             </div>
 
-            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="shield-check" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Sécurisé</h3>
+            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="shield-check" class="icon-inline"></i> Sécurisé</h3>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
                 Par défaut, tes données sont stockées <strong>localement dans ton navigateur</strong>. En te connectant avec Google, tu peux synchroniser tes données de manière sécurisée sur Firebase (Google Cloud) pour les retrouver sur tous tes appareils. Aucun tracking publicitaire, aucune vente de données.
             </p>
 
-            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="zap" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> 100% Gratuit</h3>
+            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="zap" class="icon-inline"></i> 100% Gratuit</h3>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
                 NutriTrack est et restera <strong>totalement gratuit</strong>. Pas d'abonnement premium, pas de fonctionnalités payantes cachées, pas de publicité. Toutes les fonctionnalités sont accessibles immédiatement, sans limite.
             </p>
 
-            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="users" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Créateur</h3>
+            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="users" class="icon-inline"></i> Créateur</h3>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
                 NutriTrack a été créé par <strong>Jérémy Mathurel</strong>, développeur passionné par la nutrition et le fitness. Le projet est né du besoin d'avoir un outil simple, efficace et respectueux de la vie privée pour suivre ses macros au quotidien.
             </p>
 
-            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="mail" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Contact</h3>
+            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="mail" class="icon-inline"></i> Contact</h3>
             <p style="line-height: 1.8; margin-bottom: var(--space-md); color: var(--text-secondary);">
                 Une question, un bug à signaler, ou simplement un retour à partager ?
             </p>
@@ -6482,14 +6675,14 @@
                 <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
             </div>
 
-            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="code" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Version & Mises à Jour</h3>
+            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="code" class="icon-inline"></i> Version & Mises à Jour</h3>
             <p style="line-height: 1.8; margin-bottom: var(--space-md); color: var(--text-secondary);">
                 <strong>Version actuelle :</strong> 3.0<br>
                 <strong>Dernière mise à jour :</strong> Décembre 2025<br>
                 <strong>Statut :</strong> Stable & maintenu activement
             </p>
 
-            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="sparkles" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Fonctionnalités Principales</h3>
+            <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: var(--space-2xl); margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="sparkles" class="icon-inline"></i> Fonctionnalités Principales</h3>
             <ul style="line-height: 1.8; color: var(--text-secondary); padding-left: var(--space-xl);">
                 <li><strong>Calculateur de macros</strong> basé sur des formules scientifiques reconnues</li>
                 <li><strong>Base de données alimentaire</strong> avec plus de 100 aliments</li>
@@ -6610,7 +6803,7 @@
                 </div></div></div>
 
         <div class="card">
-            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="user" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Éditeur de l'Application</h2>
+            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="user" class="icon-inline"></i> Éditeur de l'Application</h2>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
                 <strong>Nom de l'application :</strong> NutriTrack<br>
                 <strong>Version :</strong> 3.0<br>
@@ -6624,7 +6817,7 @@
                 <strong>Email :</strong> <a href="mailto:contact.nutritrack@gmail.com" style="color: var(--accent-ui);">contact.nutritrack@gmail.com</a>
             </p>
 
-            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="server" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Hébergement</h2>
+            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="server" class="icon-inline"></i> Hébergement</h2>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
                 <strong>Hébergeur :</strong> Netlify, Inc.<br>
                 <strong>Adresse :</strong> 44 Montgomery Street, Suite 300, San Francisco, CA 94104, États-Unis<br>
@@ -6636,7 +6829,7 @@
                 </p>
             </div>
 
-            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="shield" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Propriété Intellectuelle</h2>
+            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="shield" class="icon-inline"></i> Propriété Intellectuelle</h2>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
                 L'ensemble du contenu de NutriTrack (structure, textes, logos, images, code source, base de données) est la propriété exclusive de Jérémy Mathurel, sauf mention contraire.
             </p>
@@ -6647,7 +6840,7 @@
                 <strong>Icônes :</strong> Les icônes utilisées proviennent de <a href="https://lucide.dev" target="_blank" rel="noopener noreferrer" style="color: var(--accent-ui); text-decoration: none;">Lucide Icons</a> (licence ISC).
             </p>
 
-            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="cookie" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Cookies et Stockage</h2>
+            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="cookie" class="icon-inline"></i> Cookies et Stockage</h2>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
                 <strong>Pas de cookies de tracking :</strong> NutriTrack n'utilise aucun cookie de suivi, aucun cookie publicitaire, ni aucun cookie tiers.
             </p>
@@ -6658,7 +6851,7 @@
                 <strong>Synchronisation cloud (optionnelle) :</strong> Si tu te connectes avec Google, tes données sont également stockées sur Firebase Firestore (Google Cloud Platform) pour permettre la synchronisation entre appareils.
             </p>
 
-            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="shield-check" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données Personnelles (RGPD)</h2>
+            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="shield-check" class="icon-inline"></i> Données Personnelles (RGPD)</h2>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
                 <strong>Conformité RGPD :</strong> NutriTrack respecte le Règlement Général sur la Protection des Données (RGPD) en vigueur depuis le 25 mai 2018.
             </p>
@@ -6678,17 +6871,17 @@
                 <li><strong>Droit à la portabilité :</strong> Tu peux exporter toutes tes données au format JSON</li>
             </ul>
 
-            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="globe" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Liens Externes</h2>
+            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="globe" class="icon-inline"></i> Liens Externes</h2>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
                 NutriTrack peut contenir des liens vers des sites externes (ex: sources scientifiques dans le Guide). Ces liens sont fournis à titre informatif uniquement. Nous ne sommes pas responsables du contenu de ces sites tiers.
             </p>
 
-            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="scale" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Droit Applicable</h2>
+            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="scale" class="icon-inline"></i> Droit Applicable</h2>
             <p style="line-height: 1.8; margin-bottom: var(--space-xl); color: var(--text-secondary);">
                 Les présentes mentions légales sont régies par le droit français. En cas de litige et à défaut d'accord amiable, le litige sera porté devant les tribunaux français conformément aux règles de compétence en vigueur.
             </p>
 
-            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="edit" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Crédits</h2>
+            <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: var(--space-xl); color: var(--text-primary);"><i data-lucide="edit" class="icon-inline"></i> Crédits</h2>
             <p style="line-height: 1.8; color: var(--text-secondary);">
                 <strong>Conception & Développement :</strong> Jérémy Mathurel<br>
                 <strong>Design :</strong> Jérémy Mathurel<br>
@@ -6787,7 +6980,7 @@
 
         <div class="card">
             <div style="background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--accent-danger); border-radius: var(--radius-md); padding: var(--space-xl); margin-bottom: var(--space-2xl);">
-                <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--accent-danger);"><i data-lucide="alert-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Avertissement Important</h2>
+                <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--accent-danger);"><i data-lucide="alert-circle" class="icon-inline"></i> Avertissement Important</h2>
                 <p style="margin: 0; line-height: 1.8; color: var(--text-primary); font-weight: 500;">
                     NutriTrack est un outil d'information et de suivi nutritionnel. Il ne remplace en aucun cas l'avis d'un professionnel de santé (médecin, nutritionniste, diététicien).
                 </p>
@@ -6889,7 +7082,7 @@
             </div>
 
             <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--accent-main); border-radius: var(--radius-md); padding: var(--space-xl); margin-top: var(--space-xl);">
-                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-main); margin-bottom: var(--space-sm);"><i data-lucide="lightbulb" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Conseil</h3>
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-main); margin-bottom: var(--space-sm);"><i data-lucide="lightbulb" class="icon-inline"></i> Conseil</h3>
                 <p style="margin: 0; line-height: 1.8; color: var(--text-primary);">
                     Les mesures par bio-impédancemétrie sont des <strong>estimations</strong> et peuvent varier selon l'hydratation, le moment de la journée et le modèle de balance. Pour un suivi précis, mesure-toi toujours dans les mêmes conditions (même heure, même niveau d'hydratation).
                 </p>
@@ -6994,7 +7187,7 @@
                 <!-- Bouton Scanner Code-barres + Saisie manuelle -->
                 <div style="display: flex; gap: var(--space-sm); margin-bottom: var(--space-md);">
                     <button type="button" class="btn" onclick="openBarcodeScannerFromAddModal()" style="flex: 1; background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.2);">
-                        <i data-lucide="scan-barcode" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Scanner
+                        <i data-lucide="scan-barcode" class="icon-inline"></i> Scanner
                     </button>
                     <div style="flex: 2; display: flex; gap: var(--space-xs);">
                         <input type="text" id="manual-barcode-input" placeholder="Ou saisir code-barres" style="flex: 1; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
@@ -7072,7 +7265,7 @@
 
                 <p class="info-text">Les calories seront calculées automatiquement si tu ne les remplis pas (Prot×4 + Glu×4 + Lip×9)</p>
 
-                <button class="btn" onclick="saveNewFood()" style="width: 100%; margin-top: 20px;"><i data-lucide="plus" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Ajouter à ma Base</button>
+                <button class="btn" onclick="saveNewFood()" style="width: 100%; margin-top: 20px;"><i data-lucide="plus" class="icon-inline"></i> Ajouter à ma Base</button>
             </div></div></div>
 
     <!-- Barcode Scanner Modal -->
@@ -7100,8 +7293,8 @@
                         <p id="scanner-result-text">Recherche du produit...</p>
                     </div>
                 </div>
-                <button class="btn scanner-cancel-btn" onclick="closeBarcodeScanner()" style="width: 100%; margin-top: var(--space-lg); background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid rgba(255, 255, 255, 0.1);">
-                    <i data-lucide="x" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Annuler
+                <button class="btn-ghost btn-full" onclick="closeBarcodeScanner()" style="margin-top: var(--space-lg);">
+                    <i data-lucide="x" class="icon-inline"></i> Annuler
                 </button>
             </div>
         </div>
@@ -7149,7 +7342,7 @@
             // Cacher le bouton après installation
             hideInstallButton();
             deferredInstallPrompt = null;
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> NutriTrack installé avec succès !');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> NutriTrack installé avec succès !');
         });
 
         function showInstallButton() {
@@ -7193,13 +7386,13 @@
 
             // Si déjà installé
             if (isStandalone) {
-                showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> L\'app est déjà installée !');
+                showToast('<i data-lucide="check-circle" class="icon-inline"></i> L\'app est déjà installée !');
                 return;
             }
 
             // iOS - pas de beforeinstallprompt
             if (isIOS) {
-                showToast('<i data-lucide="share" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Appuie sur Partager <i data-lucide="square-plus" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> puis "Sur l\'écran d\'accueil"', 6000);
+                showToast('<i data-lucide="share" class="icon-inline"></i> Appuie sur Partager <i data-lucide="square-plus" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> puis "Sur l\'écran d\'accueil"', 6000);
                 return;
             }
 
@@ -7208,19 +7401,19 @@
                 deferredInstallPrompt.prompt();
                 const { outcome } = await deferredInstallPrompt.userChoice;
                 if (outcome === 'accepted') {
-                    showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Installation en cours...');
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Installation en cours...');
                 }
                 return;
             }
 
             // Android sans prompt (déjà installé ou pas supporté)
             if (isAndroid) {
-                showToast('<i data-lucide="menu" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Menu ⋮ → "Installer l\'application" ou "Ajouter à l\'écran d\'accueil"', 5000);
+                showToast('<i data-lucide="menu" class="icon-inline"></i> Menu ⋮ → "Installer l\'application" ou "Ajouter à l\'écran d\'accueil"', 5000);
                 return;
             }
 
             // Autre navigateur
-            showToast('<i data-lucide="info" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Utilise Chrome ou Safari pour installer');
+            showToast('<i data-lucide="info" class="icon-inline"></i> Utilise Chrome ou Safari pour installer');
         }
 
         // Tab switching
@@ -7266,7 +7459,7 @@
             if (tabName === 'admin') {
                 if (typeof window.isAdmin !== 'function' || !window.isAdmin()) {
                     if (typeof showToast === 'function') {
-                        showToast('<i data-lucide="shield-x" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Accès non autorisé');
+                        showToast('<i data-lucide="shield-x" class="icon-inline"></i> Accès non autorisé', 'error');
                     }
                     return;
                 }
@@ -7308,7 +7501,7 @@
             if (tab === 'admin') {
                 if (typeof window.isAdmin !== 'function' || !window.isAdmin()) {
                     if (typeof showToast === 'function') {
-                        showToast('<i data-lucide="shield-x" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Accès non autorisé');
+                        showToast('<i data-lucide="shield-x" class="icon-inline"></i> Accès non autorisé', 'error');
                     }
                     return;
                 }
@@ -7425,14 +7618,14 @@
                 // AFFICHER WARNING + DÉSACTIVER BOUTON
                 warningBox.style.display = 'block';
                 warningBox.innerHTML = `
-                    <div style="font-weight: 600; color: var(--accent-danger); margin-bottom: var(--space-sm);"><i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Configuration impossible</div>
+                    <div style="font-weight: 600; color: var(--accent-danger); margin-bottom: var(--space-sm);"><i data-lucide="alert-triangle" class="icon-inline"></i> Configuration impossible</div>
                     <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
                         Avec ces réglages, ton objectif calorique ne peut pas être respecté.
                     </div>
                     <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); font-size: 0.85rem;">
                         <strong style="color: var(--text-primary);">Budget calorique :</strong> ${Math.round(targetCalories)} kcal<br>
                         <strong style="color: var(--text-primary);">Protéines + Lipides :</strong> ${Math.round(usedCal)} kcal<br>
-                        <strong style="color: ${carbs < 0 ? 'var(--accent-danger)' : 'var(--accent-fat)'};">Reste pour glucides :</strong> ${Math.round(remainingCal)} kcal ${carbs < 0 ? '(<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> négatif)' : `(<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ${Math.round(carbs)}g - trop faible)`}
+                        <strong style="color: ${carbs < 0 ? 'var(--accent-danger)' : 'var(--accent-fat)'};">Reste pour glucides :</strong> ${Math.round(remainingCal)} kcal ${carbs < 0 ? '(<i data-lucide="x-circle" class="icon-inline"></i> négatif)' : `(<i data-lucide="alert-triangle" class="icon-inline"></i> ${Math.round(carbs)}g - trop faible)`}
                     </div>
                     <div style="margin-top: var(--space-md); font-size: 0.85rem; color: var(--text-secondary);">
                         <strong style="color: var(--text-primary);">Solutions :</strong> Réduis ton déficit, tes protéines ou tes lipides.
@@ -7474,7 +7667,7 @@
             const birthYear = document.getElementById('birth-year')?.value;
 
             if (!birthDay || !birthMonth || !birthYear) {
-                showProfileAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Date de naissance manquante - Remplis jour, mois et année'); document.getElementById('birth-day')?.focus(); document.getElementById('birth-day')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+                showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Date de naissance manquante - Remplis jour, mois et année'); document.getElementById('birth-day')?.focus(); document.getElementById('birth-day')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
                 if (btn) {
                     btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
                     if (typeof lucide !== "undefined") lucide.createIcons();
@@ -7485,7 +7678,7 @@
 
             const gender = document.getElementById('profile-gender')?.value;
             if (!gender) {
-                showProfileAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Sexe non sélectionné - Choisis Homme ou Femme'); document.getElementById('profile-gender')?.focus(); document.getElementById('profile-gender')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+                showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Sexe non sélectionné - Choisis Homme ou Femme'); document.getElementById('profile-gender')?.focus(); document.getElementById('profile-gender')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
                 if (btn) {
                     btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
                     if (typeof lucide !== "undefined") lucide.createIcons();
@@ -7496,7 +7689,7 @@
 
             const height = parseFloat(document.getElementById('height')?.value);
             if (!height || height <= 0) {
-                showProfileAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Taille manquante ou invalide - Entre ta taille en cm'); document.getElementById('height')?.focus(); document.getElementById('height')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+                showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Taille manquante ou invalide - Entre ta taille en cm'); document.getElementById('height')?.focus(); document.getElementById('height')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
                 if (btn) {
                     btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
                     if (typeof lucide !== "undefined") lucide.createIcons();
@@ -7507,7 +7700,7 @@
 
             const weight = parseFloat(document.getElementById('weight')?.value);
             if (!weight || weight <= 0) {
-                showProfileAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Poids manquant ou invalide - Entre ton poids en kg'); document.getElementById('weight')?.focus(); document.getElementById('weight')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+                showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Poids manquant ou invalide - Entre ton poids en kg'); document.getElementById('weight')?.focus(); document.getElementById('weight')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
                 if (btn) {
                     btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
                     if (typeof lucide !== "undefined") lucide.createIcons();
@@ -7518,7 +7711,7 @@
 
             const activity = parseFloat(document.getElementById('activity')?.value);
             if (!activity) {
-                showProfileAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Niveau d\'activité non sélectionné - Choisis ton niveau');
+                showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Niveau d\'activité non sélectionné - Choisis ton niveau');
                 if (btn) {
                     btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
                     if (typeof lucide !== "undefined") lucide.createIcons();
@@ -7543,12 +7736,12 @@
 
             // Validation
             if (!weight || !height || !age || !gender || !activity) {
-                showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Remplis tous les champs obligatoires (*) pour calculer tes macros.');
+                showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Remplis tous les champs obligatoires (*) pour calculer tes macros.');
                 return;
             }
 
             if (age < 10) {
-                showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> L\'âge minimum est de 10 ans. Vérifie ta date de naissance.');
+                showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> L\'âge minimum est de 10 ans. Vérifie ta date de naissance.');
                 return;
             }
 
@@ -7581,19 +7774,19 @@
 
                 // Vérifier que les champs sont remplis
                 if (!deficitInput || deficitInput === '') {
-                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Déficit calorique (%) requis pour calculer les macros');
+                    showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Déficit calorique (%) requis pour calculer les macros');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
                     document.getElementById('deficit')?.focus();
                     return;
                 }
                 if (!proteinCoeffInput || proteinCoeffInput === '') {
-                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Protéines (g/kg) requis pour calculer les macros');
+                    showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Protéines (g/kg) requis pour calculer les macros');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
                     document.getElementById('proteinCoeff')?.focus();
                     return;
                 }
                 if (!fatCoeffInput || fatCoeffInput === '') {
-                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Lipides (g/kg) requis pour calculer les macros');
+                    showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Lipides (g/kg) requis pour calculer les macros');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
                     document.getElementById('fatCoeff')?.focus();
                     return;
@@ -7605,17 +7798,17 @@
 
                 // GARDE-FOUS: Validation des limites
                 if (deficit < 0.10 || deficit > 0.25) {
-                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Déficit invalide : max 25%');
+                    showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Déficit invalide : max 25%');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; }
                     return;
                 }
                 if (proteinCoeff < 1.5 || proteinCoeff > 2.2) {
-                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Protéines invalides : min 1,5 g/kg, max 2,2 g/kg');
+                    showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Protéines invalides : min 1,5 g/kg, max 2,2 g/kg');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; }
                     return;
                 }
                 if (fatCoeff < 0.6 || fatCoeff > 1.5) {
-                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Lipides invalides : min 0,6 g/kg, max 1,5 g/kg');
+                    showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Lipides invalides : min 0,6 g/kg, max 1,5 g/kg');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; }
                     return;
                 }
@@ -7645,19 +7838,19 @@
 
                 // Vérifier que les champs sont remplis
                 if (!surplusInput || surplusInput === '') {
-                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Surplus calorique (%) requis pour calculer les macros');
+                    showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Surplus calorique (%) requis pour calculer les macros');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
                     document.getElementById('surplus')?.focus();
                     return;
                 }
                 if (!proteinCoeffBulkInput || proteinCoeffBulkInput === '') {
-                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Protéines (g/kg) requis pour calculer les macros');
+                    showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Protéines (g/kg) requis pour calculer les macros');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
                     document.getElementById('proteinCoeffBulk')?.focus();
                     return;
                 }
                 if (!fatCoeffBulkInput || fatCoeffBulkInput === '') {
-                    showProfileAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Lipides (g/kg) requis pour calculer les macros');
+                    showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Lipides (g/kg) requis pour calculer les macros');
                     if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
                     document.getElementById('fatCoeffBulk')?.focus();
                     return;
@@ -7772,7 +7965,7 @@ Solutions possibles :
 
             // FEEDBACK SUCCÈS DU BOUTON
             if (btn) {
-                btn.innerHTML = '<i data-lucide="check" style="width: 22px; height: 22px;"></i> Calcul effectué <i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
+                btn.innerHTML = '<i data-lucide="check" style="width: 22px; height: 22px;"></i> Calcul effectué <i data-lucide="check-circle" class="icon-inline"></i>';
                 if (typeof lucide !== "undefined") lucide.createIcons();
                 setTimeout(() => {
                     btn.innerHTML = '<i data-lucide="calculator" style="width: 22px; height: 22px;"></i> Calculer mes Macros';
@@ -7785,7 +7978,7 @@ Solutions possibles :
 
             // MESSAGE DE TRANSITION
             setTimeout(() => {
-                showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Tes besoins sont calculés. Tu peux maintenant ajouter tes repas dans "Mes Repas" !', 'success');
+                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Tes besoins sont calculés. Tu peux maintenant ajouter tes repas dans "Mes Repas" !', 'success');
             }, 2100); // Juste après le feedback du bouton
         }
 
@@ -7807,7 +8000,7 @@ Solutions possibles :
             } else {
                 alert.style.background = 'rgba(239, 68, 68, 0.1)';
                 alert.style.borderColor = 'var(--accent-danger)';
-                messageEl.previousElementSibling.innerHTML = '<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Attention';
+                messageEl.previousElementSibling.innerHTML = '<i data-lucide="alert-triangle" class="icon-inline"></i> Attention';
                 messageEl.previousElementSibling.style.color = 'var(--accent-danger)';
             }
 
@@ -7985,7 +8178,7 @@ Solutions possibles :
 
             if (!validation.valid) {
                 const missingFields = validation.errors.join(', ');
-                showProfileAlert(`<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Profil incomplet ou invalide : ${missingFields}. Remplis tous les champs obligatoires (*) avec des valeurs correctes.`);
+                showProfileAlert(`<i data-lucide="alert-triangle" class="icon-inline"></i> Profil incomplet ou invalide : ${missingFields}. Remplis tous les champs obligatoires (*) avec des valeurs correctes.`);
                 return;
             }
 
@@ -7997,7 +8190,7 @@ Solutions possibles :
 
             // Toast de confirmation
             const profile = validation.profile;
-            showToast(`<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Profil sauvegardé${profile.name ? ' pour ' + profile.name : ''}`);
+            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> Profil sauvegardé${profile.name ? ' pour ' + profile.name : ''}`);
         }
 
         // Modal management
@@ -8149,7 +8342,7 @@ Solutions possibles :
             saveDailyMeals();
             syncMealsToPlanning();
             closeFoodModal();
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Aliment ajouté');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Aliment ajouté');
         }
 
         // ===== QUICK ADD SYSTEM =====
@@ -8273,7 +8466,7 @@ Solutions possibles :
             input.value = '';
             results.style.display = 'none';
 
-            showToast(`<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ${food.name} ajouté (100g)`);
+            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${food.name} ajouté (100g)`);
         }
 
         // Close quick add results when clicking outside
@@ -8425,7 +8618,7 @@ Solutions possibles :
                 const parsedQuantity = parseFloat(quantity);
                 // Block negative quantities
                 if (parsedQuantity < 1 || isNaN(parsedQuantity)) {
-                    showToast('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Quantité invalide (min: 1g)');
+                    showToast('<i data-lucide="alert-triangle" class="icon-inline"></i> Quantité invalide (min: 1g)', 'warning');
                     renderMeal(mealType);
                     return;
                 }
@@ -8641,37 +8834,37 @@ Solutions possibles :
                 updateStreakDisplay();
             } else if (calPct >= 85 && calPct <= 115) {
                 // Très bien
-                emoji = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
+                emoji = '<i data-lucide="check-circle" class="icon-inline"></i>';
                 message = 'Super journée, tu gères !';
                 bgColor = 'rgba(78, 205, 196, 0.15)';
                 textColor = 'var(--accent-carbs)';
             } else if (calPct >= 75 && calPct <= 125) {
                 // Correct
-                emoji = '<i data-lucide="thumbs-up" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
+                emoji = '<i data-lucide="thumbs-up" class="icon-inline"></i>';
                 message = 'Bonne progression, continue comme ça !';
                 bgColor = 'rgba(255, 230, 109, 0.15)';
                 textColor = 'var(--accent-fat)';
             } else if (calPct > 125 && calPct <= 150) {
                 // Au-dessus
-                emoji = '<i data-lucide="utensils" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
+                emoji = '<i data-lucide="utensils" class="icon-inline"></i>';
                 message = 'Journée gourmande, ça fait du bien parfois !';
                 bgColor = 'rgba(255, 193, 7, 0.15)';
                 textColor = '#ffc107';
             } else if (calPct > 150) {
                 // Bien au-dessus
-                emoji = '<i data-lucide="party-popper" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
+                emoji = '<i data-lucide="party-popper" class="icon-inline"></i>';
                 message = 'Journée festive ! Demain est un nouveau jour';
                 bgColor = 'rgba(168, 85, 247, 0.15)';
                 textColor = '#a855f7';
             } else if (calPct < 75 && calPct > 50) {
                 // En-dessous
-                emoji = '<i data-lucide="coffee" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
+                emoji = '<i data-lucide="coffee" class="icon-inline"></i>';
                 message = 'Tu peux encore te faire plaisir si tu as faim';
                 bgColor = 'rgba(255, 193, 7, 0.15)';
                 textColor = '#ffc107';
             } else if (calPct <= 50 && calPct > 0) {
                 // Très en-dessous
-                emoji = '<i data-lucide="heart" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>';
+                emoji = '<i data-lucide="heart" class="icon-inline"></i>';
                 message = 'Pense à bien manger, ton corps en a besoin';
                 bgColor = 'rgba(248, 113, 113, 0.15)';
                 textColor = 'var(--accent-protein)';
@@ -8720,7 +8913,7 @@ Solutions possibles :
             // Update UI
             updateCloseDayUI(true);
 
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Journée clôturée et enregistrée au planning');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Journée clôturée et enregistrée au planning');
         }
 
         function reopenDay(dateKey) {
@@ -8875,7 +9068,7 @@ Solutions possibles :
             const hasDinner = dailyMeals.dinner && dailyMeals.dinner.length > 0;
 
             if (!hasBreakfast && !hasLunch && !hasSnack && !hasDinner) {
-                customAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Aucun repas', 'Aucun repas à dupliquer pour cette journée');
+                customAlert('<i data-lucide="x-circle" class="icon-inline"></i> Aucun repas', 'Aucun repas à dupliquer pour cette journée');
                 return;
             }
 
@@ -8891,13 +9084,13 @@ Solutions possibles :
             // Valider la date
             const parts = targetDateStr.split('-');
             if (parts.length !== 3) {
-                alert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Format invalide. Utilise AAAA-MM-JJ');
+                alert('<i data-lucide="x-circle" class="icon-inline"></i> Format invalide. Utilise AAAA-MM-JJ');
                 return;
             }
 
             const targetDate = new Date(targetDateStr);
             if (isNaN(targetDate.getTime())) {
-                alert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Date invalide');
+                alert('<i data-lucide="x-circle" class="icon-inline"></i> Date invalide');
                 return;
             }
 
@@ -8905,7 +9098,7 @@ Solutions possibles :
 
             // Demander confirmation si la date cible a déjà des repas
             if (allDailyMeals[targetDateKey] && (allDailyMeals[targetDateKey].breakfast.length > 0 || allDailyMeals[targetDateKey].lunch.length > 0 || allDailyMeals[targetDateKey].snack.length > 0 || allDailyMeals[targetDateKey].dinner.length > 0)) {
-                customConfirm('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Écraser les repas', 'Cette date contient déjà des repas.\n\nLes écraser ?', true).then((confirmed) => {
+                customConfirm('<i data-lucide="alert-triangle" class="icon-inline"></i> Écraser les repas', 'Cette date contient déjà des repas.\n\nLes écraser ?', true).then((confirmed) => {
                     if (!confirmed) return;
                     completeDuplication();
                 });
@@ -8945,7 +9138,7 @@ Solutions possibles :
             syncMealsToPlanning();
             currentMealDate = oldDate;
 
-            alert(`<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Journée dupliquée vers ${targetDate.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long'})}`);
+            alert(`<i data-lucide="check-circle" class="icon-inline"></i> Journée dupliquée vers ${targetDate.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long'})}`);
 
             // Demander si on veut aller sur cette date
             customConfirm('Aller vers cette date', 'Basculer sur le ' + targetDate.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long'}) + ' ?').then((confirmed) => {
@@ -8968,7 +9161,7 @@ Solutions possibles :
                     toast = document.createElement('div');
                     toast.id = 'save-toast';
                     toast.className = 'save-toast';
-                    toast.innerHTML = '<i data-lucide="save" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données enregistrées';
+                    toast.innerHTML = '<i data-lucide="save" class="icon-inline"></i> Données enregistrées';
                     if (typeof lucide !== "undefined") lucide.createIcons();
                     document.body.appendChild(toast);
                 }
@@ -9374,7 +9567,7 @@ Solutions possibles :
             });
 
 
-            showToast(`<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ${cleaned} recette(s) dupliquée(s) supprimée(s)`);
+            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${cleaned} recette(s) dupliquée(s) supprimée(s)`);
 
             // Recharger l'affichage
             loadDailyMealsForCurrentDate();
@@ -9386,16 +9579,16 @@ Solutions possibles :
             let message = 'Cette action est irréversible et supprimera :\n\n• Tous tes repas et plannings\n• Tous tes aliments personnalisés\n• Tous tes suivis corporels\n• Tous tes paramètres\n\n';
 
             if (isConnected) {
-                message += '<i data-lucide="cloud" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> <strong>Les données locales ET cloud seront supprimées.</strong>\n\n';
+                message += '<i data-lucide="cloud" class="icon-inline"></i> <strong>Les données locales ET cloud seront supprimées.</strong>\n\n';
             } else {
-                message += '<i data-lucide="hard-drive" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> <strong>Seules les données locales seront supprimées</strong> (pas connecté au cloud).\n\n';
+                message += '<i data-lucide="hard-drive" class="icon-inline"></i> <strong>Seules les données locales seront supprimées</strong> (pas connecté au cloud).\n\n';
             }
 
-            message += '<i data-lucide="lightbulb" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Pense à exporter tes données avant.\n\nConfirmer la suppression ?';
+            message += '<i data-lucide="lightbulb" class="icon-inline"></i> Pense à exporter tes données avant.\n\nConfirmer la suppression ?';
 
             customConfirm('Supprimer toutes les données', message, true).then(async (confirmed) => {
                 if (!confirmed) {
-                    showToast('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Suppression annulée');
+                    showToast('<i data-lucide="x-circle" class="icon-inline"></i> Suppression annulée');
                     return;
                 }
 
@@ -9403,13 +9596,13 @@ Solutions possibles :
                 if (isConnected && typeof firebaseDeleteCloudData === 'function') {
                     const cloudDeleted = await firebaseDeleteCloudData();
                     if (cloudDeleted) {
-                        showToast('<i data-lucide="cloud-off" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données cloud supprimées');
+                        showToast('<i data-lucide="cloud-off" class="icon-inline"></i> Données cloud supprimées');
                     }
                 }
 
                 // Supprimer toutes les données locales
                 localStorage.clear();
-                showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Toutes les données ont été supprimées');
+                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Toutes les données ont été supprimées');
 
                 // Reload après 1 seconde
                 setTimeout(() =>  { location.reload(); }, 1000);
@@ -9440,7 +9633,7 @@ Solutions possibles :
 
             try {
                 // Charger html2canvas si nécessaire
-                showToast('<i data-lucide="loader" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Préparation de l\'export...');
+                showToast('<i data-lucide="loader" class="icon-inline"></i> Préparation de l\'export...');
                 await loadHtml2Canvas();
 
                 // Masquer l'IMC avant export (toujours masqué pour protéger la vie privée)
@@ -9483,7 +9676,7 @@ Solutions possibles :
                     link.click();
                     URL.revokeObjectURL(url);
 
-                    showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Image téléchargée !');
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Image téléchargée !');
                 });
 
             } catch (error) {
@@ -9566,7 +9759,7 @@ Solutions possibles :
                         daySelect.appendChild(option);
                     }
                 } else {
-                    console.error('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Day select not found! ID: birth-day');
+                    console.error('<i data-lucide="x-circle" class="icon-inline"></i> Day select not found! ID: birth-day');
                 }
 
                 if (yearSelect) {
@@ -9582,7 +9775,7 @@ Solutions possibles :
                         yearSelect.appendChild(option);
                     }
                 } else {
-                    console.error('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Year select not found! ID: birth-year');
+                    console.error('<i data-lucide="x-circle" class="icon-inline"></i> Year select not found! ID: birth-year');
                 }
 
                 // IMPORTANT: Load profile AFTER dropdowns are populated
@@ -9755,13 +9948,13 @@ Solutions possibles :
             console.log('💾 [saveNewFood] pendingProductSource:', window.pendingProductSource);
 
             if (!name) {
-                customAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nom manquant', 'Veuillez entrer un nom pour l\'aliment.').then(() => {});
+                customAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Nom manquant', 'Veuillez entrer un nom pour l\'aliment.').then(() => {});
                 return;
             }
 
             // Vérifier qu'une catégorie a été sélectionnée
             if (!category) {
-                customAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Catégorie manquante', 'Veuillez choisir une catégorie pour l\'aliment.').then(() => {});
+                customAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Catégorie manquante', 'Veuillez choisir une catégorie pour l\'aliment.').then(() => {});
                 return;
             }
 
@@ -9799,10 +9992,10 @@ Solutions possibles :
                 if (barcode && typeof window.saveToAlimentsCommuns === 'function') {
                     const saved = await window.saveToAlimentsCommuns(newFood);
                     if (saved) {
-                        toastMessage = '<i data-lucide="database" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' (base communautaire)';
+                        toastMessage = '<i data-lucide="database" class="icon-inline"></i> ' + name + ' (base communautaire)';
                     }
                 } else {
-                    toastMessage = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' prêt !';
+                    toastMessage = '<i data-lucide="check-circle" class="icon-inline"></i> ' + name + ' prêt !';
                 }
             }
             // === CAS 2: Produit d'OpenFoodFacts ou saisie manuelle ===
@@ -9812,7 +10005,7 @@ Solutions possibles :
                 // Vérifier doublon local
                 const existingFood = customFoods.find(f => f.name.toLowerCase() === name.toLowerCase());
                 if (existingFood) {
-                    customAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nom déjà utilisé', 'Un aliment avec ce nom existe déjà dans ta base.').then(() => {});
+                    customAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Nom déjà utilisé', 'Un aliment avec ce nom existe déjà dans ta base.').then(() => {});
                     return;
                 }
 
@@ -9825,14 +10018,14 @@ Solutions possibles :
                 localStorage.setItem('customFoods', JSON.stringify(customFoods));
                 console.log('💾 [saveNewFood] Sauvegardé localement');
 
-                toastMessage = '<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à ta base';
+                toastMessage = '<i data-lucide="check-circle" class="icon-inline"></i> ' + name + ' ajouté à ta base';
 
                 // Sauvegarder dans Firestore si code-barres
                 if (barcode && typeof window.saveToAlimentsCommuns === 'function') {
                     try {
                         const saved = await window.saveToAlimentsCommuns(newFood);
                         if (saved) {
-                            toastMessage = '<i data-lucide="cloud" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + name + ' ajouté à la base communautaire !';
+                            toastMessage = '<i data-lucide="cloud" class="icon-inline"></i> ' + name + ' ajouté à la base communautaire !';
                             console.log('✅ [saveNewFood] Sauvegardé dans Firestore:', barcode);
                         }
                     } catch (err) {
@@ -9988,7 +10181,7 @@ Solutions possibles :
         function openBarcodeScanner() {
             // Vérifier si HTTPS (requis pour caméra sur mobile)
             if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-                showToast('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Le scanner nécessite une connexion HTTPS');
+                showToast('<i data-lucide="alert-triangle" class="icon-inline"></i> Le scanner nécessite HTTPS', 'warning');
                 return;
             }
 
@@ -10052,7 +10245,7 @@ Solutions possibles :
                 console.log(scannerFlashOn ? '🔦 Flash activé' : '🔦 Flash désactivé');
             } catch (err) {
                 console.error('Erreur toggle flash:', err);
-                showToast('<i data-lucide="zap-off" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Impossible d\'activer le flash');
+                showToast('<i data-lucide="zap-off" class="icon-inline"></i> Impossible d\'activer le flash', 'error');
             }
         }
 
@@ -10120,7 +10313,7 @@ Solutions possibles :
                 }
             } catch (err) {
                 console.error('❌ Erreur démarrage scanner:', err);
-                showToast('<i data-lucide="camera-off" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Impossible d\'accéder à la caméra');
+                showToast('<i data-lucide="camera-off" class="icon-inline"></i> Impossible d\'accéder à la caméra', 'error');
                 closeBarcodeScanner();
             }
         }
@@ -10253,7 +10446,7 @@ Solutions possibles :
                 }
             } catch (err) {
                 console.error('📷 [SCAN] Erreur:', err);
-                showToast('❌ Erreur lors de la recherche');
+                showToast('<i data-lucide="alert-circle" class="icon-inline"></i> Erreur lors de la recherche', 'error');
             }
         }
 
@@ -10366,7 +10559,7 @@ Solutions possibles :
                     // Rafraîchir la liste (filterFoodDatabase reconstruit allFoods)
                     filterFoodDatabase();
 
-                    showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Aliment supprimé');
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Aliment supprimé');
 
                 }
             });
@@ -10589,7 +10782,7 @@ Solutions possibles :
             if (index > -1) {
                 // Retirer des favoris
                 favoriteFoods.splice(index, 1);
-                showToast('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Retiré des favoris');
+                showToast('<i data-lucide="x-circle" class="icon-inline"></i> Retiré des favoris');
             } else {
                 // Ajouter aux favoris
                 favoriteFoods.push(foodName);
@@ -10610,13 +10803,13 @@ Solutions possibles :
         function editFoodByIndex(index) {
             const food = window.currentFoodList[index];
             if (!food) {
-                showToast('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Aliment introuvable');
+                showToast('<i data-lucide="x-circle" class="icon-inline"></i> Aliment introuvable');
                 return;
             }
 
             // Only allow editing custom foods
             if (!food.custom) {
-                showToast('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Tu ne peux modifier que les aliments personnalisés');
+                showToast('<i data-lucide="alert-triangle" class="icon-inline"></i> Tu ne peux modifier que les aliments personnalisés', 'warning');
                 return;
             }
 
@@ -10636,7 +10829,7 @@ Solutions possibles :
 
             const saveBtn = document.querySelector('#addFoodModal .btn[onclick="saveNewFood()"]');
             if (saveBtn) {
-                saveBtn.innerHTML = '<i data-lucide="save" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Sauvegarder';
+                saveBtn.innerHTML = '<i data-lucide="save" class="icon-inline"></i> Sauvegarder';
                 saveBtn.onclick = () => updateFoodByIndex(index);
             }
 
@@ -10656,13 +10849,13 @@ Solutions possibles :
             const fiber = parseFloat(document.getElementById('new-food-fiber').value) || 0;
 
             if (!newName) {
-                showToast('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Le nom est obligatoire');
+                showToast('<i data-lucide="alert-triangle" class="icon-inline"></i> Le nom est obligatoire', 'warning');
                 return;
             }
 
             // Vérifier si le nouveau nom existe déjà (sauf si c'est le même)
             if (newName !== food.name && foodDatabase.some(f => f.name.toLowerCase() === newName.toLowerCase())) {
-                showToast('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Un aliment avec ce nom existe déjà');
+                showToast('<i data-lucide="alert-triangle" class="icon-inline"></i> Un aliment avec ce nom existe déjà', 'warning');
                 return;
             }
 
@@ -10692,13 +10885,13 @@ Solutions possibles :
 
             const saveBtn = document.querySelector('#addFoodModal .btn[onclick]');
             if (saveBtn) {
-                saveBtn.innerHTML = '<i data-lucide="plus" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Ajouter à ma Base';
+                saveBtn.innerHTML = '<i data-lucide="plus" class="icon-inline"></i> Ajouter à ma Base';
                 // onclick déjà défini dans HTML - pas de double binding
             }
 
             closeAddFoodModal();
             filterFoodDatabase();
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Aliment modifié !');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Aliment modifié !');
         }
 
         function deleteFoodByIndex(index) {
@@ -11068,12 +11261,12 @@ Solutions possibles :
 
 
             if (!date) {
-                customAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Date manquante', 'Veuillez sélectionner une date.').then(() => {});
+                customAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Date manquante', 'Veuillez sélectionner une date.').then(() => {});
                 return;
             }
 
             if (!weight || weight <= 0) {
-                customAlert('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Date manquante', 'Veuillez sélectionner une date.').then(() => {});
+                customAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Date manquante', 'Veuillez sélectionner une date.').then(() => {});
                 return;
             }
 
@@ -11131,7 +11324,7 @@ Solutions possibles :
             document.getElementById('tracking-notes').value = '';
             setTrackingDateToToday();
 
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Suivi enregistré');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Suivi enregistré');
 
             // SYNC: Update calculator weight with latest tracking weight
             syncWeightToCalculator();
@@ -11187,7 +11380,7 @@ Solutions possibles :
 
             const weightInput = document.getElementById('weight');
             if (!weightInput) {
-                console.error('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Weight input not found');
+                console.error('<i data-lucide="x-circle" class="icon-inline"></i> Weight input not found');
                 return;
             }
 
@@ -11233,7 +11426,7 @@ Solutions possibles :
             // If all data present, recalculate silently
             if (weight && height && age && gender && activity)  { try {
                     calculateMacros(); } catch (error) {
-                    console.error('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Error during auto-recalculation:', error);
+                    console.error('<i data-lucide="x-circle" class="icon-inline"></i> Error during auto-recalculation:', error);
                 }
             }
         }
@@ -11368,7 +11561,7 @@ Solutions possibles :
 
                     // Rafraîchir l'affichage
                     renderTrackingList();
-                    showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Suivi supprimé');
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Suivi supprimé');
 
                     // SYNC: Update calculator weight after deletion
                     syncWeightToCalculator();
@@ -11455,7 +11648,7 @@ Solutions possibles :
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données exportées !');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Données exportées !');
         }
 
         function importData(event) {
@@ -11467,7 +11660,7 @@ Solutions possibles :
                 try {
                     const data = JSON.parse(e.target.result);
 
-                    customConfirm('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Importer les données', 'Ça remplacera tes données actuelles.\n\nContinuer ?', true).then((confirmed) => {
+                    customConfirm('<i data-lucide="alert-triangle" class="icon-inline"></i> Importer les données', 'Ça remplacera tes données actuelles.\n\nContinuer ?', true).then((confirmed) => {
                         if (!confirmed) return;
 
                         // Import données principales
@@ -11489,11 +11682,11 @@ Solutions possibles :
                         if (data.confirmDelete !== undefined) localStorage.setItem('confirmDelete', data.confirmDelete);
                         if (data.notifications !== undefined) localStorage.setItem('notifications', data.notifications);
 
-                        showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données importées ! Rechargement...');
+                        showToast('<i data-lucide="check-circle" class="icon-inline"></i> Données importées ! Rechargement...');
                         setTimeout(() => location.reload(), 1000);
                     });
                 } catch (error) {
-                    customAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Erreur', 'Fichier invalide');
+                    customAlert('<i data-lucide="x-circle" class="icon-inline"></i> Erreur', 'Fichier invalide');
                 }
             };
             reader.readAsText(file);
@@ -11520,7 +11713,7 @@ Solutions possibles :
             modalTitle.textContent = 'Modifier ' + food.name;
 
             const saveBtn = document.querySelector('#addFoodModal .btn');
-            saveBtn.innerHTML = '<i data-lucide="save" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Sauvegarder les Modifications';
+            saveBtn.innerHTML = '<i data-lucide="save" class="icon-inline"></i> Sauvegarder les Modifications';
             saveBtn.onclick = function() { updateFood(foodName); };
 
             openAddFoodModal();
@@ -11533,13 +11726,13 @@ Solutions possibles :
             const newName = document.getElementById('new-food-name').value.trim();
 
             if (!newName) {
-                showToast('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Le nom est obligatoire');
+                showToast('<i data-lucide="alert-triangle" class="icon-inline"></i> Le nom est obligatoire', 'warning');
                 return;
             }
 
             // Vérifier si le nouveau nom existe déjà (sauf si c'est le même)
             if (newName !== originalName && foodDatabase.some(f => f.name.toLowerCase() === newName.toLowerCase())) {
-                showToast('<i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Un aliment avec ce nom existe déjà');
+                showToast('<i data-lucide="alert-triangle" class="icon-inline"></i> Un aliment avec ce nom existe déjà', 'warning');
                 return;
             }
 
@@ -11567,12 +11760,12 @@ Solutions possibles :
             document.getElementById('new-food-name').disabled = false;
             document.querySelector('#addFoodModal .modal-title').textContent = 'Ajouter un aliment Personnalisé';
             const saveBtn = document.querySelector('#addFoodModal .btn');
-            saveBtn.innerHTML = '<i data-lucide="plus" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Ajouter à ma Base';
+            saveBtn.innerHTML = '<i data-lucide="plus" class="icon-inline"></i> Ajouter à ma Base';
             // onclick déjà défini dans HTML - pas de double binding
 
             closeAddFoodModal();
             filterFoodDatabase();
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ' + newName + ' modifié !');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> ' + newName + ' modifié !');
         }
 
         // ===== REPAS TYPES =====
@@ -11590,7 +11783,7 @@ Solutions possibles :
             const recipe = meal ? (meal.recipe || '') : '';
 
             if (foods.length === 0) {
-                customAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Repas vide', 'Ce repas est vide, ajoute des aliments d\'abord');
+                customAlert('<i data-lucide="x-circle" class="icon-inline"></i> Repas vide', 'Ce repas est vide, ajoute des aliments d\'abord');
                 return;
             }
 
@@ -11608,13 +11801,13 @@ Solutions possibles :
                 mealTemplates.push(template);
                 localStorage.setItem('mealTemplates', JSON.stringify(mealTemplates));
 
-                showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Repas type "' + templateName + '" sauvegardé !');
+                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type "' + templateName + '" sauvegardé !');
             });
         }
 
         function openMealTemplatesModal(mealType) {
             if (mealTemplates.length === 0) {
-                customAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Aucun repas type', 'Aucun repas type sauvegardé.\n\nAjoute des aliments à un repas puis clique sur "<i data-lucide="save" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Sauvegarder"');
+                customAlert('<i data-lucide="x-circle" class="icon-inline"></i> Aucun repas type', 'Aucun repas type sauvegardé.\n\nAjoute des aliments à un repas puis clique sur "<i data-lucide="save" class="icon-inline"></i> Sauvegarder"');
                 return;
             }
 
@@ -11746,7 +11939,7 @@ Solutions possibles :
 
             syncMealsToPlanning();
             closeTemplatesModal();
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Repas type "' + template.name + '" chargé');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type "' + template.name + '" chargé');
         }
 
         async function deleteMealTemplate(templateId) {
@@ -11759,7 +11952,7 @@ Solutions possibles :
             mealTemplates = mealTemplates.filter(t => t.id !== templateId);
             localStorage.setItem('mealTemplates', JSON.stringify(mealTemplates));
 
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Repas type supprimé');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type supprimé');
 
             // Refresh modal content without closing
             const modal = document.getElementById('templatesModal');
@@ -11799,7 +11992,7 @@ Solutions possibles :
             renderTemplateFoodsList();
             updateTemplateMacros();
             closeFoodModal();
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Aliment ajouté (100g)');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Aliment ajouté (100g)');
         }
 
         function renderTemplateFoodsList() {
@@ -11881,12 +12074,12 @@ Solutions possibles :
             const recipe = document.getElementById('new-template-recipe').value.trim();
 
             if (!name) {
-                customAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Nom manquant', 'Donne un nom à ton repas type');
+                customAlert('<i data-lucide="x-circle" class="icon-inline"></i> Nom manquant', 'Donne un nom à ton repas type');
                 return;
             }
 
             if (currentTemplateFoods.length === 0) {
-                customAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Repas vide', 'Ajoute au moins un aliment à ton repas type');
+                customAlert('<i data-lucide="x-circle" class="icon-inline"></i> Repas vide', 'Ajoute au moins un aliment à ton repas type');
                 return;
             }
 
@@ -11911,7 +12104,7 @@ Solutions possibles :
             // Refresh list
             renderMealTemplatesList();
 
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Repas type "' + name + '" créé !');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type "' + name + '" créé !');
         }
 
         function renderMealTemplatesList() {
@@ -12026,7 +12219,7 @@ Solutions possibles :
             localStorage.setItem('mealTemplates', JSON.stringify(mealTemplates));
 
             renderMealTemplatesList();
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Repas type supprimé');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type supprimé');
         }
 
         function editMealTemplate(templateId) {
@@ -12092,7 +12285,7 @@ Solutions possibles :
             saveDailyMeals();
             syncMealsToPlanning();
 
-            showToast(`<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> ${mealNames[mealType]} vidé`);
+            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${mealNames[mealType]} vidé`);
         }
 
         // ===== SAUVEGARDE PARAMÈTRES =====
@@ -12180,7 +12373,7 @@ Solutions possibles :
                         if (resultsEl)  { resultsEl.style.display = 'block'; }
                     }
                 } catch(e) {
-                    console.error('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Error loading saved targets:', e);
+                    console.error('<i data-lucide="x-circle" class="icon-inline"></i> Error loading saved targets:', e);
                 }
             }
         }
@@ -12274,7 +12467,7 @@ Solutions possibles :
         // Fonction pour changer l'unité de poids
         function setUnit(unit) {
             localStorage.setItem('weightUnit', unit);
-            showToast(`<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Unité changée en ${unit}`);
+            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> Unité changée en ${unit}`);
 
             // Mettre à jour les boutons
             const kgBtn = document.querySelector('button[onclick="setUnit(\'kg\')"]');
@@ -12314,13 +12507,13 @@ Solutions possibles :
             const newUsername = document.getElementById('username-edit-input').value.trim();
 
             if (!newUsername || newUsername.length < 2) {
-                customAlert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Prénom invalide', 'Entre un prénom valide (minimum 2 caractères)');
+                customAlert('<i data-lucide="x-circle" class="icon-inline"></i> Prénom invalide', 'Entre un prénom valide (minimum 2 caractères)');
                 return;
             }
 
             localStorage.setItem('appUsername', newUsername);
             displayUsername();
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Prénom mis à jour !');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Prénom mis à jour !');
         }
 
         // Appeler au chargement
@@ -12489,7 +12682,7 @@ Solutions possibles :
             const weight = parseFloat(document.getElementById('tracking-weight').value);
 
             if (!date || !weight) {
-                alert('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Date et poids obligatoires');
+                alert('<i data-lucide="x-circle" class="icon-inline"></i> Date et poids obligatoires');
                 return;
             }
 
@@ -12520,7 +12713,7 @@ Solutions possibles :
                 if (elem) elem.value = '';
             });
 
-            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Mesure enregistrée !');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Mesure enregistrée !');
         }
 
 
@@ -12568,7 +12761,7 @@ Solutions possibles :
                 advancedTrackingData = advancedTrackingData.filter(e => e.date !== date);
                 localStorage.setItem('advancedTrackingData', JSON.stringify(advancedTrackingData));
                 renderAdvancedTrackingList();
-                showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Mesure supprimée');
+                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Mesure supprimée');
             });
         }
 
@@ -12840,13 +13033,16 @@ Solutions possibles :
             }
         }
 
-        function showToast(message) {
+        function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toast-message');
             toastMsg.innerHTML = message;
-            
+
+            // Reset et appliquer le type
+            toast.classList.remove('toast-success', 'toast-error', 'toast-warning', 'toast-info');
+            toast.classList.add('toast-' + type);
             toast.classList.add('show');
-            
+
             // Reinit Lucide APRÈS que le DOM soit mis à jour
             setTimeout(() => {
                 if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -12987,7 +13183,7 @@ Solutions possibles :
 
     <!-- Toast de confirmation -->
     <div class="toast" id="toast">
-        <span id="toast-message"><i data-lucide="save" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données enregistrées</span>
+        <span id="toast-message"><i data-lucide="save" class="icon-inline"></i> Données enregistrées</span>
     </div>
 
     <!-- Export Warning Modal -->
@@ -13001,7 +13197,7 @@ Solutions possibles :
 
             <p style="color: var(--text-secondary); font-size: 1rem; line-height: 1.7; margin-bottom: var(--space-2xl);">
                 Cette image contient tes <strong style="color: var(--text-primary);">données personnelles</strong> (poids, objectifs, macros).<br><br>
-                <strong style="color: var(--accent-fat);"><i data-lucide="alert-triangle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Ne la partage pas publiquement</strong>
+                <strong style="color: var(--accent-fat);"><i data-lucide="alert-triangle" class="icon-inline"></i> Ne la partage pas publiquement</strong>
             </p>
 
             <div style="display: flex; gap: var(--space-lg); flex-wrap: wrap;">
@@ -13019,7 +13215,7 @@ Solutions possibles :
             <button onclick="closePrivacyPolicy()" style="position: absolute; top: 20px; right: 20px; background: rgba(16, 185, 129, 0.1); border: 2px solid var(--accent-main); color: var(--accent-main); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.5rem; display: flex; align-items: center; justify-content: center;">×</button>
 
             <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--text-primary);">
-                <i data-lucide="lock" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Politique de Confidentialité
+                <i data-lucide="lock" class="icon-inline"></i> Politique de Confidentialité
             </h2>
 
             <div style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.8;">
@@ -13125,7 +13321,7 @@ Solutions possibles :
     <div id="rgpd-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10000; justify-content: center; align-items: flex-start; padding: 16px; padding-top: 50px; overflow-y: auto;">
         <div style="background: var(--bg-secondary); border: 2px solid var(--accent-main); border-radius: 12px; max-width: 500px; width: 100%; padding: 20px; box-shadow: var(--shadow-lg);">
             <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary);">
-                <i data-lucide="lock" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Protection de tes données
+                <i data-lucide="lock" class="icon-inline"></i> Protection de tes données
             </h2>
 
             <div style="color: var(--text-secondary); font-size: 0.82rem; line-height: 1.5; margin-bottom: 18px;">
@@ -13145,10 +13341,10 @@ Solutions possibles :
 
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button class="btn" onclick="acceptRGPD()" style="flex: 1; min-width: 150px; font-size: 0.85rem; padding: 10px 16px;">
-                    <i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> J'accepte
+                    <i data-lucide="check-circle" class="icon-inline"></i> J'accepte
                 </button>
                 <button class="btn" onclick="refuseRGPD()" style="flex: 1; min-width: 150px; font-size: 0.85rem; padding: 10px 16px; background: var(--accent-danger);">
-                    <i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Je refuse
+                    <i data-lucide="x-circle" class="icon-inline"></i> Je refuse
                 </button>
             </div>
 
@@ -13745,7 +13941,7 @@ Solutions possibles :
             if (typeof window.firebaseSignIn === 'function') {
                 window.firebaseSignIn();
             } else {
-                showToast('<i data-lucide="info" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Connexion bientôt disponible');
+                showToast('<i data-lucide="info" class="icon-inline"></i> Connexion bientôt disponible');
             }
         }
 
@@ -14286,7 +14482,7 @@ Solutions possibles :
                 return true;
             } catch (error) {
                 console.error('Erreur sauvegarde aliments_communs:', error);
-                showToast('❌ Erreur lors de la sauvegarde dans la base communautaire');
+                showToast('<i data-lucide="alert-circle" class="icon-inline"></i> Erreur lors de la sauvegarde', 'error');
                 return false;
             }
         };
@@ -14505,7 +14701,7 @@ Solutions possibles :
 
             // Reload page to apply restored data
             if (typeof showToast === 'function') {
-                showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données restaurées depuis le cloud !', 'success');
+                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Données restaurées depuis le cloud !', 'success');
             }
             setTimeout(() => location.reload(), 1500);
         }
@@ -14533,7 +14729,7 @@ Solutions possibles :
                 const firstName = await askForFirstName();
                 if (!firstName) {
                     if (typeof showToast === 'function') {
-                        showToast('<i data-lucide="info" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Inscription annulée');
+                        showToast('<i data-lucide="info" class="icon-inline"></i> Inscription annulée');
                     }
                     return;
                 }
@@ -14574,7 +14770,7 @@ Solutions possibles :
                                     // Keep local data and sync to cloud
                                     syncToFirestore(user);
                                     if (typeof showToast === 'function') {
-                                        showToast('<i data-lucide="cloud-upload" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données locales envoyées vers le cloud');
+                                        showToast('<i data-lucide="cloud-upload" class="icon-inline"></i> Données locales envoyées vers le cloud');
                                     }
                                 }
                             });
@@ -14594,14 +14790,14 @@ Solutions possibles :
                     // No cloud data, upload local
                     syncToFirestore(user);
                     if (typeof showToast === 'function') {
-                        showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Connecté ! Tes données sont synchronisées.');
+                        showToast('<i data-lucide="check-circle" class="icon-inline"></i> Connecté ! Tes données sont synchronisées.');
                     }
                 }
 
             } catch (error) {
                 console.error('Erreur connexion Google:', error);
                 if (typeof showToast === 'function') {
-                    showToast('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Erreur de connexion');
+                    showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur de connexion', 'error');
                 }
             }
         };
@@ -14618,7 +14814,7 @@ Solutions possibles :
                     try {
                         await signOut(auth);
                         if (typeof showToast === 'function') {
-                            showToast('<i data-lucide="log-out" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Déconnecté');
+                            showToast('<i data-lucide="log-out" class="icon-inline"></i> Déconnecté');
                         }
                     } catch (error) {
                         console.error('Erreur déconnexion:', error);
@@ -14641,7 +14837,7 @@ Solutions possibles :
                 updateSyncStatus('Synchronisation en cours...');
                 await syncToFirestore(auth.currentUser);
                 if (typeof showToast === 'function') {
-                    showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Synchronisation terminée !');
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Synchronisation terminée !');
                 }
             }
         };
@@ -14666,7 +14862,7 @@ Solutions possibles :
                 }
             } else {
                 if (typeof showToast === 'function') {
-                    showToast('<i data-lucide="info" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Aucune donnée dans le cloud');
+                    showToast('<i data-lucide="info" class="icon-inline"></i> Aucune donnée dans le cloud');
                 }
             }
         };
@@ -14729,12 +14925,12 @@ Solutions possibles :
                                     if (restore) {
                                         restoreDataFromCloud(cloudData);
                                         if (typeof showToast === 'function') {
-                                            showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Données récupérées avec succès !');
+                                            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Données récupérées avec succès !');
                                         }
                                     } else {
                                         // User wants fresh start - sync empty local to cloud
                                         if (typeof showToast === 'function') {
-                                            showToast('<i data-lucide="info" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Tu repars de zéro sur cet appareil');
+                                            showToast('<i data-lucide="info" class="icon-inline"></i> Tu repars de zéro sur cet appareil');
                                         }
                                     }
                                 });
@@ -14823,7 +15019,7 @@ Solutions possibles :
 
             if (!type || !tab || !description.trim()) {
                 if (typeof showToast === 'function') {
-                    showToast('<i data-lucide="alert-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Remplis tous les champs obligatoires');
+                    showToast('<i data-lucide="alert-circle" class="icon-inline"></i> Remplis tous les champs obligatoires');
                 }
                 return;
             }
@@ -14845,12 +15041,12 @@ Solutions possibles :
 
                 closeFeedbackModal();
                 if (typeof showToast === 'function') {
-                    showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Merci pour ton feedback !');
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Merci pour ton feedback !');
                 }
             } catch (error) {
                 console.error('Erreur envoi feedback:', error);
                 if (typeof showToast === 'function') {
-                    showToast('<i data-lucide="x-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Erreur lors de l\'envoi');
+                    showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur lors de l\'envoi', 'error');
                 }
             }
         };
@@ -14958,9 +15154,9 @@ Solutions possibles :
                         <div style="color: var(--text-primary); line-height: 1.6; margin-bottom: var(--space-md); white-space: pre-wrap;">${escapeHtml(feedback.description)}</div>
                         ${feedback.reproduction ? `<div style="background: rgba(239, 68, 68, 0.1); padding: var(--space-sm); border-radius: var(--radius-sm); margin-bottom: var(--space-md); font-size: 0.85rem;"><strong>Reproduction:</strong> ${escapeHtml(feedback.reproduction)}</div>` : ''}
                         <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
-                            ${feedback.status === 'new' ? `<button class="btn" style="font-size: 0.8rem; padding: 4px 12px; background: var(--accent-ui);" onclick="updateFeedbackStatus('${feedback.id}', 'read')">Marquer lu</button>` : ''}
-                            ${feedback.status !== 'resolved' ? `<button class="btn" style="font-size: 0.8rem; padding: 4px 12px; background: var(--accent-main);" onclick="updateFeedbackStatus('${feedback.id}', 'resolved')">Résolu</button>` : ''}
-                            <button class="btn" style="font-size: 0.8rem; padding: 4px 12px; background: var(--accent-danger);" onclick="deleteFeedback('${feedback.id}')">Supprimer</button>
+                            ${feedback.status === 'new' ? `<button class="btn btn-sm btn-info" onclick="updateFeedbackStatus('${feedback.id}', 'read')">Marquer lu</button>` : ''}
+                            ${feedback.status !== 'resolved' ? `<button class="btn btn-sm" onclick="updateFeedbackStatus('${feedback.id}', 'resolved')">Résolu</button>` : ''}
+                            <button class="btn btn-danger btn-sm" onclick="deleteFeedback('${feedback.id}')">Supprimer</button>
                         </div>
                         ${feedback.userEmail ? `<div style="margin-top: var(--space-sm); font-size: 0.75rem; color: var(--text-secondary);">👤 ${feedback.userEmail}</div>` : ''}
                     </div>
@@ -15001,7 +15197,7 @@ Solutions possibles :
                 await setDoc(doc(db, 'feedbacks', feedbackId), { status: newStatus }, { merge: true });
                 loadAdminFeedbacks();
                 if (typeof showToast === 'function') {
-                    showToast('<i data-lucide="check-circle" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Statut mis à jour');
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Statut mis à jour');
                 }
             } catch (error) {
                 console.error('Erreur mise à jour statut:', error);
@@ -15017,7 +15213,7 @@ Solutions possibles :
                 await deleteDoc(doc(db, 'feedbacks', feedbackId));
                 loadAdminFeedbacks();
                 if (typeof showToast === 'function') {
-                    showToast('<i data-lucide="trash-2" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i> Feedback supprimé');
+                    showToast('<i data-lucide="trash-2" class="icon-inline"></i> Feedback supprimé');
                 }
             } catch (error) {
                 console.error('Erreur suppression feedback:', error);
