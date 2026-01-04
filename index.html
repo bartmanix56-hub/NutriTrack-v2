@@ -5032,7 +5032,7 @@
                         </div>
                         <div>
                             <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">Hydratation</div>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary);">1 verre = 250ml</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">30ml/kg · 1 verre = 250ml</div>
                         </div>
                     </div>
                     <!-- Compteur -->
@@ -5054,7 +5054,7 @@
                             <div id="water-progress" style="height: 100%; background: var(--accent-carbs); border-radius: var(--radius-full); transition: width 0.3s ease; width: 0%;"></div>
                         </div>
                         <div style="font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap;">
-                            <span id="water-ml">0</span> / 2000 ml
+                            <span id="water-ml">0</span> / <span id="water-target">2000</span> ml
                         </div>
                     </div>
                 </div>
@@ -9299,16 +9299,16 @@ Solutions possibles :
                         </div>
                         <div class="day-meals">
                             <div class="day-meal-item">
-                                <div class="day-meal-label">☀️ Petit-déjeuner</div>
+                                <div class="day-meal-label"><i data-lucide="sunrise" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Petit-déjeuner</div>
                                 <div class="day-meal-foods">${dayPlan.breakfast}</div></div>
                             <div class="day-meal-item">
                                 <div class="day-meal-label"><i data-lucide="utensils" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Déjeuner</div>
                                 <div class="day-meal-foods">${dayPlan.lunch}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label">🍎 Goûter</div>
+                                <div class="day-meal-label"><i data-lucide="apple" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Goûter</div>
                                 <div class="day-meal-foods">${dayPlan.snack}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label">🌙 Dîner</div>
+                                <div class="day-meal-label"><i data-lucide="moon" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Dîner</div>
                                 <div class="day-meal-foods">${dayPlan.dinner}</div></div></div>
                         <div class="day-total-cal">${dayPlan.totalCal} kcal</div></div>
                 `;
@@ -9513,6 +9513,8 @@ Solutions possibles :
                         this.value = 300;
                         showProfileAlert('Le poids maximum est de 300 kg', 'warning', true);
                     }
+                    // Mettre à jour l'objectif d'hydratation
+                    if (typeof updateWaterUI === 'function') updateWaterUI();
                 });
             }
         }
@@ -10581,6 +10583,21 @@ Solutions possibles :
             });
             let allFoods = Array.from(foodMap.values());
 
+            // CHARGER ALIMENTS COMMUNAUTAIRES si filtre "community" sélectionné (même sans recherche)
+            if (filter === 'community' && typeof window.loadCommunityFoods === 'function') {
+                try {
+                    const communityFoods = await window.loadCommunityFoods();
+                    communityFoods.forEach(item => {
+                        if (!foodMap.has(item.name)) {
+                            foodMap.set(item.name, item);
+                        }
+                    });
+                    allFoods = Array.from(foodMap.values());
+                } catch (err) {
+                    console.error('Erreur chargement aliments communautaires:', err);
+                }
+            }
+
             // RECHERCHE FIRESTORE (si query >= 2 caractères ou code-barres numérique)
             if (query && (query.length >= 2 || /^\d+$/.test(query))) {
 
@@ -11019,18 +11036,29 @@ Solutions possibles :
             saveDailyMeals();
         }
 
+        function getWaterTarget() {
+            // Objectif = 30ml par kg de poids corporel (minimum 1500ml, max 4000ml)
+            const weight = parseFloat(document.getElementById('weight')?.value) || 0;
+            if (weight > 0) {
+                return Math.min(4000, Math.max(1500, Math.round(weight * 30)));
+            }
+            return 2000; // Défaut si pas de poids renseigné
+        }
+
         function updateWaterUI() {
             const count = dailyMeals.water || 0;
             const ml = count * 250;
-            const target = 2000;
+            const target = getWaterTarget();
             const percent = Math.min(100, (ml / target) * 100);
 
             const countEl = document.getElementById('water-count');
             const mlEl = document.getElementById('water-ml');
+            const targetEl = document.getElementById('water-target');
             const progressEl = document.getElementById('water-progress');
 
             if (countEl) countEl.textContent = count;
             if (mlEl) mlEl.textContent = ml;
+            if (targetEl) targetEl.textContent = target;
             if (progressEl) progressEl.style.width = percent + '%';
         }
 
@@ -11152,16 +11180,16 @@ Solutions possibles :
                         <div class="day-date">${formatDate(date)}</div>
                         <div class="day-meals">
                             <div class="day-meal-item">
-                                <div class="day-meal-label">☀️ Petit-déjeuner</div>
+                                <div class="day-meal-label"><i data-lucide="sunrise" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Petit-déjeuner</div>
                                 <div class="day-meal-foods">${dayPlan.breakfast}</div></div>
                             <div class="day-meal-item">
                                 <div class="day-meal-label"><i data-lucide="utensils" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Déjeuner</div>
                                 <div class="day-meal-foods">${dayPlan.lunch}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label">🍎 Goûter</div>
+                                <div class="day-meal-label"><i data-lucide="apple" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Goûter</div>
                                 <div class="day-meal-foods">${dayPlan.snack}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label">🌙 Dîner</div>
+                                <div class="day-meal-label"><i data-lucide="moon" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Dîner</div>
                                 <div class="day-meal-foods">${dayPlan.dinner}</div></div></div>
                         <div class="day-total-cal">${dayPlan.totalCal} kcal</div></div>
                 `;
@@ -14391,13 +14419,44 @@ Solutions possibles :
                     }
                 });
 
-                if (results.length > 0) {
-                    console.log('✅ Résultats:', results.map(r => r.name));
-                }
-
                 return results;
             } catch (error) {
                 console.error('❌ Erreur recherche aliments_communs:', error);
+                return [];
+            }
+        };
+
+        // Charger TOUS les aliments communautaires (pour affichage dans le filtre)
+        window.loadCommunityFoods = async function() {
+            if (!db) return [];
+
+            try {
+                const q = query(collection(db, 'aliments_communs'), limit(200));
+                const querySnapshot = await getDocs(q);
+
+                const results = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.name) {
+                        results.push({
+                            name: data.name,
+                            calories: parseFloat(data.calories) || 0,
+                            protein: parseFloat(data.proteins || data.protein) || 0,
+                            carbs: parseFloat(data.carbs) || 0,
+                            fat: parseFloat(data.fats || data.fat) || 0,
+                            fiber: parseFloat(data.fibers || data.fiber) || 0,
+                            category: data.category || 'autres',
+                            barcode: doc.id,
+                            unit: '100g',
+                            custom: false,
+                            fromFirestore: true
+                        });
+                    }
+                });
+
+                return results;
+            } catch (error) {
+                console.error('Erreur chargement aliments communautaires:', error);
                 return [];
             }
         };
