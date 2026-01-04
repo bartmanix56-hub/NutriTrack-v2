@@ -14450,17 +14450,24 @@ Solutions possibles :
             }
 
             try {
-                // Vérifier si VAPID_KEY est configuré
-                if (VAPID_KEY === 'YOUR_VAPID_KEY_HERE') {
-                    console.warn('⚠️ VAPID_KEY non configurée - FCM désactivé');
-                    return null;
+                // Attendre que le SW soit enregistré
+                if (!window.swRegistration) {
+                    console.log('Service Worker pas encore enregistré, attente...');
+                    await new Promise(resolve => setTimeout(resolve, 2000));
                 }
 
-                const currentToken = await getToken(messaging, { vapidKey: VAPID_KEY });
+                const options = { vapidKey: VAPID_KEY };
+
+                // Utiliser notre SW si disponible
+                if (window.swRegistration) {
+                    options.serviceWorkerRegistration = window.swRegistration;
+                }
+
+                const currentToken = await getToken(messaging, options);
 
                 if (currentToken) {
                     fcmToken = currentToken;
-                    console.log('Token FCM obtenu');
+                    console.log('✅ Token FCM obtenu');
                     return currentToken;
                 } else {
                     console.log('Pas de token FCM disponible');
@@ -15455,7 +15462,7 @@ Solutions possibles :
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', async () => {
                 try {
-                    const registration = await navigator.serviceWorker.register('./sw.js');
+                    const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
                     window.swRegistration = registration;
 
                     // Programmer les notifications au chargement
