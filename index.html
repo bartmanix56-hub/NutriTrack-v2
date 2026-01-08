@@ -3070,6 +3070,257 @@
             color: white;
         }
 
+        /* ===== ONBOARDING STYLES ===== */
+        .onboarding-section {
+            margin-bottom: var(--space-3xl);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .onboarding-section.hidden {
+            display: none;
+        }
+
+        .onboarding-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-xl);
+        }
+
+        .onboarding-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .onboarding-progress {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .onboarding-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .onboarding-card {
+            background: var(--bg-secondary);
+            border: 2px dashed rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+        }
+
+        .onboarding-card:hover {
+            border-color: var(--accent-main);
+            background: rgba(16, 185, 129, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .onboarding-card.completed {
+            border-style: solid;
+            border-color: var(--accent-main);
+            background: rgba(16, 185, 129, 0.1);
+            opacity: 0.7;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .onboarding-card.completed .onboarding-card-icon {
+            background: var(--accent-main);
+        }
+
+        .onboarding-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .onboarding-card-icon i {
+            width: 24px;
+            height: 24px;
+            color: var(--accent-main);
+        }
+
+        .onboarding-card.completed .onboarding-card-icon i {
+            color: white;
+        }
+
+        .onboarding-card-content {
+            flex: 1;
+        }
+
+        .onboarding-card-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .onboarding-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .onboarding-card-check {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-full);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .onboarding-card.completed .onboarding-card-check {
+            background: var(--accent-main);
+            border-color: var(--accent-main);
+        }
+
+        .onboarding-card.completed .onboarding-card-check i {
+            color: white;
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Onboarding Modal Styles */
+        .onboarding-modal .modal-content {
+            max-width: 500px;
+        }
+
+        .onboarding-modal .modal-body {
+            padding: var(--space-2xl);
+        }
+
+        .onboarding-step-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .onboarding-step-indicator span {
+            padding: 4px 10px;
+            background: var(--accent-main);
+            color: white;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .onboarding-actions {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-2xl);
+            padding-top: var(--space-xl);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .onboarding-actions .btn {
+            flex: 1;
+        }
+
+        .onboarding-actions .btn-skip {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-secondary);
+        }
+
+        .onboarding-actions .btn-skip:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Goal selector for onboarding (3 columns) */
+        .goal-selector-onboarding {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+        }
+
+        .goal-selector-onboarding .goal-btn {
+            padding: var(--space-lg);
+        }
+
+        .goal-selector-onboarding .goal-title {
+            font-size: 1rem;
+            margin-bottom: var(--space-xs);
+        }
+
+        .goal-selector-onboarding .goal-desc {
+            font-size: 0.8rem;
+        }
+
+        /* Example meal card */
+        .example-meal-preview {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            margin: var(--space-lg) 0;
+        }
+
+        .example-meal-preview-title {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .example-meal-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-sm) 0;
+            font-size: 0.9rem;
+        }
+
+        .example-meal-item:not(:last-child) {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .example-meal-item-name {
+            color: var(--text-primary);
+        }
+
+        .example-meal-item-macros {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* Responsive onboarding */
+        @media (max-width: 768px) {
+            .onboarding-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .goal-selector-onboarding {
+                grid-template-columns: 1fr;
+            }
+
+            .goal-selector-onboarding .goal-btn {
+                padding: var(--space-md);
+            }
+        }
+
         /* Date navigation */
         .date-nav {
             display: flex;
@@ -4538,6 +4789,58 @@
                 </div>
             </section>
 
+            <!-- Onboarding Section (visible uniquement pour les nouveaux utilisateurs) -->
+            <section class="onboarding-section" id="onboarding-section">
+                <div class="onboarding-header">
+                    <div class="onboarding-title">
+                        <i data-lucide="rocket" style="width: 18px; height: 18px;"></i>
+                        Pour bien commencer
+                    </div>
+                    <div class="onboarding-progress" id="onboarding-progress">0/3 terminé</div>
+                </div>
+                <div class="onboarding-cards">
+                    <!-- Card 1: Objectif -->
+                    <div class="onboarding-card" id="onboarding-card-goal" onclick="openOnboardingGoal()">
+                        <div class="onboarding-card-icon">
+                            <i data-lucide="target"></i>
+                        </div>
+                        <div class="onboarding-card-content">
+                            <div class="onboarding-card-title">Définir mon objectif</div>
+                            <div class="onboarding-card-desc">Perte, maintien ou prise de poids</div>
+                        </div>
+                        <div class="onboarding-card-check">
+                            <i data-lucide="check" style="display: none;"></i>
+                        </div>
+                    </div>
+                    <!-- Card 2: Profil -->
+                    <div class="onboarding-card" id="onboarding-card-profile" onclick="openOnboardingProfile()">
+                        <div class="onboarding-card-icon">
+                            <i data-lucide="user"></i>
+                        </div>
+                        <div class="onboarding-card-content">
+                            <div class="onboarding-card-title">Renseigner mon profil</div>
+                            <div class="onboarding-card-desc">Poids, taille et activité physique</div>
+                        </div>
+                        <div class="onboarding-card-check">
+                            <i data-lucide="check" style="display: none;"></i>
+                        </div>
+                    </div>
+                    <!-- Card 3: Premier repas -->
+                    <div class="onboarding-card" id="onboarding-card-meal" onclick="openOnboardingMeal()">
+                        <div class="onboarding-card-icon">
+                            <i data-lucide="utensils"></i>
+                        </div>
+                        <div class="onboarding-card-content">
+                            <div class="onboarding-card-title">Ajouter mon premier repas</div>
+                            <div class="onboarding-card-desc">Découvrir le suivi de repas</div>
+                        </div>
+                        <div class="onboarding-card-check">
+                            <i data-lucide="check" style="display: none;"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Features -->
             <div class="home-features">
                 <div class="home-feature" onclick="switchToTab('calculator')">
@@ -4778,12 +5081,15 @@
                     </div>
 
                     <!-- Goal selector -->
-                    <div class="goal-selector" style="margin-bottom: var(--space-2xl);">
+                    <div class="goal-selector" style="margin-bottom: var(--space-2xl); display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md);">
                         <div class="goal-btn active" data-goal="cut" onclick="selectGoal('cut')">
                             <div class="goal-title"><i data-lucide="flame" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Sèche</div>
                             <div class="goal-desc">Perdre du gras</div></div>
+                        <div class="goal-btn" data-goal="maintain" onclick="selectGoal('maintain')">
+                            <div class="goal-title"><i data-lucide="equal" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Maintien</div>
+                            <div class="goal-desc">Garder son poids</div></div>
                         <div class="goal-btn" data-goal="bulk" onclick="selectGoal('bulk')">
-                            <div class="goal-title"><i data-lucide="trending-up" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Prise de Masse</div>
+                            <div class="goal-title"><i data-lucide="trending-up" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Prise</div>
                             <div class="goal-desc">Prendre du muscle</div></div></div>
 
                     <!-- Cut options -->
@@ -4822,6 +5128,40 @@
                                 <strong style="color: var(--text-primary);"><i data-lucide="lightbulb" class="icon-inline"></i> Recommandations</strong><br>
                                 Les valeurs proposées (0.8-1.0 g/kg) sont adaptées à la majorité des personnes actives et peuvent être ajustées selon ta réponse individuelle.
                             </div></div></div>
+
+                    <!-- Maintain options -->
+                    <div id="maintain-options" style="display: none;">
+                        <div style="padding: var(--space-xl); background: rgba(16, 185, 129, 0.08); border-radius: var(--radius-lg); border: 1px solid rgba(16, 185, 129, 0.2); margin-bottom: var(--space-xl);">
+                            <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md);">
+                                <i data-lucide="equal" style="width: 24px; height: 24px; color: var(--accent-main);"></i>
+                                <div style="font-weight: 600; color: var(--text-primary);">Mode Maintien</div>
+                            </div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                                Tes calories seront calculées à ton niveau de maintenance (TDEE), sans déficit ni surplus. Idéal pour stabiliser ton poids actuel.
+                            </div>
+                        </div>
+
+                        <div style="display: grid; gap: var(--space-xl);">
+                            <div class="input-group">
+                                <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                    <i data-lucide="beef" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Protéines (g/kg)
+                                </label>
+                                <input type="number" id="proteinCoeffMaintain" placeholder="ex: 1.8" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 1.6-2.0 g/kg pour le maintien</p>
+                            </div>
+
+                            <div class="input-group">
+                                <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                    <i data-lucide="droplet" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Lipides (g/kg)
+                                </label>
+                                <input type="number" id="fatCoeffMaintain" placeholder="ex: 1.0" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'maintain')" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 0.8-1.2 g/kg pour le maintien</p>
+                                <div id="fat-warning-maintain" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(255, 230, 109, 0.1); border-left: 3px solid var(--accent-fat); border-radius: var(--radius-sm);">
+                                    <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" class="icon-inline"></i> Attention</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">Valeur élevée : peut réduire les glucides disponibles.</div></div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Bulk options -->
                     <div id="bulk-options" style="display: none;">
@@ -7585,15 +7925,24 @@
         function selectGoal(goal) {
             currentGoal = goal;
             document.querySelectorAll('.goal-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-goal="${goal}"]`).classList.add('active');
+            document.querySelector(`[data-goal="${goal}"]`)?.classList.add('active');
 
+            // Masquer toutes les options
+            document.getElementById('cut-options').style.display = 'none';
+            document.getElementById('maintain-options').style.display = 'none';
+            document.getElementById('bulk-options').style.display = 'none';
+
+            // Afficher les options correspondantes
             if (goal === 'cut') {
                 document.getElementById('cut-options').style.display = 'block';
-                document.getElementById('bulk-options').style.display = 'none';
-            } else {
-                document.getElementById('cut-options').style.display = 'none';
+            } else if (goal === 'maintain') {
+                document.getElementById('maintain-options').style.display = 'block';
+            } else if (goal === 'bulk') {
                 document.getElementById('bulk-options').style.display = 'block';
             }
+
+            // Sauvegarder le goal
+            localStorage.setItem('calc_goal', goal);
 
             // Revalider après changement d'objectif
             validateMacroInputs();
@@ -7638,6 +7987,11 @@
                 targetCalories = tdee * (1 - deficit);
                 proteinCoeff = parseFloat(document.getElementById('proteinCoeff').value);
                 fatCoeff = parseFloat(document.getElementById('fatCoeff').value);
+            } else if (currentGoal === 'maintain') {
+                // Mode maintien: TDEE = calories cibles (pas de déficit ni surplus)
+                targetCalories = tdee;
+                proteinCoeff = parseFloat(document.getElementById('proteinCoeffMaintain').value);
+                fatCoeff = parseFloat(document.getElementById('fatCoeffMaintain').value);
             } else {
                 const surplus = parseFloat(document.getElementById('surplus').value) / 100;
                 targetCalories = tdee * (1 + surplus);
@@ -7865,6 +8219,57 @@
                 targetCalories = tdee * (1 - deficit);
 
                 // Protéines et lipides basés sur le POIDS TOTAL (pas masse sèche)
+                protein = proteinCoeff * weight;
+                fat = fatCoeff * weight;
+
+                // Arrondir aux 5g près
+                protein = Math.round(protein / 5) * 5;
+                fat = Math.round(fat / 5) * 5;
+
+                // Glucides = calories restantes / 4
+                const proteinCal = protein * 4;
+                const fatCal = fat * 9;
+                const remainingCal = targetCalories - proteinCal - fatCal;
+                carbs = Math.round((remainingCal / 4) / 5) * 5;
+
+            } else if (currentGoal === 'maintain') {
+                // MAINTIEN
+                const proteinCoeffMaintainInput = document.getElementById('proteinCoeffMaintain').value;
+                const fatCoeffMaintainInput = document.getElementById('fatCoeffMaintain').value;
+
+                // Vérifier que les champs sont remplis
+                if (!proteinCoeffMaintainInput || proteinCoeffMaintainInput === '') {
+                    showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Protéines (g/kg) requis pour calculer les macros');
+                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
+                    document.getElementById('proteinCoeffMaintain')?.focus();
+                    return;
+                }
+                if (!fatCoeffMaintainInput || fatCoeffMaintainInput === '') {
+                    showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Lipides (g/kg) requis pour calculer les macros');
+                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
+                    document.getElementById('fatCoeffMaintain')?.focus();
+                    return;
+                }
+
+                const proteinCoeff = parseFloat(proteinCoeffMaintainInput);
+                const fatCoeff = parseFloat(fatCoeffMaintainInput);
+
+                // Validation des limites
+                if (proteinCoeff < 1.5 || proteinCoeff > 2.2) {
+                    showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Protéines invalides : min 1,5 g/kg, max 2,2 g/kg');
+                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; }
+                    return;
+                }
+                if (fatCoeff < 0.6 || fatCoeff > 1.5) {
+                    showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Lipides invalides : min 0,6 g/kg, max 1,5 g/kg');
+                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; }
+                    return;
+                }
+
+                // Calories cibles = TDEE (pas de modification)
+                targetCalories = tdee;
+
+                // Protéines et lipides basés sur le POIDS TOTAL
                 protein = proteinCoeff * weight;
                 fat = fatCoeff * weight;
 
@@ -13248,6 +13653,301 @@ Solutions possibles :
         // Vérifier au chargement
         checkFirstVisit();
 
+        // ============================================
+        // ONBOARDING - Gestion de l'accueil nouveaux utilisateurs
+        // ============================================
+
+        // État de l'onboarding
+        let onboardingState = JSON.parse(localStorage.getItem('onboardingState') || '{"goal": false, "profile": false, "meal": false}');
+        let selectedOnboardingGoal = null;
+
+        // Initialiser l'onboarding au chargement
+        function initOnboarding() {
+            // Charger l'état depuis localStorage
+            onboardingState = JSON.parse(localStorage.getItem('onboardingState') || '{"goal": false, "profile": false, "meal": false}');
+
+            // Vérifier si l'onboarding est terminé
+            const isComplete = onboardingState.goal && onboardingState.profile && onboardingState.meal;
+            const onboardingSection = document.getElementById('onboarding-section');
+
+            if (isComplete && onboardingSection) {
+                onboardingSection.classList.add('hidden');
+            } else {
+                updateOnboardingUI();
+            }
+        }
+
+        // Mettre à jour l'UI de l'onboarding
+        function updateOnboardingUI() {
+            // Mettre à jour les cards
+            const cards = {
+                goal: document.getElementById('onboarding-card-goal'),
+                profile: document.getElementById('onboarding-card-profile'),
+                meal: document.getElementById('onboarding-card-meal')
+            };
+
+            // Compter les étapes terminées
+            let completed = 0;
+
+            Object.keys(onboardingState).forEach(key => {
+                const card = cards[key];
+                if (card) {
+                    if (onboardingState[key]) {
+                        card.classList.add('completed');
+                        card.querySelector('.onboarding-card-check i').style.display = 'block';
+                        completed++;
+                    } else {
+                        card.classList.remove('completed');
+                        card.querySelector('.onboarding-card-check i').style.display = 'none';
+                    }
+                }
+            });
+
+            // Mettre à jour le compteur de progression
+            const progressEl = document.getElementById('onboarding-progress');
+            if (progressEl) {
+                progressEl.textContent = `${completed}/3 terminé`;
+            }
+
+            // Masquer la section si tout est terminé
+            if (completed === 3) {
+                setTimeout(() => {
+                    const section = document.getElementById('onboarding-section');
+                    if (section) {
+                        section.style.animation = 'fadeIn 0.5s ease reverse';
+                        setTimeout(() => section.classList.add('hidden'), 500);
+                    }
+                }, 500);
+            }
+
+            // Rafraîchir les icônes Lucide
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // Sauvegarder l'état de l'onboarding
+        function saveOnboardingState() {
+            localStorage.setItem('onboardingState', JSON.stringify(onboardingState));
+            updateOnboardingUI();
+        }
+
+        // === MODAL OBJECTIF ===
+        function openOnboardingGoal() {
+            if (onboardingState.goal) return;
+            const modal = document.getElementById('onboarding-goal-modal');
+            modal.classList.add('active');
+            selectedOnboardingGoal = null;
+            document.querySelectorAll('#onboarding-goal-selector .goal-btn').forEach(btn => btn.classList.remove('active'));
+            const confirmBtn = document.getElementById('onboarding-goal-confirm');
+            confirmBtn.disabled = true;
+            confirmBtn.style.opacity = '0.5';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function closeOnboardingGoal() {
+            document.getElementById('onboarding-goal-modal').classList.remove('active');
+        }
+
+        function selectOnboardingGoal(goal) {
+            selectedOnboardingGoal = goal;
+            document.querySelectorAll('#onboarding-goal-selector .goal-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`#onboarding-goal-selector [data-goal="${goal}"]`).classList.add('active');
+            const confirmBtn = document.getElementById('onboarding-goal-confirm');
+            confirmBtn.disabled = false;
+            confirmBtn.style.opacity = '1';
+        }
+
+        function confirmOnboardingGoal() {
+            if (!selectedOnboardingGoal) return;
+
+            // Appliquer l'objectif au calculateur
+            selectGoal(selectedOnboardingGoal);
+
+            // Marquer comme terminé
+            onboardingState.goal = true;
+            saveOnboardingState();
+            closeOnboardingGoal();
+
+            // Afficher un toast
+            if (typeof showToast === 'function') {
+                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Objectif défini !', 'success');
+            }
+        }
+
+        function skipOnboardingGoal() {
+            onboardingState.goal = true;
+            saveOnboardingState();
+            closeOnboardingGoal();
+        }
+
+        // === MODAL PROFIL ===
+        function openOnboardingProfile() {
+            if (onboardingState.profile) return;
+            const modal = document.getElementById('onboarding-profile-modal');
+            modal.classList.add('active');
+
+            // Pré-remplir avec les données existantes si disponibles
+            const existingWeight = document.getElementById('weight')?.value;
+            const existingHeight = document.getElementById('height')?.value;
+            const existingActivity = document.getElementById('activity')?.value;
+
+            if (existingWeight) document.getElementById('onboarding-weight').value = existingWeight;
+            if (existingHeight) document.getElementById('onboarding-height').value = existingHeight;
+            if (existingActivity) document.getElementById('onboarding-activity').value = existingActivity;
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function closeOnboardingProfile() {
+            document.getElementById('onboarding-profile-modal').classList.remove('active');
+        }
+
+        function confirmOnboardingProfile() {
+            const weight = document.getElementById('onboarding-weight').value;
+            const height = document.getElementById('onboarding-height').value;
+            const activity = document.getElementById('onboarding-activity').value;
+
+            // Validation minimale
+            if (!weight) {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="alert-circle" class="icon-inline"></i> Le poids est requis', 'error');
+                }
+                return;
+            }
+
+            // Appliquer les valeurs au calculateur
+            const weightEl = document.getElementById('weight');
+            const heightEl = document.getElementById('height');
+            const activityEl = document.getElementById('activity');
+
+            if (weightEl) weightEl.value = weight;
+            if (heightEl && height) heightEl.value = height;
+            if (activityEl && activity) activityEl.value = activity;
+
+            // Marquer comme terminé
+            onboardingState.profile = true;
+            saveOnboardingState();
+            closeOnboardingProfile();
+
+            // Afficher un toast
+            if (typeof showToast === 'function') {
+                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Profil enregistré !', 'success');
+            }
+        }
+
+        function skipOnboardingProfile() {
+            onboardingState.profile = true;
+            saveOnboardingState();
+            closeOnboardingProfile();
+        }
+
+        // === MODAL PREMIER REPAS ===
+        function openOnboardingMeal() {
+            if (onboardingState.meal) return;
+            const modal = document.getElementById('onboarding-meal-modal');
+            modal.classList.add('active');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function closeOnboardingMeal() {
+            document.getElementById('onboarding-meal-modal').classList.remove('active');
+        }
+
+        function confirmOnboardingMeal() {
+            // Ajouter le repas exemple au petit-déjeuner
+            const exampleFoods = [
+                {
+                    id: 'onb_' + Date.now() + '_1',
+                    name: 'Flocons d\'avoine',
+                    quantity: 50,
+                    protein: 6.5,
+                    carbs: 33,
+                    fat: 3.5,
+                    calories: 189,
+                    category: 'cereales'
+                },
+                {
+                    id: 'onb_' + Date.now() + '_2',
+                    name: 'Lait demi-écrémé',
+                    quantity: 200,
+                    protein: 6.4,
+                    carbs: 9.6,
+                    fat: 3.2,
+                    calories: 92,
+                    category: 'produits-laitiers'
+                },
+                {
+                    id: 'onb_' + Date.now() + '_3',
+                    name: 'Banane',
+                    quantity: 100,
+                    protein: 1.1,
+                    carbs: 22.8,
+                    fat: 0.3,
+                    calories: 89,
+                    category: 'fruits'
+                }
+            ];
+
+            // Ajouter au repas du jour
+            const today = new Date();
+            const dateKey = getDateKey ? getDateKey(today) : today.toISOString().split('T')[0];
+
+            // Charger les repas existants
+            let allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            if (!allMeals[dateKey]) {
+                allMeals[dateKey] = {
+                    breakfast: { foods: [], recipe: '' },
+                    lunch: { foods: [], recipe: '' },
+                    snack: { foods: [], recipe: '' },
+                    dinner: { foods: [], recipe: '' },
+                    water: 0
+                };
+            }
+
+            // Ajouter les aliments au petit-déjeuner
+            allMeals[dateKey].breakfast.foods.push(...exampleFoods);
+
+            // Sauvegarder
+            localStorage.setItem('allDailyMeals', JSON.stringify(allMeals));
+
+            // Mettre à jour dailyMeals si c'est le jour courant
+            if (typeof dailyMeals !== 'undefined' && typeof currentMealDate !== 'undefined') {
+                const currentDateKey = getDateKey ? getDateKey(currentMealDate) : currentMealDate.toISOString().split('T')[0];
+                if (currentDateKey === dateKey) {
+                    dailyMeals.breakfast.foods.push(...exampleFoods);
+                    if (typeof renderMeal === 'function') renderMeal('breakfast');
+                    if (typeof updateRemainingWidget === 'function') updateRemainingWidget();
+                }
+            }
+
+            // Marquer comme terminé
+            onboardingState.meal = true;
+            saveOnboardingState();
+            closeOnboardingMeal();
+
+            // Afficher un toast
+            if (typeof showToast === 'function') {
+                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas ajouté !', 'success');
+            }
+
+            // Optionnel : Rediriger vers l'onglet repas
+            setTimeout(() => {
+                if (typeof switchToTab === 'function') {
+                    switchToTab('meals');
+                }
+            }, 800);
+        }
+
+        function skipOnboardingMeal() {
+            onboardingState.meal = true;
+            saveOnboardingState();
+            closeOnboardingMeal();
+        }
+
+        // Initialiser l'onboarding au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(initOnboarding, 500);
+        });
+
     </script>
 
     <!-- Pop-up custom -->
@@ -13404,6 +14104,166 @@ Solutions possibles :
                     <i data-lucide="send" style="width: 18px; height: 18px;"></i>
                     Envoyer le feedback
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Onboarding: Objectif -->
+    <div id="onboarding-goal-modal" class="modal onboarding-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeOnboardingGoal()">&times;</button>
+                <div class="onboarding-step-indicator">
+                    <span>Étape 1</span> Définir ton objectif
+                </div>
+                <h2 class="modal-title">Quel est ton objectif ?</h2>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary); margin-bottom: var(--space-xl);">
+                    Choisis l'objectif qui correspond à ce que tu veux accomplir. Tu pourras le modifier à tout moment.
+                </p>
+
+                <div class="goal-selector-onboarding" id="onboarding-goal-selector">
+                    <div class="goal-btn" data-goal="cut" onclick="selectOnboardingGoal('cut')">
+                        <div class="goal-title"><i data-lucide="trending-down" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>Sèche</div>
+                        <div class="goal-desc">Perdre du gras</div>
+                    </div>
+                    <div class="goal-btn" data-goal="maintain" onclick="selectOnboardingGoal('maintain')">
+                        <div class="goal-title"><i data-lucide="equal" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>Maintien</div>
+                        <div class="goal-desc">Garder ton poids</div>
+                    </div>
+                    <div class="goal-btn" data-goal="bulk" onclick="selectOnboardingGoal('bulk')">
+                        <div class="goal-title"><i data-lucide="trending-up" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>Prise</div>
+                        <div class="goal-desc">Prendre du muscle</div>
+                    </div>
+                </div>
+
+                <div class="onboarding-actions">
+                    <button class="btn btn-skip" onclick="skipOnboardingGoal()">Passer</button>
+                    <button class="btn" id="onboarding-goal-confirm" onclick="confirmOnboardingGoal()" disabled style="opacity: 0.5;">
+                        <i data-lucide="check" style="width: 16px; height: 16px;"></i>
+                        Valider
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Onboarding: Profil -->
+    <div id="onboarding-profile-modal" class="modal onboarding-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeOnboardingProfile()">&times;</button>
+                <div class="onboarding-step-indicator">
+                    <span>Étape 2</span> Ton profil
+                </div>
+                <h2 class="modal-title">Quelques infos sur toi</h2>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary); margin-bottom: var(--space-xl);">
+                    Ces informations permettent de calculer tes besoins caloriques. Elles restent sur ton appareil.
+                </p>
+
+                <div style="display: grid; gap: var(--space-lg);">
+                    <div class="input-group">
+                        <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                            ⚖️ Poids actuel (kg) <span style="color: var(--accent-danger);">*</span>
+                        </label>
+                        <input type="number" id="onboarding-weight" inputmode="decimal" step="0.1" min="30" max="300" placeholder="Ex: 75" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary);">
+                    </div>
+
+                    <div class="input-group">
+                        <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                            📏 Taille (cm) <span style="color: var(--text-muted); font-weight: 400; font-size: 0.85rem;">(optionnel)</span>
+                        </label>
+                        <input type="number" id="onboarding-height" inputmode="decimal" step="1" min="100" max="250" placeholder="Ex: 175" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary);">
+                    </div>
+
+                    <div class="input-group">
+                        <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                            🏃 Niveau d'activité <span style="color: var(--accent-danger);">*</span>
+                        </label>
+                        <select id="onboarding-activity" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); font-family: inherit;">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="1.2">🪑 Sédentaire (peu ou pas d'exercice)</option>
+                            <option value="1.375">🚶 Légèrement actif (1-3 jours/semaine)</option>
+                            <option value="1.55">🏃 Modérément actif (3-5 jours/semaine)</option>
+                            <option value="1.725">💪 Très actif (6-7 jours/semaine)</option>
+                            <option value="1.9">🔥 Extrêmement actif (2x/jour)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top: var(--space-xl); padding: var(--space-md); background: rgba(16, 185, 129, 0.05); border-radius: var(--radius-md); border-left: 3px solid var(--accent-main);">
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: start; gap: var(--space-sm);">
+                        <i data-lucide="shield-check" style="width: 16px; height: 16px; color: var(--accent-main); flex-shrink: 0; margin-top: 2px;"></i>
+                        <span>Tes données sont stockées uniquement sur ton appareil et ne sont jamais partagées.</span>
+                    </div>
+                </div>
+
+                <div class="onboarding-actions">
+                    <button class="btn btn-skip" onclick="skipOnboardingProfile()">Passer</button>
+                    <button class="btn" id="onboarding-profile-confirm" onclick="confirmOnboardingProfile()">
+                        <i data-lucide="check" style="width: 16px; height: 16px;"></i>
+                        Valider
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Onboarding: Premier repas -->
+    <div id="onboarding-meal-modal" class="modal onboarding-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeOnboardingMeal()">&times;</button>
+                <div class="onboarding-step-indicator">
+                    <span>Étape 3</span> Ton premier repas
+                </div>
+                <h2 class="modal-title">Ajouter un repas exemple</h2>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary); margin-bottom: var(--space-lg);">
+                    Pour découvrir le fonctionnement, on te propose un petit-déjeuner exemple que tu pourras modifier ou supprimer.
+                </p>
+
+                <div class="example-meal-preview">
+                    <div class="example-meal-preview-title">
+                        <i data-lucide="sunrise" style="width: 16px; height: 16px; color: var(--accent-fat);"></i>
+                        Petit-déjeuner exemple
+                    </div>
+                    <div class="example-meal-item">
+                        <span class="example-meal-item-name">Flocons d'avoine (50g)</span>
+                        <span class="example-meal-item-macros">189 kcal</span>
+                    </div>
+                    <div class="example-meal-item">
+                        <span class="example-meal-item-name">Lait demi-écrémé (200ml)</span>
+                        <span class="example-meal-item-macros">92 kcal</span>
+                    </div>
+                    <div class="example-meal-item">
+                        <span class="example-meal-item-name">Banane (1 moyenne)</span>
+                        <span class="example-meal-item-macros">89 kcal</span>
+                    </div>
+                    <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; font-weight: 600;">
+                        <span style="color: var(--text-primary);">Total</span>
+                        <span style="color: var(--accent-main);">370 kcal</span>
+                    </div>
+                </div>
+
+                <div style="padding: var(--space-md); background: rgba(56, 189, 248, 0.05); border-radius: var(--radius-md); border-left: 3px solid var(--accent-carbs);">
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: start; gap: var(--space-sm);">
+                        <i data-lucide="info" style="width: 16px; height: 16px; color: var(--accent-carbs); flex-shrink: 0; margin-top: 2px;"></i>
+                        <span>Tu pourras ensuite modifier les quantités ou supprimer ces aliments depuis l'onglet "Mes Repas".</span>
+                    </div>
+                </div>
+
+                <div class="onboarding-actions">
+                    <button class="btn btn-skip" onclick="skipOnboardingMeal()">Passer</button>
+                    <button class="btn" onclick="confirmOnboardingMeal()">
+                        <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+                        Ajouter ce repas
+                    </button>
+                </div>
             </div>
         </div>
     </div>
