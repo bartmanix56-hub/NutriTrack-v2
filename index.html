@@ -13629,36 +13629,6 @@ Solutions possibles :
             }
         });
 
-        // === TUTORIEL PREMIÈRE CONNEXION ===
-        function checkFirstVisit() {
-            const hasVisited = localStorage.getItem('hasVisitedApp');
-
-            if (!hasVisited) {
-                // Première visite → Afficher le tutoriel
-                setTimeout(() => {
-
-                    document.body.style.overflow = 'hidden';
-                }, 500); // Petit délai pour que la page se charge
-            }
-        }
-
-        function closeTutorial() {
-            // Marquer comme visité
-            localStorage.setItem('hasVisitedApp', 'true');
-
-            // Fermer avec animation
-            const overlay =
-            overlay.style.animation = 'fadeOut 0.3s ease';
-
-            setTimeout(() => {
-                overlay.classList.remove('active');
-                overlay.style.animation = '';
-                document.body.style.overflow = '';
-            }, 300);
-        }
-
-        // Vérifier au chargement
-        checkFirstVisit();
 
         // ============================================
         // ONBOARDING - Gestion de l'accueil nouveaux utilisateurs
@@ -13736,6 +13706,10 @@ Solutions possibles :
         function saveOnboardingState() {
             localStorage.setItem('onboardingState', JSON.stringify(onboardingState));
             updateOnboardingUI();
+            // Sync avec Firestore (best effort, non bloquant)
+            if (typeof auth !== 'undefined' && auth.currentUser && typeof syncToFirestore === 'function') {
+                syncToFirestore(auth.currentUser).catch(() => {});
+            }
         }
 
         // === MODAL OBJECTIF ===
@@ -13935,6 +13909,11 @@ Solutions possibles :
 
             // Sauvegarder
             localStorage.setItem('allDailyMeals', JSON.stringify(allMeals));
+
+            // Sync avec Firestore (best effort, non bloquant)
+            if (typeof auth !== 'undefined' && auth.currentUser && typeof syncToFirestore === 'function') {
+                syncToFirestore(auth.currentUser).catch(() => {});
+            }
 
             // Mettre à jour dailyMeals si c'est le jour courant
             if (typeof dailyMeals !== 'undefined' && typeof currentMealDate !== 'undefined') {
