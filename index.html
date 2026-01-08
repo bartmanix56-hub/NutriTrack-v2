@@ -9318,7 +9318,10 @@ Solutions possibles :
 
             const getMealCalories = (mealData) => {
                 if (!mealData || !mealData.foods) return 0;
-                return mealData.foods.reduce((sum, f) => sum + (f.calories || 0), 0);
+                return mealData.foods.reduce((sum, f) => {
+                    const quantity = f.quantity || 100;
+                    return sum + ((f.calories || 0) * quantity / 100);
+                }, 0);
             };
 
             const totalCal = getMealCalories(dayMeals.breakfast) + getMealCalories(dayMeals.lunch) +
@@ -14914,6 +14917,11 @@ Solutions possibles :
                     originalSetItem.call(localStorage, key, cloudData[key]);
                 }
             });
+
+            // Recharger les mealTemplates en mémoire immédiatement
+            if (cloudData.mealTemplates && typeof loadMealTemplates === 'function') {
+                loadMealTemplates();
+            }
 
             // Sync firstName from userProfile to appUsername for header display
             try {
