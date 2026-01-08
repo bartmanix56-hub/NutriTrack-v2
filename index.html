@@ -12145,7 +12145,10 @@ Solutions possibles :
                 // Préférences
                 autoSave: localStorage.getItem('autoSave') || 'true',
                 confirmDelete: localStorage.getItem('confirmDelete') || 'true',
-                notifications: localStorage.getItem('notifications') || 'false'
+                notifications: localStorage.getItem('notifications') || 'false',
+                // Onboarding et goal
+                onboardingState: JSON.parse(localStorage.getItem('onboardingState') || '{}'),
+                calc_goal: localStorage.getItem('calc_goal') || 'cut'
             };
 
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -12191,6 +12194,10 @@ Solutions possibles :
                         if (data.autoSave !== undefined) localStorage.setItem('autoSave', data.autoSave);
                         if (data.confirmDelete !== undefined) localStorage.setItem('confirmDelete', data.confirmDelete);
                         if (data.notifications !== undefined) localStorage.setItem('notifications', data.notifications);
+
+                        // Import onboarding et goal
+                        if (data.onboardingState) localStorage.setItem('onboardingState', JSON.stringify(data.onboardingState));
+                        if (data.calc_goal) localStorage.setItem('calc_goal', data.calc_goal);
 
                         showToast('<i data-lucide="check-circle" class="icon-inline"></i> Données importées ! Rechargement...');
                         setTimeout(() => location.reload(), 1000);
@@ -13692,13 +13699,14 @@ Solutions possibles :
             Object.keys(onboardingState).forEach(key => {
                 const card = cards[key];
                 if (card) {
+                    const checkIcon = card.querySelector('.onboarding-card-check i');
                     if (onboardingState[key]) {
                         card.classList.add('completed');
-                        card.querySelector('.onboarding-card-check i').style.display = 'block';
+                        if (checkIcon) checkIcon.style.display = 'block';
                         completed++;
                     } else {
                         card.classList.remove('completed');
-                        card.querySelector('.onboarding-card-check i').style.display = 'none';
+                        if (checkIcon) checkIcon.style.display = 'none';
                     }
                 }
             });
@@ -13762,10 +13770,12 @@ Solutions possibles :
             // Appliquer l'objectif au calculateur
             selectGoal(selectedOnboardingGoal);
 
-            // Marquer comme terminé
+            // Fermer la modale d'abord
+            closeOnboardingGoal();
+
+            // Marquer comme terminé et sauvegarder
             onboardingState.goal = true;
             saveOnboardingState();
-            closeOnboardingGoal();
 
             // Afficher un toast
             if (typeof showToast === 'function') {
@@ -13806,11 +13816,26 @@ Solutions possibles :
             const height = document.getElementById('onboarding-height').value;
             const activity = document.getElementById('onboarding-activity').value;
 
-            // Validation minimale
+            // Validation - tous les champs sont requis
             if (!weight) {
                 if (typeof showToast === 'function') {
                     showToast('<i data-lucide="alert-circle" class="icon-inline"></i> Le poids est requis', 'error');
                 }
+                document.getElementById('onboarding-weight')?.focus();
+                return;
+            }
+            if (!height) {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="alert-circle" class="icon-inline"></i> La taille est requise pour calculer les macros', 'error');
+                }
+                document.getElementById('onboarding-height')?.focus();
+                return;
+            }
+            if (!activity) {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="alert-circle" class="icon-inline"></i> Le niveau d\'activité est requis', 'error');
+                }
+                document.getElementById('onboarding-activity')?.focus();
                 return;
             }
 
@@ -13820,13 +13845,15 @@ Solutions possibles :
             const activityEl = document.getElementById('activity');
 
             if (weightEl) weightEl.value = weight;
-            if (heightEl && height) heightEl.value = height;
-            if (activityEl && activity) activityEl.value = activity;
+            if (heightEl) heightEl.value = height;
+            if (activityEl) activityEl.value = activity;
 
-            // Marquer comme terminé
+            // Fermer la modale d'abord
+            closeOnboardingProfile();
+
+            // Marquer comme terminé et sauvegarder
             onboardingState.profile = true;
             saveOnboardingState();
-            closeOnboardingProfile();
 
             // Afficher un toast
             if (typeof showToast === 'function') {
@@ -14174,7 +14201,7 @@ Solutions possibles :
 
                     <div class="input-group">
                         <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                            📏 Taille (cm) <span style="color: var(--text-muted); font-weight: 400; font-size: 0.85rem;">(optionnel)</span>
+                            📏 Taille (cm) <span style="color: var(--accent-danger);">*</span>
                         </label>
                         <input type="number" id="onboarding-height" inputmode="decimal" step="1" min="100" max="250" placeholder="Ex: 175" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary);">
                     </div>
@@ -15575,7 +15602,7 @@ Solutions possibles :
         };
 
         // Keys to sync with Firestore - ALL important data
-        const SYNC_KEYS = ['userProfile', 'foodLog', 'customFoods', 'macroTargets', 'allDailyMeals', 'trackingData', 'mealTemplates', 'weeklyPlan', 'favoriteFoods', 'appUsername', 'closedDays', 'advancedTrackingData', 'calcSettings', 'foodAliases'];
+        const SYNC_KEYS = ['userProfile', 'foodLog', 'customFoods', 'macroTargets', 'allDailyMeals', 'trackingData', 'mealTemplates', 'weeklyPlan', 'favoriteFoods', 'appUsername', 'closedDays', 'advancedTrackingData', 'calcSettings', 'foodAliases', 'onboardingState', 'calc_goal'];
 
         // Debounce timer for sync
         let syncTimeout = null;
