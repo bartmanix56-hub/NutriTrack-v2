@@ -109,6 +109,31 @@
             --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
 
+        /* ===== SYSTÈME D'AUTHENTIFICATION OBLIGATOIRE ===== */
+        /* Par défaut: cacher l'app, montrer landing page */
+        body:not(.user-connected) header,
+        body:not(.user-connected) .app-layout {
+            display: none !important;
+        }
+
+        body:not(.user-connected) #landing-page {
+            display: block !important;
+        }
+
+        /* Quand connecté: montrer l'app, cacher landing */
+        body.user-connected #landing-page {
+            display: none !important;
+        }
+
+        body.user-connected header,
+        body.user-connected .app-layout {
+            display: flex !important;
+        }
+
+        body.user-connected .app-layout {
+            display: flex !important;
+        }
+
         *  { margin: 0;
             padding: 0;
             box-sizing: border-box; }
@@ -5248,13 +5273,13 @@
 
             <!-- Widget "Reste du jour" -->
             <div id="remaining-widget" style="background: var(--bg-tertiary); border-radius: var(--radius-xl); padding: var(--space-xl); margin-bottom: var(--space-2xl); border: 1px solid rgba(16, 185, 129, 0.2); display: none;">
-                <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-xl);">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-xl); flex-wrap: wrap;">
                     <div style="display: flex; align-items: center; gap: var(--space-md);">
                         <div style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: var(--accent-ui); border-radius: var(--radius-md);"><i data-lucide="target" style="width: 24px; height: 24px; color: white;"></i></div>
                         <div>
                             <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">Il te reste</div>
                             <div style="font-size: 0.85rem; color: var(--text-secondary);">Pour atteindre tes objectifs du jour</div></div></div>
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-xl);">
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-lg); flex: 1; max-width: 650px;">
                         <div style="text-align: center;">
                             <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Protéines</div>
                             <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-protein);" id="remaining-protein">0g</div></div>
@@ -5266,45 +5291,15 @@
                             <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-fat);" id="remaining-fat">0g</div></div>
                         <div style="text-align: center;">
                             <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Calories</div>
-                            <div style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);" id="remaining-cal">0 kcal</div></div></div></div>
-            </div>
-
-            <!-- Widget Eau / Hydratation -->
-            <div id="water-widget" style="background: var(--bg-tertiary); border-radius: var(--radius-xl); padding: var(--space-lg) var(--space-xl); margin-bottom: var(--space-2xl); border: 1px solid rgba(78, 205, 196, 0.2);">
-                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-md);">
-                    <!-- Icône et titre -->
-                    <div style="display: flex; align-items: center; gap: var(--space-md);">
-                        <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(78, 205, 196, 0.15); border-radius: var(--radius-md);">
-                            <i data-lucide="droplets" style="width: 22px; height: 22px; color: var(--accent-ui);"></i>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">Hydratation</div>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary);">Objectif : environ 30ml par kg de poids</div>
-                        </div>
-                    </div>
-                    <!-- Compteur -->
-                    <div style="display: flex; align-items: center; gap: var(--space-md);">
-                        <button onclick="updateWater(-1)" class="btn-ghost" style="width: 36px; height: 36px; padding: 0; border-radius: 50%;">
-                            <i data-lucide="minus" style="width: 18px; height: 18px;"></i>
-                        </button>
-                        <div style="text-align: center; min-width: 80px;">
-                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-ui);" id="water-count">0</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary);">verres</div>
-                        </div>
-                        <button onclick="updateWater(1)" class="btn" style="width: 36px; height: 36px; padding: 0; border-radius: 50%; background: var(--accent-ui);">
-                            <i data-lucide="plus" style="width: 18px; height: 18px;"></i>
-                        </button>
-                    </div>
-                    <!-- Progression -->
-                    <div style="display: flex; align-items: center; gap: var(--space-md); min-width: 180px;">
-                        <div style="flex: 1; height: 8px; background: rgba(78, 205, 196, 0.15); border-radius: var(--radius-full); overflow: hidden;">
-                            <div id="water-progress" style="height: 100%; background: var(--accent-ui); border-radius: var(--radius-full); transition: width 0.3s ease; width: 0%;"></div>
-                        </div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap;">
-                            <span id="water-ml">0</span> / <span id="water-target">2000</span> ml
-                        </div>
-                    </div>
-                </div>
+                            <div style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);" id="remaining-cal">0 kcal</div></div>
+                        <div style="text-align: center; border-left: 1px solid rgba(255,255,255,0.1); padding-left: var(--space-lg);">
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);"><i data-lucide="droplets" style="width: 12px; height: 12px; display: inline; vertical-align: middle;"></i> Eau</div>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-xs);">
+                                <button onclick="updateWater(-1)" class="btn-ghost" style="width: 24px; height: 24px; padding: 0; border-radius: 50%; font-size: 1rem;">−</button>
+                                <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-ui);" id="water-count">0</div>
+                                <button onclick="updateWater(1)" class="btn" style="width: 24px; height: 24px; padding: 0; border-radius: 50%; background: var(--accent-ui); font-size: 1rem;">+</button>
+                            </div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px;"><span id="water-ml">0</span>/<span id="water-target">2000</span>ml</div></div></div></div>
             </div>
 
             <!-- Grid 2x2 des repas -->
@@ -6395,22 +6390,52 @@
             <!-- Grille de paramètres -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: var(--space-xl); margin-bottom: var(--space-3xl);">
 
-                <!-- Profil -->
+                <!-- Profil & Préférences (fusionnés) -->
                     <div class="card">
                         <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
-                            <i data-lucide="user-circle" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
-                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0;">Profil</h3>
+                            <i data-lucide="user-cog" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
+                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0;">Profil & Préférences</h3>
                         </div>
 
-                        <div style="margin-bottom: var(--space-lg);">
+                        <!-- Prénom -->
+                        <div style="margin-bottom: var(--space-xl);">
                             <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: var(--space-sm);">Prénom</label>
-                            <input type="text" id="username-edit-input" maxlength="20" style="width: 100%; padding: var(--space-md); font-size: 1rem; background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); color: var(--text-primary);" placeholder="Ex: Jérémy">
-                            <div style="margin-top: var(--space-sm); font-size: 0.85rem; color: var(--text-secondary);">Affiché dans le header</div></div>
+                            <div style="display: flex; gap: var(--space-sm);">
+                                <input type="text" id="username-edit-input" maxlength="20" style="flex: 1; padding: var(--space-md); font-size: 1rem; background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); color: var(--text-primary);" placeholder="Ex: Jérémy">
+                                <button onclick="updateUsername()" class="btn" style="background: var(--accent-ui); color: white; padding: var(--space-md) var(--space-lg);">
+                                    <i data-lucide="check" style="width: 18px; height: 18px;"></i>
+                                </button>
+                            </div>
+                            <div style="margin-top: var(--space-xs); font-size: 0.8rem; color: var(--text-secondary);">Affiché dans le header</div>
+                        </div>
 
-                        <button onclick="updateUsername()" class="btn" style="width: 100%; background: var(--accent-ui); color: white; display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
-                            <i data-lucide="check" style="width: 18px; height: 18px;"></i>
-                            Enregistrer
-                        </button>
+                        <!-- Thème -->
+                        <div style="margin-bottom: var(--space-lg);">
+                            <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: var(--space-sm);">Thème</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
+                                <button id="theme-dark-btn" onclick="setTheme('dark')" class="btn" style="background: var(--accent-ui); color: white; display: flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: var(--space-md);">
+                                    <i data-lucide="moon" style="width: 18px; height: 18px;"></i>
+                                    <span>Sombre</span>
+                                </button>
+                                <button id="theme-light-btn" onclick="setTheme('light')" class="btn" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: var(--space-md);">
+                                    <i data-lucide="sun" style="width: 18px; height: 18px;"></i>
+                                    <span>Clair</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Installation PWA (inline) -->
+                        <div id="pwa-install-inline" style="display: none; padding: var(--space-md); background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(78, 205, 196, 0.1) 100%); border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-md);">
+                                <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                    <i data-lucide="smartphone" style="width: 20px; height: 20px; color: var(--accent-main);"></i>
+                                    <span style="font-size: 0.9rem; color: var(--text-primary);">Installer l'app</span>
+                                </div>
+                                <button onclick="installPWA()" class="btn" style="background: var(--accent-main); color: white; padding: var(--space-sm) var(--space-md); font-size: 0.85rem;">
+                                    Installer
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Notifications -->
@@ -6461,55 +6486,7 @@
                         </button>
                     </div>
 
-                    <!-- Apparence -->
-                    <div class="card">
-                        <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
-                            <i data-lucide="palette" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
-                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0;">Apparence</h3>
-                        </div>
-
-                        <div style="margin-bottom: var(--space-md);">
-                            <label style="display: block; font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: var(--space-md);">Thème</label>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
-                                <button id="theme-dark-btn" onclick="setTheme('dark')" class="btn" style="background: var(--accent-ui); color: white; display: flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: var(--space-md);">
-                                    <i data-lucide="moon" style="width: 18px; height: 18px;"></i>
-                                    <span>Sombre</span>
-                                </button>
-                                <button id="theme-light-btn" onclick="setTheme('light')" class="btn" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: var(--space-md);">
-                                    <i data-lucide="sun" style="width: 18px; height: 18px;"></i>
-                                    <span>Clair</span>
-                                </button>
-                            </div></div>
-
-                        <div style="padding: var(--space-md); background: rgba(5, 150, 105, 0.1); border-radius: var(--radius-md); border-left: 3px solid var(--accent-ui);">
-                            <div style="display: flex; align-items: start; gap: var(--space-sm);">
-                                <i data-lucide="info" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 2px;"></i>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Ton choix est sauvegardé automatiquement</span>
-                            </div></div></div>
-
-                    <!-- Installation PWA -->
-                    <div class="card" id="pwa-install-card" style="display: none;">
-                        <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
-                            <i data-lucide="download-cloud" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
-                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0;">Installation</h3>
-                        </div>
-
-                        <div style="margin-bottom: var(--space-lg);">
-                            <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin: 0;">
-                                Ajoute NutriTrack à ton écran d'accueil pour y accéder en un clic, même sans connexion !
-                            </p>
-                        </div>
-
-                        <button onclick="installPWA()" class="btn" style="width: 100%; background: linear-gradient(135deg, var(--accent-main) 0%, var(--accent-ui) 100%); color: white; display: flex; align-items: center; justify-content: center; gap: var(--space-sm); font-weight: 700;">
-                            <i data-lucide="smartphone" style="width: 18px; height: 18px;"></i>
-                            Installer l'application
-                        </button>
-
-                        <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(5, 150, 105, 0.1); border-radius: var(--radius-md); border-left: 3px solid var(--accent-ui);">
-                            <div style="display: flex; align-items: start; gap: var(--space-sm);">
-                                <i data-lucide="info" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 2px;"></i>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Fonctionne comme une vraie app, sans passer par l'App Store</span>
-                            </div></div></div></div>
+</div>
 
             <!-- Deuxième ligne: Données, Préférences, Zone Dangereuse -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: var(--space-xl); margin-bottom: var(--space-3xl);">
@@ -7581,19 +7558,19 @@
         });
 
         function showInstallButton() {
-            const installCard = document.getElementById('pwa-install-card');
+            const installInline = document.getElementById('pwa-install-inline');
             const landingInstallBtn = document.getElementById('landing-install-btn');
             // Afficher uniquement dans: Settings et Landing page
-            if (installCard) installCard.style.display = 'block';
+            if (installInline) installInline.style.display = 'block';
             if (landingInstallBtn) landingInstallBtn.style.display = 'inline-flex';
         }
 
         function hideInstallButton() {
-            const installCard = document.getElementById('pwa-install-card');
+            const installInline = document.getElementById('pwa-install-inline');
             const landingInstallBtn = document.getElementById('landing-install-btn');
             const footerInstallBtn = document.getElementById('footer-install-btn');
             const drawerInstallBtn = document.getElementById('drawer-install-btn');
-            if (installCard) installCard.style.display = 'none';
+            if (installInline) installInline.style.display = 'none';
             if (landingInstallBtn) landingInstallBtn.style.display = 'none';
             if (footerInstallBtn) footerInstallBtn.style.display = 'none';
             if (drawerInstallBtn) drawerInstallBtn.style.display = 'none';
@@ -14168,7 +14145,7 @@ Solutions possibles :
 
     <!-- Landing Page -->
     <!-- HOMEPAGE PROFESSIONNELLE -->
-    <div id="landing-page" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #0a2f23 0%, #0d3d2d 30%, #115c42 60%, #0a2f23 100%); z-index: 10000; overflow-y: auto; -webkit-overflow-scrolling: touch; overflow-x: hidden;">
+    <div id="landing-page" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #0a2f23 0%, #0d3d2d 30%, #115c42 60%, #0a2f23 100%); z-index: 10000; overflow-y: auto; -webkit-overflow-scrolling: touch; overflow-x: hidden;">
 
         <!-- Floating Food Elements Background -->
         <div class="landing-floating-foods" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 0;">
@@ -14244,22 +14221,18 @@ Solutions possibles :
                 </p>
 
                 <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-                    <button onclick="startTutorial()" style="padding: 18px 36px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: none; cursor: pointer; background: #10b981; color: white; transition: all 0.2s ease;">
-                        <i data-lucide="rocket" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i>
-                        Commencer dès maintenant
+                    <button onclick="window.firebaseSignIn ? window.firebaseSignIn() : showToast('Chargement...')" style="padding: 18px 36px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: none; cursor: pointer; background: white; color: #1a1a1a; transition: all 0.2s ease; display: flex; align-items: center; gap: 12px;">
+                        <svg viewBox="0 0 24 24" style="width: 22px; height: 22px;"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                        Continuer avec Google
                     </button>
                     <button id="landing-install-btn" onclick="installPWA()" style="display: none; padding: 18px 36px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: 2px solid #10b981; cursor: pointer; background: transparent; color: #10b981; transition: all 0.2s ease;">
                         <i data-lucide="download" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i>
                         Installer l'app
                     </button>
-                    <button onclick="skipToApp()" style="padding: 18px 36px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: 2px solid rgba(255, 255, 255, 0.25); cursor: pointer; background: rgba(255, 255, 255, 0.1); color: white; transition: all 0.2s ease;">
-                        <i data-lucide="skip-forward" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i>
-                        Passer le tutoriel
-                    </button>
                 </div>
 
                 <p style="text-align: center; font-size: 0.85rem; color: rgba(255, 255, 255, 0.6); margin-top: 32px;">
-                    Pas d'inscription obligatoire • Synchronisation cloud optionnelle • Fonctionne hors ligne
+                    <i data-lucide="shield-check" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Connexion sécurisée via Google • Données synchronisées sur tous tes appareils
                 </p>
 
                 <!-- 3D Mockup Screenshot -->
@@ -14520,12 +14493,12 @@ Solutions possibles :
                     <p style="font-size: 1.2rem; color: var(--text-secondary); margin: 0 0 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
                         C'est gratuit, c'est rapide, et tu peux commencer tout de suite.
                     </p>
-                    <button onclick="startTutorial()" style="padding: 18px 48px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: none; cursor: pointer; background: var(--accent-ui); color: white; transition: all 0.2s ease; ">
-                        <i data-lucide="rocket" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i>
-                        Commencer dès maintenant
+                    <button onclick="window.firebaseSignIn ? window.firebaseSignIn() : showToast('Chargement...')" style="padding: 18px 48px; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 600; border: none; cursor: pointer; background: white; color: #1a1a1a; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 12px;">
+                        <svg viewBox="0 0 24 24" style="width: 22px; height: 22px;"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                        Continuer avec Google
                     </button>
                     <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 24px; opacity: 0.7;">
-                        Gratuit • Sans inscription • Prêt en 2 minutes
+                        Gratuit • Synchronisation cloud • Prêt en 30 secondes
                     </p>
                 </div>
             </section>
@@ -14553,9 +14526,9 @@ Solutions possibles :
                     <div>
                         <h4 style="color: var(--text-primary); font-size: 0.85rem; font-weight: 700; margin: 0 0 16px; text-transform: uppercase; letter-spacing: 1px;">Légal</h4>
                         <ul style="list-style: none; padding: 0; margin: 0;">
-                            <li style="margin-bottom: 12px;"><a href="#" onclick="skipToApp(); switchToTab('privacy'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">Confidentialité</a></li>
-                            <li style="margin-bottom: 12px;"><a href="#" onclick="skipToApp(); switchToTab('terms'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">CGU</a></li>
-                            <li style="margin-bottom: 12px;"><a href="#" onclick="skipToApp(); switchToTab('legal'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">Mentions légales</a></li>
+                            <li style="margin-bottom: 12px;"><a href="#" onclick="showLegalModal('privacy'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">Confidentialité</a></li>
+                            <li style="margin-bottom: 12px;"><a href="#" onclick="showLegalModal('terms'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">CGU</a></li>
+                            <li style="margin-bottom: 12px;"><a href="#" onclick="showLegalModal('legal'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">Mentions légales</a></li>
                         </ul>
                     </div>
                     <div>
@@ -14577,9 +14550,9 @@ Solutions possibles :
             <!-- FOOTER Mobile (Landing Page) -->
             <footer class="footer-mobile" style="display: none; border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 24px 16px; text-align: center;">
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 16px;">
-                    <a href="#" onclick="skipToApp(); switchToTab('privacy'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;">Confidentialité</a>
-                    <a href="#" onclick="skipToApp(); switchToTab('terms'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;">CGU</a>
-                    <a href="#" onclick="skipToApp(); switchToTab('legal'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;">Mentions légales</a>
+                    <a href="#" onclick="showLegalModal('privacy'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;">Confidentialité</a>
+                    <a href="#" onclick="showLegalModal('terms'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;">CGU</a>
+                    <a href="#" onclick="showLegalModal('legal'); return false;" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;">Mentions légales</a>
                 </div>
                 <p style="color: var(--text-muted); font-size: 0.75rem; margin: 0;">© 2025 NutriTrack • v3.0</p>
             </footer>
@@ -14707,23 +14680,62 @@ Solutions possibles :
             setTimeout(() => initV2(), 0);
         }
 
-        // Start tutorial from landing page
+        // Start tutorial from landing page (requires login now)
         function startTutorial() {
-            document.getElementById('landing-page').style.display = 'none';
-            document.getElementById('tutorial-fullscreen').style.display = 'block';
-            currentSlideIndex = 0;
-            initTutorial();
+            // Auth obligatoire - rediriger vers login
+            if (typeof window.firebaseSignIn === 'function') {
+                window.firebaseSignIn();
+            } else {
+                showToast('<i data-lucide="info" class="icon-inline"></i> Connexion en cours de chargement...');
+            }
         }
 
-        // Skip to app directly
+        // Skip to app directly (requires login now)
         function skipToApp() {
-            document.getElementById('landing-page').style.display = 'none';
-            document.getElementById('tutorial-fullscreen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            document.body.style.overflow = '';
-            document.documentElement.style.overflow = '';
-            localStorage.setItem('hasSeenLanding', 'true');
-            setTimeout(() => initV2(), 0);
+            // Auth obligatoire - rediriger vers login
+            if (typeof window.firebaseSignIn === 'function') {
+                window.firebaseSignIn();
+            } else {
+                showToast('<i data-lucide="info" class="icon-inline"></i> Connexion en cours de chargement...');
+            }
+        }
+
+        // Show legal pages in modal (accessible without login)
+        function showLegalModal(pageType) {
+            const titles = {
+                'privacy': 'Politique de Confidentialité',
+                'terms': 'Conditions Générales d\'Utilisation',
+                'legal': 'Mentions Légales'
+            };
+
+            // Get content from the actual tab if it exists
+            const tabContent = document.getElementById(pageType);
+            let content = '';
+            if (tabContent) {
+                content = tabContent.innerHTML;
+            } else {
+                content = '<p style="color: var(--text-secondary);">Contenu non disponible.</p>';
+            }
+
+            // Create modal overlay
+            const modal = document.createElement('div');
+            modal.id = 'legal-modal-overlay';
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100001; display: flex; align-items: center; justify-content: center; padding: 20px;';
+            modal.innerHTML = `
+                <div style="background: var(--bg-secondary); border-radius: 16px; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative;">
+                    <div style="position: sticky; top: 0; background: var(--bg-secondary); padding: 20px 24px; border-bottom: 1px solid var(--bg-tertiary); display: flex; justify-content: space-between; align-items: center; z-index: 10;">
+                        <h2 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);">${titles[pageType] || 'Information'}</h2>
+                        <button onclick="document.getElementById('legal-modal-overlay').remove()" style="background: none; border: none; cursor: pointer; color: var(--text-secondary); font-size: 1.5rem; padding: 8px;">×</button>
+                    </div>
+                    <div style="padding: 24px;">${content}</div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Close on backdrop click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
         }
 
         // Login with Google from landing page
