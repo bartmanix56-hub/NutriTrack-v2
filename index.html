@@ -426,45 +426,6 @@
             min-width: 0; /* Important for flex shrinking */
         }
 
-        .sidebar-btn {
-            background: var(--bg-secondary);
-            border: 2px solid transparent;
-            color: var(--text-secondary);
-            padding: 15px 30px;
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .sidebar-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: var(--accent-protein);
-            transition: left 0.4s ease;
-            z-index: -1;
-        }
-
-        .sidebar-btn:hover  { border-color: var(--accent-ui); }
-
-        .sidebar-btn.active {
-            background: var(--bg-tertiary);
-            border-color: var(--accent-ui);
-            color: var(--text-primary);
-
-        }
-
-        .sidebar-btn.active::before  { left: 0;
-            opacity: 0.1; }
-
         /* Tab Content */
         .tab-content {
             display: none;
@@ -3460,16 +3421,6 @@
                         radial-gradient(circle at 40% 20%, rgba(16, 185, 129, 0.02) 0%, transparent 50%);
         }
 
-        /* Corrections couleur principale verte */
-        .sidebar-btn:hover  { border-color: var(--accent-ui); }
-
-        .sidebar-btn.active {
-            background: var(--bg-tertiary);
-            border-color: var(--accent-main);
-            color: var(--text-primary);
-            box-shadow: none !important;
-        }
-
         /* ===== SYSTÈME DE BOUTONS UNIFIÉ (3 types) ===== */
 
         /* Type 1: Bouton Primary (solid) */
@@ -4126,11 +4077,6 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
         .custom-popup h3 {
             margin-bottom: 15px;
             font-size: 1.4rem;
@@ -4303,11 +4249,6 @@
 
         .progress-fill[style*="--accent-fat"]  { color: #000 !important; }
 
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
         /* Sections désactivées tant que macros pas calculées */
 
 
@@ -4391,40 +4332,6 @@
                 transform: translateX(-50%);
                 margin-left: 0;
                 margin-top: var(--space-sm);
-            }
-        }
-
-        /* ===== CONFETTIS ANIMATION ===== */
-        .confetti-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-            overflow: hidden;
-        }
-
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            opacity: 0;
-            animation: confetti-fall 5s ease-out forwards;
-        }
-
-        @keyframes confetti-fall {
-            0% {
-                opacity: 1;
-                transform: translateY(-100px) rotate(0deg) scale(1);
-            }
-            80% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(100vh) rotate(1080deg) scale(0.3);
             }
         }
 
@@ -5363,12 +5270,12 @@
             </div>
 
             <!-- Widget Eau / Hydratation -->
-            <div id="water-widget" style="background: var(--bg-tertiary); border-radius: var(--radius-xl); padding: var(--space-lg) var(--space-xl); margin-bottom: var(--space-2xl); border: 1px solid rgba(56, 189, 248, 0.2);">
+            <div id="water-widget" style="background: var(--bg-tertiary); border-radius: var(--radius-xl); padding: var(--space-lg) var(--space-xl); margin-bottom: var(--space-2xl); border: 1px solid rgba(78, 205, 196, 0.2);">
                 <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-md);">
                     <!-- Icône et titre -->
                     <div style="display: flex; align-items: center; gap: var(--space-md);">
-                        <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(56, 189, 248, 0.15); border-radius: var(--radius-md);">
-                            <i data-lucide="droplets" style="width: 22px; height: 22px; color: var(--accent-carbs);"></i>
+                        <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(78, 205, 196, 0.15); border-radius: var(--radius-md);">
+                            <i data-lucide="droplets" style="width: 22px; height: 22px; color: var(--accent-ui);"></i>
                         </div>
                         <div>
                             <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">Hydratation</div>
@@ -5381,17 +5288,17 @@
                             <i data-lucide="minus" style="width: 18px; height: 18px;"></i>
                         </button>
                         <div style="text-align: center; min-width: 80px;">
-                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-carbs);" id="water-count">0</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-ui);" id="water-count">0</div>
                             <div style="font-size: 0.75rem; color: var(--text-secondary);">verres</div>
                         </div>
-                        <button onclick="updateWater(1)" class="btn" style="width: 36px; height: 36px; padding: 0; border-radius: 50%; background: var(--accent-carbs);">
+                        <button onclick="updateWater(1)" class="btn" style="width: 36px; height: 36px; padding: 0; border-radius: 50%; background: var(--accent-ui);">
                             <i data-lucide="plus" style="width: 18px; height: 18px;"></i>
                         </button>
                     </div>
                     <!-- Progression -->
                     <div style="display: flex; align-items: center; gap: var(--space-md); min-width: 180px;">
-                        <div style="flex: 1; height: 8px; background: rgba(56, 189, 248, 0.15); border-radius: var(--radius-full); overflow: hidden;">
-                            <div id="water-progress" style="height: 100%; background: var(--accent-carbs); border-radius: var(--radius-full); transition: width 0.3s ease; width: 0%;"></div>
+                        <div style="flex: 1; height: 8px; background: rgba(78, 205, 196, 0.15); border-radius: var(--radius-full); overflow: hidden;">
+                            <div id="water-progress" style="height: 100%; background: var(--accent-ui); border-radius: var(--radius-full); transition: width 0.3s ease; width: 0%;"></div>
                         </div>
                         <div style="font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap;">
                             <span id="water-ml">0</span> / <span id="water-target">2000</span> ml
@@ -5663,13 +5570,13 @@
                         <div style="font-size: 1.2rem; line-height: 1.6;" id="feedback-message">Continue comme ça !</div></div>
 
                     <!-- Bouton Clôturer la journée -->
-                    <div style="margin-top: var(--space-2xl); padding: var(--space-xl); background: rgba(78, 205, 196, 0.1); border: 2px solid var(--accent-carbs); border-radius: var(--radius-md);">
+                    <div style="margin-top: var(--space-2xl); padding: var(--space-xl); background: rgba(16, 185, 129, 0.1); border: 2px solid var(--accent-main); border-radius: var(--radius-md);">
                         <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md);">
-                            <i data-lucide="lock" style="width: 32px; height: 32px; color: white;"></i>
+                            <i data-lucide="lock" style="width: 32px; height: 32px; color: var(--accent-main);"></i>
                             <div style="flex: 1;">
                                 <div style="font-weight: 600; font-size: 1.1rem; color: var(--text-primary); margin-bottom: var(--space-xs);">Journée terminée ?</div>
                                 <div style="font-size: 0.85rem; color: var(--text-secondary);">Verrouille cette journée et ajoute-la à ton planning</div></div></div>
-                        <button class="btn" id="close-day-btn" onclick="closeDayConfirm()" style="width: 100%; background: var(--accent-carbs);">
+                        <button class="btn" id="close-day-btn" onclick="closeDayConfirm()" style="width: 100%;">
                             <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i><span id="close-day-text">Clôturer cette journée</span>
                         </button>
                         <div id="day-closed-notice" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(16, 185, 129, 0.2); border-radius: var(--radius-sm); text-align: center; color: var(--accent-main); font-weight: 600;">
@@ -6617,16 +6524,16 @@
                         <!-- Stats -->
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); margin-bottom: var(--space-lg); padding: var(--space-lg); background: var(--bg-tertiary); border-radius: var(--radius-md);">
                             <div style="text-align: center;">
-                                <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-ui);" id="stats-meals">0</div>
+                                <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-main);" id="stats-meals">0</div>
                                 <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--space-xs);">Repas</div></div>
                             <div style="text-align: center;">
-                                <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-carbs);" id="stats-foods">0</div>
+                                <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-ui);" id="stats-foods">0</div>
                                 <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--space-xs);">Aliments</div></div>
                             <div style="text-align: center;">
-                                <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-protein);" id="stats-tracking">0</div>
+                                <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-ui);" id="stats-tracking">0</div>
                                 <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--space-xs);">Suivis</div></div>
                             <div style="text-align: center;">
-                                <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-fat);" id="stats-templates">0</div>
+                                <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-ui);" id="stats-templates">0</div>
                                 <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--space-xs);">Repas types</div></div></div>
 
                         <!-- Export -->
@@ -6869,13 +6776,6 @@
                     }
                 }
 
-        .progress-fill[style*="--accent-fat"]  { color: #000 !important; }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
         /* Sections désactivées tant que macros pas calculées */
 
 
@@ -6907,61 +6807,8 @@
             pointer-events: all;
         }
 
-        .section-disabled-message h3 {
-            font-size: 1.5rem;
-            margin: 0 0 var(--space-lg) 0;
-            color: var(--accent-ui);
-        }
-
-        .section-disabled-message p {
-            margin: 0;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Tooltip pour sections grisées */
-        .sidebar-btn.disabled {
-            opacity: 0.5;
-            pointer-events: all; /* Autoriser le hover */
-            cursor: not-allowed;
-            position: relative;
-        }
-
-        .sidebar-btn.disabled::after {
-            content: "<i data-lucide="lock" class="icon-inline"></i> Disponible après le calcul des besoins";
-            position: absolute;
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            margin-left: var(--space-md);
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-md);
-            font-size: 0.85rem;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: all;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            transition: opacity 0.3s;
-            border: 1px solid var(--accent-ui);
-            z-index: 1000;
-        }
-
-        .sidebar-btn.disabled:hover::after  { opacity: 1; }
-
-        /* Mobile: afficher en dessous */
+        /* Mobile: FIX pour overlay sections désactivées */
         @media (max-width: 768px) {
-            .sidebar-btn.disabled::after {
-                left: 50%;
-                top: 100%;
-                transform: translateX(-50%);
-                margin-left: 0;
-                margin-top: var(--space-sm);
-            }
-
-            /* FIX: Overlay ne doit pas bloquer la navbar mobile */
             .section-disabled-overlay {
                 z-index: 50 !important;
                 bottom: 85px !important;
@@ -9320,49 +9167,48 @@ Solutions possibles :
 
             let emoji, message, bgColor, textColor;
 
-            // Logique de feedback bienveillante basée sur les calories
+            // Logique de feedback neutre basée sur les calories
             if (calPct >= 95 && calPct <= 105) {
-                // Objectif atteint - Confettis !
-                emoji = '🎯';
-                message = 'Objectif atteint, bravo !';
+                // Objectif atteint
+                emoji = '<i data-lucide="check" class="icon-inline"></i>';
+                message = 'Objectif atteint';
                 bgColor = 'rgba(16, 185, 129, 0.15)';
                 textColor = 'var(--accent-main)';
-                launchConfetti();
                 updateStreakDisplay();
             } else if (calPct >= 85 && calPct <= 115) {
-                // Très bien
+                // Très proche
                 emoji = '<i data-lucide="check-circle" class="icon-inline"></i>';
-                message = 'Super journée, tu gères !';
+                message = 'Très proche de l\'objectif';
                 bgColor = 'rgba(78, 205, 196, 0.15)';
                 textColor = 'var(--accent-carbs)';
             } else if (calPct >= 75 && calPct <= 125) {
                 // Correct
-                emoji = '<i data-lucide="thumbs-up" class="icon-inline"></i>';
-                message = 'Bonne progression, continue comme ça !';
+                emoji = '<i data-lucide="circle-dot" class="icon-inline"></i>';
+                message = 'Bonne journée';
                 bgColor = 'rgba(255, 230, 109, 0.15)';
                 textColor = 'var(--accent-fat)';
             } else if (calPct > 125 && calPct <= 150) {
                 // Au-dessus
-                emoji = '<i data-lucide="utensils" class="icon-inline"></i>';
-                message = 'Journée gourmande, ça fait du bien parfois !';
+                emoji = '<i data-lucide="arrow-up" class="icon-inline"></i>';
+                message = 'Un peu au-dessus de l\'objectif';
                 bgColor = 'rgba(255, 193, 7, 0.15)';
                 textColor = '#ffc107';
             } else if (calPct > 150) {
                 // Bien au-dessus
-                emoji = '<i data-lucide="party-popper" class="icon-inline"></i>';
-                message = 'Journée festive ! Demain est un nouveau jour';
+                emoji = '<i data-lucide="trending-up" class="icon-inline"></i>';
+                message = 'Journée plus riche que prévu';
                 bgColor = 'rgba(168, 85, 247, 0.15)';
                 textColor = '#a855f7';
             } else if (calPct < 75 && calPct > 50) {
                 // En-dessous
-                emoji = '<i data-lucide="coffee" class="icon-inline"></i>';
-                message = 'Tu peux encore te faire plaisir si tu as faim';
+                emoji = '<i data-lucide="arrow-down" class="icon-inline"></i>';
+                message = 'En dessous de l\'objectif';
                 bgColor = 'rgba(255, 193, 7, 0.15)';
                 textColor = '#ffc107';
             } else if (calPct <= 50 && calPct > 0) {
                 // Très en-dessous
-                emoji = '<i data-lucide="heart" class="icon-inline"></i>';
-                message = 'Pense à bien manger, ton corps en a besoin';
+                emoji = '<i data-lucide="alert-circle" class="icon-inline"></i>';
+                message = 'Apport insuffisant';
                 bgColor = 'rgba(248, 113, 113, 0.15)';
                 textColor = 'var(--accent-protein)';
             }
@@ -12002,12 +11848,12 @@ Solutions possibles :
                         </div>
                         <div class="tracking-compact-details" id="${entryId}-details">
                             <div class="tracking-compact-grid">
-                                ${entry.weight ? `<div class="tracking-compact-grid-item"><span class="label">Poids</span><span class="value" style="color: var(--accent-protein);">${entry.weight} kg</span></div>` : ''}
-                                ${entry.bodyfat ? `<div class="tracking-compact-grid-item"><span class="label">Taux de graisse</span><span class="value" style="color: var(--accent-carbs);">${entry.bodyfat}%</span></div>` : ''}
+                                ${entry.weight ? `<div class="tracking-compact-grid-item"><span class="label">Poids</span><span class="value" style="color: var(--accent-main);">${entry.weight} kg</span></div>` : ''}
+                                ${entry.bodyfat ? `<div class="tracking-compact-grid-item"><span class="label">Taux de graisse</span><span class="value" style="color: var(--accent-ui);">${entry.bodyfat}%</span></div>` : ''}
                                 ${entry.muscle ? `<div class="tracking-compact-grid-item"><span class="label">Masse musculaire</span><span class="value" style="color: var(--accent-main);">${entry.muscle} kg</span></div>` : ''}
                                 ${entry.bone ? `<div class="tracking-compact-grid-item"><span class="label">Masse osseuse</span><span class="value" style="color: var(--text-secondary);">${entry.bone} kg</span></div>` : ''}
                                 ${entry.proteinPct ? `<div class="tracking-compact-grid-item"><span class="label">Protéines</span><span class="value" style="color: var(--accent-protein);">${entry.proteinPct}%</span></div>` : ''}
-                                ${entry.water ? `<div class="tracking-compact-grid-item"><span class="label">Eau</span><span class="value" style="color: var(--accent-carbs);">${entry.water}%</span></div>` : ''}
+                                ${entry.water ? `<div class="tracking-compact-grid-item"><span class="label">Eau</span><span class="value" style="color: var(--accent-ui);">${entry.water}%</span></div>` : ''}
                                 ${entry.visceral ? `<div class="tracking-compact-grid-item"><span class="label">Graisse viscérale</span><span class="value" style="color: var(--accent-danger);">${entry.visceral}</span></div>` : ''}
                                 ${entry.bodyAge ? `<div class="tracking-compact-grid-item"><span class="label">Âge corporel</span><span class="value" style="color: var(--accent-purple);">${entry.bodyAge} ans</span></div>` : ''}
                             </div>
@@ -14783,21 +14629,9 @@ Solutions possibles :
             </div></div></div>
 
     <style>
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        #landing-page button:hover { transform: translateY(-1px);  }
+        #landing-page button:hover { transform: translateY(-1px); }
         #tutorial-prev:disabled { opacity: 0.3; cursor: not-allowed; }
-        #tutorial-next:not(:disabled):hover { transform: translateY(-2px);  }
+        #tutorial-next:not(:disabled):hover { transform: translateY(-2px); }
     </style>
 
     <script>
@@ -15114,37 +14948,6 @@ Solutions possibles :
         document.getElementById('modalFoodSearch')?.addEventListener('input', () => {
             searchSelectedIndex = -1;
         });
-
-        // ===== CONFETTIS =====
-        let confettiShownToday = localStorage.getItem('confettiShownDate') === getDateKey(new Date());
-
-        function launchConfetti() {
-            // Ne pas relancer si déjà montré aujourd'hui
-            if (confettiShownToday) return;
-            confettiShownToday = true;
-            localStorage.setItem('confettiShownDate', getDateKey(new Date()));
-
-            const container = document.createElement('div');
-            container.className = 'confetti-container';
-            document.body.appendChild(container);
-
-            const colors = ['#10b981', '#f87171', '#38bdf8', '#fbbf24', '#a855f7', '#ec4899'];
-            const shapes = ['square', 'circle'];
-
-            for (let i = 0; i < 150; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.borderRadius = shapes[Math.floor(Math.random() * shapes.length)] === 'circle' ? '50%' : '2px';
-                confetti.style.animationDelay = Math.random() * 1 + 's';
-                confetti.style.animationDuration = (4 + Math.random() * 3) + 's';
-                container.appendChild(confetti);
-            }
-
-            // Supprimer après l'animation (durée max 8s)
-            setTimeout(() => container.remove(), 8000);
-        }
 
         // ===== STREAK COUNTER (based on achieving calorie goal) =====
         function calculateStreak() {
