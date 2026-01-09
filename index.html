@@ -4740,7 +4740,7 @@
                             <span class="home-brand-name">NutriTrack</span>
                         </div>
                         <h1>Mange mieux,<br><span>simplement.</span></h1>
-                        <p>Compose ton assiette idéale. Calcule tes macros, suis tes repas et atteins tes objectifs sans te prendre la tête.</p>
+                        <p>Calcule tes besoins, suis tes repas et visualise ta progression. Tout est synchronisé entre tes appareils.</p>
                         <div class="home-hero-buttons">
                             <button class="home-btn-primary" onclick="switchToTab('calculator')">
                                 <i data-lucide="play"></i>
@@ -4805,8 +4805,8 @@
                             <i data-lucide="target"></i>
                         </div>
                         <div class="onboarding-card-content">
-                            <div class="onboarding-card-title">Définir mon objectif</div>
-                            <div class="onboarding-card-desc">Perte, maintien ou prise de poids</div>
+                            <div class="onboarding-card-title">Choisis ton objectif</div>
+                            <div class="onboarding-card-desc">Perdre, maintenir ou prendre du poids</div>
                         </div>
                         <div class="onboarding-card-check">
                             <i data-lucide="check" style="display: none;"></i>
@@ -4818,8 +4818,8 @@
                             <i data-lucide="user"></i>
                         </div>
                         <div class="onboarding-card-content">
-                            <div class="onboarding-card-title">Renseigner mon profil</div>
-                            <div class="onboarding-card-desc">Poids, taille et activité physique</div>
+                            <div class="onboarding-card-title">Complète ton profil</div>
+                            <div class="onboarding-card-desc">Pour des calculs adaptés à toi</div>
                         </div>
                         <div class="onboarding-card-check">
                             <i data-lucide="check" style="display: none;"></i>
@@ -4831,8 +4831,8 @@
                             <i data-lucide="utensils"></i>
                         </div>
                         <div class="onboarding-card-content">
-                            <div class="onboarding-card-title">Ajouter mon premier repas</div>
-                            <div class="onboarding-card-desc">Découvrir le suivi de repas</div>
+                            <div class="onboarding-card-title">Ajoute ton premier repas</div>
+                            <div class="onboarding-card-desc">Découvre comment ça marche</div>
                         </div>
                         <div class="onboarding-card-check">
                             <i data-lucide="check" style="display: none;"></i>
@@ -4846,22 +4846,22 @@
                 <div class="home-feature" onclick="switchToTab('calculator')">
                     <div class="home-feature-icon"><i data-lucide="target"></i></div>
                     <h3>Calculateur</h3>
-                    <p>Tes besoins personnalisés</p>
+                    <p>Calcule tes macros idéales</p>
                 </div>
                 <div class="home-feature" onclick="switchToTab('meals')">
                     <div class="home-feature-icon"><i data-lucide="utensils"></i></div>
                     <h3>Repas</h3>
-                    <p>Suivi en temps réel</p>
+                    <p>Note ce que tu manges</p>
                 </div>
                 <div class="home-feature" onclick="switchToTab('tracking')">
                     <div class="home-feature-icon"><i data-lucide="trending-up"></i></div>
                     <h3>Progression</h3>
-                    <p>Graphiques détaillés</p>
+                    <p>Suis ton évolution</p>
                 </div>
                 <div class="home-feature" onclick="switchToTab('planner')">
                     <div class="home-feature-icon"><i data-lucide="calendar"></i></div>
                     <h3>Planning</h3>
-                    <p>Organise ta semaine</p>
+                    <p>Visualise ta semaine</p>
                 </div>
             </div>
 
@@ -4976,7 +4976,7 @@
                             Calcule tes Macros
                         </h1>
                         <p style="margin: 0; margin-top: var(--space-xs); color: var(--text-secondary); font-size: 1rem;">
-                            Obtiens tes besoins caloriques et macronutriments personnalisés
+                            Trouve les macros qui te correspondent en quelques clics
                         </p>
                     </div></div></div>
 
@@ -5024,7 +5024,7 @@
                                     <option value="">Année</option>
                                 </select>
                             </div>
-                            <p class="info-text" style="margin-top: var(--space-sm);">Ton âge sera calculé automatiquement • Plus besoin de le mettre à jour</p>
+                            <p class="info-text" style="margin-top: var(--space-sm);">Ton âge sera calculé automatiquement à partir de ta date de naissance</p>
                         </div>
 
                         <div class="input-group">
@@ -5037,7 +5037,7 @@
                                 <option value="male">Homme</option>
                                 <option value="female">Femme</option>
                             </select>
-                            <p class="info-text" style="margin-top: var(--space-sm);">Influence le calcul du métabolisme de base (BMR)</p>
+                            <p class="info-text" style="margin-top: var(--space-sm);">Utilisé pour estimer ton métabolisme de base</p>
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
@@ -5070,7 +5070,7 @@
                                 <option value="1.725">💪 Très actif (6-7 jours/semaine)</option>
                                 <option value="1.9">🔥 Extrêmement actif (2x/jour + travail physique)</option>
                             </select>
-                            <p class="info-text" style="margin-top: var(--space-sm);">Sport + activité quotidienne + travail physique</p>
+                            <p class="info-text" style="margin-top: var(--space-sm);">Inclut sport, marche quotidienne et éventuel travail physique</p>
                         </div></div></div>
 
                 <!-- CARD 2: Ton Objectif -->
@@ -5084,13 +5084,13 @@
                     <div class="goal-selector" style="margin-bottom: var(--space-2xl); display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md);">
                         <div class="goal-btn active" data-goal="cut" onclick="selectGoal('cut')">
                             <div class="goal-title"><i data-lucide="flame" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Sèche</div>
-                            <div class="goal-desc">Perdre du gras</div></div>
+                            <div class="goal-desc">Affiner ta silhouette</div></div>
                         <div class="goal-btn" data-goal="maintain" onclick="selectGoal('maintain')">
                             <div class="goal-title"><i data-lucide="equal" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Maintien</div>
-                            <div class="goal-desc">Garder son poids</div></div>
+                            <div class="goal-desc">Stabiliser ton poids</div></div>
                         <div class="goal-btn" data-goal="bulk" onclick="selectGoal('bulk')">
                             <div class="goal-title"><i data-lucide="trending-up" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Prise</div>
-                            <div class="goal-desc">Prendre du muscle</div></div></div>
+                            <div class="goal-desc">Gagner en muscle</div></div></div>
 
                     <!-- Cut options -->
                     <div id="cut-options" style="display: grid; gap: var(--space-xl);">
@@ -5137,7 +5137,7 @@
                                 <div style="font-weight: 600; color: var(--text-primary);">Mode Maintien</div>
                             </div>
                             <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
-                                Tes calories seront calculées à ton niveau de maintenance (TDEE), sans déficit ni surplus. Idéal pour stabiliser ton poids actuel.
+                                Tes calories correspondent à ce que ton corps dépense réellement. Ni déficit ni surplus : tu gardes ton poids stable.
                             </div>
                         </div>
 
@@ -5221,11 +5221,11 @@
                     <div>
                         <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-xs);">Métabolisme de base (BMR)</div>
                         <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);" id="bmr-display">0 kcal</div>
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--space-xs);">Calories brûlées au repos</div></div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--space-xs);">Ce que tu brûles au repos</div></div>
                     <div>
                         <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-xs);">Dépense journalière (TDEE)</div>
                         <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-main);" id="tdee-display">0 kcal</div>
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--space-xs);">Avec ton niveau d'activité</div></div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--space-xs);">Ce que tu dépenses vraiment</div></div>
                     <div style="position: relative;">
                         <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-xs);">IMC (Indice de Masse Corporelle)</div>
 
@@ -5280,7 +5280,7 @@
                 <!-- CTA après calcul -->
                 <div style="margin-top: var(--space-3xl); padding: var(--space-2xl); background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%); border: 2px solid var(--accent-main); border-radius: var(--radius-lg);">
                     <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-xl); display: flex; align-items: center; gap: var(--space-md);">
-                        <i data-lucide="rocket" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>Prêt à commencer ?
+                        <i data-lucide="rocket" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>Et maintenant ?
                     </h3>
 
                     <div style="display: flex; gap: var(--space-lg); margin-bottom: var(--space-xl); flex-wrap: wrap;">
@@ -5294,7 +5294,7 @@
 
                     <div style="padding: var(--space-lg); background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-md); border-left: 3px solid var(--accent-main);">
                         <p style="margin: 0; color: var(--text-primary); font-size: 0.95rem; line-height: 1.7;">
-                            <div style="display: flex; align-items: start; gap: var(--space-xs);"><i data-lucide="alert-circle" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 3px;"></i><div><strong>Important :</strong> Ces valeurs constituent une estimation de départ basée sur tes informations actuelles. Suis ces recommandations pendant <strong>10 à 14 jours</strong>, puis ajuste en fonction de l'évolution de ton poids, de ton énergie et de tes performances.</div></div>
+                            <div style="display: flex; align-items: start; gap: var(--space-xs);"><i data-lucide="alert-circle" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 3px;"></i><div><strong>Bon à savoir :</strong> Ces valeurs sont un point de départ. Suis-les pendant <strong>10-14 jours</strong>, puis ajuste selon ton ressenti : énergie, humeur, résultats sur la balance. Ton corps te donnera les meilleurs indices.</div></div>
                         </p>
                     </div></div></div></div>
 
@@ -5309,7 +5309,7 @@
                             Mes Repas
                         </h1>
                         <p style="margin: 0; margin-top: var(--space-xs); color: var(--text-secondary); font-size: 1rem;">
-                            Planifie et suit tes repas quotidiens
+                            Note ce que tu manges et visualise tes macros en temps réel
                         </p>
                     </div></div></div>
 
@@ -5345,8 +5345,8 @@
                     <div style="display: flex; align-items: center; gap: var(--space-md);">
                         <div style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: var(--accent-ui); border-radius: var(--radius-md);"><i data-lucide="target" style="width: 24px; height: 24px; color: white;"></i></div>
                         <div>
-                            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">Il te reste à manger</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Pour atteindre tes objectifs</div></div></div>
+                            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">Il te reste</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Pour atteindre tes objectifs du jour</div></div></div>
                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-xl);">
                         <div style="text-align: center;">
                             <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Protéines</div>
@@ -5372,7 +5372,7 @@
                         </div>
                         <div>
                             <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">Hydratation</div>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary);">30ml/kg · 1 verre = 250ml</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">Objectif : environ 30ml par kg de poids</div>
                         </div>
                     </div>
                     <!-- Compteur -->
@@ -5654,7 +5654,7 @@
 
                     <!-- Disclaimer macros -->
                     <div style="margin-top: var(--space-lg); padding: var(--space-lg); background: rgba(78, 205, 196, 0.1); border-left: 3px solid var(--accent-carbs); border-radius: var(--radius-sm); font-size: 1rem; color: var(--text-secondary); line-height: 1.6;">
-                        <i data-lucide="lightbulb" class="icon-inline"></i> <strong>Astuce :</strong> Les glucides et lipides peuvent varier au quotidien (minimum 80% de l'objectif). Seules les protéines doivent être atteintes chaque jour pour préserver la masse musculaire.
+                        <i data-lucide="lightbulb" class="icon-inline"></i> <strong>Bonne nouvelle :</strong> Pas besoin d'être parfait ! Glucides et lipides peuvent varier d'un jour à l'autre. Seules les protéines comptent vraiment chaque jour pour garder ton muscle.
                     </div>
 
                     <!-- Feedback émotionnel journalier -->
@@ -5667,13 +5667,13 @@
                         <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md);">
                             <i data-lucide="lock" style="width: 32px; height: 32px; color: var(--accent-ui);"></i>
                             <div style="flex: 1;">
-                                <div style="font-weight: 600; font-size: 1.1rem; color: var(--text-primary); margin-bottom: var(--space-xs);">Clôturer cette journée</div>
-                                <div style="font-size: 0.85rem; color: var(--text-secondary);">Verrouille les modifications et enregistre au planning</div></div></div>
+                                <div style="font-weight: 600; font-size: 1.1rem; color: var(--text-primary); margin-bottom: var(--space-xs);">Journée terminée ?</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">Verrouille cette journée et ajoute-la à ton planning</div></div></div>
                         <button class="btn" id="close-day-btn" onclick="closeDayConfirm()" style="width: 100%; background: var(--accent-carbs);">
                             <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i><span id="close-day-text">Clôturer cette journée</span>
                         </button>
                         <div id="day-closed-notice" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(16, 185, 129, 0.2); border-radius: var(--radius-sm); text-align: center; color: var(--accent-main); font-weight: 600;">
-                            <i data-lucide="lock" style="width: 18px; height: 18px;"></i> Journée clôturée et enregistrée au planning
+                            <i data-lucide="lock" style="width: 18px; height: 18px;"></i> C'est noté ! Journée ajoutée au planning
                         </div></div></div></div>
         </div>
 
@@ -5688,7 +5688,7 @@
                             Planning Hebdomadaire
                         </h1>
                         <p style="margin: 0; margin-top: var(--space-xs); color: var(--text-secondary); font-size: 1rem;">
-                            Visualise ta semaine nutritionnelle complète
+                            Retrouve tes journées clôturées et garde une vue d'ensemble
                         </p>
                     </div></div></div>
 
@@ -5890,7 +5890,7 @@
                             Suivi Corporel
                         </h1>
                         <p style="margin: 0; margin-top: var(--space-xs); color: var(--text-secondary); font-size: 1rem;">
-                            Mesure et analyse ton évolution physique
+                            Suis l'évolution de ton corps sur le long terme
                         </p>
                     </div></div></div>
 
@@ -5932,60 +5932,60 @@
                     <div class="input-group">
                         <label>Poids (kg) *</label>
                         <input type="number" id="tracking-weight" inputmode="decimal" pattern="[0-9]*" step="0.1" placeholder="Ex: 80">
-						<p class="info-text">Pesez-vous de préférence le matin, à jeun</p>
+						<p class="info-text">Idéalement le matin, à jeun, pour plus de régularité</p>
                     </div>
 
                     <div class="input-group">
                         <label>Taux de graisse (%) <span style="opacity: 0.6;">(optionnel)</span></label>
                         <input type="number" id="tracking-bodyfat" inputmode="decimal" pattern="[0-9]*" step="0.1" placeholder="Ex: 25">
-                        <p class="info-text">Nécessite une balance avec analyse corporelle</p>
+                        <p class="info-text">Disponible sur certaines balances connectées</p>
                     </div>
 
                     <div class="input-group">
                         <label>Masse musculaire (kg) <span style="opacity: 0.6;">(optionnel)</span></label>
                         <input type="number" id="tracking-muscle" inputmode="decimal" pattern="[0-9]*" step="0.1" placeholder="Ex: 55">
-                        <p class="info-text">Nécessite une balance avec analyse corporelle</p>
+                        <p class="info-text">Disponible sur certaines balances connectées</p>
                     </div>
 
                     <div class="input-group">
                         <label>Masse osseuse (kg) <span style="opacity: 0.6;">(optionnel)</span></label>
                         <input type="number" id="tracking-bone" step="0.1" placeholder="Ex: 3">
-                        <p class="info-text">Nécessite une balance avec analyse corporelle</p>
+                        <p class="info-text">Disponible sur certaines balances connectées</p>
                     </div>
 
                     <div class="input-group">
                         <label>Protéines (%) <span style="opacity: 0.6;">(optionnel)</span></label>
                         <input type="number" id="tracking-protein-pct" step="0.1" placeholder="Ex: 18">
-                        <p class="info-text">Nécessite une balance avec analyse corporelle</p>
+                        <p class="info-text">Disponible sur certaines balances connectées</p>
                     </div>
 
                     <div class="input-group">
                         <label>Eau (%) <span style="opacity: 0.6;">(optionnel)</span></label>
                         <input type="number" id="tracking-water" step="0.1" placeholder="Ex: 55">
-                        <p class="info-text">Nécessite une balance avec analyse corporelle</p>
+                        <p class="info-text">Disponible sur certaines balances connectées</p>
                     </div>
 
                     <div class="input-group">
                         <label>Âge corporel (années) <span style="opacity: 0.6;">(optionnel)</span></label>
                         <input type="number" id="tracking-body-age" step="1" placeholder="Ex: 35">
-                        <p class="info-text">Nécessite une balance avec analyse corporelle</p>
+                        <p class="info-text">Disponible sur certaines balances connectées</p>
                     </div>
 
                     <div class="input-group">
                         <label>Graisse viscérale <span style="opacity: 0.6;">(optionnel)</span></label>
                         <input type="number" id="tracking-visceral" step="1" placeholder="Ex: 8">
-                        <p class="info-text">Nécessite une balance avec analyse corporelle</p>
+                        <p class="info-text">Disponible sur certaines balances connectées</p>
                     </div></div>
 
                 <div class="input-group">
                     <label>Notes du jour (optionnel)</label>
-                    <textarea id="tracking-notes" placeholder="Forme, sommeil, entraînement..."></textarea>
+                    <textarea id="tracking-notes" placeholder="Comment te sens-tu ? Sommeil, énergie, entraînement..."></textarea>
                 </div>
 
-                <button class="btn" onclick="saveTracking()" style="display: flex; align-items: center; gap: var(--space-sm);"><i data-lucide="save" style="width: 18px; height: 18px;"></i> Enregistrer cette Mesure</button>
+                <button class="btn" onclick="saveTracking()" style="display: flex; align-items: center; gap: var(--space-sm);"><i data-lucide="save" style="width: 18px; height: 18px;"></i> Enregistrer</button>
 
                 <div id="tracking-history" style="margin-top: 40px;">
-                    <h3 style="margin-bottom: 20px; font-size: 1.5rem;">Historique & Graphiques</h3>
+                    <h3 style="margin-bottom: 20px; font-size: 1.5rem;">Ton historique</h3>
 
                     <div id="chart-buttons" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
                         <button class="btn-secondary btn chart-toggle-btn" data-chart="weight" onclick="toggleChart('weight')">Poids</button>
@@ -8431,7 +8431,7 @@ Solutions possibles :
 
             // MESSAGE DE TRANSITION
             setTimeout(() => {
-                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Tes besoins sont calculés. Tu peux maintenant ajouter tes repas dans "Mes Repas" !', 'success');
+                showToast('<i data-lucide="check-circle" class="icon-inline"></i> C\'est calculé ! Tu peux maintenant noter tes repas.', 'success');
             }, 2100); // Juste après le feedback du bouton
         }
 
@@ -8791,7 +8791,7 @@ Solutions possibles :
             saveDailyMeals();
             syncMealsToPlanning();
             closeFoodModal();
-            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Aliment ajouté');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Ajouté !');
         }
 
         // ===== QUICK ADD SYSTEM =====
@@ -9410,7 +9410,7 @@ Solutions possibles :
             // Update UI
             updateCloseDayUI(true);
 
-            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Journée clôturée et enregistrée au planning');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Journée enregistrée dans ton planning !');
         }
 
         function reopenDay(dateKey) {
@@ -9420,7 +9420,7 @@ Solutions possibles :
 
             updateCloseDayUI(false);
 
-            showToast('🔓 Journée rouverte pour modification');
+            showToast('<i data-lucide="unlock" class="icon-inline"></i> Journée rouverte, tu peux la modifier');
         }
 
         function updateCloseDayUI(isClosed) {
@@ -11834,7 +11834,7 @@ Solutions possibles :
             document.getElementById('tracking-notes').value = '';
             setTrackingDateToToday();
 
-            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Suivi enregistré');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Mesure enregistrée !');
 
             // SYNC: Update calculator weight with latest tracking weight
             syncWeightToCalculator();
@@ -12161,7 +12161,7 @@ Solutions possibles :
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
-            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Données exportées !');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Fichier téléchargé !');
         }
 
         function importData(event) {
@@ -12199,7 +12199,7 @@ Solutions possibles :
                         if (data.onboardingState) localStorage.setItem('onboardingState', JSON.stringify(data.onboardingState));
                         if (data.calc_goal) localStorage.setItem('calc_goal', data.calc_goal);
 
-                        showToast('<i data-lucide="check-circle" class="icon-inline"></i> Données importées ! Rechargement...');
+                        showToast('<i data-lucide="check-circle" class="icon-inline"></i> Import réussi ! Rechargement...');
                         setTimeout(() => location.reload(), 1000);
                     });
                 } catch (error) {
