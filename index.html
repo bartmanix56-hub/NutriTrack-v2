@@ -4507,9 +4507,8 @@
         </style>
 
         <header class="app-header">
-            <!-- Ligne principale: Prénom | NutriTrack | Local/Cloud + Thème -->
+            <!-- Ligne principale: NutriTrack | Local/Cloud + Thème -->
             <div class="header-main-row">
-                <div id="username-display" class="header-username"></div>
                 <h1 class="header-title">
                     <img src="logo.svg" alt="Logo" class="header-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
                     <span class="header-logo-fallback"><i data-lucide="target" style="width: 1em; height: 1em; color: white;"></i></span>
@@ -6385,7 +6384,7 @@
                 </div></div>
 
             <!-- Grille de paramètres -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: var(--space-xl); margin-bottom: var(--space-3xl);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: var(--space-xl); margin-bottom: var(--space-3xl); align-items: start;">
 
                 <!-- Profil & Préférences (fusionnés) -->
                     <div class="card">
@@ -15642,32 +15641,18 @@ Solutions possibles :
 
         // ===== AUTH FUNCTIONS (exposed globally) =====
         window.firebaseSignIn = async function() {
-            console.log('firebaseSignIn called');
             try {
-                // D'abord demander le prénom
-                console.log('Calling askForFirstName...');
-                const firstName = await askForFirstName();
-                console.log('firstName received:', firstName);
-                if (!firstName) {
-                    if (typeof showToast === 'function') {
-                        showToast('<i data-lucide="info" class="icon-inline"></i> Inscription annulée');
-                    }
-                    return;
-                }
-
-                // Sauvegarder le prénom dans userProfile ET appUsername pour l'affichage header
-                const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
-                userProfile.firstName = firstName;
-                localStorage.setItem('userProfile', JSON.stringify(userProfile));
-                localStorage.setItem('appUsername', firstName); // Pour le header display
-
-                // Maintenant connexion Google
+                // Connexion Google directe
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
 
-                // Mettre à jour l'affichage du nom d'utilisateur dans le header
-                if (typeof displayUsername === 'function') {
-                    displayUsername();
+                // Utiliser le prénom Google si pas de prénom local
+                const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                if (!userProfile.firstName && user.displayName) {
+                    const googleFirstName = user.displayName.split(' ')[0];
+                    userProfile.firstName = googleFirstName;
+                    localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                    localStorage.setItem('appUsername', googleFirstName);
                 }
 
                 // Check if cloud data exists
