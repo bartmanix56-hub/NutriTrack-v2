@@ -15461,16 +15461,19 @@ Solutions possibles :
 
         // Fonction pour demander le prénom avant inscription
         function askForFirstName() {
+            console.log('askForFirstName called');
             return new Promise((resolve) => {
-                if (typeof customPrompt === 'function') {
+                console.log('customPrompt available:', typeof window.customPrompt === 'function');
+                if (typeof window.customPrompt === 'function') {
                     // Utiliser le prompt personnalisé si disponible
                     const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
                     const existingName = userProfile.firstName || '';
 
-                    customPrompt('Bienvenue sur NutriTrack !', 'Entre ton prénom pour personnaliser ton expérience :', existingName || 'Ton prénom')
+                    window.customPrompt('Bienvenue sur NutriTrack !', 'Entre ton prénom pour personnaliser ton expérience :', existingName || 'Ton prénom')
                         .then(name => resolve(name));
                 } else {
                     // Fallback vers prompt natif
+                    console.log('Using native prompt');
                     const name = prompt('Entre ton prénom pour personnaliser ton expérience :');
                     resolve(name);
                 }
@@ -15634,9 +15637,12 @@ Solutions possibles :
 
         // ===== AUTH FUNCTIONS (exposed globally) =====
         window.firebaseSignIn = async function() {
+            console.log('firebaseSignIn called');
             try {
                 // D'abord demander le prénom
+                console.log('Calling askForFirstName...');
                 const firstName = await askForFirstName();
+                console.log('firstName received:', firstName);
                 if (!firstName) {
                     if (typeof showToast === 'function') {
                         showToast('<i data-lucide="info" class="icon-inline"></i> Inscription annulée');
