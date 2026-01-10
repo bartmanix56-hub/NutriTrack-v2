@@ -13416,14 +13416,19 @@ Solutions possibles :
         let promptResolve = null;
 
         function customPrompt(title, message, defaultValue = '') {
+            console.log('customPrompt function called with:', title, message);
             return new Promise((resolve) => {
                 promptResolve = resolve;
+
+                const promptEl = document.getElementById('custom-prompt');
+                console.log('prompt element found:', !!promptEl);
 
                 document.getElementById('prompt-title').textContent = title;
                 document.getElementById('prompt-message').textContent = message;
                 document.getElementById('prompt-input').value = defaultValue;
 
-                document.getElementById('custom-prompt').classList.add('active');
+                promptEl.classList.add('active');
+                console.log('prompt classList:', promptEl.classList.toString());
                 document.body.style.overflow = 'hidden';
 
                 // Focus sur l'input
