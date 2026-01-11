@@ -4420,7 +4420,7 @@
             /* ===== NEW HEADER LAYOUT ===== */
             .app-header {
                 text-align: center;
-                padding: var(--space-xl) var(--space-lg);
+                padding: var(--space-lg) var(--space-xl);
             }
 
             .header-main-row {
@@ -4434,31 +4434,71 @@
             .header-right {
                 display: flex;
                 align-items: center;
-                gap: var(--space-sm);
-                min-width: 150px;
-                justify-content: flex-end;
+                gap: var(--space-md);
             }
 
-            .header-btn {
-                width: 44px;
-                height: 44px;
-                background: var(--bg-secondary);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: var(--radius-full);
-                cursor: pointer;
+            /* Greeting badge (gauche) */
+            .header-greeting {
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                transition: all 0.2s;
-                box-shadow: var(--shadow-sm);
+                gap: var(--space-sm);
+                background: var(--bg-secondary);
+                padding: var(--space-sm) var(--space-lg);
+                border-radius: var(--radius-full);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                font-size: 0.95rem;
                 color: var(--text-primary);
             }
 
-            .header-btn:hover {
-                background: var(--bg-tertiary);
-                border-color: var(--accent-main);
+            .greeting-dot {
+                width: 8px;
+                height: 8px;
+                background: var(--accent-main);
+                border-radius: 50%;
             }
 
+            /* Login button */
+            .header-login-btn {
+                display: flex;
+                align-items: center;
+                gap: var(--space-sm);
+                background: var(--accent-main);
+                color: white;
+                border: none;
+                padding: var(--space-sm) var(--space-lg);
+                border-radius: var(--radius-full);
+                font-size: 0.9rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .header-login-btn:hover {
+                background: var(--accent-main);
+                filter: brightness(1.1);
+            }
+
+            /* Sync button */
+            .header-sync-btn {
+                display: flex;
+                align-items: center;
+                gap: var(--space-sm);
+                background: var(--bg-secondary);
+                color: var(--accent-main);
+                border: 1px solid var(--accent-main);
+                padding: var(--space-sm) var(--space-md);
+                border-radius: var(--radius-full);
+                font-size: 0.85rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .header-sync-btn:hover {
+                background: rgba(16, 185, 129, 0.1);
+            }
+
+            /* Title */
             .header-title {
                 font-size: 1.8rem;
                 font-weight: 700;
@@ -4484,20 +4524,137 @@
                 justify-content: center;
             }
 
-            .header-username {
-                min-width: 150px;
+            /* Profile button wrapper */
+            .header-profile-wrapper {
+                position: relative;
+            }
+
+            .header-profile-btn {
+                width: 44px;
                 height: 44px;
+                border-radius: 50%;
+                border: 2px solid var(--accent-main);
+                padding: 0;
+                cursor: pointer;
+                overflow: hidden;
                 background: var(--bg-secondary);
-                padding: 0 var(--space-lg);
-                border-radius: var(--radius-full);
+                transition: all 0.2s;
+            }
+
+            .header-profile-btn:hover {
+                border-color: var(--accent-main);
+                transform: scale(1.05);
+            }
+
+            .header-profile-btn img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            /* User Menu Dropdown */
+            .user-menu {
+                display: none;
+                position: absolute;
+                top: calc(100% + 10px);
+                right: 0;
+                width: 300px;
+                background: var(--bg-secondary);
                 border: 1px solid rgba(255, 255, 255, 0.1);
-                color: var(--text-primary);
-                font-size: 0.95rem;
+                border-radius: var(--radius-lg);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+                z-index: 10003;
+                overflow: hidden;
+            }
+
+            .user-menu.active {
+                display: block;
+                animation: fadeInDown 0.2s ease;
+            }
+
+            .user-menu-header {
                 display: flex;
                 align-items: center;
-                justify-content: flex-start;
-                gap: var(--space-sm);
-                box-shadow: var(--shadow-sm);
+                gap: var(--space-md);
+                padding: var(--space-lg);
+                background: var(--bg-tertiary);
+            }
+
+            .user-menu-photo {
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid var(--accent-main);
+            }
+
+            .user-menu-info {
+                flex: 1;
+            }
+
+            .user-menu-name {
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: 4px;
+            }
+
+            .user-menu-status {
+                display: flex;
+                align-items: center;
+                gap: var(--space-xs);
+                font-size: 0.85rem;
+                color: var(--text-secondary);
+            }
+
+            .user-menu-status .status-dot {
+                width: 8px;
+                height: 8px;
+                background: var(--accent-main);
+                border-radius: 50%;
+            }
+
+            .user-menu-status .status-text {
+                color: var(--accent-main);
+                font-weight: 600;
+            }
+
+            .user-menu-divider {
+                height: 1px;
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .user-menu-item {
+                display: flex;
+                align-items: center;
+                gap: var(--space-md);
+                width: 100%;
+                padding: var(--space-md) var(--space-lg);
+                background: none;
+                border: none;
+                color: var(--text-primary);
+                font-size: 0.95rem;
+                cursor: pointer;
+                transition: background 0.2s;
+                text-align: left;
+            }
+
+            .user-menu-item:hover {
+                background: var(--bg-tertiary);
+            }
+
+            .user-menu-item i {
+                width: 20px;
+                height: 20px;
+                color: var(--text-secondary);
+            }
+
+            .user-menu-logout {
+                color: var(--color-danger);
+            }
+
+            .user-menu-logout i {
+                color: var(--color-danger);
             }
 
             .app-header .subtitle {
@@ -4507,25 +4664,76 @@
         </style>
 
         <header class="app-header">
-            <!-- Ligne principale: NutriTrack | Local/Cloud + Thème -->
             <div class="header-main-row">
+                <!-- Gauche: Salut + Nom -->
+                <div id="header-greeting" class="header-greeting" style="display: none;">
+                    <span class="greeting-dot"></span>
+                    <span>Salut, <strong id="header-username">Utilisateur</strong> !</span>
+                </div>
+                <!-- Bouton connexion (visible si non connecté) -->
+                <button id="header-login-btn" class="header-btn header-login-btn" onclick="window.firebaseSignIn ? window.firebaseSignIn() : showToast('Chargement...')">
+                    <i data-lucide="log-in" style="width: 18px; height: 18px;"></i>
+                    <span>Connexion</span>
+                </button>
+
+                <!-- Centre: Logo NutriTrack -->
                 <h1 class="header-title">
                     <img src="logo.svg" alt="Logo" class="header-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
                     <span class="header-logo-fallback"><i data-lucide="target" style="width: 1em; height: 1em; color: white;"></i></span>
                     NutriTrack
                 </h1>
+
+                <!-- Droite: Sync + Photo profil -->
                 <div class="header-right">
-                    <button id="header-login-btn" class="header-btn" onclick="window.firebaseSignIn ? window.firebaseSignIn() : showToast('Chargement...')" title="Se connecter avec Google" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--accent-main); color: white; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 600;">
-                        <i data-lucide="user" style="width: 16px; height: 16px;"></i>
-                        <span class="header-login-text">Connexion</span>
+                    <button id="header-sync-btn" class="header-btn header-sync-btn" onclick="window.firebaseForceSync ? window.firebaseForceSync() : null" title="Synchroniser" style="display: none;">
+                        <i data-lucide="cloud" style="width: 20px; height: 20px;"></i>
+                        <span>Sync</span>
                     </button>
-                    <div id="sync-indicator" onclick="switchToTab('settings')" title="Statut de synchronisation">
-                        <span class="sync-dot"></span>
-                        <span id="sync-indicator-text">Local</span>
+                    <div class="header-profile-wrapper" style="display: none;">
+                        <button id="header-profile-btn" class="header-profile-btn" onclick="toggleUserMenu()">
+                            <img id="header-profile-photo" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'><circle cx='12' cy='8' r='4'/><path d='M20 21a8 8 0 1 0-16 0'/></svg>" alt="Profil">
+                        </button>
+                        <!-- User Menu Dropdown -->
+                        <div id="user-menu" class="user-menu">
+                            <div class="user-menu-header">
+                                <img id="user-menu-photo" src="" alt="Photo" class="user-menu-photo">
+                                <div class="user-menu-info">
+                                    <div class="user-menu-name" id="user-menu-name">Utilisateur</div>
+                                    <div class="user-menu-status">
+                                        <span class="status-dot"></span>
+                                        <span>Synchronisation cloud : </span>
+                                        <span class="status-text" id="user-menu-sync-status">active</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="user-menu-divider"></div>
+                            <button class="user-menu-item" onclick="switchToTab('settings'); closeUserMenu();">
+                                <i data-lucide="settings"></i>
+                                <span>Paramètres</span>
+                            </button>
+                            <button class="user-menu-item" onclick="window.firebaseForceSync ? window.firebaseForceSync() : null; closeUserMenu();">
+                                <i data-lucide="cloud"></i>
+                                <span>Synchronisation cloud</span>
+                            </button>
+                            <button class="user-menu-item" onclick="switchToTab('privacy'); closeUserMenu();">
+                                <i data-lucide="shield-check"></i>
+                                <span>Données & confidentialité</span>
+                            </button>
+                            <button class="user-menu-item" onclick="switchToTab('guide'); closeUserMenu();">
+                                <i data-lucide="help-circle"></i>
+                                <span>Aide</span>
+                            </button>
+                            <button class="user-menu-item" onclick="window.open('https://github.com/anthropics/claude-code/issues', '_blank'); closeUserMenu();">
+                                <i data-lucide="alert-triangle"></i>
+                                <span>Signaler un bug</span>
+                            </button>
+                            <div class="user-menu-divider"></div>
+                            <button class="user-menu-item user-menu-logout" onclick="window.firebaseSignOut ? window.firebaseSignOut() : null; closeUserMenu();">
+                                <i data-lucide="power"></i>
+                                <span>Déconnexion</span>
+                            </button>
+                        </div>
                     </div>
-                    <button class="header-btn" onclick="toggleTheme()" title="Changer le thème">
-                        <i data-lucide="moon" id="theme-icon" style="width: 20px; height: 20px;"></i>
-                    </button>
                 </div>
             </div>
             <!-- Sous-titre -->
@@ -4583,14 +4791,6 @@
                 <button class="sidebar-btn" data-tab="guide">
                     <span class="sidebar-icon"><i data-lucide="info"></i></span>
                     <span class="sidebar-label">Guide</span>
-                </button>
-
-                <!-- Séparateur -->
-                <div style="height: 1px; background: var(--bg-tertiary); margin: var(--space-lg) var(--space-md);"></div>
-
-                <button class="sidebar-btn" data-tab="settings">
-                    <span class="sidebar-icon"><i data-lucide="settings"></i></span>
-                    <span class="sidebar-label">Paramètres</span>
                 </button>
 
                 <!-- Bouton Admin (visible uniquement pour l'admin) -->
@@ -6384,7 +6584,7 @@
                 </div></div>
 
             <!-- Grille de paramètres -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: var(--space-xl); margin-bottom: var(--space-3xl); align-items: start;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: var(--space-xl); margin-bottom: var(--space-3xl);">
 
                 <!-- Profil & Préférences (fusionnés) -->
                     <div class="card">
@@ -12740,6 +12940,29 @@ Solutions possibles :
         calculateMacros = function()  { origCalculateMacros();
             saveCalcSettings(); };
 
+        // ===== USER MENU =====
+        function toggleUserMenu() {
+            const menu = document.getElementById('user-menu');
+            if (menu) {
+                menu.classList.toggle('active');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        }
+
+        function closeUserMenu() {
+            const menu = document.getElementById('user-menu');
+            if (menu) menu.classList.remove('active');
+        }
+
+        // Fermer le menu si on clique ailleurs
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('user-menu');
+            const btn = document.getElementById('header-profile-btn');
+            if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
         // ===== THEME TOGGLE =====
         function toggleTheme() {
             const body = document.body;
@@ -15429,6 +15652,9 @@ Solutions possibles :
             const notConnected = document.getElementById('firebase-not-connected');
             const connected = document.getElementById('firebase-connected');
             const headerLoginBtn = document.getElementById('header-login-btn');
+            const headerGreeting = document.getElementById('header-greeting');
+            const headerSyncBtn = document.getElementById('header-sync-btn');
+            const headerProfileWrapper = document.querySelector('.header-profile-wrapper');
 
             // Mise à jour bannière
             updateSyncBanner(user);
@@ -15437,14 +15663,34 @@ Solutions possibles :
                 document.body.classList.add('user-connected');
                 if (notConnected) notConnected.style.display = 'none';
                 if (connected) connected.style.display = 'block';
-                // Cacher le bouton connexion du header quand connecté
+
+                // Header: cacher login, montrer greeting + profile
                 if (headerLoginBtn) headerLoginBtn.style.display = 'none';
+                if (headerGreeting) headerGreeting.style.display = 'flex';
+                if (headerSyncBtn) headerSyncBtn.style.display = 'flex';
+                if (headerProfileWrapper) headerProfileWrapper.style.display = 'block';
 
                 const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
-                const displayName = userProfile.firstName || user.displayName || 'Utilisateur';
+                const displayName = userProfile.firstName || user.displayName?.split(' ')[0] || 'Utilisateur';
+                const photoURL = user.photoURL || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2310b981"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>';
 
+                // Update header greeting
+                const headerUsername = document.getElementById('header-username');
+                if (headerUsername) headerUsername.textContent = displayName;
+
+                // Update header profile photo
+                const headerProfilePhoto = document.getElementById('header-profile-photo');
+                if (headerProfilePhoto) headerProfilePhoto.src = photoURL;
+
+                // Update user menu
+                const userMenuName = document.getElementById('user-menu-name');
+                const userMenuPhoto = document.getElementById('user-menu-photo');
+                if (userMenuName) userMenuName.textContent = displayName;
+                if (userMenuPhoto) userMenuPhoto.src = photoURL;
+
+                // Legacy elements in settings
                 if (document.getElementById('firebase-user-photo')) {
-                    document.getElementById('firebase-user-photo').src = user.photoURL || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2310b981"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>';
+                    document.getElementById('firebase-user-photo').src = photoURL;
                 }
                 if (document.getElementById('firebase-user-name')) {
                     document.getElementById('firebase-user-name').textContent = displayName;
@@ -15458,8 +15704,12 @@ Solutions possibles :
                 document.body.classList.remove('user-connected');
                 if (notConnected) notConnected.style.display = 'block';
                 if (connected) connected.style.display = 'none';
-                // Afficher le bouton connexion du header quand non connecté
+
+                // Header: montrer login, cacher greeting + profile
                 if (headerLoginBtn) headerLoginBtn.style.display = 'flex';
+                if (headerGreeting) headerGreeting.style.display = 'none';
+                if (headerSyncBtn) headerSyncBtn.style.display = 'none';
+                if (headerProfileWrapper) headerProfileWrapper.style.display = 'none';
             }
         }
 
