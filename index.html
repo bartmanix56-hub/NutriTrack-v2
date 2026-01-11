@@ -1166,7 +1166,6 @@
         .home-btn-primary:hover {
             background: #059669;
             transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.35);
         }
 
         .home-btn-primary i { width: 18px; height: 18px; }
@@ -1253,10 +1252,10 @@
         .home-info-1 .home-info-icon { background: var(--accent-main); }
 
         .home-info-2 { bottom: 30px; right: -70px; animation-delay: 2s; }
-        .home-info-2 .home-info-icon { background: var(--accent-main); }
+        .home-info-2 .home-info-icon { background: var(--accent-protein); }
 
         .home-info-3 { top: 50%; right: -90px; transform: translateY(-50%); animation-delay: 1.2s; }
-        .home-info-3 .home-info-icon { background: var(--accent-main); }
+        .home-info-3 .home-info-icon { background: var(--accent-carbs); }
 
         @keyframes homeFloat {
             0%, 100% { transform: translateY(0); }
@@ -2872,11 +2871,10 @@
         }
 
         .week-nav-btn {
-            background: var(--bg-secondary);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            background: var(--accent-ui);
+            border: none;
             pointer-events: all;
-            color: var(--text-primary);
+            color: white;
             padding: 10px 20px;
             border-radius: var(--radius-md);
             cursor: pointer;
@@ -2886,10 +2884,8 @@
         }
 
         .week-nav-btn:hover {
-            background: var(--accent-ui);
-            color: white;
+            background: #34d399;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
 
         .week-nav-btn.this-week-btn {
@@ -4536,6 +4532,10 @@
                 font-size: 1.8rem;
                 font-weight: 800;
                 color: #ffffff !important;
+                -webkit-text-fill-color: #ffffff !important;
+                background: none !important;
+                -webkit-background-clip: unset !important;
+                background-clip: unset !important;
                 display: flex;
                 align-items: center;
                 gap: 12px;
@@ -4621,6 +4621,7 @@
                 gap: var(--space-md);
                 padding: var(--space-lg);
                 background: var(--bg-tertiary);
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
             }
 
             .user-menu-photo {
