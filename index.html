@@ -4599,7 +4599,23 @@
                 margin-bottom: 4px;
             }
 
-            .user-menu-status {
+            .user-menu-username {
+                display: flex;
+                align-items: center;
+                gap: var(--space-xs);
+                font-size: 0.9rem;
+                color: var(--text-primary);
+                margin-bottom: 2px;
+            }
+
+            .user-menu-username .status-dot {
+                width: 8px;
+                height: 8px;
+                background: var(--accent-main);
+                border-radius: 50%;
+            }
+
+            .user-menu-sync-line {
                 display: flex;
                 align-items: center;
                 gap: var(--space-xs);
@@ -4607,14 +4623,7 @@
                 color: var(--text-secondary);
             }
 
-            .user-menu-status .status-dot {
-                width: 8px;
-                height: 8px;
-                background: var(--accent-main);
-                border-radius: 50%;
-            }
-
-            .user-menu-status .status-text {
+            .user-menu-sync-line .status-text {
                 color: var(--accent-main);
                 font-weight: 600;
             }
@@ -4699,8 +4708,11 @@
                                 <img id="user-menu-photo" src="" alt="Photo" class="user-menu-photo">
                                 <div class="user-menu-info">
                                     <div class="user-menu-name" id="user-menu-name">Utilisateur</div>
-                                    <div class="user-menu-status">
+                                    <div class="user-menu-username">
                                         <span class="status-dot"></span>
+                                        <span id="user-menu-username-text">Utilisateur</span>
+                                    </div>
+                                    <div class="user-menu-sync-line">
                                         <span>Synchronisation cloud : </span>
                                         <span class="status-text" id="user-menu-sync-status">active</span>
                                     </div>
@@ -4838,10 +4850,6 @@
                 <div class="mobile-drawer-item" onclick="navigateFromDrawer('guide')">
                     <i data-lucide="info" style="color: var(--accent-main);"></i>
                     <span>Guide d'utilisation</span>
-                </div>
-                <div class="mobile-drawer-item" onclick="navigateFromDrawer('settings')">
-                    <i data-lucide="settings" style="color: var(--accent-main);"></i>
-                    <span>Paramètres</span>
                 </div>
                 <!-- Bouton Admin dans drawer (visible uniquement pour admin) -->
                 <div class="mobile-drawer-item" id="drawer-admin-btn" onclick="navigateFromDrawer('admin')" style="display: none; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3);">
@@ -15685,7 +15693,9 @@ Solutions possibles :
                 // Update user menu
                 const userMenuName = document.getElementById('user-menu-name');
                 const userMenuPhoto = document.getElementById('user-menu-photo');
+                const userMenuUsername = document.getElementById('user-menu-username-text');
                 if (userMenuName) userMenuName.textContent = displayName;
+                if (userMenuUsername) userMenuUsername.textContent = displayName;
                 if (userMenuPhoto) userMenuPhoto.src = photoURL;
 
                 // Legacy elements in settings
