@@ -651,14 +651,26 @@
             align-items: center;
             transition: all var(--transition-normal);
             border: 1px solid transparent;
+            max-width: 100%;
+            overflow: hidden;
         }
 
         #meals .food-item .food-name {
             flex: 1;
             min-width: 0;
-            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Fix overflow for meal cards container */
+        #meals .meal-card {
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        #meals .meal-card .food-list {
+            overflow: hidden;
         }
 
         #meals .food-item .food-macros {
@@ -4524,10 +4536,10 @@
             .header-title {
                 font-size: 2.2rem;
                 font-weight: 700;
-                color: #ffffff;
+                color: #ffffff !important;
                 display: flex;
                 align-items: center;
-                gap: var(--space-sm);
+                gap: var(--space-md);
                 margin: 0;
             }
 
@@ -4615,20 +4627,14 @@
                 flex: 1;
             }
 
-            .user-menu-name {
-                font-size: 1.1rem;
-                font-weight: 700;
-                color: var(--text-primary);
-                margin-bottom: 4px;
-            }
-
             .user-menu-username {
                 display: flex;
                 align-items: center;
                 gap: var(--space-xs);
-                font-size: 0.9rem;
+                font-size: 1rem;
+                font-weight: 600;
                 color: var(--text-primary);
-                margin-bottom: 2px;
+                margin-bottom: 4px;
             }
 
             .user-menu-username .status-dot {
@@ -4728,7 +4734,6 @@
                             <div class="user-menu-header">
                                 <img id="user-menu-photo" src="" alt="Photo" class="user-menu-photo">
                                 <div class="user-menu-info">
-                                    <div class="user-menu-name" id="user-menu-name">Utilisateur</div>
                                     <div class="user-menu-username">
                                         <span class="status-dot"></span>
                                         <span id="user-menu-username-text">Utilisateur</span>
@@ -4756,7 +4761,7 @@
                                 <i data-lucide="help-circle"></i>
                                 <span>Aide</span>
                             </button>
-                            <button class="user-menu-item" onclick="window.open('https://github.com/anthropics/claude-code/issues', '_blank'); closeUserMenu();">
+                            <button class="user-menu-item" onclick="openFeedbackModal(); closeUserMenu();">
                                 <i data-lucide="alert-triangle"></i>
                                 <span>Signaler un bug</span>
                             </button>
