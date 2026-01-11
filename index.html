@@ -4414,7 +4414,9 @@
             /* ===== NEW HEADER LAYOUT ===== */
             .app-header {
                 text-align: center;
-                padding: var(--space-lg) var(--space-xl);
+                padding: var(--space-md) var(--space-xl);
+                position: relative;
+                z-index: 1000;
             }
 
             .header-main-row {
@@ -4422,13 +4424,29 @@
                 align-items: center;
                 justify-content: space-between;
                 gap: var(--space-lg);
-                margin-bottom: var(--space-sm);
+            }
+
+            .header-left {
+                display: flex;
+                align-items: center;
+                flex: 1;
+                min-width: 0;
+            }
+
+            .header-center {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
             }
 
             .header-right {
                 display: flex;
                 align-items: center;
+                justify-content: flex-end;
                 gap: var(--space-md);
+                flex: 1;
+                min-width: 0;
             }
 
             /* Greeting badge (gauche) */
@@ -4442,6 +4460,7 @@
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 font-size: 0.95rem;
                 color: var(--text-primary);
+                white-space: nowrap;
             }
 
             .greeting-dot {
@@ -4521,6 +4540,7 @@
             /* Profile button wrapper */
             .header-profile-wrapper {
                 position: relative;
+                z-index: 10005;
             }
 
             .header-profile-btn {
@@ -4557,8 +4577,8 @@
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 border-radius: var(--radius-lg);
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-                z-index: 10003;
-                overflow: hidden;
+                z-index: 99999;
+                overflow: visible;
             }
 
             .user-menu.active {
@@ -4663,23 +4683,26 @@
 
         <header class="app-header">
             <div class="header-main-row">
-                <!-- Gauche: Salut + Nom -->
-                <div id="header-greeting" class="header-greeting" style="display: none;">
-                    <span class="greeting-dot"></span>
-                    <span>Salut, <strong id="header-username">Utilisateur</strong> !</span>
+                <!-- Gauche: Salut + Nom OU Bouton connexion -->
+                <div class="header-left">
+                    <div id="header-greeting" class="header-greeting" style="display: none;">
+                        <span class="greeting-dot"></span>
+                        <span>Salut, <strong id="header-username">Utilisateur</strong> !</span>
+                    </div>
+                    <button id="header-login-btn" class="header-btn header-login-btn" onclick="window.firebaseSignIn ? window.firebaseSignIn() : showToast('Chargement...')">
+                        <i data-lucide="log-in" style="width: 18px; height: 18px;"></i>
+                        <span>Connexion</span>
+                    </button>
                 </div>
-                <!-- Bouton connexion (visible si non connecté) -->
-                <button id="header-login-btn" class="header-btn header-login-btn" onclick="window.firebaseSignIn ? window.firebaseSignIn() : showToast('Chargement...')">
-                    <i data-lucide="log-in" style="width: 18px; height: 18px;"></i>
-                    <span>Connexion</span>
-                </button>
 
                 <!-- Centre: Logo NutriTrack -->
-                <h1 class="header-title">
-                    <img src="logo.svg" alt="Logo" class="header-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
-                    <span class="header-logo-fallback"><i data-lucide="target" style="width: 1em; height: 1em; color: white;"></i></span>
-                    NutriTrack
-                </h1>
+                <div class="header-center">
+                    <h1 class="header-title">
+                        <img src="logo.svg" alt="Logo" class="header-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+                        <span class="header-logo-fallback"><i data-lucide="target" style="width: 1em; height: 1em; color: white;"></i></span>
+                        NutriTrack
+                    </h1>
+                </div>
 
                 <!-- Droite: Sync + Photo profil -->
                 <div class="header-right">
