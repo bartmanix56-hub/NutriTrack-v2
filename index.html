@@ -4415,7 +4415,8 @@
                 text-align: center;
                 padding: var(--space-md) var(--space-xl);
                 position: relative;
-                z-index: 1000;
+                z-index: 9999;
+                overflow: visible;
             }
 
             .header-main-row {
@@ -4423,6 +4424,13 @@
                 align-items: center;
                 justify-content: space-between;
                 gap: var(--space-lg);
+                margin-bottom: var(--space-xs);
+            }
+
+            .header-subtitle {
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+                margin: 0;
             }
 
             .header-left {
@@ -4446,6 +4454,8 @@
                 gap: var(--space-md);
                 flex: 1;
                 min-width: 0;
+                overflow: visible;
+                position: relative;
             }
 
             /* Greeting badge (gauche) */
@@ -4512,9 +4522,9 @@
 
             /* Title */
             .header-title {
-                font-size: 1.8rem;
+                font-size: 2.2rem;
                 font-weight: 700;
-                color: var(--text-primary);
+                color: #ffffff;
                 display: flex;
                 align-items: center;
                 gap: var(--space-sm);
@@ -4759,6 +4769,7 @@
                     </div>
                 </div>
             </div>
+            <p class="header-subtitle">Prends le contrôle de ton alimentation</p>
         </header>
 
         <!-- App Layout with Sidebar -->
