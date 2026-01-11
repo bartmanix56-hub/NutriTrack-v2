@@ -4439,12 +4439,6 @@
                 margin-bottom: var(--space-xs);
             }
 
-            .header-subtitle {
-                font-size: 0.9rem;
-                color: var(--text-secondary);
-                margin: 0;
-            }
-
             .header-left {
                 display: flex;
                 align-items: center;
@@ -4532,30 +4526,39 @@
                 background: rgba(16, 185, 129, 0.1);
             }
 
-            /* Title */
+            /* Title - même style que home-brand */
             .header-title {
-                font-size: 2.2rem;
-                font-weight: 700;
+                font-size: 1.8rem;
+                font-weight: 800;
                 color: #ffffff !important;
                 display: flex;
                 align-items: center;
-                gap: var(--space-md);
+                gap: 12px;
                 margin: 0;
+                letter-spacing: -0.5px;
             }
 
             .header-logo {
-                height: 1.6em;
-                width: auto;
+                width: 40px;
+                height: 40px;
             }
 
             .header-logo-fallback {
                 display: none;
-                width: 1.6em;
-                height: 1.6em;
+                width: 40px;
+                height: 40px;
                 background: var(--accent-main);
                 border-radius: 8px;
                 align-items: center;
                 justify-content: center;
+            }
+
+            /* Subtitle */
+            .header-subtitle {
+                font-size: 1rem;
+                font-weight: 600;
+                color: var(--text-secondary);
+                margin: var(--space-xs) 0 0 0;
             }
 
             /* Profile button wrapper */
@@ -4825,10 +4828,6 @@
                     <span class="sidebar-icon"><i data-lucide="clipboard-list"></i></span>
                     <span class="sidebar-label">Repas Types</span>
                 </button>
-                <button class="sidebar-btn" data-tab="guide">
-                    <span class="sidebar-icon"><i data-lucide="info"></i></span>
-                    <span class="sidebar-label">Guide</span>
-                </button>
 
                 <!-- Bouton Admin (visible uniquement pour l'admin) -->
                 <button class="sidebar-btn" data-tab="admin" id="admin-sidebar-btn" style="display: none;">
@@ -4871,10 +4870,6 @@
                 <div class="mobile-drawer-item" onclick="navigateFromDrawer('meal-templates')">
                     <i data-lucide="clipboard-list" style="color: var(--accent-main);"></i>
                     <span>Repas Types</span>
-                </div>
-                <div class="mobile-drawer-item" onclick="navigateFromDrawer('guide')">
-                    <i data-lucide="info" style="color: var(--accent-main);"></i>
-                    <span>Guide d'utilisation</span>
                 </div>
                 <!-- Bouton Admin dans drawer (visible uniquement pour admin) -->
                 <div class="mobile-drawer-item" id="drawer-admin-btn" onclick="navigateFromDrawer('admin')" style="display: none; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3);">
