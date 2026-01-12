@@ -775,22 +775,42 @@
 
         .search-results::-webkit-scrollbar-thumb:hover  { background: var(--accent-main); }
 
-        /* Quick Add Results */
-        .quick-add-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
+        /* Quick Add Results - Global Dropdown */
+        #global-quick-add-results {
+            position: fixed;
             background: var(--bg-secondary);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--accent-main);
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(16, 185, 129, 0.3);
             pointer-events: all;
-            border-radius: var(--radius-md);
-            max-height: 300px;
+            border-radius: var(--radius-lg);
+            max-height: 400px;
             overflow-y: auto;
-            z-index: 200;
-            margin-top: var(--space-xs);
-            box-shadow: var(--shadow-lg);
+            z-index: 9999;
+            display: none;
+            min-width: 350px;
+            max-width: 500px;
+        }
+
+        #global-quick-add-results::-webkit-scrollbar { width: 8px; }
+        #global-quick-add-results::-webkit-scrollbar-track { background: var(--bg-tertiary); }
+        #global-quick-add-results::-webkit-scrollbar-thumb { background: var(--accent-main); border-radius: var(--radius-full); }
+
+        #global-quick-add-results .quick-add-item {
+            padding: var(--space-md) var(--space-lg);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        #global-quick-add-results .quick-add-item:last-child { border-bottom: none; }
+
+        #global-quick-add-results .quick-add-item:hover {
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        /* Legacy Quick Add Results (hidden, kept for compatibility) */
+        .quick-add-results {
+            display: none !important;
         }
 
         .quick-add-results::-webkit-scrollbar  { width: 6px; }
@@ -9195,27 +9215,70 @@ Solutions possibles :
 
         // ===== QUICK ADD SYSTEM =====
         let favoriteFoods = [];
-        let quickAddTimeout = null; // Pour debounce Firestore
+        let quickAddTimeout = null;
+        let currentQuickAddMealType = null;
+        let currentQuickAddInput = null;
 
         function loadFavoriteFoods() {
             const saved = localStorage.getItem('favoriteFoods');
             if (saved) { favoriteFoods = JSON.parse(saved); }
         }
 
-        function isFavorite(foodName)  { return favoriteFoods.includes(foodName); }
+        function isFavorite(foodName) { return favoriteFoods.includes(foodName); }
+
+        // Get global dropdown element
+        function getGlobalDropdown() {
+            return document.getElementById('global-quick-add-results');
+        }
+
+        // Position the global dropdown relative to input
+        function positionGlobalDropdown(input) {
+            const dropdown = getGlobalDropdown();
+            if (!dropdown || !input) return;
+
+            const rect = input.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            const viewportWidth = window.innerWidth;
+
+            // Calculate dropdown position
+            let top = rect.bottom + 4;
+            let left = rect.left;
+            let width = Math.max(rect.width, 350);
+
+            // Ensure dropdown doesn't go off-screen horizontally
+            if (left + width > viewportWidth) {
+                left = viewportWidth - width - 10;
+            }
+            if (left < 10) left = 10;
+
+            // If dropdown would go below viewport, position above input
+            const dropdownHeight = 400; // max-height
+            if (top + dropdownHeight > viewportHeight) {
+                top = rect.top - dropdownHeight - 4;
+                if (top < 10) top = rect.bottom + 4; // Fallback if no space above
+            }
+
+            dropdown.style.top = `${top}px`;
+            dropdown.style.left = `${left}px`;
+            dropdown.style.width = `${width}px`;
+        }
 
         function handleQuickAddSearch(mealType, query) {
-            const resultsDiv = document.getElementById(`quick-results-${mealType}`);
+            const input = document.getElementById(`quick-add-${mealType}`);
+            const dropdown = getGlobalDropdown();
 
-            if (query.length < 2)  {
-                resultsDiv.style.display = 'none';
+            currentQuickAddMealType = mealType;
+            currentQuickAddInput = input;
+
+            if (query.length < 2) {
+                dropdown.style.display = 'none';
                 return;
             }
 
-            // Annuler le timeout précédent
+            // Cancel previous timeout
             if (quickAddTimeout) clearTimeout(quickAddTimeout);
 
-            // Filter foods localement d'abord (résultats immédiats)
+            // Filter foods locally first (immediate results)
             const localFiltered = foodDatabase
                 .filter(food => food.name.toLowerCase().includes(query.toLowerCase()))
                 .sort((a, b) => {
@@ -9225,21 +9288,20 @@ Solutions possibles :
                     if (!aFav && bFav) return 1;
                     return a.name.localeCompare(b.name);
                 })
-                .slice(0, 8);
+                .slice(0, 10);
 
-            // Afficher résultats locaux immédiatement
+            // Display local results immediately
             if (localFiltered.length > 0) {
-                renderQuickAddResults(mealType, localFiltered, resultsDiv);
+                renderGlobalQuickAddResults(localFiltered);
             }
 
-            // Chercher dans Firestore avec debounce
+            // Search Firestore with debounce
             quickAddTimeout = setTimeout(async () => {
                 if (typeof window.searchAlimentsCommuns === 'function') {
                     try {
                         const firestoreResults = await window.searchAlimentsCommuns(query);
 
                         if (firestoreResults.length > 0) {
-                            // Convertir les résultats Firestore
                             const firestoreFoods = firestoreResults.map(item => ({
                                 name: item.name,
                                 calories: parseFloat(item.calories) || 0,
@@ -9253,7 +9315,7 @@ Solutions possibles :
                                 fromFirestore: true
                             }));
 
-                            // Fusionner : Firestore + local (sans doublons), favoris en premier
+                            // Merge: Firestore + local (no duplicates), favorites first
                             const existingNames = new Set(firestoreFoods.map(f => f.name.toLowerCase()));
                             const uniqueLocalResults = localFiltered.filter(f => !existingNames.has(f.name.toLowerCase()));
                             const allResults = [...firestoreFoods, ...uniqueLocalResults]
@@ -9264,10 +9326,10 @@ Solutions possibles :
                                     if (!aFav && bFav) return 1;
                                     return a.name.localeCompare(b.name);
                                 })
-                                .slice(0, 8);
+                                .slice(0, 10);
 
                             if (allResults.length > 0) {
-                                renderQuickAddResults(mealType, allResults, resultsDiv);
+                                renderGlobalQuickAddResults(allResults);
                             }
                         }
                     } catch (err) {
@@ -9277,11 +9339,14 @@ Solutions possibles :
             }, 300);
         }
 
-        function renderQuickAddResults(mealType, foods, resultsDiv) {
-            resultsDiv.innerHTML = foods.map(food => {
+        function renderGlobalQuickAddResults(foods) {
+            const dropdown = getGlobalDropdown();
+            if (!dropdown || !currentQuickAddMealType) return;
+
+            dropdown.innerHTML = foods.map(food => {
                 const displayName = (typeof getDisplayName === 'function') ? getDisplayName(food) : food.name;
                 return `
-                <div class="quick-add-item" onclick="quickAddFood('${mealType}', ${JSON.stringify(food).replace(/"/g, '&quot;')})">
+                <div class="quick-add-item" onclick="quickAddFood('${currentQuickAddMealType}', ${JSON.stringify(food).replace(/"/g, '&quot;')})">
                     <div class="quick-add-item-name">
                         ${isFavorite(food.name) ? '<span class="quick-add-favorite">⭐</span>' : ''}
                         ${displayName}
@@ -9289,9 +9354,17 @@ Solutions possibles :
                     </div>
                     <div class="quick-add-item-macros">
                         P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
-                    </div></div>
+                    </div>
+                </div>
             `}).join('');
-            resultsDiv.style.display = 'block';
+
+            positionGlobalDropdown(currentQuickAddInput);
+            dropdown.style.display = 'block';
+        }
+
+        // Legacy function for compatibility (no longer used)
+        function renderQuickAddResults(mealType, foods, resultsDiv) {
+            renderGlobalQuickAddResults(foods);
         }
 
         function quickAddFood(mealType, food) {
@@ -9308,23 +9381,39 @@ Solutions possibles :
             syncMealsToPlanning();
             updateRemainingWidget();
 
-            // Clear input and results
+            // Clear input and hide global dropdown
             const input = document.getElementById(`quick-add-${mealType}`);
-            const results = document.getElementById(`quick-results-${mealType}`);
-            input.value = '';
-            results.style.display = 'none';
+            const dropdown = getGlobalDropdown();
+            if (input) input.value = '';
+            if (dropdown) dropdown.style.display = 'none';
+            currentQuickAddMealType = null;
+            currentQuickAddInput = null;
 
             showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${food.name} ajouté (100g)`);
         }
 
-        // Close quick add results when clicking outside
+        // Close global quick add dropdown when clicking outside
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('.quick-add-results') && !e.target.id?.startsWith('quick-add-')) {
-                document.querySelectorAll('.quick-add-results').forEach(div => {
-                    div.style.display = 'none';
-                });
+            const dropdown = document.getElementById('global-quick-add-results');
+            if (!dropdown) return;
+
+            // Don't close if clicking inside dropdown or on a quick-add input
+            if (e.target.closest('#global-quick-add-results') || e.target.id?.startsWith('quick-add-')) {
+                return;
             }
+
+            dropdown.style.display = 'none';
+            currentQuickAddMealType = null;
+            currentQuickAddInput = null;
         });
+
+        // Reposition dropdown on scroll
+        document.addEventListener('scroll', () => {
+            const dropdown = document.getElementById('global-quick-add-results');
+            if (dropdown && dropdown.style.display === 'block' && currentQuickAddInput) {
+                positionGlobalDropdown(currentQuickAddInput);
+            }
+        }, true);
 
         // Render specific meal
         // Remove recipe from meal without clearing foods
@@ -10148,8 +10237,8 @@ Solutions possibles :
             const weekStart = currentWeekStart ? new Date(currentWeekStart) : getMonday(new Date());
             const daysShort = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
-            // Utiliser allDailyMeals ou un objet vide
-            const mealsData = (typeof allDailyMeals !== 'undefined' && allDailyMeals) ? allDailyMeals : {};
+            // TOUJOURS lire depuis localStorage pour avoir les données à jour
+            const mealsData = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
 
             let totalCal = 0;
             let closedDays = 0;
@@ -10158,7 +10247,7 @@ Solutions possibles :
             let html = daysShort.map((day, index) => {
                 const date = new Date(weekStart);
                 date.setDate(date.getDate() + index);
-                const dateKey = getDateKey(date);  // Utiliser getDateKey pour cohérence timezone
+                const dateKey = getDateKey(date);
                 const dayMeals = mealsData[dateKey] || {};
                 const isClosed = dayMeals.closed === true;
 
@@ -17453,5 +17542,8 @@ Solutions possibles :
             });
         });
     </script>
+
+    <!-- Global Quick Add Dropdown -->
+    <div id="global-quick-add-results"></div>
 </body>
 </html>
