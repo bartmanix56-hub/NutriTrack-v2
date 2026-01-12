@@ -665,7 +665,7 @@
 
         /* Fix overflow for meal cards container */
         #meals .meal-card {
-            overflow: hidden;
+            overflow: visible;
             max-width: 100%;
         }
 
@@ -10158,7 +10158,7 @@ Solutions possibles :
             let html = daysShort.map((day, index) => {
                 const date = new Date(weekStart);
                 date.setDate(date.getDate() + index);
-                const dateKey = date.toISOString().split('T')[0];
+                const dateKey = getDateKey(date);  // Utiliser getDateKey pour cohérence timezone
                 const dayMeals = mealsData[dateKey] || {};
                 const isClosed = dayMeals.closed === true;
 
