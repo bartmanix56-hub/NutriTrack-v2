@@ -10144,14 +10144,12 @@ Solutions possibles :
             const summaryBar = document.getElementById('week-summary-bar');
             if (!summaryBar) return;
 
-            // S'assurer que les données sont disponibles
-            if (!currentWeekStart || typeof allDailyMeals === 'undefined') {
-                console.warn('renderWeekSummary: données non disponibles');
-                return;
-            }
-
-            const weekStart = new Date(currentWeekStart);
+            // Utiliser la date actuelle si currentWeekStart n'est pas défini
+            const weekStart = currentWeekStart ? new Date(currentWeekStart) : getMonday(new Date());
             const daysShort = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+
+            // Utiliser allDailyMeals ou un objet vide
+            const mealsData = (typeof allDailyMeals !== 'undefined' && allDailyMeals) ? allDailyMeals : {};
 
             let totalCal = 0;
             let closedDays = 0;
@@ -10161,7 +10159,7 @@ Solutions possibles :
                 const date = new Date(weekStart);
                 date.setDate(date.getDate() + index);
                 const dateKey = date.toISOString().split('T')[0];
-                const dayMeals = allDailyMeals[dateKey] || {};
+                const dayMeals = mealsData[dateKey] || {};
                 const isClosed = dayMeals.closed === true;
 
                 // Calculer les calories du jour
