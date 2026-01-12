@@ -4439,17 +4439,18 @@
             align-items: center;
             gap: var(--space-xs);
             padding: var(--space-sm) var(--space-md);
-            background: rgba(168, 85, 247, 0.15);
+            background: var(--accent-purple);
             border: 1px solid var(--accent-purple);
             border-radius: var(--radius-md);
-            color: var(--accent-purple);
+            color: white;
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: var(--transition-normal);
         }
         .copy-yesterday-btn:hover {
-            background: rgba(168, 85, 247, 0.25);
+            background: #9333ea;
+            border-color: #9333ea;
         }
 
         /* === WIDGET IL TE RESTE CLIQUABLE (Premium) === */
@@ -10151,7 +10152,8 @@ Solutions possibles :
                 // Calculer les calories du jour
                 let dayCal = 0;
                 ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
-                    const foods = dayMeals[mealType] || [];
+                    const mealData = dayMeals[mealType];
+                    const foods = mealData?.foods || (Array.isArray(mealData) ? mealData : []);
                     foods.forEach(f => {
                         dayCal += (f.calories || 0) * (f.quantity || 100) / 100;
                     });
@@ -11852,7 +11854,15 @@ Solutions possibles :
             yesterday.setDate(yesterday.getDate() - 1);
             const yesterdayKey = yesterday.toISOString().split('T')[0];
 
-            if (allMeals[yesterdayKey] && Object.values(allMeals[yesterdayKey]).some(arr => arr && arr.length > 0)) {
+            // Fonction pour vérifier si un repas contient des aliments
+            const hasFoods = (meal) => {
+                if (!meal) return false;
+                if (Array.isArray(meal)) return meal.length > 0;
+                if (meal.foods && Array.isArray(meal.foods)) return meal.foods.length > 0;
+                return false;
+            };
+
+            if (allMeals[yesterdayKey] && Object.values(allMeals[yesterdayKey]).some(hasFoods)) {
                 sourceDate = yesterday;
                 sourceMeals = allMeals[yesterdayKey];
             } else {
@@ -11861,7 +11871,7 @@ Solutions possibles :
                     const checkDate = new Date(today);
                     checkDate.setDate(checkDate.getDate() - i);
                     const checkKey = checkDate.toISOString().split('T')[0];
-                    if (allMeals[checkKey] && Object.values(allMeals[checkKey]).some(arr => arr && arr.length > 0)) {
+                    if (allMeals[checkKey] && Object.values(allMeals[checkKey]).some(hasFoods)) {
                         sourceDate = checkDate;
                         sourceMeals = allMeals[checkKey];
                         break;
@@ -11904,7 +11914,8 @@ Solutions possibles :
 
             // Trouver le premier repas sans aliments
             for (const mealType of mealTypes) {
-                const foods = dayMeals[mealType] || [];
+                const mealData = dayMeals[mealType];
+                const foods = mealData?.foods || (Array.isArray(mealData) ? mealData : []);
                 if (foods.length === 0) {
                     // Scroll vers ce repas et focus sur le quick-add
                     const quickAddInput = document.getElementById(`quick-add-${mealType}`);
@@ -13227,7 +13238,7 @@ Solutions possibles :
             }).join('');
 
             const modal = document.createElement('div');
-            modal.className = 'custom-modal active';
+            modal.className = 'modal active';
             modal.innerHTML = `
                 <div class="modal-content" style="max-width: 400px;">
                     <h3 style="margin-bottom: var(--space-lg); display: flex; align-items: center; gap: var(--space-sm);">
@@ -13243,7 +13254,7 @@ Solutions possibles :
                         <input type="text" id="import-template-name" placeholder="Ex: Mon déjeuner habituel" style="width: 100%; padding: var(--space-md); background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary);">
                     </div>
                     <div style="display: flex; gap: var(--space-md);">
-                        <button onclick="this.closest('.custom-modal').remove()" class="btn" style="flex: 1; background: var(--bg-tertiary);">Annuler</button>
+                        <button onclick="this.closest('.modal').remove()" class="btn" style="flex: 1; background: var(--bg-tertiary);">Annuler</button>
                         <button onclick="executeImportMeal()" class="btn" style="flex: 1;">Importer</button>
                     </div>
                 </div>
@@ -13271,10 +13282,10 @@ Solutions possibles :
 
             // Mettre à jour l'affichage
             updateTemplateFoodsList();
-            updateTemplateTotals();
+            updateTemplateMacros();
 
             // Fermer le modal
-            document.querySelector('.custom-modal').remove();
+            document.querySelector('.modal.active').remove();
 
             // Scroll vers le formulaire
             document.getElementById('new-template-name').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -13508,7 +13519,7 @@ Solutions possibles :
             const options = targetMealTypes.map(m => `<option value="${m}">${mealNames[m]}</option>`).join('');
 
             const modal = document.createElement('div');
-            modal.className = 'custom-modal active';
+            modal.className = 'modal active';
             modal.innerHTML = `
                 <div class="modal-content" style="max-width: 350px;">
                     <h3 style="margin-bottom: var(--space-lg);"><i data-lucide="copy" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i> Copier ${mealNames[mealType]}</h3>
@@ -13517,7 +13528,7 @@ Solutions possibles :
                         ${options}
                     </select>
                     <div style="display: flex; gap: var(--space-md);">
-                        <button onclick="this.closest('.custom-modal').remove()" class="btn" style="flex: 1; background: var(--bg-tertiary);">Annuler</button>
+                        <button onclick="this.closest('.modal').remove()" class="btn" style="flex: 1; background: var(--bg-tertiary);">Annuler</button>
                         <button onclick="executeCopyMeal('${mealType}')" class="btn" style="flex: 1;">Copier</button>
                     </div>
                 </div>
@@ -13542,7 +13553,7 @@ Solutions possibles :
             renderMealFoods(targetMealType);
             updateDayTotals();
 
-            document.querySelector('.custom-modal').remove();
+            document.querySelector('.modal.active').remove();
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas copié');
             if (typeof lucide !== "undefined") lucide.createIcons();
         }
