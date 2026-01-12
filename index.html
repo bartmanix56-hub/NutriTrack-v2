@@ -4538,47 +4538,6 @@
             color: var(--accent-danger);
         }
 
-        /* === RÉSUMÉ SEMAINE (Premium) === */
-        .week-summary-bar {
-            display: flex;
-            gap: var(--space-sm);
-            padding: var(--space-md);
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-xl);
-            overflow-x: auto;
-            min-height: 70px;
-            align-items: stretch;
-        }
-        .week-day-summary {
-            flex: 1;
-            min-width: 70px;
-            text-align: center;
-            padding: var(--space-sm) var(--space-xs);
-            border-radius: var(--radius-sm);
-            background: rgba(255, 255, 255, 0.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 2px;
-        }
-        .week-day-summary.closed {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid var(--accent-main);
-        }
-        .week-day-summary .day-name {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .week-day-summary .day-cal {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
         /* === TENDANCES SUIVI (Premium) === */
         .tracking-trends {
             display: grid;
@@ -6163,11 +6122,6 @@
                     <button class="week-nav-btn this-week-btn" onclick="goToCurrentWeek()" style="background: var(--accent-purple); color: white; border-color: var(--accent-purple);">
                         <i data-lucide="calendar-check" style="width: 16px; height: 16px;"></i> Cette semaine
                     </button>
-                </div>
-
-                <!-- Premium: Résumé compact de la semaine -->
-                <div class="week-summary-bar" id="week-summary-bar">
-                    <!-- Rempli dynamiquement par renderWeekSummary() -->
                 </div>
 
                 <div class="week-grid" id="week-grid"></div></div></div>
@@ -9240,7 +9194,7 @@ Solutions possibles :
             const viewportHeight = window.innerHeight;
             const viewportWidth = window.innerWidth;
 
-            // Calculate dropdown position
+            // Calculate dropdown position - ALWAYS below input
             let top = rect.bottom + 4;
             let left = rect.left;
             let width = Math.max(rect.width, 350);
@@ -9251,16 +9205,15 @@ Solutions possibles :
             }
             if (left < 10) left = 10;
 
-            // If dropdown would go below viewport, position above input
-            const dropdownHeight = 400; // max-height
-            if (top + dropdownHeight > viewportHeight) {
-                top = rect.top - dropdownHeight - 4;
-                if (top < 10) top = rect.bottom + 4; // Fallback if no space above
-            }
+            // Dropdown always appears below - allow scrolling if needed
+            // Set a reasonable max-height based on available space
+            const availableHeight = viewportHeight - top - 10;
+            const maxHeight = Math.max(200, Math.min(availableHeight, 400));
 
             dropdown.style.top = `${top}px`;
             dropdown.style.left = `${left}px`;
             dropdown.style.width = `${width}px`;
+            dropdown.style.maxHeight = `${maxHeight}px`;
         }
 
         function handleQuickAddSearch(mealType, query) {
@@ -10228,74 +10181,9 @@ Solutions possibles :
             };
         }
 
-        // Premium: Afficher le résumé de la semaine
-        function renderWeekSummary() {
-            const summaryBar = document.getElementById('week-summary-bar');
-            if (!summaryBar) return;
-
-            // Utiliser la date actuelle si currentWeekStart n'est pas défini
-            const weekStart = currentWeekStart ? new Date(currentWeekStart) : getMonday(new Date());
-            const daysShort = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-
-            // TOUJOURS lire depuis localStorage pour avoir les données à jour
-            const mealsData = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
-
-            let totalCal = 0;
-            let closedDays = 0;
-            let daysWithData = 0;
-
-            let html = daysShort.map((day, index) => {
-                const date = new Date(weekStart);
-                date.setDate(date.getDate() + index);
-                const dateKey = getDateKey(date);
-                const dayMeals = mealsData[dateKey] || {};
-                const isClosed = dayMeals.closed === true;
-
-                // Calculer les calories du jour
-                let dayCal = 0;
-                ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
-                    const mealData = dayMeals[mealType];
-                    const foods = mealData?.foods || (Array.isArray(mealData) ? mealData : []);
-                    foods.forEach(f => {
-                        dayCal += (f.calories || 0) * (f.quantity || 100) / 100;
-                    });
-                });
-
-                if (dayCal > 0) {
-                    totalCal += dayCal;
-                    daysWithData++;
-                }
-                if (isClosed) closedDays++;
-
-                return `
-                    <div class="week-day-summary ${isClosed ? 'closed' : ''}">
-                        <div class="day-name">${day}</div>
-                        <div class="day-cal">${dayCal > 0 ? Math.round(dayCal) : '—'}</div>
-                        ${isClosed ? '<i data-lucide="check" style="width: 12px; height: 12px; color: var(--accent-main);"></i>' : ''}
-                    </div>
-                `;
-            }).join('');
-
-            // Ajouter le résumé global
-            const avgCal = daysWithData > 0 ? Math.round(totalCal / daysWithData) : 0;
-            html += `
-                <div class="week-day-summary" style="background: rgba(168, 85, 247, 0.15); border: 1px solid var(--accent-purple);">
-                    <div class="day-name" style="color: var(--accent-purple);">Moy.</div>
-                    <div class="day-cal" style="color: var(--accent-purple);">${avgCal > 0 ? avgCal : '—'}</div>
-                    <div style="font-size: 0.7rem; color: var(--text-secondary);">${closedDays}/7 jours</div>
-                </div>
-            `;
-
-            summaryBar.innerHTML = html;
-            if (typeof lucide !== "undefined") lucide.createIcons();
-        }
-
         function renderWeeklyPlan() {
             const weekStart = new Date(currentWeekStart);
             document.getElementById('current-week').textContent = `Semaine du ${formatDate(weekStart)}`;
-
-            // Premium: Render week summary
-            renderWeekSummary();
 
             const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
             const weekGrid = document.getElementById('week-grid');
