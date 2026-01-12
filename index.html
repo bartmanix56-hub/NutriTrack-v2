@@ -4521,32 +4521,40 @@
         /* === RÉSUMÉ SEMAINE (Premium) === */
         .week-summary-bar {
             display: flex;
-            gap: var(--space-md);
-            padding: var(--space-lg);
+            gap: var(--space-sm);
+            padding: var(--space-md);
             background: var(--bg-tertiary);
             border-radius: var(--radius-md);
             margin-bottom: var(--space-xl);
             overflow-x: auto;
+            min-height: 70px;
+            align-items: stretch;
         }
         .week-day-summary {
             flex: 1;
-            min-width: 80px;
+            min-width: 70px;
             text-align: center;
-            padding: var(--space-sm);
+            padding: var(--space-sm) var(--space-xs);
             border-radius: var(--radius-sm);
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2px;
         }
         .week-day-summary.closed {
             background: rgba(16, 185, 129, 0.15);
             border: 1px solid var(--accent-main);
         }
         .week-day-summary .day-name {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
+            font-weight: 600;
             color: var(--text-secondary);
-            margin-bottom: var(--space-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .week-day-summary .day-cal {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--text-primary);
         }
@@ -10133,10 +10141,17 @@ Solutions possibles :
 
         // Premium: Afficher le résumé de la semaine
         function renderWeekSummary() {
-            const weekStart = new Date(currentWeekStart);
-            const daysShort = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
             const summaryBar = document.getElementById('week-summary-bar');
             if (!summaryBar) return;
+
+            // S'assurer que les données sont disponibles
+            if (!currentWeekStart || typeof allDailyMeals === 'undefined') {
+                console.warn('renderWeekSummary: données non disponibles');
+                return;
+            }
+
+            const weekStart = new Date(currentWeekStart);
+            const daysShort = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
             let totalCal = 0;
             let closedDays = 0;
@@ -13238,24 +13253,22 @@ Solutions possibles :
             }).join('');
 
             const modal = document.createElement('div');
-            modal.className = 'modal active';
+            modal.className = 'custom-popup-overlay active';
+            modal.id = 'import-meal-popup';
             modal.innerHTML = `
-                <div class="modal-content" style="max-width: 400px;">
-                    <h3 style="margin-bottom: var(--space-lg); display: flex; align-items: center; gap: var(--space-sm);">
-                        <i data-lucide="download" style="width: 22px; height: 22px; color: var(--accent-main);"></i>
-                        Importer un repas
-                    </h3>
-                    <p style="margin-bottom: var(--space-lg); color: var(--text-secondary);">Choisis le repas à importer comme nouveau repas type :</p>
-                    <select id="import-meal-select" style="width: 100%; padding: var(--space-md); margin-bottom: var(--space-lg); background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); font-size: 1rem;">
+                <div class="custom-popup">
+                    <h3><i data-lucide="download" style="width: 20px; height: 20px; display: inline; vertical-align: middle; color: var(--accent-main);"></i> Importer un repas</h3>
+                    <p>Choisis le repas à importer comme nouveau repas type :</p>
+                    <select id="import-meal-select" style="width: 100%; padding: var(--space-md); margin-bottom: var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); color: var(--text-primary); font-size: 1rem;">
                         ${options}
                     </select>
-                    <div class="input-group" style="margin-bottom: var(--space-xl);">
-                        <label style="font-weight: 600; margin-bottom: var(--space-xs); display: block;">Nom du repas type</label>
-                        <input type="text" id="import-template-name" placeholder="Ex: Mon déjeuner habituel" style="width: 100%; padding: var(--space-md); background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary);">
+                    <div style="margin-bottom: var(--space-lg);">
+                        <label style="font-weight: 600; margin-bottom: var(--space-xs); display: block; font-size: 0.9rem;">Nom du repas type</label>
+                        <input type="text" id="import-template-name" placeholder="Ex: Mon déjeuner habituel" style="width: 100%; padding: var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); color: var(--text-primary);">
                     </div>
-                    <div style="display: flex; gap: var(--space-md);">
-                        <button onclick="this.closest('.modal').remove()" class="btn" style="flex: 1; background: var(--bg-tertiary);">Annuler</button>
-                        <button onclick="executeImportMeal()" class="btn" style="flex: 1;">Importer</button>
+                    <div class="custom-popup-buttons">
+                        <button onclick="document.getElementById('import-meal-popup').remove()" class="custom-popup-btn cancel">Annuler</button>
+                        <button onclick="executeImportMeal()" class="custom-popup-btn confirm">Importer</button>
                     </div>
                 </div>
             `;
@@ -13285,7 +13298,7 @@ Solutions possibles :
             updateTemplateMacros();
 
             // Fermer le modal
-            document.querySelector('.modal.active').remove();
+            document.getElementById('import-meal-popup').remove();
 
             // Scroll vers le formulaire
             document.getElementById('new-template-name').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -13519,17 +13532,18 @@ Solutions possibles :
             const options = targetMealTypes.map(m => `<option value="${m}">${mealNames[m]}</option>`).join('');
 
             const modal = document.createElement('div');
-            modal.className = 'modal active';
+            modal.className = 'custom-popup-overlay active';
+            modal.id = 'copy-meal-popup';
             modal.innerHTML = `
-                <div class="modal-content" style="max-width: 350px;">
-                    <h3 style="margin-bottom: var(--space-lg);"><i data-lucide="copy" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i> Copier ${mealNames[mealType]}</h3>
-                    <p style="margin-bottom: var(--space-lg); color: var(--text-secondary);">Copier les ${foods.length} aliment(s) vers :</p>
-                    <select id="copy-target-meal" style="width: 100%; padding: var(--space-md); margin-bottom: var(--space-xl); background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); font-size: 1rem;">
+                <div class="custom-popup">
+                    <h3><i data-lucide="copy" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i> Copier ${mealNames[mealType]}</h3>
+                    <p>Copier les ${foods.length} aliment(s) vers :</p>
+                    <select id="copy-target-meal" style="width: 100%; padding: var(--space-md); margin-bottom: var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); color: var(--text-primary); font-size: 1rem;">
                         ${options}
                     </select>
-                    <div style="display: flex; gap: var(--space-md);">
-                        <button onclick="this.closest('.modal').remove()" class="btn" style="flex: 1; background: var(--bg-tertiary);">Annuler</button>
-                        <button onclick="executeCopyMeal('${mealType}')" class="btn" style="flex: 1;">Copier</button>
+                    <div class="custom-popup-buttons">
+                        <button onclick="document.getElementById('copy-meal-popup').remove()" class="custom-popup-btn cancel">Annuler</button>
+                        <button onclick="executeCopyMeal('${mealType}')" class="custom-popup-btn confirm">Copier</button>
                     </div>
                 </div>
             `;
@@ -13553,7 +13567,7 @@ Solutions possibles :
             renderMealFoods(targetMealType);
             updateDayTotals();
 
-            document.querySelector('.modal.active').remove();
+            document.getElementById('copy-meal-popup').remove();
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas copié');
             if (typeof lucide !== "undefined") lucide.createIcons();
         }
@@ -16526,26 +16540,24 @@ Solutions possibles :
         if (typeof window.customPrompt !== 'function') {
             window.customPrompt = function(title, message, placeholder) {
                 return new Promise((resolve) => {
-                    // Créer modal temporaire
                     const modal = document.createElement('div');
-                    modal.className = 'modal active';
-                    modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 10001;';
+                    modal.className = 'custom-popup-overlay active';
                     modal.innerHTML = `
-                        <div style="background: var(--bg-secondary); border-radius: 16px; padding: 24px; max-width: 400px; width: 90%; text-align: center;">
-                            <h3 style="margin: 0 0 8px 0; color: var(--text-primary); font-size: 1.3rem;">${title}</h3>
-                            <p style="margin: 0 0 20px 0; color: var(--text-secondary); font-size: 0.95rem;">${message}</p>
-                            <input type="text" id="prompt-input" placeholder="${placeholder || ''}"
-                                style="width: 100%; padding: 12px 16px; background: var(--bg-tertiary); border: 2px solid var(--accent-main); border-radius: 8px; color: var(--text-primary); font-size: 1rem; margin-bottom: 16px; text-align: center;"
+                        <div class="custom-popup">
+                            <h3>${title}</h3>
+                            <p>${message}</p>
+                            <input type="text" id="prompt-input-fb" placeholder="${placeholder || ''}"
+                                style="width: 100%; padding: var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); color: var(--text-primary); font-size: 1rem; margin-bottom: var(--space-md);"
                                 maxlength="20">
-                            <div style="display: flex; gap: 12px;">
-                                <button id="prompt-cancel" style="flex: 1; padding: 12px; background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text-secondary); cursor: pointer;">Annuler</button>
-                                <button id="prompt-confirm" style="flex: 1; padding: 12px; background: var(--accent-main); border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Confirmer</button>
+                            <div class="custom-popup-buttons">
+                                <button id="prompt-cancel-fb" class="custom-popup-btn cancel">Annuler</button>
+                                <button id="prompt-confirm-fb" class="custom-popup-btn confirm">Confirmer</button>
                             </div>
                         </div>
                     `;
                     document.body.appendChild(modal);
 
-                    const input = modal.querySelector('#prompt-input');
+                    const input = modal.querySelector('#prompt-input-fb');
                     input.focus();
 
                     const cleanup = (value) => {
@@ -16553,8 +16565,8 @@ Solutions possibles :
                         resolve(value);
                     };
 
-                    modal.querySelector('#prompt-confirm').onclick = () => cleanup(input.value.trim());
-                    modal.querySelector('#prompt-cancel').onclick = () => cleanup(null);
+                    modal.querySelector('#prompt-confirm-fb').onclick = () => cleanup(input.value.trim());
+                    modal.querySelector('#prompt-cancel-fb').onclick = () => cleanup(null);
                     input.onkeypress = (e) => { if (e.key === 'Enter') cleanup(input.value.trim()); };
                     modal.onclick = (e) => { if (e.target === modal) cleanup(null); };
                 });
@@ -16859,26 +16871,13 @@ Solutions possibles :
 
                         // NEW DEVICE DETECTION: If no local data but cloud has data
                         if (!hasLocalData && cloudData.allDailyMeals) {
-                            // Automatically propose to restore
-                            if (typeof customConfirm === 'function') {
-                                customConfirm(
-                                    'Données trouvées !',
-                                    `Des données ont été trouvées sur ton compte cloud (sync: ${syncDate}). Veux-tu les récupérer sur cet appareil ?`,
-                                    { confirmText: 'Oui, récupérer mes données', cancelText: 'Non, repartir de zéro', isDanger: false }
-                                ).then((restore) => {
-                                    if (restore) {
-                                        restoreDataFromCloud(cloudData);
-                                        if (typeof showToast === 'function') {
-                                            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Données récupérées avec succès !');
-                                        }
-                                    } else {
-                                        // User wants fresh start - sync empty local to cloud
-                                        if (typeof showToast === 'function') {
-                                            showToast('<i data-lucide="info" class="icon-inline"></i> Tu repars de zéro sur cet appareil');
-                                        }
-                                    }
-                                });
+                            // Auto-restore without asking - simpler UX
+                            if (typeof showToast === 'function') {
+                                showToast('<i data-lucide="cloud-download" class="icon-inline"></i> Récupération automatique de tes données...', 'info');
                             }
+                            setTimeout(() => {
+                                restoreDataFromCloud(cloudData);
+                            }, 1000);
                         }
                     }
                 }
