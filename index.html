@@ -4521,32 +4521,40 @@
         /* === RÉSUMÉ SEMAINE (Premium) === */
         .week-summary-bar {
             display: flex;
-            gap: var(--space-md);
-            padding: var(--space-lg);
+            gap: var(--space-sm);
+            padding: var(--space-md);
             background: var(--bg-tertiary);
             border-radius: var(--radius-md);
             margin-bottom: var(--space-xl);
             overflow-x: auto;
+            min-height: 70px;
+            align-items: stretch;
         }
         .week-day-summary {
             flex: 1;
-            min-width: 80px;
+            min-width: 70px;
             text-align: center;
-            padding: var(--space-sm);
+            padding: var(--space-sm) var(--space-xs);
             border-radius: var(--radius-sm);
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2px;
         }
         .week-day-summary.closed {
             background: rgba(16, 185, 129, 0.15);
             border: 1px solid var(--accent-main);
         }
         .week-day-summary .day-name {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
+            font-weight: 600;
             color: var(--text-secondary);
-            margin-bottom: var(--space-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .week-day-summary .day-cal {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--text-primary);
         }
@@ -10133,10 +10141,17 @@ Solutions possibles :
 
         // Premium: Afficher le résumé de la semaine
         function renderWeekSummary() {
-            const weekStart = new Date(currentWeekStart);
-            const daysShort = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
             const summaryBar = document.getElementById('week-summary-bar');
             if (!summaryBar) return;
+
+            // S'assurer que les données sont disponibles
+            if (!currentWeekStart || typeof allDailyMeals === 'undefined') {
+                console.warn('renderWeekSummary: données non disponibles');
+                return;
+            }
+
+            const weekStart = new Date(currentWeekStart);
+            const daysShort = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
             let totalCal = 0;
             let closedDays = 0;
