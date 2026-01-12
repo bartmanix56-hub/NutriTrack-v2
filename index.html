@@ -4382,6 +4382,210 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
+
+        /* === ACCORDÉONS INFO (Premium) === */
+        .info-accordion {
+            background: rgba(16, 185, 129, 0.05);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--accent-main);
+            overflow: hidden;
+        }
+        .info-accordion-header {
+            padding: var(--space-md) var(--space-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: var(--transition-normal);
+        }
+        .info-accordion-header:hover {
+            background: rgba(16, 185, 129, 0.08);
+        }
+        .info-accordion-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        .info-accordion-chevron {
+            transition: transform 0.3s ease;
+            color: var(--text-secondary);
+        }
+        .info-accordion.open .info-accordion-chevron {
+            transform: rotate(180deg);
+        }
+        .info-accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            padding: 0 var(--space-lg);
+        }
+        .info-accordion.open .info-accordion-content {
+            max-height: 500px;
+            padding: 0 var(--space-lg) var(--space-lg);
+        }
+        .info-accordion-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* === BOUTON COPIER HIER (Premium) === */
+        .copy-yesterday-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid var(--accent-purple);
+            border-radius: var(--radius-md);
+            color: var(--accent-purple);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-normal);
+        }
+        .copy-yesterday-btn:hover {
+            background: rgba(168, 85, 247, 0.25);
+        }
+
+        /* === WIDGET IL TE RESTE CLIQUABLE (Premium) === */
+        .remaining-macro-clickable {
+            cursor: pointer;
+            transition: var(--transition-normal);
+            padding: var(--space-sm);
+            border-radius: var(--radius-md);
+        }
+        .remaining-macro-clickable:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: scale(1.05);
+        }
+
+        /* === MENU REPAS ⋯ (Premium) === */
+        .meal-menu-container {
+            position: relative;
+        }
+        .meal-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: var(--space-sm);
+            border-radius: var(--radius-sm);
+            transition: var(--transition-normal);
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        .meal-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+        .meal-menu-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            min-width: 150px;
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            display: none;
+        }
+        .meal-menu-dropdown.show {
+            display: block;
+        }
+        .meal-menu-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition-normal);
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+        .meal-menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .meal-menu-item.danger {
+            color: var(--accent-danger);
+        }
+
+        /* === RÉSUMÉ SEMAINE (Premium) === */
+        .week-summary-bar {
+            display: flex;
+            gap: var(--space-md);
+            padding: var(--space-lg);
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-xl);
+            overflow-x: auto;
+        }
+        .week-day-summary {
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+            padding: var(--space-sm);
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .week-day-summary.closed {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--accent-main);
+        }
+        .week-day-summary .day-name {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-xs);
+        }
+        .week-day-summary .day-cal {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* === TENDANCES SUIVI (Premium) === */
+        .tracking-trends {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-lg);
+            padding: var(--space-xl);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(56, 189, 248, 0.1));
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-2xl);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .trend-item {
+            text-align: center;
+        }
+        .trend-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-xs);
+        }
+        .trend-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-main);
+        }
+        .trend-value.negative {
+            color: var(--accent-protein);
+        }
+        .trend-value.positive {
+            color: var(--accent-main);
+        }
+
+        /* === ÉTAT VIDE CALCULATEUR (Premium) === */
+        .empty-state-value {
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -5328,14 +5532,21 @@
                                 <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" class="icon-inline"></i> Attention</div>
                                 <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">Valeur élevée : peut réduire les glucides et impacter la performance.</div></div></div>
 
-                        <!-- Info box lipides -->
-                        <div style="padding: var(--space-lg); background: rgba(16, 185, 129, 0.05); border-radius: var(--radius-md); border-left: 3px solid var(--accent-main);">
-                            <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
-                                <strong style="color: var(--text-primary);">ℹ️ À propos des lipides</strong><br>
-                                Les lipides sont essentiels à la santé hormonale, mais consomment beaucoup de calories. Des valeurs trop élevées peuvent réduire les glucides disponibles et impacter la performance. À l'inverse, une consommation trop faible peut entraîner fatigue et baisse hormonale.<br><br>
-                                <strong style="color: var(--text-primary);"><i data-lucide="lightbulb" class="icon-inline"></i> Recommandations</strong><br>
-                                Les valeurs proposées (0.8-1.0 g/kg) sont adaptées à la majorité des personnes actives et peuvent être ajustées selon ta réponse individuelle.
-                            </div></div></div>
+                        <!-- Info box lipides - Accordéon -->
+                        <div class="info-accordion" onclick="this.classList.toggle('open')">
+                            <div class="info-accordion-header">
+                                <div class="info-accordion-title">
+                                    <span>ℹ️</span>
+                                    <span>À propos des lipides</span>
+                                </div>
+                                <i data-lucide="chevron-down" class="info-accordion-chevron" style="width: 18px; height: 18px;"></i>
+                            </div>
+                            <div class="info-accordion-content">
+                                <p>Les lipides sont essentiels à la santé hormonale, mais consomment beaucoup de calories. Des valeurs trop élevées peuvent réduire les glucides disponibles et impacter la performance. À l'inverse, une consommation trop faible peut entraîner fatigue et baisse hormonale.</p>
+                                <p style="margin-top: var(--space-md);"><strong style="color: var(--text-primary);"><i data-lucide="lightbulb" class="icon-inline"></i> Recommandations</strong><br>
+                                Les valeurs proposées (0.8-1.0 g/kg) sont adaptées à la majorité des personnes actives et peuvent être ajustées selon ta réponse individuelle.</p>
+                            </div>
+                        </div></div>
 
                     <!-- Maintain options -->
                     <div id="maintain-options" style="display: none;">
@@ -5400,14 +5611,21 @@
                                     <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" class="icon-inline"></i> Attention</div>
                                     <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">Valeur élevée : peut réduire les glucides et impacter la performance.</div></div></div>
 
-                            <!-- Info box lipides -->
-                            <div style="padding: var(--space-lg); background: rgba(16, 185, 129, 0.05); border-radius: var(--radius-md); border-left: 3px solid var(--accent-main);">
-                                <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
-                                    <strong style="color: var(--text-primary);">ℹ️ À propos des lipides</strong><br>
-                                    Les lipides sont essentiels à la santé hormonale, mais consomment beaucoup de calories. Des valeurs trop élevées peuvent réduire les glucides disponibles et impacter la performance. À l'inverse, une consommation trop faible peut entraîner fatigue et baisse hormonale.<br><br>
-                                    <strong style="color: var(--text-primary);"><i data-lucide="lightbulb" class="icon-inline"></i> Recommandations</strong><br>
-                                    Les valeurs proposées (0.8-1.0 g/kg) sont adaptées à la majorité des personnes actives et peuvent être ajustées selon ta réponse individuelle.
-                                </div></div></div></div></div></div>
+                            <!-- Info box lipides - Accordéon -->
+                            <div class="info-accordion" onclick="this.classList.toggle('open')">
+                                <div class="info-accordion-header">
+                                    <div class="info-accordion-title">
+                                        <span>ℹ️</span>
+                                        <span>À propos des lipides</span>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="info-accordion-chevron" style="width: 18px; height: 18px;"></i>
+                                </div>
+                                <div class="info-accordion-content">
+                                    <p>Les lipides sont essentiels à la santé hormonale, mais consomment beaucoup de calories. Des valeurs trop élevées peuvent réduire les glucides disponibles et impacter la performance. À l'inverse, une consommation trop faible peut entraîner fatigue et baisse hormonale.</p>
+                                    <p style="margin-top: var(--space-md);"><strong style="color: var(--text-primary);"><i data-lucide="lightbulb" class="icon-inline"></i> Recommandations</strong><br>
+                                    Les valeurs proposées (0.8-1.0 g/kg) sont adaptées à la majorité des personnes actives et peuvent être ajustées selon ta réponse individuelle.</p>
+                                </div>
+                            </div></div></div></div></div>
 
             <!-- Warning box for macro validation -->
             <div id="macro-warning" style="display: none; margin-bottom: var(--space-2xl); padding: var(--space-xl); background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--accent-danger); border-radius: var(--radius-lg); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);">
@@ -5424,87 +5642,97 @@
             <div class="card" id="results" style="display: none;">
                 <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="bar-chart-3" style="width: 28px; height: 28px; color: var(--accent-ui);"></i>Tes Résultats</h2>
 
-                <!-- BMR, TDEE et IMC -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-lg); margin-bottom: var(--space-3xl); padding: var(--space-xl); background: var(--bg-tertiary); border-radius: var(--radius-md); border-left: 3px solid var(--accent-main);">
-                    <div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-xs);">Métabolisme de base (BMR)</div>
-                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);" id="bmr-display">0 kcal</div>
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--space-xs);">Ce que tu brûles au repos</div></div>
-                    <div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-xs);">Dépense journalière (TDEE)</div>
-                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-main);" id="tdee-display">0 kcal</div>
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--space-xs);">Ce que tu dépenses vraiment</div></div>
-                    <div style="position: relative;">
-                        <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-xs);">IMC (Indice de Masse Corporelle)</div>
+                <!-- Message état vide -->
+                <div id="results-empty-state" style="text-align: center; padding: var(--space-2xl); color: var(--text-secondary); font-size: 0.95rem;">
+                    <i data-lucide="calculator" style="width: 48px; height: 48px; opacity: 0.3; margin-bottom: var(--space-md);"></i>
+                    <p>Renseigne ton profil puis clique <strong style="color: var(--accent-main);">"Calculer mes Macros"</strong></p>
+                </div>
 
-                        <!-- IMC toujours visible -->
-                        <div style="position: relative; min-height: 60px;">
-                            <div style="font-size: 1.5rem; font-weight: 700;" id="imc-display-blur">0</div>
-                            <div style="font-size: 0.9rem; margin-top: var(--space-xs);" id="imc-category-blur">-</div>
-                        </div></div></div>
+                <!-- Contenu des résultats (caché par défaut jusqu'au calcul) -->
+                <div id="results-content" style="display: none;">
+                    <!-- BMR, TDEE et IMC -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-lg); margin-bottom: var(--space-3xl); padding: var(--space-xl); background: var(--bg-tertiary); border-radius: var(--radius-md); border-left: 3px solid var(--accent-main);">
+                        <div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-xs);">Métabolisme de base (BMR)</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);" id="bmr-display">— kcal</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--space-xs);">Ce que tu brûles au repos</div></div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-xs);">Dépense journalière (TDEE)</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-main);" id="tdee-display">— kcal</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--space-xs);">Ce que tu dépenses vraiment</div></div>
+                        <div style="position: relative;">
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-xs);">IMC (Indice de Masse Corporelle)</div>
 
-                <h3 style="margin-bottom: var(--space-xl); font-size: 1.2rem;">Tes Objectifs Macros :</h3>
+                            <!-- IMC toujours visible -->
+                            <div style="position: relative; min-height: 60px;">
+                                <div style="font-size: 1.5rem; font-weight: 700;" id="imc-display-blur">—</div>
+                                <div style="font-size: 0.9rem; margin-top: var(--space-xs);" id="imc-category-blur">—</div>
+                            </div></div></div>
 
-                <div class="grid-3">
-                    <div class="macro-display">
-                        <div class="macro-label">Protéines</div>
-                        <div class="macro-value protein" id="targetProtein">0</div>
-                        <div class="macro-unit">grammes</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill protein" id="proteinBar" style="width: 0%"></div></div></div>
+                    <h3 style="margin-bottom: var(--space-xl); font-size: 1.2rem;">Tes Objectifs Macros :</h3>
 
-                    <div class="macro-display">
-                        <div class="macro-label">Glucides</div>
-                        <div class="macro-value carbs" id="targetCarbs">0</div>
-                        <div class="macro-unit">grammes</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill carbs" id="carbsBar" style="width: 0%"></div></div></div>
+                    <div class="grid-3">
+                        <div class="macro-display">
+                            <div class="macro-label">Protéines</div>
+                            <div class="macro-value protein" id="targetProtein">—</div>
+                            <div class="macro-unit">grammes</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill protein" id="proteinBar" style="width: 0%"></div></div></div>
 
-                    <div class="macro-display">
-                        <div class="macro-label">Lipides</div>
-                        <div class="macro-value fat" id="targetFat">0</div>
-                        <div class="macro-unit">grammes</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill fat" id="fatBar" style="width: 0%"></div></div></div></div>
+                        <div class="macro-display">
+                            <div class="macro-label">Glucides</div>
+                            <div class="macro-value carbs" id="targetCarbs">—</div>
+                            <div class="macro-unit">grammes</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill carbs" id="carbsBar" style="width: 0%"></div></div></div>
 
-                <div class="summary-grid">
-                    <div class="summary-card protein-card">
-                        <div class="summary-label">Protéines</div>
-                        <div class="summary-value" id="proteinCal">0</div>
-                        <div class="summary-label">kcal</div></div>
-                    <div class="summary-card carbs-card">
-                        <div class="summary-label">Glucides</div>
-                        <div class="summary-value" id="carbsCal">0</div>
-                        <div class="summary-label">kcal</div></div>
-                    <div class="summary-card fat-card">
-                        <div class="summary-label">Lipides</div>
-                        <div class="summary-value" id="fatCal">0</div>
-                        <div class="summary-label">kcal</div></div>
-                    <div class="summary-card total-card">
-                        <div class="summary-label">Total</div>
-                        <div class="summary-value" id="totalCal">0</div>
-                        <div class="summary-label">kcal / jour</div></div></div>
+                        <div class="macro-display">
+                            <div class="macro-label">Lipides</div>
+                            <div class="macro-value fat" id="targetFat">—</div>
+                            <div class="macro-unit">grammes</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill fat" id="fatBar" style="width: 0%"></div></div></div></div>
 
-                <!-- CTA après calcul -->
-                <div style="margin-top: var(--space-3xl); padding: var(--space-2xl); background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%); border: 2px solid var(--accent-main); border-radius: var(--radius-lg);">
-                    <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-xl); display: flex; align-items: center; gap: var(--space-md);">
-                        <i data-lucide="rocket" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>Et maintenant ?
-                    </h3>
+                    <div class="summary-grid">
+                        <div class="summary-card protein-card">
+                            <div class="summary-label">Protéines</div>
+                            <div class="summary-value" id="proteinCal">—</div>
+                            <div class="summary-label">kcal</div></div>
+                        <div class="summary-card carbs-card">
+                            <div class="summary-label">Glucides</div>
+                            <div class="summary-value" id="carbsCal">—</div>
+                            <div class="summary-label">kcal</div></div>
+                        <div class="summary-card fat-card">
+                            <div class="summary-label">Lipides</div>
+                            <div class="summary-value" id="fatCal">—</div>
+                            <div class="summary-label">kcal</div></div>
+                        <div class="summary-card total-card">
+                            <div class="summary-label">Total</div>
+                            <div class="summary-value" id="totalCal">—</div>
+                            <div class="summary-label">kcal / jour</div></div></div>
 
-                    <div style="display: flex; gap: var(--space-lg); margin-bottom: var(--space-xl); flex-wrap: wrap;">
-                        <button class="btn" onclick="exportMacrosAsImage()" style="flex: 1; min-width: 200px; display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
-                            <i data-lucide="camera" style="width: 18px; height: 18px;"></i> Télécharger en image
-                        </button>
-                        <button class="btn" onclick="document.querySelector('[data-tab=&quot;meals&quot;]').click(); window.scrollTo({top: 0, behavior: 'smooth'});" style="flex: 1; min-width: 200px; background: var(--accent-purple); display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
-                            <i data-lucide="calendar" style="width: 18px; height: 18px;"></i> Aller à Mes Repas
-                        </button>
-                    </div>
+                    <!-- CTA après calcul -->
+                    <div style="margin-top: var(--space-3xl); padding: var(--space-2xl); background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%); border: 2px solid var(--accent-main); border-radius: var(--radius-lg);">
+                        <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-xl); display: flex; align-items: center; gap: var(--space-md);">
+                            <i data-lucide="rocket" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>Et maintenant ?
+                        </h3>
 
-                    <div style="padding: var(--space-lg); background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-md); border-left: 3px solid var(--accent-main);">
-                        <p style="margin: 0; color: var(--text-primary); font-size: 0.95rem; line-height: 1.7;">
-                            <div style="display: flex; align-items: start; gap: var(--space-xs);"><i data-lucide="alert-circle" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 3px;"></i><div><strong>Bon à savoir :</strong> Ces valeurs sont un point de départ. Suis-les pendant <strong>10-14 jours</strong>, puis ajuste selon ton ressenti : énergie, humeur, résultats sur la balance. Ton corps te donnera les meilleurs indices.</div></div>
-                        </p>
-                    </div></div></div></div>
+                        <div style="display: flex; gap: var(--space-lg); margin-bottom: var(--space-xl); flex-wrap: wrap;">
+                            <button class="btn" onclick="exportMacrosAsImage()" style="flex: 1; min-width: 200px; display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
+                                <i data-lucide="camera" style="width: 18px; height: 18px;"></i> Télécharger en image
+                            </button>
+                            <button class="btn" onclick="document.querySelector('[data-tab=&quot;meals&quot;]').click(); window.scrollTo({top: 0, behavior: 'smooth'});" style="flex: 1; min-width: 200px; background: var(--accent-purple); display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
+                                <i data-lucide="calendar" style="width: 18px; height: 18px;"></i> Aller à Mes Repas
+                            </button>
+                        </div>
+
+                        <div style="padding: var(--space-lg); background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-md); border-left: 3px solid var(--accent-main);">
+                            <p style="margin: 0; color: var(--text-primary); font-size: 0.95rem; line-height: 1.7;">
+                                <div style="display: flex; align-items: start; gap: var(--space-xs);"><i data-lucide="alert-circle" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 3px;"></i><div><strong>Bon à savoir :</strong> Ces valeurs sont un point de départ. Suis-les pendant <strong>10-14 jours</strong>, puis ajuste selon ton ressenti : énergie, humeur, résultats sur la balance. Ton corps te donnera les meilleurs indices.</div></div>
+                            </p>
+                        </div></div>
+                </div><!-- Fin #results-content -->
+            </div></div>
 
         <!-- Meals Tab -->
         <div id="meals" class="tab-content">
@@ -5544,6 +5772,11 @@
                         <i data-lucide="calendar-check" style="width: 18px; height: 18px;"></i>
                         <span class="today-btn-text">Aujourd'hui</span>
                     </button>
+                    <!-- Premium: Bouton Copier hier -->
+                    <button class="copy-yesterday-btn" onclick="copyYesterdayMeals()" title="Copier les repas d'hier">
+                        <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
+                        <span>Copier hier</span>
+                    </button>
                 </div>
             </div>
 
@@ -5556,16 +5789,17 @@
                             <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">Il te reste</div>
                             <div style="font-size: 0.85rem; color: var(--text-secondary);">Pour atteindre tes objectifs du jour</div></div></div>
                     <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-lg); flex: 1; max-width: 650px;">
-                        <div style="text-align: center;">
+                        <!-- Premium: Macros cliquables -->
+                        <div class="remaining-macro-clickable" onclick="scrollToNextEmptyMeal()" style="text-align: center;" title="Cliquer pour ajouter des protéines">
                             <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Protéines</div>
                             <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-protein);" id="remaining-protein">0g</div></div>
-                        <div style="text-align: center;">
+                        <div class="remaining-macro-clickable" onclick="scrollToNextEmptyMeal()" style="text-align: center;" title="Cliquer pour ajouter des glucides">
                             <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Glucides</div>
                             <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-carbs);" id="remaining-carbs">0g</div></div>
-                        <div style="text-align: center;">
+                        <div class="remaining-macro-clickable" onclick="scrollToNextEmptyMeal()" style="text-align: center;" title="Cliquer pour ajouter des lipides">
                             <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Lipides</div>
                             <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-fat);" id="remaining-fat">0g</div></div>
-                        <div style="text-align: center;">
+                        <div class="remaining-macro-clickable" onclick="scrollToNextEmptyMeal()" style="text-align: center;" title="Cliquer pour ajouter des calories">
                             <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Calories</div>
                             <div style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);" id="remaining-cal">0 kcal</div></div>
                         <div style="text-align: center; border-left: 1px solid rgba(255,255,255,0.1); padding-left: var(--space-lg);">
@@ -5590,9 +5824,14 @@
                         </div>
                         <div style="display: flex; align-items: center; gap: var(--space-md);">
                             <div style="font-weight: 700; color: var(--accent-ui);" id="breakfast-total">0 kcal</div>
-                            <button onclick="clearMeal('breakfast')" class="meal-clear-btn" title="Vider ce repas">
-                                <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
-                            </button>
+                            <!-- Premium: Menu ⋯ -->
+                            <div class="meal-menu-container">
+                                <button class="meal-menu-btn" onclick="toggleMealMenu('breakfast')" title="Options du repas">⋯</button>
+                                <div class="meal-menu-dropdown" id="meal-menu-breakfast">
+                                    <div class="meal-menu-item" onclick="copyMealTo('breakfast')"><i data-lucide="copy" style="width: 16px; height: 16px;"></i> Copier vers...</div>
+                                    <div class="meal-menu-item danger" onclick="clearMeal('breakfast'); closeMealMenus()"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Vider</div>
+                                </div>
+                            </div>
                         </div></div>
                     <div class="food-list" id="breakfast-foods"></div>
                     <div id="breakfast-recipe" style="display: none; margin-top: var(--space-sm); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
@@ -5637,9 +5876,14 @@
                         </div>
                         <div style="display: flex; align-items: center; gap: var(--space-md);">
                             <div style="font-weight: 700; color: var(--accent-ui);" id="lunch-total">0 kcal</div>
-                            <button onclick="clearMeal('lunch')" class="meal-clear-btn" title="Vider ce repas">
-                                <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
-                            </button>
+                            <!-- Premium: Menu ⋯ -->
+                            <div class="meal-menu-container">
+                                <button class="meal-menu-btn" onclick="toggleMealMenu('lunch')" title="Options du repas">⋯</button>
+                                <div class="meal-menu-dropdown" id="meal-menu-lunch">
+                                    <div class="meal-menu-item" onclick="copyMealTo('lunch')"><i data-lucide="copy" style="width: 16px; height: 16px;"></i> Copier vers...</div>
+                                    <div class="meal-menu-item danger" onclick="clearMeal('lunch'); closeMealMenus()"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Vider</div>
+                                </div>
+                            </div>
                         </div></div>
                     <div class="food-list" id="lunch-foods"></div>
                     <div id="lunch-recipe" style="display: none; margin-top: var(--space-sm); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
@@ -5684,9 +5928,14 @@
                         </div>
                         <div style="display: flex; align-items: center; gap: var(--space-md);">
                             <div style="font-weight: 700; color: var(--accent-ui);" id="snack-total">0 kcal</div>
-                            <button onclick="clearMeal('snack')" class="meal-clear-btn" title="Vider ce repas">
-                                <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
-                            </button>
+                            <!-- Premium: Menu ⋯ -->
+                            <div class="meal-menu-container">
+                                <button class="meal-menu-btn" onclick="toggleMealMenu('snack')" title="Options du repas">⋯</button>
+                                <div class="meal-menu-dropdown" id="meal-menu-snack">
+                                    <div class="meal-menu-item" onclick="copyMealTo('snack')"><i data-lucide="copy" style="width: 16px; height: 16px;"></i> Copier vers...</div>
+                                    <div class="meal-menu-item danger" onclick="clearMeal('snack'); closeMealMenus()"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Vider</div>
+                                </div>
+                            </div>
                         </div></div>
                     <div class="food-list" id="snack-foods"></div>
                     <div id="snack-recipe" style="display: none; margin-top: var(--space-sm); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
@@ -5731,9 +5980,14 @@
                         </div>
                         <div style="display: flex; align-items: center; gap: var(--space-md);">
                             <div style="font-weight: 700; color: var(--accent-ui);" id="dinner-total">0 kcal</div>
-                            <button onclick="clearMeal('dinner')" class="meal-clear-btn" title="Vider ce repas">
-                                <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
-                            </button>
+                            <!-- Premium: Menu ⋯ -->
+                            <div class="meal-menu-container">
+                                <button class="meal-menu-btn" onclick="toggleMealMenu('dinner')" title="Options du repas">⋯</button>
+                                <div class="meal-menu-dropdown" id="meal-menu-dinner">
+                                    <div class="meal-menu-item" onclick="copyMealTo('dinner')"><i data-lucide="copy" style="width: 16px; height: 16px;"></i> Copier vers...</div>
+                                    <div class="meal-menu-item danger" onclick="clearMeal('dinner'); closeMealMenus()"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Vider</div>
+                                </div>
+                            </div>
                         </div></div>
                     <div class="food-list" id="dinner-foods"></div>
                     <div id="dinner-recipe" style="display: none; margin-top: var(--space-sm); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
@@ -5877,7 +6131,14 @@
                     <button class="week-nav-btn" onclick="changeWeek(1)">Semaine suiv. <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i></button>
                 </div>
                 <div style="text-align: center; margin-bottom: var(--space-xl);">
-                    <button class="week-nav-btn this-week-btn" onclick="goToCurrentWeek()">Cette semaine</button>
+                    <button class="week-nav-btn this-week-btn" onclick="goToCurrentWeek()" style="background: var(--accent-purple); color: white; border-color: var(--accent-purple);">
+                        <i data-lucide="calendar-check" style="width: 16px; height: 16px;"></i> Cette semaine
+                    </button>
+                </div>
+
+                <!-- Premium: Résumé compact de la semaine -->
+                <div class="week-summary-bar" id="week-summary-bar">
+                    <!-- Rempli dynamiquement par renderWeekSummary() -->
                 </div>
 
                 <div class="week-grid" id="week-grid"></div></div></div>
@@ -5982,6 +6243,14 @@
                             Enregistre tes repas favoris pour les réutiliser facilement
                         </p>
                     </div></div></div>
+
+            <!-- Premium: Bouton importer depuis repas du jour -->
+            <div style="margin-bottom: var(--space-xl); display: flex; gap: var(--space-md); flex-wrap: wrap;">
+                <button class="copy-yesterday-btn" onclick="importMealFromToday()" style="background: rgba(16, 185, 129, 0.15); border-color: var(--accent-main); color: var(--accent-main);">
+                    <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+                    <span>Importer depuis un repas du jour</span>
+                </button>
+            </div>
 
             <!-- Create New Template Card -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); margin-bottom: var(--space-3xl);">
@@ -6161,6 +6430,22 @@
                 </div>
 
                 <button class="btn" onclick="saveTracking()" style="display: flex; align-items: center; gap: var(--space-sm);"><i data-lucide="save" style="width: 18px; height: 18px;"></i> Enregistrer</button>
+
+                <!-- Premium: Tendances -->
+                <div class="tracking-trends" id="tracking-trends" style="margin-top: var(--space-2xl);">
+                    <div class="trend-item">
+                        <div class="trend-label"><i data-lucide="trending-down" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Évolution 14 jours</div>
+                        <div class="trend-value" id="trend-14d">—</div>
+                    </div>
+                    <div class="trend-item">
+                        <div class="trend-label"><i data-lucide="scale" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Moyenne 7 jours</div>
+                        <div class="trend-value" id="trend-7d-avg">—</div>
+                    </div>
+                    <div class="trend-item">
+                        <div class="trend-label"><i data-lucide="activity" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Dernière mesure</div>
+                        <div class="trend-value" id="trend-last">—</div>
+                    </div>
+                </div>
 
                 <div id="tracking-history" style="margin-top: 40px;">
                     <h3 style="margin-bottom: 20px; font-size: 1.5rem;">Ton historique</h3>
@@ -8506,6 +8791,11 @@ Solutions possibles :
             }, 100);
 
             document.getElementById('results').style.display = 'block';
+            // Premium: Cacher l'état vide et afficher le contenu
+            const emptyState = document.getElementById('results-empty-state');
+            const resultsContent = document.getElementById('results-content');
+            if (emptyState) emptyState.style.display = 'none';
+            if (resultsContent) resultsContent.style.display = 'block';
             if (typeof lucide !== "undefined") lucide.createIcons();
 
             // Sauvegarder dans localStorage (incluant IMC)
@@ -9840,9 +10130,68 @@ Solutions possibles :
             };
         }
 
+        // Premium: Afficher le résumé de la semaine
+        function renderWeekSummary() {
+            const weekStart = new Date(currentWeekStart);
+            const daysShort = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+            const summaryBar = document.getElementById('week-summary-bar');
+            if (!summaryBar) return;
+
+            let totalCal = 0;
+            let closedDays = 0;
+            let daysWithData = 0;
+
+            let html = daysShort.map((day, index) => {
+                const date = new Date(weekStart);
+                date.setDate(date.getDate() + index);
+                const dateKey = date.toISOString().split('T')[0];
+                const dayMeals = allDailyMeals[dateKey] || {};
+                const isClosed = dayMeals.closed === true;
+
+                // Calculer les calories du jour
+                let dayCal = 0;
+                ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
+                    const foods = dayMeals[mealType] || [];
+                    foods.forEach(f => {
+                        dayCal += (f.calories || 0) * (f.quantity || 100) / 100;
+                    });
+                });
+
+                if (dayCal > 0) {
+                    totalCal += dayCal;
+                    daysWithData++;
+                }
+                if (isClosed) closedDays++;
+
+                return `
+                    <div class="week-day-summary ${isClosed ? 'closed' : ''}">
+                        <div class="day-name">${day}</div>
+                        <div class="day-cal">${dayCal > 0 ? Math.round(dayCal) : '—'}</div>
+                        ${isClosed ? '<i data-lucide="check" style="width: 12px; height: 12px; color: var(--accent-main);"></i>' : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // Ajouter le résumé global
+            const avgCal = daysWithData > 0 ? Math.round(totalCal / daysWithData) : 0;
+            html += `
+                <div class="week-day-summary" style="background: rgba(168, 85, 247, 0.15); border: 1px solid var(--accent-purple);">
+                    <div class="day-name" style="color: var(--accent-purple);">Moy.</div>
+                    <div class="day-cal" style="color: var(--accent-purple);">${avgCal > 0 ? avgCal : '—'}</div>
+                    <div style="font-size: 0.7rem; color: var(--text-secondary);">${closedDays}/7 jours</div>
+                </div>
+            `;
+
+            summaryBar.innerHTML = html;
+            if (typeof lucide !== "undefined") lucide.createIcons();
+        }
+
         function renderWeeklyPlan() {
             const weekStart = new Date(currentWeekStart);
             document.getElementById('current-week').textContent = `Semaine du ${formatDate(weekStart)}`;
+
+            // Premium: Render week summary
+            renderWeekSummary();
 
             const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
             const weekGrid = document.getElementById('week-grid');
@@ -10014,6 +10363,11 @@ Solutions possibles :
             document.getElementById('fatBar').style.width = `${(fatCal / targets.calories) * 100}%`;
 
             document.getElementById('results').style.display = 'block';
+            // Premium: Cacher l'état vide et afficher le contenu
+            const emptyState2 = document.getElementById('results-empty-state');
+            const resultsContent2 = document.getElementById('results-content');
+            if (emptyState2) emptyState2.style.display = 'none';
+            if (resultsContent2) resultsContent2.style.display = 'block';
             if (typeof lucide !== "undefined") lucide.createIcons();
         }
 
@@ -11483,6 +11837,93 @@ Solutions possibles :
             updateDayTotals();
         }
 
+        // Premium: Copier les repas d'hier vers aujourd'hui
+        function copyYesterdayMeals() {
+            const today = new Date();
+            const todayKey = today.toISOString().split('T')[0];
+
+            // Trouver la dernière journée non vide
+            const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            let sourceDate = null;
+            let sourceMeals = null;
+
+            // Chercher d'abord hier
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayKey = yesterday.toISOString().split('T')[0];
+
+            if (allMeals[yesterdayKey] && Object.values(allMeals[yesterdayKey]).some(arr => arr && arr.length > 0)) {
+                sourceDate = yesterday;
+                sourceMeals = allMeals[yesterdayKey];
+            } else {
+                // Chercher dans les 7 derniers jours
+                for (let i = 2; i <= 7; i++) {
+                    const checkDate = new Date(today);
+                    checkDate.setDate(checkDate.getDate() - i);
+                    const checkKey = checkDate.toISOString().split('T')[0];
+                    if (allMeals[checkKey] && Object.values(allMeals[checkKey]).some(arr => arr && arr.length > 0)) {
+                        sourceDate = checkDate;
+                        sourceMeals = allMeals[checkKey];
+                        break;
+                    }
+                }
+            }
+
+            if (!sourceMeals) {
+                showToast('<i data-lucide="info" class="icon-inline"></i> Aucun repas récent à copier');
+                return;
+            }
+
+            // Copier vers aujourd'hui
+            customConfirm(
+                'Copier les repas',
+                `Copier les repas du ${sourceDate.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long'})} vers aujourd'hui ?`
+            ).then((confirmed) => {
+                if (confirmed) {
+                    allMeals[todayKey] = JSON.parse(JSON.stringify(sourceMeals));
+                    localStorage.setItem('allDailyMeals', JSON.stringify(allMeals));
+
+                    // Aller à aujourd'hui et recharger
+                    currentMealDate = new Date();
+                    loadDailyMealsForCurrentDate();
+                    updateMealDateDisplay();
+                    updateDayTotals();
+
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas copiés avec succès');
+                    if (typeof lucide !== "undefined") lucide.createIcons();
+                }
+            });
+        }
+
+        // Premium: Scroll vers le prochain repas vide
+        function scrollToNextEmptyMeal() {
+            const mealTypes = ['breakfast', 'lunch', 'snack', 'dinner'];
+            const dateKey = currentMealDate.toISOString().split('T')[0];
+            const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            const dayMeals = allMeals[dateKey] || {};
+
+            // Trouver le premier repas sans aliments
+            for (const mealType of mealTypes) {
+                const foods = dayMeals[mealType] || [];
+                if (foods.length === 0) {
+                    // Scroll vers ce repas et focus sur le quick-add
+                    const quickAddInput = document.getElementById(`quick-add-${mealType}`);
+                    if (quickAddInput) {
+                        quickAddInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        setTimeout(() => quickAddInput.focus(), 500);
+                        return;
+                    }
+                }
+            }
+
+            // Si tous les repas sont remplis, scroll vers le premier
+            const firstInput = document.getElementById('quick-add-breakfast');
+            if (firstInput) {
+                firstInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => firstInput.focus(), 500);
+            }
+        }
+
         function changeMealDate(days) {
             currentMealDate.setDate(currentMealDate.getDate() + days);
             updateMealDateDisplay();
@@ -12044,12 +12485,83 @@ Solutions possibles :
         let trackingCurrentPage = 1;
         const trackingPerPage = 5;
 
+        // Premium: Mettre à jour les tendances de suivi
+        function updateTrackingTrends() {
+            const saved = localStorage.getItem('trackingData');
+            const data = saved ? JSON.parse(saved) : [];
+
+            const trend14dEl = document.getElementById('trend-14d');
+            const trend7dAvgEl = document.getElementById('trend-7d-avg');
+            const trendLastEl = document.getElementById('trend-last');
+
+            if (!trend14dEl || !trend7dAvgEl || !trendLastEl) return;
+
+            if (data.length === 0) {
+                trend14dEl.textContent = '—';
+                trend7dAvgEl.textContent = '—';
+                trendLastEl.textContent = '—';
+                return;
+            }
+
+            // Trier par date (plus récent en premier)
+            const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            // Dernière mesure
+            const lastWeight = sortedData[0]?.weight;
+            if (lastWeight) {
+                trendLastEl.textContent = `${lastWeight} kg`;
+                trendLastEl.className = 'trend-value';
+            } else {
+                trendLastEl.textContent = '—';
+            }
+
+            // Moyenne 7 jours (les 7 dernières mesures avec poids)
+            const last7WithWeight = sortedData.filter(d => d.weight).slice(0, 7);
+            if (last7WithWeight.length > 0) {
+                const avg = last7WithWeight.reduce((sum, d) => sum + parseFloat(d.weight), 0) / last7WithWeight.length;
+                trend7dAvgEl.textContent = `${avg.toFixed(1)} kg`;
+            } else {
+                trend7dAvgEl.textContent = '—';
+            }
+
+            // Évolution 14 jours (différence entre la dernière et il y a ~14 jours)
+            const now = new Date();
+            const twoWeeksAgo = new Date(now);
+            twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
+            const recentWeight = sortedData.find(d => d.weight)?.weight;
+            const oldEntries = sortedData.filter(d => d.weight && new Date(d.date) <= twoWeeksAgo);
+            const oldWeight = oldEntries.length > 0 ? oldEntries[0].weight : null;
+
+            if (recentWeight && oldWeight) {
+                const diff = (parseFloat(recentWeight) - parseFloat(oldWeight)).toFixed(1);
+                const sign = diff > 0 ? '+' : '';
+                trend14dEl.textContent = `${sign}${diff} kg`;
+                trend14dEl.className = `trend-value ${diff < 0 ? 'positive' : diff > 0 ? 'negative' : ''}`;
+            } else if (recentWeight && sortedData.filter(d => d.weight).length > 1) {
+                // S'il n'y a pas assez de données sur 14j, prendre la différence avec la plus ancienne
+                const oldest = sortedData.filter(d => d.weight).pop();
+                if (oldest) {
+                    const diff = (parseFloat(recentWeight) - parseFloat(oldest.weight)).toFixed(1);
+                    const sign = diff > 0 ? '+' : '';
+                    trend14dEl.textContent = `${sign}${diff} kg`;
+                    trend14dEl.className = `trend-value ${diff < 0 ? 'positive' : diff > 0 ? 'negative' : ''}`;
+                }
+            } else {
+                trend14dEl.textContent = 'stable';
+                trend14dEl.className = 'trend-value';
+            }
+        }
+
         function renderTrackingList() {
             const container = document.getElementById('tracking-list');
 
             // Charger les données depuis localStorage
             const saved = localStorage.getItem('trackingData');
             const data = saved ? JSON.parse(saved) : [];
+
+            // Premium: Mettre à jour les tendances
+            updateTrackingTrends();
 
             if (data.length === 0) {
                 container.innerHTML = `
@@ -12685,6 +13197,92 @@ Solutions possibles :
             document.getElementById('template-cal-total').textContent = Math.round(totals.calories) + ' kcal';
         }
 
+        // Premium: Importer un repas du jour comme template
+        function importMealFromToday() {
+            const mealNames = {
+                breakfast: 'Petit-déjeuner',
+                lunch: 'Déjeuner',
+                snack: 'Goûter',
+                dinner: 'Dîner'
+            };
+
+            const dateKey = getCurrentDateKey();
+            const dayMeals = allDailyMeals[dateKey] || {};
+
+            // Vérifier s'il y a des repas avec aliments
+            const availableMeals = Object.entries(mealNames).filter(([type]) => {
+                const foods = dayMeals[type] || [];
+                return foods.length > 0;
+            });
+
+            if (availableMeals.length === 0) {
+                customAlert('Aucun repas', "Tu n'as pas encore d'aliments dans tes repas d'aujourd'hui");
+                return;
+            }
+
+            // Créer un modal de sélection
+            const options = availableMeals.map(([type, name]) => {
+                const foods = dayMeals[type] || [];
+                return `<option value="${type}">${name} (${foods.length} aliment${foods.length > 1 ? 's' : ''})</option>`;
+            }).join('');
+
+            const modal = document.createElement('div');
+            modal.className = 'custom-modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 400px;">
+                    <h3 style="margin-bottom: var(--space-lg); display: flex; align-items: center; gap: var(--space-sm);">
+                        <i data-lucide="download" style="width: 22px; height: 22px; color: var(--accent-main);"></i>
+                        Importer un repas
+                    </h3>
+                    <p style="margin-bottom: var(--space-lg); color: var(--text-secondary);">Choisis le repas à importer comme nouveau repas type :</p>
+                    <select id="import-meal-select" style="width: 100%; padding: var(--space-md); margin-bottom: var(--space-lg); background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); font-size: 1rem;">
+                        ${options}
+                    </select>
+                    <div class="input-group" style="margin-bottom: var(--space-xl);">
+                        <label style="font-weight: 600; margin-bottom: var(--space-xs); display: block;">Nom du repas type</label>
+                        <input type="text" id="import-template-name" placeholder="Ex: Mon déjeuner habituel" style="width: 100%; padding: var(--space-md); background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary);">
+                    </div>
+                    <div style="display: flex; gap: var(--space-md);">
+                        <button onclick="this.closest('.custom-modal').remove()" class="btn" style="flex: 1; background: var(--bg-tertiary);">Annuler</button>
+                        <button onclick="executeImportMeal()" class="btn" style="flex: 1;">Importer</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            if (typeof lucide !== "undefined") lucide.createIcons();
+        }
+
+        function executeImportMeal() {
+            const mealType = document.getElementById('import-meal-select').value;
+            const templateName = document.getElementById('import-template-name').value.trim();
+            const dateKey = getCurrentDateKey();
+            const foods = allDailyMeals[dateKey]?.[mealType] || [];
+
+            if (!templateName) {
+                showToast('<i data-lucide="alert-circle" class="icon-inline"></i> Donne un nom au repas type');
+                return;
+            }
+
+            // Copier les aliments dans le formulaire de template
+            currentTemplateFoods = JSON.parse(JSON.stringify(foods));
+
+            // Remplir le nom
+            document.getElementById('new-template-name').value = templateName;
+
+            // Mettre à jour l'affichage
+            updateTemplateFoodsList();
+            updateTemplateTotals();
+
+            // Fermer le modal
+            document.querySelector('.custom-modal').remove();
+
+            // Scroll vers le formulaire
+            document.getElementById('new-template-name').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${foods.length} aliment(s) importé(s)`);
+            if (typeof lucide !== "undefined") lucide.createIcons();
+        }
+
         function saveNewMealTemplate() {
             const name = document.getElementById('new-template-name').value.trim();
             const recipe = document.getElementById('new-template-recipe').value.trim();
@@ -12858,6 +13456,95 @@ Solutions possibles :
             renderMealTemplatesList();
 
             showToast('✏️ Modifie ton repas puis enregistre');
+        }
+
+        // Premium: Toggle menu repas
+        function toggleMealMenu(mealType) {
+            const menu = document.getElementById(`meal-menu-${mealType}`);
+            const isOpen = menu.classList.contains('show');
+
+            // Fermer tous les menus
+            closeMealMenus();
+
+            // Ouvrir celui-ci s'il était fermé
+            if (!isOpen) {
+                menu.classList.add('show');
+                if (typeof lucide !== "undefined") lucide.createIcons();
+            }
+        }
+
+        function closeMealMenus() {
+            document.querySelectorAll('.meal-menu-dropdown').forEach(m => m.classList.remove('show'));
+        }
+
+        // Fermer les menus si on clique ailleurs
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.meal-menu-container')) {
+                closeMealMenus();
+            }
+        });
+
+        // Premium: Copier un repas vers un autre jour
+        function copyMealTo(mealType) {
+            closeMealMenus();
+            const mealNames = {
+                breakfast: 'Petit-déjeuner',
+                lunch: 'Déjeuner',
+                snack: 'Goûter',
+                dinner: 'Dîner'
+            };
+
+            const dateKey = getCurrentDateKey();
+            const meal = allDailyMeals[dateKey] ? allDailyMeals[dateKey][mealType] : null;
+            const foods = meal ? (meal.foods || meal) : [];
+
+            if (foods.length === 0) {
+                showToast('<i data-lucide="info" class="icon-inline"></i> Ce repas est vide');
+                return;
+            }
+
+            // Demander où copier
+            const targetMealTypes = Object.keys(mealNames).filter(m => m !== mealType);
+            const options = targetMealTypes.map(m => `<option value="${m}">${mealNames[m]}</option>`).join('');
+
+            const modal = document.createElement('div');
+            modal.className = 'custom-modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 350px;">
+                    <h3 style="margin-bottom: var(--space-lg);"><i data-lucide="copy" style="width: 20px; height: 20px; display: inline; vertical-align: middle;"></i> Copier ${mealNames[mealType]}</h3>
+                    <p style="margin-bottom: var(--space-lg); color: var(--text-secondary);">Copier les ${foods.length} aliment(s) vers :</p>
+                    <select id="copy-target-meal" style="width: 100%; padding: var(--space-md); margin-bottom: var(--space-xl); background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); font-size: 1rem;">
+                        ${options}
+                    </select>
+                    <div style="display: flex; gap: var(--space-md);">
+                        <button onclick="this.closest('.custom-modal').remove()" class="btn" style="flex: 1; background: var(--bg-tertiary);">Annuler</button>
+                        <button onclick="executeCopyMeal('${mealType}')" class="btn" style="flex: 1;">Copier</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            if (typeof lucide !== "undefined") lucide.createIcons();
+        }
+
+        function executeCopyMeal(sourceMealType) {
+            const targetMealType = document.getElementById('copy-target-meal').value;
+            const dateKey = getCurrentDateKey();
+            const sourceFoods = allDailyMeals[dateKey][sourceMealType] || [];
+
+            if (!allDailyMeals[dateKey]) allDailyMeals[dateKey] = {};
+            if (!allDailyMeals[dateKey][targetMealType]) allDailyMeals[dateKey][targetMealType] = [];
+
+            // Copier les aliments (deep copy)
+            const copiedFoods = JSON.parse(JSON.stringify(sourceFoods));
+            allDailyMeals[dateKey][targetMealType] = [...allDailyMeals[dateKey][targetMealType], ...copiedFoods];
+
+            saveDailyMeals();
+            renderMealFoods(targetMealType);
+            updateDayTotals();
+
+            document.querySelector('.custom-modal').remove();
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas copié');
+            if (typeof lucide !== "undefined") lucide.createIcons();
         }
 
         async function clearMeal(mealType) {
