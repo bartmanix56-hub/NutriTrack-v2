@@ -7085,11 +7085,6 @@
                         </button>
                     </div>
 
-</div>
-
-            <!-- Deuxième ligne: Données, Préférences, Zone Dangereuse -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: var(--space-xl); margin-bottom: var(--space-3xl);">
-
                 <!-- Données -->
                     <div class="card">
                         <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
@@ -7269,7 +7264,8 @@
                             <i data-lucide="trash-2" class="icon-inline"></i>
                             Tout supprimer
                         </button>
-                    </div></div>
+                    </div>
+            </div>
 
             <!-- Méthodologie (section isolée en dessous) -->
             <div style="margin-bottom: var(--space-3xl);">
@@ -12002,20 +11998,21 @@ Solutions possibles :
             updateDayTotals();
         }
 
-        // Premium: Copier les repas d'hier vers aujourd'hui
+        // Premium: Copier les repas d'hier vers la date actuelle affichée
         function copyYesterdayMeals() {
-            const today = new Date();
-            const todayKey = today.toISOString().split('T')[0];
+            // Utiliser la date actuellement affichée au lieu de "aujourd'hui"
+            const targetDate = new Date(currentMealDate);
+            const targetKey = getDateKey(targetDate);
 
             // Trouver la dernière journée non vide
             const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
             let sourceDate = null;
             let sourceMeals = null;
 
-            // Chercher d'abord hier
-            const yesterday = new Date(today);
+            // Chercher d'abord hier (par rapport à la date actuelle affichée)
+            const yesterday = new Date(targetDate);
             yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayKey = yesterday.toISOString().split('T')[0];
+            const yesterdayKey = getDateKey(yesterday);
 
             // Fonction pour vérifier si un repas contient des aliments
             const hasFoods = (meal) => {
@@ -12029,11 +12026,11 @@ Solutions possibles :
                 sourceDate = yesterday;
                 sourceMeals = allMeals[yesterdayKey];
             } else {
-                // Chercher dans les 7 derniers jours
+                // Chercher dans les 7 derniers jours (par rapport à la date cible)
                 for (let i = 2; i <= 7; i++) {
-                    const checkDate = new Date(today);
+                    const checkDate = new Date(targetDate);
                     checkDate.setDate(checkDate.getDate() - i);
-                    const checkKey = checkDate.toISOString().split('T')[0];
+                    const checkKey = getDateKey(checkDate);
                     if (allMeals[checkKey] && Object.values(allMeals[checkKey]).some(hasFoods)) {
                         sourceDate = checkDate;
                         sourceMeals = allMeals[checkKey];
@@ -12047,17 +12044,17 @@ Solutions possibles :
                 return;
             }
 
-            // Copier vers aujourd'hui
+            // Copier vers la date actuellement affichée
+            const targetDateStr = targetDate.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long'});
             customConfirm(
                 'Copier les repas',
-                `Copier les repas du ${sourceDate.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long'})} vers aujourd'hui ?`
+                `Copier les repas du ${sourceDate.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long'})} vers le ${targetDateStr} ?`
             ).then((confirmed) => {
                 if (confirmed) {
-                    allMeals[todayKey] = JSON.parse(JSON.stringify(sourceMeals));
+                    allMeals[targetKey] = JSON.parse(JSON.stringify(sourceMeals));
                     localStorage.setItem('allDailyMeals', JSON.stringify(allMeals));
 
-                    // Aller à aujourd'hui et recharger
-                    currentMealDate = new Date();
+                    // Recharger les repas pour la date actuelle
                     loadDailyMealsForCurrentDate();
                     updateMealDateDisplay();
                     updateDayTotals();
@@ -15822,12 +15819,8 @@ Solutions possibles :
                 document.getElementById('landing-page').style.display = 'block';
                 document.body.style.overflow = 'hidden';
                 document.documentElement.style.overflow = 'hidden';
-            } else {
-                document.getElementById('main-app').style.display = 'block';
-                // Enable scroll for the app
-                document.body.style.overflow = '';
-                document.documentElement.style.overflow = '';
             }
+            // Ne pas afficher main-app ici, attendre onAuthStateChanged
         });
 
         // Enter app button
@@ -16142,7 +16135,11 @@ Solutions possibles :
                 let totalCalories = 0;
                 ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
                     if (meals[mealType] && meals[mealType].foods) {
-                        totalCalories += meals[mealType].foods.reduce((sum, f) => sum + (f.calories || 0), 0);
+                        totalCalories += meals[mealType].foods.reduce((sum, f) => {
+                            const quantity = f.quantity || 100;
+                            const ratio = quantity / 100;
+                            return sum + ((f.calories || 0) * ratio);
+                        }, 0);
                     }
                 });
 
@@ -17029,6 +17026,18 @@ Solutions possibles :
                         }
                     }
                 }
+
+                // Afficher le main-app après vérification de l'auth state
+                const hasSeenLanding = localStorage.getItem('hasSeenLanding');
+                if (hasSeenLanding) {
+                    const mainApp = document.getElementById('main-app');
+                    if (mainApp && mainApp.style.display === 'none') {
+                        mainApp.style.display = 'block';
+                        document.body.style.overflow = '';
+                        document.documentElement.style.overflow = '';
+                    }
+                }
+
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             };
 
