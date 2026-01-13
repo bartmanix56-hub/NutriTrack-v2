@@ -16023,12 +16023,7 @@ Solutions possibles :
         // Show body after everything is loaded
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                // Seulement afficher le body si on est sur la landing page
-                // Sinon, attendre que onAuthStateChanged affiche le main-app
-                const hasSeenLanding = localStorage.getItem('hasSeenLanding');
-                if (!hasSeenLanding) {
-                    document.body.style.opacity = '1';
-                }
+                document.body.style.opacity = '1';
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
                 }
@@ -17042,8 +17037,6 @@ Solutions possibles :
                         mainApp.style.display = 'block';
                         document.body.style.overflow = '';
                         document.documentElement.style.overflow = '';
-                        // Afficher le body maintenant que le main-app est prêt
-                        document.body.style.opacity = '1';
                     }
                 }
 
