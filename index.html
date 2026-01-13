@@ -792,8 +792,18 @@
         }
 
         #global-quick-add-results::-webkit-scrollbar { width: 8px; }
-        #global-quick-add-results::-webkit-scrollbar-track { background: var(--bg-tertiary); }
-        #global-quick-add-results::-webkit-scrollbar-thumb { background: var(--accent-main); border-radius: var(--radius-full); }
+        #global-quick-add-results::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            margin: 4px 0;
+        }
+        #global-quick-add-results::-webkit-scrollbar-thumb {
+            background: var(--accent-main);
+            border-radius: var(--radius-full);
+        }
+        #global-quick-add-results::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-ui);
+        }
 
         #global-quick-add-results .quick-add-item {
             padding: var(--space-md) var(--space-lg);
@@ -2146,6 +2156,12 @@
             #week-grid {
                 grid-template-columns: 1fr 1fr !important;
                 gap: var(--space-sm) !important;
+            }
+
+            /* Weekly summary responsive */
+            #weekly-summary > div:last-child {
+                grid-template-columns: 1fr !important;
+                gap: var(--space-md) !important;
             }
 
             /* Navigation semaine */
@@ -6122,6 +6138,45 @@
                     <button class="week-nav-btn this-week-btn" onclick="goToCurrentWeek()" style="background: var(--accent-purple); color: white; border-color: var(--accent-purple);">
                         <i data-lucide="calendar-check" style="width: 16px; height: 16px;"></i> Cette semaine
                     </button>
+                </div>
+
+                <!-- Résumé Hebdomadaire -->
+                <div id="weekly-summary" style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border-radius: var(--radius-lg); padding: var(--space-xl); margin-bottom: var(--space-2xl); border: 2px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
+                    <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-xl); padding-bottom: var(--space-md); border-bottom: 2px solid rgba(255, 255, 255, 0.1);">
+                        <i data-lucide="bar-chart-3" style="width: 28px; height: 28px; color: var(--accent-ui);"></i>
+                        <h3 style="font-size: 1.3rem; font-weight: 700; margin: 0; color: var(--text-primary);">Résumé de la semaine</h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl);">
+                        <!-- Calories moyennes -->
+                        <div style="text-align: center; padding: var(--space-lg); background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
+                                <i data-lucide="flame" style="width: 20px; height: 20px; color: var(--accent-main);"></i>
+                                <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary);">Calories moy.</div>
+                            </div>
+                            <div id="weekly-avg-calories" style="font-size: 2rem; font-weight: 700; color: var(--accent-main);">—</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--space-xs);">kcal / jour</div>
+                        </div>
+
+                        <!-- Jours clôturés -->
+                        <div style="text-align: center; padding: var(--space-lg); background: rgba(91, 141, 217, 0.1); border-radius: var(--radius-md); border: 1px solid rgba(91, 141, 217, 0.2);">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
+                                <i data-lucide="lock" style="width: 20px; height: 20px; color: var(--accent-carbs);"></i>
+                                <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary);">Jours clôturés</div>
+                            </div>
+                            <div id="weekly-closed-days" style="font-size: 2rem; font-weight: 700; color: var(--accent-carbs);">—</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--space-xs);">sur 7 jours</div>
+                        </div>
+
+                        <!-- % Objectifs macros -->
+                        <div style="text-align: center; padding: var(--space-lg); background: rgba(212, 168, 71, 0.1); border-radius: var(--radius-md); border: 1px solid rgba(212, 168, 71, 0.2);">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
+                                <i data-lucide="target" style="width: 20px; height: 20px; color: var(--accent-fat);"></i>
+                                <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary);">Objectifs macros</div>
+                            </div>
+                            <div id="weekly-macro-success" style="font-size: 2rem; font-weight: 700; color: var(--accent-fat);">—</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--space-xs);">% de respect</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="week-grid" id="week-grid"></div></div></div>
@@ -10219,6 +10274,124 @@ Solutions possibles :
 
             // Reinitialize Lucide icons after dynamic content
             if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            // Update weekly summary
+            updateWeeklySummary();
+        }
+
+        function updateWeeklySummary() {
+            const weekStart = new Date(currentWeekStart);
+            const savedMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
+            const macroTargets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+
+            let totalCalories = 0;
+            let daysWithData = 0;
+            let closedDaysCount = 0;
+            let macroSuccessDays = 0;
+            let totalDaysChecked = 0;
+
+            // Parcourir les 7 jours de la semaine
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(weekStart);
+                date.setDate(date.getDate() + i);
+                const dateKey = getDateKey(date);
+
+                // Compter les jours clôturés
+                if (closedDays[dateKey]) {
+                    closedDaysCount++;
+                }
+
+                // Récupérer les repas du jour
+                const dayMeals = savedMeals[dateKey];
+                if (dayMeals) {
+                    // Calculer les calories du jour
+                    const getMealMacros = (mealData) => {
+                        if (!mealData || !mealData.foods) return { calories: 0, protein: 0, carbs: 0, fat: 0 };
+                        return mealData.foods.reduce((sum, f) => {
+                            const quantity = f.quantity || 100;
+                            const ratio = quantity / 100;
+                            return {
+                                calories: sum.calories + ((f.calories || 0) * ratio),
+                                protein: sum.protein + ((f.protein || 0) * ratio),
+                                carbs: sum.carbs + ((f.carbs || 0) * ratio),
+                                fat: sum.fat + ((f.fat || 0) * ratio)
+                            };
+                        }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
+                    };
+
+                    const breakfast = getMealMacros(dayMeals.breakfast);
+                    const lunch = getMealMacros(dayMeals.lunch);
+                    const snack = getMealMacros(dayMeals.snack);
+                    const dinner = getMealMacros(dayMeals.dinner);
+
+                    const dayTotals = {
+                        calories: breakfast.calories + lunch.calories + snack.calories + dinner.calories,
+                        protein: breakfast.protein + lunch.protein + snack.protein + dinner.protein,
+                        carbs: breakfast.carbs + lunch.carbs + snack.carbs + dinner.carbs,
+                        fat: breakfast.fat + lunch.fat + snack.fat + dinner.fat
+                    };
+
+                    // Ajouter aux calories totales si le jour a des données
+                    if (dayTotals.calories > 0) {
+                        totalCalories += dayTotals.calories;
+                        daysWithData++;
+
+                        // Vérifier si les objectifs macros sont respectés (seulement pour les jours avec données)
+                        if (macroTargets.calories && macroTargets.protein && macroTargets.carbs && macroTargets.fat) {
+                            totalDaysChecked++;
+
+                            // Tolérance de 10% pour les calories, 20% pour les macros
+                            const calorieMatch = Math.abs(dayTotals.calories - macroTargets.calories) <= macroTargets.calories * 0.10;
+                            const proteinMatch = Math.abs(dayTotals.protein - macroTargets.protein) <= macroTargets.protein * 0.20;
+                            const carbsMatch = Math.abs(dayTotals.carbs - macroTargets.carbs) <= macroTargets.carbs * 0.20;
+                            const fatMatch = Math.abs(dayTotals.fat - macroTargets.fat) <= macroTargets.fat * 0.20;
+
+                            // Si au moins calories + 2 macros sont respectées, on considère le jour comme réussi
+                            const macrosMetCount = [proteinMatch, carbsMatch, fatMatch].filter(Boolean).length;
+                            if (calorieMatch && macrosMetCount >= 2) {
+                                macroSuccessDays++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Calculer la moyenne des calories
+            const avgCalories = daysWithData > 0 ? Math.round(totalCalories / daysWithData) : 0;
+
+            // Calculer le pourcentage de réussite des objectifs macros
+            const macroSuccessRate = totalDaysChecked > 0 ? Math.round((macroSuccessDays / totalDaysChecked) * 100) : 0;
+
+            // Mettre à jour l'interface
+            const avgCaloriesEl = document.getElementById('weekly-avg-calories');
+            const closedDaysEl = document.getElementById('weekly-closed-days');
+            const macroSuccessEl = document.getElementById('weekly-macro-success');
+
+            if (avgCaloriesEl) {
+                avgCaloriesEl.textContent = daysWithData > 0 ? avgCalories.toLocaleString() : '—';
+            }
+
+            if (closedDaysEl) {
+                closedDaysEl.textContent = closedDaysCount;
+            }
+
+            if (macroSuccessEl) {
+                if (totalDaysChecked > 0) {
+                    macroSuccessEl.textContent = macroSuccessRate + '%';
+                    // Changer la couleur selon le taux de réussite
+                    if (macroSuccessRate >= 80) {
+                        macroSuccessEl.style.color = 'var(--accent-main)';
+                    } else if (macroSuccessRate >= 60) {
+                        macroSuccessEl.style.color = 'var(--accent-fat)';
+                    } else {
+                        macroSuccessEl.style.color = 'var(--accent-danger)';
+                    }
+                } else {
+                    macroSuccessEl.textContent = '—';
+                    macroSuccessEl.style.color = 'var(--accent-fat)';
+                }
+            }
         }
 
         // Food database search
