@@ -15827,9 +15827,10 @@ Solutions possibles :
         function enterApp() {
             document.getElementById('landing-page').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
-            // Remove overflow locks
+            // Remove overflow locks and show body
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
+            document.body.style.opacity = '1';
             localStorage.setItem('hasSeenLanding', 'true');
             // Force reflow for Chrome
             document.body.offsetHeight;
@@ -15911,6 +15912,7 @@ Solutions possibles :
             document.getElementById('main-app').style.display = 'block';
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
+            document.body.style.opacity = '1';
             localStorage.setItem('hasSeenLanding', 'true');
             setTimeout(() => initV2(), 0);
         }
@@ -16021,7 +16023,12 @@ Solutions possibles :
         // Show body after everything is loaded
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                document.body.style.opacity = '1';
+                // Seulement afficher le body si on est sur la landing page
+                // Sinon, attendre que onAuthStateChanged affiche le main-app
+                const hasSeenLanding = localStorage.getItem('hasSeenLanding');
+                if (!hasSeenLanding) {
+                    document.body.style.opacity = '1';
+                }
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
                 }
@@ -17035,6 +17042,8 @@ Solutions possibles :
                         mainApp.style.display = 'block';
                         document.body.style.overflow = '';
                         document.documentElement.style.overflow = '';
+                        // Afficher le body maintenant que le main-app est prêt
+                        document.body.style.opacity = '1';
                     }
                 }
 
