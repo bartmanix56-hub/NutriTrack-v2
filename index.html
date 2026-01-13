@@ -15306,7 +15306,7 @@ Solutions possibles :
 
     <!-- Landing Page -->
     <!-- HOMEPAGE PROFESSIONNELLE -->
-    <div id="landing-page" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #0a2f23 0%, #0d3d2d 30%, #115c42 60%, #0a2f23 100%); z-index: 10000; overflow-y: auto; -webkit-overflow-scrolling: touch; overflow-x: hidden;">
+    <div id="landing-page" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #0a2f23 0%, #0d3d2d 30%, #115c42 60%, #0a2f23 100%); z-index: 10000; overflow-y: auto; -webkit-overflow-scrolling: touch; overflow-x: hidden; display: none;">
 
         <!-- Floating Food Elements Background -->
         <div class="landing-floating-foods" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 0;">
@@ -15816,11 +15816,17 @@ Solutions possibles :
             const hasSeenLanding = localStorage.getItem('hasSeenLanding');
 
             if (!hasSeenLanding) {
+                // Première visite : afficher landing page
                 document.getElementById('landing-page').style.display = 'block';
                 document.body.style.overflow = 'hidden';
                 document.documentElement.style.overflow = 'hidden';
+            } else {
+                // Déjà vu : afficher main-app immédiatement (pas d'attente Firebase)
+                document.getElementById('main-app').style.display = 'block';
+                // S'assurer que le scroll fonctionne
+                document.body.style.overflow = '';
+                document.documentElement.style.overflow = '';
             }
-            // Ne pas afficher main-app ici, attendre onAuthStateChanged
         });
 
         // Enter app button
