@@ -3435,6 +3435,9 @@
                     <span>Maintenance</span>
                 </h2>
                 <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                    <button onclick="migrateFoodDatabaseToFirestore()" class="btn" style="background: var(--accent-main); color: white; justify-content: flex-start;">
+                        <i data-lucide="database" style="width: 16px; height: 16px;"></i> Migrer foodDatabase → Firestore (one-shot)
+                    </button>
                     <button onclick="clearFirestoreCache()" class="btn" style="background: var(--accent-danger); color: white; justify-content: flex-start;">
                         <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Vider le cache Firestore
                     </button>
@@ -7019,6 +7022,73 @@
             if (!isAdmin()) return;
             // Scroll to logs section
             document.getElementById('admin-logs-list').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        window.migrateFoodDatabaseToFirestore = async function() {
+            if (!isAdmin()) return;
+
+            if (!confirm('⚠️ Cette action va copier tous les aliments de foodDatabase (app.js) vers Firestore aliments_communs. Les aliments existants seront écrasés. Continuer ?')) {
+                return;
+            }
+
+            try {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="database" class="icon-inline"></i> Migration en cours...');
+                }
+
+                let migratedCount = 0;
+                let errorCount = 0;
+
+                // Loop through foodDatabase from app.js
+                for (const food of foodDatabase) {
+                    try {
+                        // Validate food data
+                        if (!food.name || typeof food.calories === 'undefined') {
+                            console.warn('Skipping invalid food:', food);
+                            errorCount++;
+                            continue;
+                        }
+
+                        // Create document in Firestore
+                        const foodDoc = {
+                            name: food.name,
+                            category: food.category || 'autres',
+                            unit: food.unit || '100g',
+                            calories: Number(food.calories) || 0,
+                            protein: Number(food.protein) || 0,
+                            carbs: Number(food.carbs) || 0,
+                            fat: Number(food.fat) || 0,
+                            migratedAt: serverTimestamp()
+                        };
+
+                        // Use food name as document ID for easier updates
+                        const docId = food.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                        await setDoc(doc(db, 'aliments_communs', docId), foodDoc);
+
+                        migratedCount++;
+                    } catch (err) {
+                        console.error('Error migrating food:', food.name, err);
+                        errorCount++;
+                    }
+                }
+
+                await logAdminAction('migrate_food_database', { migratedCount, errorCount });
+
+                if (typeof showToast === 'function') {
+                    showToast(`<i data-lucide="check-circle" class="icon-inline"></i> Migration terminée ! ${migratedCount} aliments migrés${errorCount > 0 ? `, ${errorCount} erreurs` : ''}`);
+                }
+
+                // Reload foods section if open
+                if (typeof loadAdminFoods === 'function') {
+                    loadAdminFoods();
+                }
+
+            } catch (error) {
+                console.error('Erreur migration:', error);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur lors de la migration', 'error');
+                }
+            }
         };
 
         // ===== ADMIN LOGGING =====
