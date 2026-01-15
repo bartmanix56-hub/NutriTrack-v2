@@ -6785,16 +6785,51 @@
             const carbs = parseFloat(document.getElementById('edit-food-carbs').value) || 0;
             const fat = parseFloat(document.getElementById('edit-food-fat').value) || 0;
 
-            const calculatedCals = protein * 4 + carbs * 4 + fat * 9;
-            const isValid = Math.abs(calculatedCals - calories) < 15;
+            // Calories théoriques = P×4 + G×4 + L×9
+            const theoreticalCals = protein * 4 + carbs * 4 + fat * 9;
+
+            // Écart = |calories_saisies − calories_théoriques|
+            const gap = Math.abs(calories - theoreticalCals);
+
+            // Tolérance = max(20 kcal, 8% des calories saisies)
+            const tolerance = Math.max(20, calories * 0.08);
 
             const warning = document.getElementById('edit-food-validation-warning');
-            if (!isValid && calories > 0) {
+            const confirmBtn = document.querySelector('#edit-food-modal .custom-popup-btn.confirm');
+
+            if (calories > 0 && gap > tolerance) {
+                // BLOCAGE: Écart > tolérance
                 warning.style.display = 'block';
-                warning.innerHTML = `⚠️ Attention: Les macros donnent ${calculatedCals.toFixed(0)} kcal, mais vous avez saisi ${calories} kcal (différence: ${Math.abs(calculatedCals - calories).toFixed(0)} kcal)`;
+                warning.style.background = 'rgba(239, 68, 68, 0.15)';
+                warning.style.borderLeft = '3px solid var(--accent-danger)';
+                warning.innerHTML = `❌ BLOCAGE: Les macros donnent ${theoreticalCals.toFixed(0)} kcal, mais vous avez saisi ${calories} kcal<br>Différence: ${gap.toFixed(0)} kcal (max autorisé: ${tolerance.toFixed(0)} kcal)<br><strong>Correction obligatoire avant sauvegarde</strong>`;
+                if (confirmBtn) {
+                    confirmBtn.disabled = true;
+                    confirmBtn.style.opacity = '0.5';
+                    confirmBtn.style.cursor = 'not-allowed';
+                }
+            } else if (calories > 0 && gap > 10) {
+                // WARNING: Écart > 10 kcal mais ≤ tolérance
+                warning.style.display = 'block';
+                warning.style.background = 'rgba(251, 191, 36, 0.15)';
+                warning.style.borderLeft = '3px solid var(--accent-fat)';
+                warning.innerHTML = `⚠️ Attention: Les macros donnent ${theoreticalCals.toFixed(0)} kcal, mais vous avez saisi ${calories} kcal (différence: ${gap.toFixed(0)} kcal)<br>Sauvegarde autorisée mais vérifiez vos valeurs`;
+                if (confirmBtn) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.style.opacity = '1';
+                    confirmBtn.style.cursor = 'pointer';
+                }
             } else {
+                // OK
                 warning.style.display = 'none';
+                if (confirmBtn) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.style.opacity = '1';
+                    confirmBtn.style.cursor = 'pointer';
+                }
             }
+
+            return gap <= tolerance;
         }
 
         window.saveEditedFood = async function() {
@@ -6819,6 +6854,15 @@
             if (isNaN(calories) || isNaN(protein) || isNaN(carbs) || isNaN(fat)) {
                 if (typeof showToast === 'function') {
                     showToast('<i data-lucide="alert-circle" class="icon-inline"></i> Les valeurs nutritionnelles doivent être des nombres', 'error');
+                }
+                return;
+            }
+
+            // VALIDATION STRICTE: Vérifier que les macros correspondent aux calories
+            const isValid = validateEditFoodMacros();
+            if (!isValid) {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="x-circle" class="icon-inline"></i> Impossible de sauvegarder : les macros ne correspondent pas aux calories', 'error');
                 }
                 return;
             }
