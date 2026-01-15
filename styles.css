@@ -4545,3 +4545,90 @@
             color: var(--text-secondary);
             opacity: 0.5;
         }
+
+/* === ADMIN PANEL === */
+.admin-subnav {
+    display: flex;
+    gap: var(--space-sm);
+    background: var(--bg-secondary);
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
+    overflow-x: auto;
+    flex-wrap: wrap;
+}
+
+.admin-subnav-btn {
+    padding: var(--space-md) var(--space-lg);
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.admin-subnav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.admin-subnav-btn.active {
+    background: var(--accent-purple) !important;
+    color: white !important;
+}
+
+.admin-section {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Button sizes */
+.btn-sm {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.85rem;
+}
+
+.btn-danger {
+    background: var(--accent-danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+.btn-info {
+    background: var(--accent-ui);
+    color: white;
+}
+
+.btn-info:hover {
+    background: #0ea5e9;
+}
+
+/* Stats grid responsive */
+@media (max-width: 768px) {
+    .admin-subnav {
+        overflow-x: scroll;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    #dashboard-stats,
+    #feedback-stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
