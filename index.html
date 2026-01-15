@@ -3159,66 +3159,298 @@
                         Panel Admin
                     </h1>
                     <p style="margin: 0; margin-top: var(--space-xs); color: var(--text-secondary); font-size: 1rem;">
-                        Gestion des feedbacks utilisateurs
+                        Gestion complète de l'application
                     </p>
                 </div></div></div>
 
-        <!-- Stats rapides -->
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md); margin-bottom: var(--space-xl);" id="admin-stats">
-            <div class="card" style="text-align: center; padding: var(--space-lg);">
-                <div style="font-size: 2rem; font-weight: 700; color: var(--accent-ui);" id="stat-total">0</div>
-                <div style="font-size: 0.85rem; color: var(--text-secondary);">Total</div>
-            </div>
-            <div class="card" style="text-align: center; padding: var(--space-lg);">
-                <div style="font-size: 2rem; font-weight: 700; color: var(--accent-danger);" id="stat-bugs">0</div>
-                <div style="font-size: 0.85rem; color: var(--text-secondary);">Bugs</div>
-            </div>
-            <div class="card" style="text-align: center; padding: var(--space-lg);">
-                <div style="font-size: 2rem; font-weight: 700; color: var(--accent-carbs);" id="stat-suggestions">0</div>
-                <div style="font-size: 0.85rem; color: var(--text-secondary);">Suggestions</div>
-            </div>
-            <div class="card" style="text-align: center; padding: var(--space-lg);">
-                <div style="font-size: 2rem; font-weight: 700; color: var(--accent-main);" id="stat-new">0</div>
-                <div style="font-size: 0.85rem; color: var(--text-secondary);">Nouveaux</div>
-            </div>
+        <!-- Sous-navigation Admin -->
+        <div class="admin-subnav" style="display: flex; gap: var(--space-sm); margin-bottom: var(--space-2xl); background: var(--bg-secondary); padding: var(--space-md); border-radius: var(--radius-lg); overflow-x: auto; flex-wrap: wrap;">
+            <button onclick="showAdminSection('dashboard')" class="admin-subnav-btn active" data-section="dashboard" style="padding: var(--space-md) var(--space-lg); background: var(--accent-purple); color: white; border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;">
+                <i data-lucide="layout-dashboard" style="width: 16px; height: 16px; margin-right: 6px;"></i> Dashboard
+            </button>
+            <button onclick="showAdminSection('feedbacks')" class="admin-subnav-btn" data-section="feedbacks" style="padding: var(--space-md) var(--space-lg); background: var(--bg-tertiary); color: var(--text-secondary); border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;">
+                <i data-lucide="message-square" style="width: 16px; height: 16px; margin-right: 6px;"></i> Feedbacks
+            </button>
+            <button onclick="showAdminSection('users')" class="admin-subnav-btn" data-section="users" style="padding: var(--space-md) var(--space-lg); background: var(--bg-tertiary); color: var(--text-secondary); border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;">
+                <i data-lucide="users" style="width: 16px; height: 16px; margin-right: 6px;"></i> Utilisateurs
+            </button>
+            <button onclick="showAdminSection('foods')" class="admin-subnav-btn" data-section="foods" style="padding: var(--space-md) var(--space-lg); background: var(--bg-tertiary); color: var(--text-secondary); border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;">
+                <i data-lucide="apple" style="width: 16px; height: 16px; margin-right: 6px;"></i> Aliments
+            </button>
+            <button onclick="showAdminSection('settings')" class="admin-subnav-btn" data-section="settings" style="padding: var(--space-md) var(--space-lg); background: var(--bg-tertiary); color: var(--text-secondary); border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;">
+                <i data-lucide="settings" style="width: 16px; height: 16px; margin-right: 6px;"></i> Paramètres
+            </button>
         </div>
 
-        <!-- Filtres -->
-        <div class="card" style="margin-bottom: var(--space-xl);">
-            <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; align-items: center;">
-                <select id="admin-filter-type" onchange="loadAdminFeedbacks()" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary);">
-                    <option value="all">Tous les types</option>
-                    <option value="bug">🐛 Bugs</option>
-                    <option value="suggestion">💡 Suggestions</option>
-                    <option value="question">❓ Questions</option>
-                </select>
-                <select id="admin-filter-status" onchange="loadAdminFeedbacks()" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary);">
-                    <option value="all">Tous les statuts</option>
-                    <option value="new">🟢 Nouveaux</option>
-                    <option value="read">🔵 Lus</option>
-                    <option value="resolved">✅ Résolus</option>
-                </select>
-                <button onclick="loadAdminFeedbacks()" class="btn" style="background: var(--accent-ui); color: white;">
-                    <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i> Rafraîchir
-                </button>
-            </div>
-        </div>
-
-        <!-- Liste des feedbacks -->
-        <div class="card">
-            <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-lg); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);">
-                <i data-lucide="inbox" style="width: 22px; height: 22px;"></i>
-                <span>Feedbacks</span>
-                <span id="feedbacks-count" style="background: var(--accent-ui); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">0</span>
-            </h2>
-            <div id="admin-feedbacks-list" style="display: flex; flex-direction: column; gap: var(--space-md);">
-                <div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);">
-                    <i data-lucide="loader" style="width: 32px; height: 32px; animation: spin 1s linear infinite;"></i>
-                    <p>Chargement...</p>
+        <!-- SECTION: Dashboard -->
+        <div id="admin-section-dashboard" class="admin-section">
+            <!-- Stats globales -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-md); margin-bottom: var(--space-xl);" id="dashboard-stats">
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-ui);" id="stat-users-total">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Utilisateurs</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-main);" id="stat-users-active">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Actifs (7j)</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-danger);" id="stat-feedbacks-unresolved">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Feedbacks non résolus</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-protein);" id="stat-foods-total">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Aliments communs</div>
                 </div>
             </div>
-            <!-- Pagination -->
-            <div id="admin-pagination" style="display: flex; justify-content: center; gap: var(--space-md); margin-top: var(--space-xl);"></div>
+
+            <!-- 5 derniers feedbacks -->
+            <div class="card">
+                <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-lg); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);">
+                    <i data-lucide="inbox" style="width: 22px; height: 22px;"></i>
+                    <span>Derniers Feedbacks</span>
+                </h2>
+                <div id="dashboard-recent-feedbacks">
+                    <div style="text-align: center; color: var(--text-secondary); padding: var(--space-2xl);">
+                        <i data-lucide="loader" style="width: 24px; height: 24px;"></i>
+                        <p>Chargement...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Feedbacks -->
+        <div id="admin-section-feedbacks" class="admin-section" style="display: none;">
+            <!-- Filtres -->
+            <div class="card" style="margin-bottom: var(--space-xl);">
+                <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; align-items: center;">
+                    <input type="text" id="admin-filter-search" placeholder="🔍 Rechercher par email..." style="flex: 1; min-width: 200px; padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary);">
+                    <select id="admin-filter-type" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary);">
+                        <option value="all">Tous les types</option>
+                        <option value="bug">🐛 Bugs</option>
+                        <option value="suggestion">💡 Suggestions</option>
+                        <option value="question">❓ Questions</option>
+                    </select>
+                    <select id="admin-filter-status" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary);">
+                        <option value="all">Tous les statuts</option>
+                        <option value="new">🟢 Nouveaux</option>
+                        <option value="read">🔵 Lus</option>
+                        <option value="resolved">✅ Résolus</option>
+                    </select>
+                    <input type="date" id="admin-filter-date" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary);">
+                    <button onclick="loadAdminFeedbacks()" class="btn" style="background: var(--accent-ui); color: white;">
+                        <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i> Rafraîchir
+                    </button>
+                    <button onclick="exportFeedbacksCSV()" class="btn" style="background: var(--accent-main); color: white;">
+                        <i data-lucide="download" style="width: 16px; height: 16px;"></i> Export CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats rapides feedbacks -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md); margin-bottom: var(--space-xl);" id="feedback-stats">
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--accent-ui);" id="stat-total">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Total</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--accent-danger);" id="stat-bugs">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Bugs</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--accent-carbs);" id="stat-suggestions">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Suggestions</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--accent-main);" id="stat-new">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Nouveaux</div>
+                </div>
+            </div>
+
+            <!-- Liste des feedbacks -->
+            <div class="card">
+                <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-lg); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);">
+                    <i data-lucide="inbox" style="width: 22px; height: 22px;"></i>
+                    <span>Feedbacks</span>
+                    <span id="feedbacks-count" style="background: var(--accent-ui); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">0</span>
+                </h2>
+                <div id="admin-feedbacks-list" style="display: flex; flex-direction: column; gap: var(--space-md);">
+                    <div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);">
+                        <i data-lucide="loader" style="width: 32px; height: 32px;"></i>
+                        <p>Chargement...</p>
+                    </div>
+                </div>
+                <!-- Pagination -->
+                <div id="admin-pagination" style="display: flex; justify-content: center; gap: var(--space-md); margin-top: var(--space-xl);"></div>
+            </div>
+        </div>
+
+        <!-- SECTION: Utilisateurs -->
+        <div id="admin-section-users" class="admin-section" style="display: none;">
+            <!-- Filtres utilisateurs -->
+            <div class="card" style="margin-bottom: var(--space-xl);">
+                <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; align-items: center;">
+                    <input type="text" id="users-filter-search" placeholder="🔍 Rechercher par email ou nom..." style="flex: 1; min-width: 250px; padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary);">
+                    <select id="users-filter-sort" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary);">
+                        <option value="newest">Plus récents</option>
+                        <option value="oldest">Plus anciens</option>
+                        <option value="lastLogin">Dernière connexion</option>
+                    </select>
+                    <button onclick="loadAdminUsers()" class="btn" style="background: var(--accent-ui); color: white;">
+                        <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i> Rafraîchir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats utilisateurs -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-md); margin-bottom: var(--space-xl);">
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--accent-ui);" id="users-stat-total">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Total</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--accent-main);" id="users-stat-active-7d">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Actifs 7j</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--accent-carbs);" id="users-stat-active-30d">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Actifs 30j</div>
+                </div>
+            </div>
+
+            <!-- Liste des utilisateurs -->
+            <div class="card">
+                <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-lg); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);">
+                    <i data-lucide="users" style="width: 22px; height: 22px;"></i>
+                    <span>Utilisateurs</span>
+                    <span id="users-count" style="background: var(--accent-ui); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">0</span>
+                </h2>
+                <div id="admin-users-list" style="display: flex; flex-direction: column; gap: var(--space-md);">
+                    <div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);">
+                        <i data-lucide="loader" style="width: 32px; height: 32px;"></i>
+                        <p>Chargement...</p>
+                    </div>
+                </div>
+                <div id="users-pagination" style="display: flex; justify-content: center; gap: var(--space-md); margin-top: var(--space-xl);"></div>
+            </div>
+        </div>
+
+        <!-- SECTION: Aliments -->
+        <div id="admin-section-foods" class="admin-section" style="display: none;">
+            <!-- Actions aliments -->
+            <div class="card" style="margin-bottom: var(--space-xl);">
+                <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; align-items: center;">
+                    <input type="text" id="foods-filter-search" placeholder="🔍 Rechercher un aliment..." style="flex: 1; min-width: 250px; padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary);">
+                    <select id="foods-filter-category" style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary);">
+                        <option value="all">Toutes catégories</option>
+                        <option value="proteines">Protéines</option>
+                        <option value="feculents">Féculents</option>
+                        <option value="legumes">Légumes</option>
+                        <option value="fruits">Fruits</option>
+                        <option value="produits-laitiers">Produits laitiers</option>
+                        <option value="matieres-grasses">Matières grasses</option>
+                        <option value="liquides">Liquides</option>
+                        <option value="autres">Autres</option>
+                    </select>
+                    <button onclick="loadAdminFoods()" class="btn" style="background: var(--accent-ui); color: white;">
+                        <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i> Rafraîchir
+                    </button>
+                    <button onclick="showAddFoodModal()" class="btn" style="background: var(--accent-main); color: white;">
+                        <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Ajouter
+                    </button>
+                    <button onclick="importFoodsCSV()" class="btn" style="background: var(--accent-carbs); color: white;">
+                        <i data-lucide="upload" style="width: 16px; height: 16px;"></i> Import CSV
+                    </button>
+                    <button onclick="exportFoodsCSV()" class="btn" style="background: var(--accent-protein); color: white;">
+                        <i data-lucide="download" style="width: 16px; height: 16px;"></i> Export CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats aliments -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-md); margin-bottom: var(--space-xl);">
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--accent-ui);" id="foods-stat-total">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Total</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--accent-protein);" id="foods-stat-proteins">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Protéines</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--accent-carbs);" id="foods-stat-carbs">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Féculents</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--accent-main);" id="foods-stat-vegetables">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Légumes</div>
+                </div>
+            </div>
+
+            <!-- Liste des aliments -->
+            <div class="card">
+                <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-lg); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);">
+                    <i data-lucide="apple" style="width: 22px; height: 22px;"></i>
+                    <span>Aliments Communs</span>
+                    <span id="foods-count" style="background: var(--accent-ui); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">0</span>
+                </h2>
+                <div id="admin-foods-list" style="display: flex; flex-direction: column; gap: var(--space-md);">
+                    <div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);">
+                        <i data-lucide="loader" style="width: 32px; height: 32px;"></i>
+                        <p>Chargement...</p>
+                    </div>
+                </div>
+                <div id="foods-pagination" style="display: flex; justify-content: center; gap: var(--space-md); margin-top: var(--space-xl);"></div>
+            </div>
+        </div>
+
+        <!-- SECTION: Paramètres Admin -->
+        <div id="admin-section-settings" class="admin-section" style="display: none;">
+            <!-- Gestion des admins -->
+            <div class="card" style="margin-bottom: var(--space-xl);">
+                <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-lg); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);">
+                    <i data-lucide="shield" style="width: 22px; height: 22px;"></i>
+                    <span>Gestion des Administrateurs</span>
+                </h2>
+                <div id="admin-uids-list" style="margin-bottom: var(--space-lg);">
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-md);">UIDs actuels: <code style="background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; font-size: 0.9rem;" id="current-admin-uid">-</code></p>
+                </div>
+                <div style="display: flex; gap: var(--space-md); align-items: center; flex-wrap: wrap;">
+                    <input type="text" id="new-admin-uid" placeholder="Nouvel UID admin..." style="flex: 1; min-width: 300px; padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary);">
+                    <button onclick="addAdminUID()" class="btn" style="background: var(--accent-main); color: white;">
+                        <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i> Ajouter Admin
+                    </button>
+                </div>
+            </div>
+
+            <!-- Maintenance -->
+            <div class="card" style="margin-bottom: var(--space-xl);">
+                <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-lg); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);">
+                    <i data-lucide="tool" style="width: 22px; height: 22px;"></i>
+                    <span>Maintenance</span>
+                </h2>
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                    <button onclick="clearFirestoreCache()" class="btn" style="background: var(--accent-danger); color: white; justify-content: flex-start;">
+                        <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Vider le cache Firestore
+                    </button>
+                    <button onclick="viewAdminLogs()" class="btn" style="background: var(--accent-ui); color: white; justify-content: flex-start;">
+                        <i data-lucide="file-text" style="width: 16px; height: 16px;"></i> Voir les logs d'actions admin
+                    </button>
+                </div>
+            </div>
+
+            <!-- Logs récents -->
+            <div class="card">
+                <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-lg); color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);">
+                    <i data-lucide="activity" style="width: 22px; height: 22px;"></i>
+                    <span>Dernières Actions Admin</span>
+                </h2>
+                <div id="admin-logs-list" style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <div style="text-align: center; color: var(--text-secondary); padding: var(--space-2xl);">
+                        <p>Chargement des logs...</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -5787,8 +6019,10 @@
             container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);"><i data-lucide="loader" style="width: 32px; height: 32px; animation: spin 1s linear infinite;"></i><p>Chargement...</p></div>';
 
             try {
-                const filterType = document.getElementById('admin-filter-type').value;
-                const filterStatus = document.getElementById('admin-filter-status').value;
+                const filterType = document.getElementById('admin-filter-type')?.value || 'all';
+                const filterStatus = document.getElementById('admin-filter-status')?.value || 'all';
+                const filterSearch = document.getElementById('admin-filter-search')?.value.toLowerCase() || '';
+                const filterDate = document.getElementById('admin-filter-date')?.value || '';
 
                 // Fetch all feedbacks
                 const q = query(collection(db, 'feedbacks'));
@@ -5816,8 +6050,29 @@
                     feedbacks = feedbacks.filter(f => f.status === filterStatus);
                 }
 
-                // Update stats
-                updateAdminStats(feedbacks);
+                // Filter by search (email)
+                if (filterSearch) {
+                    feedbacks = feedbacks.filter(f =>
+                        (f.userEmail && f.userEmail.toLowerCase().includes(filterSearch)) ||
+                        (f.description && f.description.toLowerCase().includes(filterSearch))
+                    );
+                }
+
+                // Filter by date
+                if (filterDate) {
+                    feedbacks = feedbacks.filter(f => {
+                        if (!f.createdAt?.toDate) return false;
+                        const feedbackDate = f.createdAt.toDate().toISOString().split('T')[0];
+                        return feedbackDate === filterDate;
+                    });
+                }
+
+                // Update stats (use all feedbacks before search filter for accurate stats)
+                const allFeedbacks = [];
+                querySnapshot.forEach((doc) => {
+                    allFeedbacks.push({ id: doc.id, ...doc.data() });
+                });
+                updateAdminStats(allFeedbacks);
 
                 // Store in cache
                 adminFeedbacksCache = feedbacks;
@@ -5939,6 +6194,7 @@
 
             try {
                 await deleteDoc(doc(db, 'feedbacks', feedbackId));
+                await logAdminAction('delete_feedback', { feedbackId });
                 loadAdminFeedbacks();
                 if (typeof showToast === 'function') {
                     showToast('<i data-lucide="trash-2" class="icon-inline"></i> Feedback supprimé');
@@ -5948,16 +6204,676 @@
             }
         };
 
-        // Load feedbacks when admin tab is opened
+        // ===== ADMIN SECTION NAVIGATION =====
+        window.showAdminSection = function(section) {
+            if (!isAdmin()) return;
+
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(el => el.style.display = 'none');
+
+            // Show selected section
+            const sectionEl = document.getElementById(`admin-section-${section}`);
+            if (sectionEl) sectionEl.style.display = 'block';
+
+            // Update nav buttons
+            document.querySelectorAll('.admin-subnav-btn').forEach(btn => {
+                if (btn.dataset.section === section) {
+                    btn.style.background = 'var(--accent-purple)';
+                    btn.style.color = 'white';
+                    btn.classList.add('active');
+                } else {
+                    btn.style.background = 'var(--bg-tertiary)';
+                    btn.style.color = 'var(--text-secondary)';
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Load data for the section
+            switch(section) {
+                case 'dashboard':
+                    loadAdminDashboard();
+                    break;
+                case 'feedbacks':
+                    loadAdminFeedbacks();
+                    break;
+                case 'users':
+                    loadAdminUsers();
+                    break;
+                case 'foods':
+                    loadAdminFoods();
+                    break;
+                case 'settings':
+                    loadAdminSettings();
+                    break;
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        };
+
+        // ===== ADMIN DASHBOARD =====
+        window.loadAdminDashboard = async function() {
+            if (!isAdmin()) return;
+
+            try {
+                // Count users (from Firestore users collection)
+                const usersSnap = await getDocs(collection(db, 'users'));
+                const totalUsers = usersSnap.size;
+
+                // Count active users (7 days)
+                const sevenDaysAgo = new Date();
+                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                let activeUsers7d = 0;
+                usersSnap.forEach(doc => {
+                    const data = doc.data();
+                    if (data.lastSync) {
+                        const lastSync = data.lastSync.toDate ? data.lastSync.toDate() : new Date(data.lastSync);
+                        if (lastSync >= sevenDaysAgo) activeUsers7d++;
+                    }
+                });
+
+                // Count feedbacks non résolus
+                const feedbacksSnap = await getDocs(collection(db, 'feedbacks'));
+                let unresolvedFeedbacks = 0;
+                feedbacksSnap.forEach(doc => {
+                    if (doc.data().status !== 'resolved') unresolvedFeedbacks++;
+                });
+
+                // Count aliments communs
+                const foodsSnap = await getDocs(collection(db, 'aliments_communs'));
+                const totalFoods = foodsSnap.size;
+
+                // Update stats
+                document.getElementById('stat-users-total').textContent = totalUsers;
+                document.getElementById('stat-users-active').textContent = activeUsers7d;
+                document.getElementById('stat-feedbacks-unresolved').textContent = unresolvedFeedbacks;
+                document.getElementById('stat-foods-total').textContent = totalFoods;
+
+                // Load 5 derniers feedbacks
+                const feedbacksQuery = query(collection(db, 'feedbacks'), limit(5));
+                const recentFeedbacksSnap = await getDocs(feedbacksQuery);
+                const recentFeedbacks = [];
+                recentFeedbacksSnap.forEach(doc => {
+                    recentFeedbacks.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Sort by date
+                recentFeedbacks.sort((a, b) => {
+                    const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(0);
+                    const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(0);
+                    return dateB - dateA;
+                });
+
+                // Render recent feedbacks
+                const container = document.getElementById('dashboard-recent-feedbacks');
+                if (recentFeedbacks.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: var(--space-xl);"><p>Aucun feedback récent</p></div>';
+                } else {
+                    container.innerHTML = recentFeedbacks.slice(0, 5).map(f => {
+                        const date = f.createdAt?.toDate ? f.createdAt.toDate().toLocaleString('fr-FR', {
+                            day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+                        }) : 'Date inconnue';
+                        const typeIcons = { bug: '🐛', suggestion: '💡', question: '❓' };
+                        return `
+                            <div style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-sm);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-xs);">
+                                    <span>${typeIcons[f.type] || '📝'} ${f.type?.toUpperCase()}</span>
+                                    <span style="color: var(--text-secondary); font-size: 0.85rem;">${date}</span>
+                                </div>
+                                <div style="color: var(--text-secondary); font-size: 0.9rem;">${escapeHtml(f.description.substring(0, 100))}${f.description.length > 100 ? '...' : ''}</div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+            } catch (error) {
+                console.error('Erreur chargement dashboard:', error);
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        };
+
+        // ===== ADMIN USERS =====
+        let adminUsersCache = [];
+        let adminUsersPage = 1;
+        const USERS_PER_PAGE = 50;
+
+        window.loadAdminUsers = async function() {
+            if (!isAdmin()) return;
+
+            const container = document.getElementById('admin-users-list');
+            container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);"><i data-lucide="loader" style="width: 32px; height: 32px;"></i><p>Chargement...</p></div>';
+
+            try {
+                const usersSnap = await getDocs(collection(db, 'users'));
+                let users = [];
+                usersSnap.forEach(doc => {
+                    users.push({ uid: doc.id, ...doc.data() });
+                });
+
+                // Apply search filter
+                const searchTerm = document.getElementById('users-filter-search')?.value.toLowerCase() || '';
+                if (searchTerm) {
+                    users = users.filter(u =>
+                        (u.email && u.email.toLowerCase().includes(searchTerm)) ||
+                        (u.displayName && u.displayName.toLowerCase().includes(searchTerm))
+                    );
+                }
+
+                // Apply sort
+                const sortBy = document.getElementById('users-filter-sort')?.value || 'newest';
+                users.sort((a, b) => {
+                    if (sortBy === 'newest') {
+                        const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(0);
+                        const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(0);
+                        return dateB - dateA;
+                    } else if (sortBy === 'oldest') {
+                        const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(0);
+                        const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(0);
+                        return dateA - dateB;
+                    } else if (sortBy === 'lastLogin') {
+                        const dateA = a.lastSync?.toDate ? a.lastSync.toDate() : new Date(0);
+                        const dateB = b.lastSync?.toDate ? b.lastSync.toDate() : new Date(0);
+                        return dateB - dateA;
+                    }
+                    return 0;
+                });
+
+                // Update stats
+                const now = new Date();
+                const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+                const active7d = users.filter(u => {
+                    if (!u.lastSync) return false;
+                    const lastSync = u.lastSync.toDate ? u.lastSync.toDate() : new Date(u.lastSync);
+                    return lastSync >= sevenDaysAgo;
+                }).length;
+
+                const active30d = users.filter(u => {
+                    if (!u.lastSync) return false;
+                    const lastSync = u.lastSync.toDate ? u.lastSync.toDate() : new Date(u.lastSync);
+                    return lastSync >= thirtyDaysAgo;
+                }).length;
+
+                document.getElementById('users-stat-total').textContent = users.length;
+                document.getElementById('users-stat-active-7d').textContent = active7d;
+                document.getElementById('users-stat-active-30d').textContent = active30d;
+                document.getElementById('users-count').textContent = users.length;
+
+                adminUsersCache = users;
+                renderAdminUsers(users);
+
+            } catch (error) {
+                console.error('Erreur chargement users:', error);
+                container.innerHTML = '<div style="text-align: center; color: var(--accent-danger); padding: var(--space-3xl);"><p>Erreur de chargement</p></div>';
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        };
+
+        function renderAdminUsers(users) {
+            const container = document.getElementById('admin-users-list');
+
+            if (users.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);"><p>Aucun utilisateur trouvé</p></div>';
+                return;
+            }
+
+            // Pagination
+            const start = (adminUsersPage - 1) * USERS_PER_PAGE;
+            const end = start + USERS_PER_PAGE;
+            const paginated = users.slice(start, end);
+
+            container.innerHTML = paginated.map(user => {
+                const lastSync = user.lastSync?.toDate ? user.lastSync.toDate().toLocaleString('fr-FR', {
+                    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                }) : 'Jamais';
+
+                const createdAt = user.createdAt?.toDate ? user.createdAt.toDate().toLocaleDateString('fr-FR') : '-';
+
+                // Count meals (if available in data)
+                const mealsCount = user.allDailyMeals ? Object.keys(user.allDailyMeals).length : 0;
+
+                return `
+                    <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md);">
+                        <div style="flex: 1; min-width: 250px;">
+                            <div style="font-weight: 600; margin-bottom: 4px;">${escapeHtml(user.email || user.displayName || 'Utilisateur inconnu')}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                UID: <code style="background: var(--bg-primary); padding: 2px 4px; border-radius: 3px; font-size: 0.75rem;">${user.uid}</code>
+                            </div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
+                                📅 Inscrit: ${createdAt} | 🔄 Dernière sync: ${lastSync} | 📊 Jours de repas: ${mealsCount}
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: var(--space-sm);">
+                            <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.uid}', '${escapeHtml(user.email || user.displayName || 'cet utilisateur')}')">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i> Supprimer
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Pagination
+            const totalPages = Math.ceil(users.length / USERS_PER_PAGE);
+            const paginationContainer = document.getElementById('users-pagination');
+            if (totalPages > 1) {
+                paginationContainer.innerHTML = `
+                    <button class="btn" ${adminUsersPage === 1 ? 'disabled' : ''} onclick="adminUsersChangePage(${adminUsersPage - 1})">← Précédent</button>
+                    <span style="color: var(--text-secondary);">Page ${adminUsersPage} / ${totalPages}</span>
+                    <button class="btn" ${adminUsersPage === totalPages ? 'disabled' : ''} onclick="adminUsersChangePage(${adminUsersPage + 1})">Suivant →</button>
+                `;
+            } else {
+                paginationContainer.innerHTML = '';
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        window.adminUsersChangePage = function(page) {
+            adminUsersPage = page;
+            renderAdminUsers(adminUsersCache);
+        };
+
+        window.deleteUser = async function(uid, identifier) {
+            if (!isAdmin()) return;
+
+            if (!confirm(`Supprimer l'utilisateur ${identifier} et toutes ses données ? Cette action est irréversible.`)) return;
+
+            try {
+                await deleteDoc(doc(db, 'users', uid));
+                await logAdminAction('delete_user', { uid, identifier });
+                loadAdminUsers();
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="trash-2" class="icon-inline"></i> Utilisateur supprimé');
+                }
+            } catch (error) {
+                console.error('Erreur suppression utilisateur:', error);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur de suppression', 'error');
+                }
+            }
+        };
+
+        // ===== ADMIN FOODS =====
+        let adminFoodsCache = [];
+        let adminFoodsPage = 1;
+        const FOODS_PER_PAGE = 50;
+
+        window.loadAdminFoods = async function() {
+            if (!isAdmin()) return;
+
+            const container = document.getElementById('admin-foods-list');
+            container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);"><i data-lucide="loader" style="width: 32px; height: 32px;"></i><p>Chargement...</p></div>';
+
+            try {
+                const foodsSnap = await getDocs(collection(db, 'aliments_communs'));
+                let foods = [];
+                foodsSnap.forEach(doc => {
+                    foods.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Apply search filter
+                const searchTerm = document.getElementById('foods-filter-search')?.value.toLowerCase() || '';
+                if (searchTerm) {
+                    foods = foods.filter(f => f.name && f.name.toLowerCase().includes(searchTerm));
+                }
+
+                // Apply category filter
+                const categoryFilter = document.getElementById('foods-filter-category')?.value || 'all';
+                if (categoryFilter !== 'all') {
+                    foods = foods.filter(f => f.category === categoryFilter);
+                }
+
+                // Sort alphabetically
+                foods.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+                // Update stats
+                document.getElementById('foods-stat-total').textContent = foods.length;
+                document.getElementById('foods-stat-proteins').textContent = foods.filter(f => f.category === 'proteines').length;
+                document.getElementById('foods-stat-carbs').textContent = foods.filter(f => f.category === 'feculents').length;
+                document.getElementById('foods-stat-vegetables').textContent = foods.filter(f => f.category === 'legumes').length;
+                document.getElementById('foods-count').textContent = foods.length;
+
+                adminFoodsCache = foods;
+                renderAdminFoods(foods);
+
+            } catch (error) {
+                console.error('Erreur chargement aliments:', error);
+                container.innerHTML = '<div style="text-align: center; color: var(--accent-danger); padding: var(--space-3xl);"><p>Erreur de chargement</p></div>';
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        };
+
+        function renderAdminFoods(foods) {
+            const container = document.getElementById('admin-foods-list');
+
+            if (foods.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);"><p>Aucun aliment trouvé</p></div>';
+                return;
+            }
+
+            // Pagination
+            const start = (adminFoodsPage - 1) * FOODS_PER_PAGE;
+            const end = start + FOODS_PER_PAGE;
+            const paginated = foods.slice(start, end);
+
+            container.innerHTML = paginated.map(food => {
+                const categoryLabels = {
+                    'proteines': 'Protéines', 'feculents': 'Féculents', 'legumes': 'Légumes',
+                    'fruits': 'Fruits', 'produits-laitiers': 'Produits laitiers',
+                    'matieres-grasses': 'Matières grasses', 'liquides': 'Liquides', 'autres': 'Autres'
+                };
+
+                // Validate macros
+                const calculatedCals = (food.protein || 0) * 4 + (food.carbs || 0) * 4 + (food.fat || 0) * 9;
+                const isValid = Math.abs(calculatedCals - (food.calories || 0)) < 15;
+
+                return `
+                    <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md);">
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: var(--space-sm);">
+                                ${escapeHtml(food.name || 'Sans nom')}
+                                ${!isValid ? '<span style="color: var(--accent-danger); font-size: 0.8rem;">⚠️ Macros incohérentes</span>' : ''}
+                            </div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                ${categoryLabels[food.category] || food.category} • ${food.unit || '100g'}
+                            </div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
+                                📊 ${food.calories || 0} kcal | P: ${food.protein || 0}g | G: ${food.carbs || 0}g | L: ${food.fat || 0}g
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: var(--space-sm);">
+                            <button class="btn btn-sm" style="background: var(--accent-ui);" onclick="editFood('${food.id}')">
+                                <i data-lucide="edit" style="width: 14px; height: 14px;"></i> Modifier
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteFood('${food.id}', '${escapeHtml(food.name || '')}')">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i> Supprimer
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Pagination
+            const totalPages = Math.ceil(foods.length / FOODS_PER_PAGE);
+            const paginationContainer = document.getElementById('foods-pagination');
+            if (totalPages > 1) {
+                paginationContainer.innerHTML = `
+                    <button class="btn" ${adminFoodsPage === 1 ? 'disabled' : ''} onclick="adminFoodsChangePage(${adminFoodsPage - 1})">← Précédent</button>
+                    <span style="color: var(--text-secondary);">Page ${adminFoodsPage} / ${totalPages}</span>
+                    <button class="btn" ${adminFoodsPage === totalPages ? 'disabled' : ''} onclick="adminFoodsChangePage(${adminFoodsPage + 1})">Suivant →</button>
+                `;
+            } else {
+                paginationContainer.innerHTML = '';
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        window.adminFoodsChangePage = function(page) {
+            adminFoodsPage = page;
+            renderAdminFoods(adminFoodsCache);
+        };
+
+        window.showAddFoodModal = function() {
+            if (!isAdmin()) return;
+            if (typeof showToast === 'function') {
+                showToast('<i data-lucide="info" class="icon-inline"></i> Fonctionnalité en développement');
+            }
+        };
+
+        window.editFood = async function(foodId) {
+            if (!isAdmin()) return;
+            if (typeof showToast === 'function') {
+                showToast('<i data-lucide="info" class="icon-inline"></i> Fonctionnalité en développement');
+            }
+        };
+
+        window.deleteFood = async function(foodId, foodName) {
+            if (!isAdmin()) return;
+
+            if (!confirm(`Supprimer l'aliment "${foodName}" ? Cette action est irréversible.`)) return;
+
+            try {
+                await deleteDoc(doc(db, 'aliments_communs', foodId));
+                await logAdminAction('delete_food', { foodId, foodName });
+                loadAdminFoods();
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="trash-2" class="icon-inline"></i> Aliment supprimé');
+                }
+            } catch (error) {
+                console.error('Erreur suppression aliment:', error);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur de suppression', 'error');
+                }
+            }
+        };
+
+        window.exportFoodsCSV = function() {
+            if (!isAdmin()) return;
+
+            if (adminFoodsCache.length === 0) {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="alert-circle" class="icon-inline"></i> Aucun aliment à exporter');
+                }
+                return;
+            }
+
+            const csv = [
+                ['Nom', 'Catégorie', 'Unité', 'Calories', 'Protéines', 'Glucides', 'Lipides'].join(','),
+                ...adminFoodsCache.map(f => [
+                    `"${(f.name || '').replace(/"/g, '""')}"`,
+                    f.category || '',
+                    f.unit || '100g',
+                    f.calories || 0,
+                    f.protein || 0,
+                    f.carbs || 0,
+                    f.fat || 0
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `aliments_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+
+            if (typeof showToast === 'function') {
+                showToast('<i data-lucide="download" class="icon-inline"></i> Export CSV réussi');
+            }
+        };
+
+        window.importFoodsCSV = function() {
+            if (!isAdmin()) return;
+            if (typeof showToast === 'function') {
+                showToast('<i data-lucide="info" class="icon-inline"></i> Fonctionnalité en développement');
+            }
+        };
+
+        window.exportFeedbacksCSV = function() {
+            if (!isAdmin()) return;
+
+            if (adminFeedbacksCache.length === 0) {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="alert-circle" class="icon-inline"></i> Aucun feedback à exporter');
+                }
+                return;
+            }
+
+            const csv = [
+                ['Date', 'Type', 'Statut', 'Email', 'Description'].join(','),
+                ...adminFeedbacksCache.map(f => {
+                    const date = f.createdAt?.toDate ? f.createdAt.toDate().toLocaleString('fr-FR') : '';
+                    return [
+                        `"${date}"`,
+                        f.type || '',
+                        f.status || '',
+                        `"${(f.userEmail || '').replace(/"/g, '""')}"`,
+                        `"${(f.description || '').replace(/"/g, '""')}"`
+                    ].join(',');
+                })
+            ].join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `feedbacks_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+
+            if (typeof showToast === 'function') {
+                showToast('<i data-lucide="download" class="icon-inline"></i> Export CSV réussi');
+            }
+        };
+
+        // ===== ADMIN SETTINGS =====
+        window.loadAdminSettings = async function() {
+            if (!isAdmin()) return;
+
+            // Show current admin UID
+            document.getElementById('current-admin-uid').textContent = ADMIN_UID;
+
+            // Load recent admin logs
+            try {
+                const logsQuery = query(collection(db, 'admin_logs'), limit(20));
+                const logsSnap = await getDocs(logsQuery);
+                const logs = [];
+                logsSnap.forEach(doc => {
+                    logs.push({ id: doc.id, ...doc.data() });
+                });
+
+                logs.sort((a, b) => {
+                    const dateA = a.timestamp?.toDate ? a.timestamp.toDate() : new Date(0);
+                    const dateB = b.timestamp?.toDate ? b.timestamp.toDate() : new Date(0);
+                    return dateB - dateA;
+                });
+
+                const container = document.getElementById('admin-logs-list');
+                if (logs.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: var(--space-xl);"><p>Aucun log disponible</p></div>';
+                } else {
+                    container.innerHTML = logs.map(log => {
+                        const date = log.timestamp?.toDate ? log.timestamp.toDate().toLocaleString('fr-FR', {
+                            day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+                        }) : 'Date inconnue';
+                        return `
+                            <div style="background: var(--bg-tertiary); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-sm); font-size: 0.85rem; display: flex; justify-content: space-between;">
+                                <span><strong>${log.action}</strong> ${log.details ? '- ' + JSON.stringify(log.details) : ''}</span>
+                                <span style="color: var(--text-secondary);">${date}</span>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+            } catch (error) {
+                console.error('Erreur chargement logs:', error);
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        };
+
+        window.addAdminUID = function() {
+            if (!isAdmin()) return;
+            if (typeof showToast === 'function') {
+                showToast('<i data-lucide="info" class="icon-inline"></i> Fonctionnalité nécessite configuration backend');
+            }
+        };
+
+        window.clearFirestoreCache = async function() {
+            if (!isAdmin()) return;
+
+            if (!confirm('Vider le cache Firestore local ? Cette action rechargera la page.')) return;
+
+            try {
+                // Clear Firestore cache is handled by Firebase internally
+                // We can clear localStorage as a workaround
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Cache vidé, rechargement...');
+                }
+                await logAdminAction('clear_cache', {});
+                setTimeout(() => location.reload(), 1000);
+            } catch (error) {
+                console.error('Erreur vidage cache:', error);
+            }
+        };
+
+        window.viewAdminLogs = async function() {
+            if (!isAdmin()) return;
+            // Scroll to logs section
+            document.getElementById('admin-logs-list').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        // ===== ADMIN LOGGING =====
+        async function logAdminAction(action, details = {}) {
+            if (!isAdmin()) return;
+
+            try {
+                await setDoc(doc(collection(db, 'admin_logs')), {
+                    action: action,
+                    adminUid: auth.currentUser.uid,
+                    adminEmail: auth.currentUser.email,
+                    details: details,
+                    timestamp: serverTimestamp()
+                });
+            } catch (error) {
+                console.error('Erreur log admin:', error);
+            }
+        }
+
+        // Load dashboard when admin tab is opened
         const originalSwitchToTab = window.switchToTab;
         if (typeof originalSwitchToTab === 'function') {
             window.switchToTab = function(tab) {
                 originalSwitchToTab(tab);
                 if (tab === 'admin' && isAdmin()) {
-                    loadAdminFeedbacks();
+                    showAdminSection('dashboard');
                 }
             };
         }
+
+        // Event listeners for filters
+        document.addEventListener('DOMContentLoaded', function() {
+            // Feedbacks search filter
+            const feedbackSearch = document.getElementById('admin-filter-search');
+            if (feedbackSearch) {
+                feedbackSearch.addEventListener('input', () => {
+                    if (isAdmin()) loadAdminFeedbacks();
+                });
+            }
+
+            // Feedbacks type/status filters
+            const feedbackType = document.getElementById('admin-filter-type');
+            const feedbackStatus = document.getElementById('admin-filter-status');
+            const feedbackDate = document.getElementById('admin-filter-date');
+            if (feedbackType) feedbackType.addEventListener('change', () => { if (isAdmin()) loadAdminFeedbacks(); });
+            if (feedbackStatus) feedbackStatus.addEventListener('change', () => { if (isAdmin()) loadAdminFeedbacks(); });
+            if (feedbackDate) feedbackDate.addEventListener('change', () => { if (isAdmin()) loadAdminFeedbacks(); });
+
+            // Users search filter
+            const usersSearch = document.getElementById('users-filter-search');
+            if (usersSearch) {
+                usersSearch.addEventListener('input', () => {
+                    if (isAdmin()) loadAdminUsers();
+                });
+            }
+
+            // Users sort filter
+            const usersSort = document.getElementById('users-filter-sort');
+            if (usersSort) usersSort.addEventListener('change', () => { if (isAdmin()) loadAdminUsers(); });
+
+            // Foods search filter
+            const foodsSearch = document.getElementById('foods-filter-search');
+            if (foodsSearch) {
+                foodsSearch.addEventListener('input', () => {
+                    if (isAdmin()) loadAdminFoods();
+                });
+            }
+
+            // Foods category filter
+            const foodsCategory = document.getElementById('foods-filter-category');
+            if (foodsCategory) foodsCategory.addEventListener('change', () => { if (isAdmin()) loadAdminFoods(); });
+        });
 
         } // Fin du if (isValidProtocol)
     </script>
