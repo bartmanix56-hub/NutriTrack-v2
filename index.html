@@ -3302,6 +3302,11 @@
                 </div>
             </div>
 
+            <!-- Message informatif -->
+            <div style="background: rgba(14, 165, 233, 0.1); border-left: 3px solid var(--accent-ui); padding: var(--space-md); border-radius: var(--radius-sm); margin-bottom: var(--space-xl); font-size: 0.9rem; color: var(--text-secondary);">
+                <strong style="color: var(--accent-ui);">ℹ️ Information :</strong> Cette liste affiche uniquement les utilisateurs ayant synchronisé des données dans Firestore. Les comptes créés mais n'ayant jamais synchronisé de repas/tracking n'apparaissent pas ici. Pour voir TOUS les comptes créés, consulte Firebase Console > Authentication > Users.
+            </div>
+
             <!-- Stats utilisateurs -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-md); margin-bottom: var(--space-xl);">
                 <div class="card" style="text-align: center; padding: var(--space-lg);">
@@ -3815,6 +3820,72 @@
                 <button class="custom-popup-btn cancel" onclick="closePrompt(null)">Annuler</button>
                 <button class="custom-popup-btn confirm" onclick="closePrompt(document.getElementById('prompt-input').value)">Valider</button>
             </div></div></div>
+
+    <!-- Modal Éditer Aliment -->
+    <div class="custom-popup-overlay" id="edit-food-modal">
+        <div class="custom-popup" style="max-width: 600px;">
+            <h3 style="margin-bottom: var(--space-lg);">✏️ Modifier l'aliment</h3>
+
+            <div style="display: flex; flex-direction: column; gap: var(--space-md); margin-bottom: var(--space-lg);">
+                <div>
+                    <label style="display: block; margin-bottom: var(--space-xs); color: var(--text-secondary); font-size: 0.9rem;">Nom *</label>
+                    <input type="text" id="edit-food-name" class="form-input" style="width: 100%; padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--bg-tertiary); background: var(--bg-tertiary); color: var(--text-primary);">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+                    <div>
+                        <label style="display: block; margin-bottom: var(--space-xs); color: var(--text-secondary); font-size: 0.9rem;">Catégorie *</label>
+                        <select id="edit-food-category" style="width: 100%; padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--bg-tertiary); background: var(--bg-tertiary); color: var(--text-primary);">
+                            <option value="proteines">Protéines</option>
+                            <option value="feculents">Féculents</option>
+                            <option value="legumes">Légumes</option>
+                            <option value="fruits">Fruits</option>
+                            <option value="produits-laitiers">Produits laitiers</option>
+                            <option value="matieres-grasses">Matières grasses</option>
+                            <option value="liquides">Liquides</option>
+                            <option value="autres">Autres</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style="display: block; margin-bottom: var(--space-xs); color: var(--text-secondary); font-size: 0.9rem;">Unité *</label>
+                        <input type="text" id="edit-food-unit" class="form-input" placeholder="ex: 100g, 1u" style="width: 100%; padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--bg-tertiary); background: var(--bg-tertiary); color: var(--text-primary);">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md);">
+                    <div>
+                        <label style="display: block; margin-bottom: var(--space-xs); color: var(--accent-main); font-size: 0.9rem;">Calories *</label>
+                        <input type="number" id="edit-food-calories" step="0.1" class="form-input" style="width: 100%; padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--bg-tertiary); background: var(--bg-tertiary); color: var(--text-primary);">
+                    </div>
+
+                    <div>
+                        <label style="display: block; margin-bottom: var(--space-xs); color: var(--accent-protein); font-size: 0.9rem;">Protéines *</label>
+                        <input type="number" id="edit-food-protein" step="0.1" class="form-input" style="width: 100%; padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--bg-tertiary); background: var(--bg-tertiary); color: var(--text-primary);">
+                    </div>
+
+                    <div>
+                        <label style="display: block; margin-bottom: var(--space-xs); color: var(--accent-carbs); font-size: 0.9rem;">Glucides *</label>
+                        <input type="number" id="edit-food-carbs" step="0.1" class="form-input" style="width: 100%; padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--bg-tertiary); background: var(--bg-tertiary); color: var(--text-primary);">
+                    </div>
+
+                    <div>
+                        <label style="display: block; margin-bottom: var(--space-xs); color: var(--accent-fat); font-size: 0.9rem;">Lipides *</label>
+                        <input type="number" id="edit-food-fat" step="0.1" class="form-input" style="width: 100%; padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--bg-tertiary); background: var(--bg-tertiary); color: var(--text-primary);">
+                    </div>
+                </div>
+
+                <div id="edit-food-validation-warning" style="display: none; background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--accent-danger); padding: var(--space-md); border-radius: var(--radius-sm); color: var(--accent-danger); font-size: 0.85rem;">
+                    ⚠️ Attention: Les macros ne correspondent pas aux calories (P×4 + G×4 + L×9)
+                </div>
+            </div>
+
+            <div class="custom-popup-buttons">
+                <button class="custom-popup-btn cancel" onclick="closeEditFoodModal()">Annuler</button>
+                <button class="custom-popup-btn confirm" onclick="saveEditedFood()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Toast de confirmation -->
     <div class="toast" id="toast">
@@ -5985,6 +6056,29 @@
             }
 
             try {
+                // Detect device type and OS
+                const ua = navigator.userAgent;
+                let deviceType = 'Unknown';
+                let deviceOS = 'Unknown';
+
+                // Detect OS
+                if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
+                    deviceType = 'Mobile';
+                    deviceOS = 'iOS';
+                } else if (/android/i.test(ua)) {
+                    deviceType = 'Mobile';
+                    deviceOS = 'Android';
+                } else if (/Windows/i.test(ua)) {
+                    deviceType = 'PC';
+                    deviceOS = 'Windows';
+                } else if (/Mac/i.test(ua)) {
+                    deviceType = 'PC';
+                    deviceOS = 'macOS';
+                } else if (/Linux/i.test(ua)) {
+                    deviceType = 'PC';
+                    deviceOS = 'Linux';
+                }
+
                 const feedbackData = {
                     type: type,
                     tab: tab,
@@ -5993,6 +6087,8 @@
                     status: 'new',
                     createdAt: serverTimestamp(),
                     userAgent: navigator.userAgent,
+                    deviceType: deviceType,
+                    deviceOS: deviceOS,
                     userId: auth.currentUser ? auth.currentUser.uid : null,
                     userEmail: auth.currentUser ? auth.currentUser.email : null
                 };
@@ -6141,7 +6237,10 @@
                             ${feedback.status !== 'resolved' ? `<button class="btn btn-sm" onclick="updateFeedbackStatus('${feedback.id}', 'resolved')">Résolu</button>` : ''}
                             <button class="btn btn-danger btn-sm" onclick="deleteFeedback('${feedback.id}')">Supprimer</button>
                         </div>
-                        ${feedback.userEmail ? `<div style="margin-top: var(--space-sm); font-size: 0.75rem; color: var(--text-secondary);">👤 ${feedback.userEmail}</div>` : ''}
+                        <div style="margin-top: var(--space-sm); font-size: 0.75rem; color: var(--text-secondary); display: flex; gap: var(--space-md); flex-wrap: wrap;">
+                            ${feedback.userEmail ? `<span>👤 ${feedback.userEmail}</span>` : ''}
+                            ${feedback.deviceType && feedback.deviceOS ? `<span>📱 ${feedback.deviceType} - ${feedback.deviceOS}</span>` : ''}
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -6624,10 +6723,128 @@
             }
         };
 
+        let currentEditingFoodId = null;
+
         window.editFood = async function(foodId) {
             if (!isAdmin()) return;
-            if (typeof showToast === 'function') {
-                showToast('<i data-lucide="info" class="icon-inline"></i> Fonctionnalité en développement');
+
+            // Find food in cache
+            const food = adminFoodsCache.find(f => f.id === foodId);
+            if (!food) {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="x-circle" class="icon-inline"></i> Aliment introuvable', 'error');
+                }
+                return;
+            }
+
+            // Store current editing food ID
+            currentEditingFoodId = foodId;
+
+            // Pre-fill form
+            document.getElementById('edit-food-name').value = food.name || '';
+            document.getElementById('edit-food-category').value = food.category || 'autres';
+            document.getElementById('edit-food-unit').value = food.unit || '100g';
+            document.getElementById('edit-food-calories').value = food.calories || 0;
+            document.getElementById('edit-food-protein').value = food.protein || 0;
+            document.getElementById('edit-food-carbs').value = food.carbs || 0;
+            document.getElementById('edit-food-fat').value = food.fat || 0;
+
+            // Validate on input
+            const inputs = ['edit-food-calories', 'edit-food-protein', 'edit-food-carbs', 'edit-food-fat'];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', validateEditFoodMacros);
+            });
+
+            // Show modal
+            document.getElementById('edit-food-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeEditFoodModal = function() {
+            document.getElementById('edit-food-modal').classList.remove('active');
+            document.body.style.overflow = '';
+            currentEditingFoodId = null;
+
+            // Clear form
+            document.getElementById('edit-food-name').value = '';
+            document.getElementById('edit-food-category').value = 'proteines';
+            document.getElementById('edit-food-unit').value = '100g';
+            document.getElementById('edit-food-calories').value = '';
+            document.getElementById('edit-food-protein').value = '';
+            document.getElementById('edit-food-carbs').value = '';
+            document.getElementById('edit-food-fat').value = '';
+            document.getElementById('edit-food-validation-warning').style.display = 'none';
+        };
+
+        function validateEditFoodMacros() {
+            const calories = parseFloat(document.getElementById('edit-food-calories').value) || 0;
+            const protein = parseFloat(document.getElementById('edit-food-protein').value) || 0;
+            const carbs = parseFloat(document.getElementById('edit-food-carbs').value) || 0;
+            const fat = parseFloat(document.getElementById('edit-food-fat').value) || 0;
+
+            const calculatedCals = protein * 4 + carbs * 4 + fat * 9;
+            const isValid = Math.abs(calculatedCals - calories) < 15;
+
+            const warning = document.getElementById('edit-food-validation-warning');
+            if (!isValid && calories > 0) {
+                warning.style.display = 'block';
+                warning.innerHTML = `⚠️ Attention: Les macros donnent ${calculatedCals.toFixed(0)} kcal, mais vous avez saisi ${calories} kcal (différence: ${Math.abs(calculatedCals - calories).toFixed(0)} kcal)`;
+            } else {
+                warning.style.display = 'none';
+            }
+        }
+
+        window.saveEditedFood = async function() {
+            if (!isAdmin() || !currentEditingFoodId) return;
+
+            const name = document.getElementById('edit-food-name').value.trim();
+            const category = document.getElementById('edit-food-category').value;
+            const unit = document.getElementById('edit-food-unit').value.trim();
+            const calories = parseFloat(document.getElementById('edit-food-calories').value);
+            const protein = parseFloat(document.getElementById('edit-food-protein').value);
+            const carbs = parseFloat(document.getElementById('edit-food-carbs').value);
+            const fat = parseFloat(document.getElementById('edit-food-fat').value);
+
+            // Validation
+            if (!name || !category || !unit) {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="alert-circle" class="icon-inline"></i> Remplis tous les champs obligatoires', 'error');
+                }
+                return;
+            }
+
+            if (isNaN(calories) || isNaN(protein) || isNaN(carbs) || isNaN(fat)) {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="alert-circle" class="icon-inline"></i> Les valeurs nutritionnelles doivent être des nombres', 'error');
+                }
+                return;
+            }
+
+            try {
+                const updatedFood = {
+                    name: name,
+                    category: category,
+                    unit: unit,
+                    calories: calories,
+                    protein: protein,
+                    carbs: carbs,
+                    fat: fat
+                };
+
+                await setDoc(doc(db, 'aliments_communs', currentEditingFoodId), updatedFood, { merge: true });
+                await logAdminAction('update_food', { foodId: currentEditingFoodId, foodName: name });
+
+                closeEditFoodModal();
+                loadAdminFoods();
+
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Aliment modifié avec succès');
+                }
+            } catch (error) {
+                console.error('Erreur modification aliment:', error);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur lors de la modification', 'error');
+                }
             }
         };
 
