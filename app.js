@@ -260,8 +260,107 @@
             // Sauvegarder le goal
             localStorage.setItem('calc_goal', goal);
 
+            // Appliquer les réglages guidés si en mode guidé
+            const currentPace = document.querySelector('.pace-btn.active')?.getAttribute('data-pace') || 'gentle';
+            applyGuidedSettings(goal, currentPace);
+
             // Revalider après changement d'objectif
             validateMacroInputs();
+        }
+
+        // === MODE GUIDÉ / AVANCÉ ===
+        let currentPace = 'gentle'; // Défaut : Doux
+
+        function selectPace(pace) {
+            currentPace = pace;
+
+            // Mettre à jour l'UI
+            document.querySelectorAll('.pace-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.borderColor = 'transparent';
+            });
+            const selected = document.querySelector(`[data-pace="${pace}"]`);
+            if (selected) {
+                selected.classList.add('active');
+                selected.style.borderColor = 'var(--accent-ui)';
+            }
+
+            // Sauvegarder
+            localStorage.setItem('calc_pace', pace);
+
+            // Appliquer les réglages guidés
+            applyGuidedSettings(currentGoal, pace);
+        }
+
+        function toggleAdvancedMode() {
+            const guidedMode = document.getElementById('guided-mode');
+            const advancedMode = document.getElementById('advanced-mode');
+
+            if (guidedMode.style.display === 'none') {
+                // Retour au mode guidé
+                guidedMode.style.display = 'block';
+                advancedMode.style.display = 'none';
+                localStorage.setItem('calc_mode', 'guided');
+
+                // Réappliquer les réglages guidés
+                const currentPace = document.querySelector('.pace-btn.active')?.getAttribute('data-pace') || 'gentle';
+                applyGuidedSettings(currentGoal, currentPace);
+            } else {
+                // Passer en mode avancé
+                guidedMode.style.display = 'none';
+                advancedMode.style.display = 'block';
+                localStorage.setItem('calc_mode', 'advanced');
+            }
+
+            // Réinitialiser les icônes Lucide
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function applyGuidedSettings(goal, pace) {
+            // Vérifier qu'on est bien en mode guidé
+            const guidedMode = document.getElementById('guided-mode');
+            if (!guidedMode || guidedMode.style.display === 'none') {
+                return; // Mode avancé actif, ne rien faire
+            }
+
+            // Définir les valeurs selon objectif et rythme
+            const settings = {
+                cut: {
+                    gentle: { deficit: 15, protein: 2.0, fat: 0.9 },
+                    normal: { deficit: 20, protein: 2.2, fat: 0.9 },
+                    fast: { deficit: 25, protein: 2.4, fat: 0.9 }
+                },
+                maintain: {
+                    gentle: { protein: 1.8, fat: 1.0 },
+                    normal: { protein: 1.8, fat: 1.0 },
+                    fast: { protein: 1.8, fat: 1.0 }
+                },
+                bulk: {
+                    gentle: { surplus: 5, protein: 2.0, fat: 0.9 },
+                    normal: { surplus: 10, protein: 2.2, fat: 0.9 },
+                    fast: { surplus: 15, protein: 2.4, fat: 0.9 }
+                }
+            };
+
+            const config = settings[goal]?.[pace];
+            if (!config) return;
+
+            // Appliquer les valeurs aux inputs
+            if (goal === 'cut') {
+                document.getElementById('deficit').value = config.deficit;
+                document.getElementById('proteinCoeff').value = config.protein;
+                document.getElementById('fatCoeff').value = config.fat;
+            } else if (goal === 'maintain') {
+                document.getElementById('proteinCoeffMaintain').value = config.protein;
+                document.getElementById('fatCoeffMaintain').value = config.fat;
+            } else if (goal === 'bulk') {
+                document.getElementById('surplus').value = config.surplus;
+                document.getElementById('proteinCoeffBulk').value = config.protein;
+                document.getElementById('fatCoeffBulk').value = config.fat;
+            }
+
+            // Sauvegarder
+            saveCalcSettings();
         }
 
         // === VALIDATION EN TEMPS RÉEL DES MACROS ===
@@ -5676,6 +5775,21 @@ Solutions possibles :
 
             const savedGoal = localStorage.getItem('calc_goal');
             if (savedGoal) selectGoal(savedGoal);
+
+            // Charger le mode (guidé par défaut)
+            const savedMode = localStorage.getItem('calc_mode') || 'guided';
+            const guidedMode = document.getElementById('guided-mode');
+            const advancedMode = document.getElementById('advanced-mode');
+            if (savedMode === 'advanced' && guidedMode && advancedMode) {
+                guidedMode.style.display = 'none';
+                advancedMode.style.display = 'block';
+            }
+
+            // Charger le pace (gentle par défaut)
+            const savedPace = localStorage.getItem('calc_pace') || 'gentle';
+            if (savedMode === 'guided') {
+                selectPace(savedPace);
+            }
 
             // Load saved macro targets and display results
             const savedTargets = localStorage.getItem('macroTargets');

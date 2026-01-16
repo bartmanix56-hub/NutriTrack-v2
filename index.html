@@ -960,6 +960,64 @@
                             <div class="goal-title"><i data-lucide="trending-up" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Prise</div>
                             <div class="goal-desc">Gagner en muscle</div></div></div>
 
+                    <!-- MODE GUIDÉ (par défaut) -->
+                    <div id="guided-mode" style="margin-bottom: var(--space-2xl);">
+                        <div style="padding: var(--space-xl); background: rgba(14, 165, 233, 0.1); border-radius: var(--radius-lg); border: 1px solid rgba(14, 165, 233, 0.2); margin-bottom: var(--space-xl);">
+                            <div style="font-weight: 600; color: var(--accent-ui); margin-bottom: var(--space-sm); display: flex; align-items: center; gap: var(--space-sm);">
+                                <i data-lucide="zap" style="width: 20px; height: 20px;"></i>
+                                Mode Guidé
+                            </div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                                Choisis simplement ton rythme, on calcule tout pour toi ! 🎯
+                            </div>
+                        </div>
+
+                        <!-- Sélecteur de Rythme -->
+                        <div style="margin-bottom: var(--space-xl);">
+                            <label style="display: block; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-primary);">
+                                <i data-lucide="gauge" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>
+                                Quel rythme souhaites-tu ?
+                            </label>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-md);">
+                                <div class="pace-btn active" data-pace="gentle" onclick="selectPace('gentle')" style="padding: var(--space-lg); background: var(--bg-secondary); border: 2px solid var(--accent-ui); border-radius: var(--radius-md); cursor: pointer; transition: all 0.3s; text-align: center;">
+                                    <div style="font-size: 2rem; margin-bottom: var(--space-xs);">😌</div>
+                                    <div style="font-weight: 600; margin-bottom: var(--space-xs);">Doux</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Facile à tenir</div>
+                                </div>
+                                <div class="pace-btn" data-pace="normal" onclick="selectPace('normal')" style="padding: var(--space-lg); background: var(--bg-secondary); border: 2px solid transparent; border-radius: var(--radius-md); cursor: pointer; transition: all 0.3s; text-align: center;">
+                                    <div style="font-size: 2rem; margin-bottom: var(--space-xs);">🙂</div>
+                                    <div style="font-weight: 600; margin-bottom: var(--space-xs);">Normal</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Équilibré</div>
+                                </div>
+                                <div class="pace-btn" data-pace="fast" onclick="selectPace('fast')" style="padding: var(--space-lg); background: var(--bg-secondary); border: 2px solid transparent; border-radius: var(--radius-md); cursor: pointer; transition: all 0.3s; text-align: center;">
+                                    <div style="font-size: 2rem; margin-bottom: var(--space-xs);">🔥</div>
+                                    <div style="font-weight: 600; margin-bottom: var(--space-xs);">Rapide</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Plus exigeant</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Toggle vers mode avancé -->
+                        <div style="text-align: center; padding-top: var(--space-lg); border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                            <button onclick="toggleAdvancedMode()" style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.9rem; display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); transition: all 0.3s;">
+                                <i data-lucide="settings" style="width: 16px; height: 16px;"></i>
+                                Afficher les paramètres avancés
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- MODE AVANCÉ (caché par défaut) -->
+                    <div id="advanced-mode" style="display: none; margin-bottom: var(--space-2xl);">
+                        <div style="padding: var(--space-xl); background: rgba(168, 85, 247, 0.1); border-radius: var(--radius-lg); border: 1px solid rgba(168, 85, 247, 0.2); margin-bottom: var(--space-xl);">
+                            <div style="font-weight: 600; color: var(--accent-purple); margin-bottom: var(--space-sm); display: flex; align-items: center; gap: var(--space-sm);">
+                                <i data-lucide="sliders" style="width: 20px; height: 20px;"></i>
+                                Mode Avancé
+                            </div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                                Tu peux ajuster manuellement tous les paramètres nutritionnels
+                            </div>
+                        </div>
+
                     <!-- Cut options -->
                     <div id="cut-options" style="display: grid; gap: var(--space-xl);">
                         <div class="input-group">
@@ -1081,7 +1139,18 @@
                                     <p style="margin-top: var(--space-md);"><strong style="color: var(--text-primary);"><i data-lucide="lightbulb" class="icon-inline"></i> Recommandations</strong><br>
                                     Les valeurs proposées (0.8-1.0 g/kg) sont adaptées à la majorité des personnes actives et peuvent être ajustées selon ta réponse individuelle.</p>
                                 </div>
-                            </div></div></div></div></div>
+                            </div></div></div>
+
+                        <!-- Toggle retour mode guidé -->
+                        <div style="text-align: center; padding-top: var(--space-xl); margin-top: var(--space-xl); border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                            <button onclick="toggleAdvancedMode()" style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.9rem; display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); transition: all 0.3s;">
+                                <i data-lucide="zap" style="width: 16px; height: 16px;"></i>
+                                Revenir au mode guidé
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Fin MODE AVANCÉ -->
+                </div></div>
 
             <!-- Warning box for macro validation -->
             <div id="macro-warning" style="display: none; margin-bottom: var(--space-2xl); padding: var(--space-xl); background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--accent-danger); border-radius: var(--radius-lg); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);">
