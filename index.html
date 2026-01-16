@@ -7071,7 +7071,7 @@
         window.migrateFoodDatabaseToFirestore = async function() {
             if (!isAdmin()) return;
 
-            if (!confirm('⚠️ Cette action va copier tous les aliments de foodDatabase (app.js) vers Firestore aliments_communs. Les aliments existants seront écrasés. Continuer ?')) {
+            if (!confirm('✅ Cette action va AJOUTER les aliments de foodDatabase (app.js) manquants dans Firestore.\n\n⚠️ Les aliments EXISTANTS dans Firestore ne seront PAS écrasés.\n\nContinuer ?')) {
                 return;
             }
 
@@ -7080,7 +7080,8 @@
                     showToast('<i data-lucide="database" class="icon-inline"></i> Migration en cours...');
                 }
 
-                let migratedCount = 0;
+                let addedCount = 0;
+                let skippedCount = 0;
                 let errorCount = 0;
 
                 // Loop through foodDatabase from app.js
@@ -7093,7 +7094,21 @@
                             continue;
                         }
 
-                        // Create document in Firestore
+                        // Use food name as document ID for easier updates
+                        const docId = food.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                        const docRef = doc(db, 'aliments_communs', docId);
+
+                        // CHECK IF ALREADY EXISTS
+                        const docSnap = await getDoc(docRef);
+
+                        if (docSnap.exists()) {
+                            // SKIP: Ne pas écraser l'aliment existant
+                            console.log('Skipping existing food:', food.name);
+                            skippedCount++;
+                            continue;
+                        }
+
+                        // Create document in Firestore (only if doesn't exist)
                         const foodDoc = {
                             name: food.name,
                             category: food.category || 'autres',
@@ -7105,21 +7120,18 @@
                             migratedAt: serverTimestamp()
                         };
 
-                        // Use food name as document ID for easier updates
-                        const docId = food.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-                        await setDoc(doc(db, 'aliments_communs', docId), foodDoc);
-
-                        migratedCount++;
+                        await setDoc(docRef, foodDoc);
+                        addedCount++;
                     } catch (err) {
                         console.error('Error migrating food:', food.name, err);
                         errorCount++;
                     }
                 }
 
-                await logAdminAction('migrate_food_database', { migratedCount, errorCount });
+                await logAdminAction('migrate_food_database', { addedCount, skippedCount, errorCount });
 
                 if (typeof showToast === 'function') {
-                    showToast(`<i data-lucide="check-circle" class="icon-inline"></i> Migration terminée ! ${migratedCount} aliments migrés${errorCount > 0 ? `, ${errorCount} erreurs` : ''}`);
+                    showToast(`<i data-lucide="check-circle" class="icon-inline"></i> Migration terminée ! ${addedCount} ajoutés, ${skippedCount} ignorés${errorCount > 0 ? `, ${errorCount} erreurs` : ''}`);
                 }
 
                 // Reload foods section if open
