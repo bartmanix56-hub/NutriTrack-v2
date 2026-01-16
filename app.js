@@ -300,16 +300,16 @@
                     fat: 0.8          // g/kg
                 },
                 normal: {
-                    deficit: 20,      // 20% déficit
-                    surplus: 10,      // 10% surplus
+                    deficit: 18,      // 18% déficit
+                    surplus: 8,       // 8% surplus
                     protein: 2.0,     // g/kg
-                    fat: 1.0          // g/kg
+                    fat: 0.9          // g/kg
                 },
                 fast: {
-                    deficit: 25,      // 25% déficit
-                    surplus: 15,      // 15% surplus
-                    protein: 2.2,     // g/kg
-                    fat: 1.0          // g/kg
+                    deficit: 22,      // 22% déficit
+                    surplus: 12,      // 12% surplus
+                    protein: 2.0,     // g/kg
+                    fat: 0.9          // g/kg
                 }
             };
 
@@ -789,13 +789,40 @@
                 const fatCal = fat * 9;
                 const macroTotal = proteinCal + fatCal;
 
+                // Récupérer les valeurs actuelles selon l'objectif
+                let currentDeficitOrSurplus = '';
+                let currentProtein = '';
+                let currentFat = '';
+
+                if (currentGoal === 'cut') {
+                    const deficitValue = parseFloat(document.getElementById('deficit')?.value || 0);
+                    const proteinValue = parseFloat(document.getElementById('proteinCoeff')?.value || 0);
+                    const fatValue = parseFloat(document.getElementById('fatCoeff')?.value || 0);
+                    currentDeficitOrSurplus = `${deficitValue}% déficit`;
+                    currentProtein = `${proteinValue} g/kg`;
+                    currentFat = `${fatValue} g/kg`;
+                } else if (currentGoal === 'bulk') {
+                    const surplusValue = parseFloat(document.getElementById('surplus')?.value || 0);
+                    const proteinValue = parseFloat(document.getElementById('proteinCoeffBulk')?.value || 0);
+                    const fatValue = parseFloat(document.getElementById('fatCoeffBulk')?.value || 0);
+                    currentDeficitOrSurplus = `${surplusValue}% surplus`;
+                    currentProtein = `${proteinValue} g/kg`;
+                    currentFat = `${fatValue} g/kg`;
+                } else {
+                    const proteinValue = parseFloat(document.getElementById('proteinCoeffMaintain')?.value || 0);
+                    const fatValue = parseFloat(document.getElementById('fatCoeffMaintain')?.value || 0);
+                    currentDeficitOrSurplus = 'maintien (0%)';
+                    currentProtein = `${proteinValue} g/kg`;
+                    currentFat = `${fatValue} g/kg`;
+                }
+
                 showProfileAlert(
                     `Impossible de calculer : tes protéines (${protein}g = ${Math.round(proteinCal)} kcal) + lipides (${fat}g = ${Math.round(fatCal)} kcal) = ${Math.round(macroTotal)} kcal, mais ton objectif calorique est seulement ${Math.round(targetCalories)} kcal.
 
 Solutions possibles :
-• Réduis ton déficit calorique (actuellement ${Math.round((currentGoal === 'cut' ? deficit : -surplus) * 100)}%)
+• Réduis ton déficit/surplus (actuellement ${currentDeficitOrSurplus})
 • Augmente ton niveau d'activité
-• Réduis tes protéines (${proteinCoeff} g/kg) ou lipides (${fatCoeff} g/kg)`,
+• Réduis tes protéines (${currentProtein}) ou lipides (${currentFat})`,
                     'warning',
                     false // Ne pas cacher automatiquement
                 );
