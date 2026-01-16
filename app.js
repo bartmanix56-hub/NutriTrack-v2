@@ -74,6 +74,49 @@
         // Exécuter au chargement
         document.addEventListener('DOMContentLoaded', checkMobileInstall);
 
+        // ===== WEEKLY SUMMARY MOBILE ACCORDION =====
+        window.toggleWeeklySummary = function() {
+            const content = document.getElementById('weekly-summary-content');
+            const toggle = document.getElementById('weekly-summary-toggle');
+
+            if (!content || !toggle) return;
+
+            const isOpen = content.classList.contains('open');
+
+            if (isOpen) {
+                content.classList.remove('open');
+                toggle.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('open');
+                toggle.style.transform = 'rotate(180deg)';
+            }
+        };
+
+        // Show/hide chevron based on screen size
+        function updateWeeklySummaryToggle() {
+            const toggle = document.getElementById('weekly-summary-toggle');
+            const content = document.getElementById('weekly-summary-content');
+
+            if (!toggle || !content) return;
+
+            if (window.innerWidth <= 768) {
+                toggle.style.display = 'block';
+                if (!content.classList.contains('open')) {
+                    content.style.maxHeight = '0';
+                    content.style.overflow = 'hidden';
+                }
+            } else {
+                toggle.style.display = 'none';
+                content.classList.remove('open');
+                content.style.maxHeight = 'none';
+                content.style.overflow = 'visible';
+                toggle.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        window.addEventListener('resize', updateWeeklySummaryToggle);
+        document.addEventListener('DOMContentLoaded', updateWeeklySummaryToggle);
+
         // ===== HOME TAB =====
         // La page d'accueil est statique - pas de mise à jour dynamique nécessaire
 
