@@ -291,25 +291,32 @@
                 selectedBtn.classList.add('active');
             }
 
-            // Définir les valeurs selon le rythme et l'objectif
+            // Récupérer le niveau d'activité
+            const activity = parseFloat(document.getElementById('activity')?.value || 1.2);
+
+            // Définir les valeurs selon le rythme, l'objectif ET l'activité
             const paceSettings = {
                 gentle: {
-                    deficit: 15,      // 15% déficit
-                    surplus: 5,       // 5% surplus
-                    protein: 1.8,     // g/kg
-                    fat: 0.8          // g/kg
+                    deficit: 15,
+                    surplus: 5,
+                    protein: 1.8,
+                    fat: 0.8
                 },
                 normal: {
-                    deficit: 18,      // 18% déficit
-                    surplus: 8,       // 8% surplus
-                    protein: 2.0,     // g/kg
-                    fat: 0.9          // g/kg
+                    deficit: 18,
+                    surplus: 8,
+                    protein: 2.0,
+                    fat: 0.9
                 },
                 fast: {
-                    deficit: 22,      // 22% déficit
-                    surplus: 12,      // 12% surplus
-                    protein: 2.0,     // g/kg
-                    fat: 0.9          // g/kg
+                    // Adapter selon l'activité pour éviter glucides absurdes
+                    deficit: activity <= 1.2 ? 18 :      // Sédentaire: cap à 18%
+                             activity <= 1.375 ? 20 :     // Légèrement actif: 20%
+                             22,                          // Actif+: 22%
+                    surplus: activity <= 1.2 ? 8 :       // Sédentaire: cap à 8%
+                             12,                          // Actif: 12%
+                    protein: activity <= 1.2 ? 1.8 : 2.0, // Sédentaire: moins de protéines
+                    fat: 0.9
                 }
             };
 
@@ -822,6 +829,39 @@
 
             }
 
+            // GARDE-FOU : Assurer un minimum de glucides (80g)
+            // Uniquement en mode guidé pour ne pas interférer avec le mode avancé
+            const guidedMode = document.getElementById('guided-mode');
+            const isGuidedMode = guidedMode && guidedMode.style.display !== 'none';
+            const MIN_CARBS = 80;
+            let adjustedAutomatically = false;
+
+            if (isGuidedMode && carbs < MIN_CARBS) {
+                // Calculer le déficit/surplus nécessaire pour avoir MIN_CARBS glucides
+                const proteinCal = protein * 4;
+                const fatCal = fat * 9;
+                const minCarbsCal = MIN_CARBS * 4;
+                const minTargetCalories = proteinCal + fatCal + minCarbsCal;
+
+                // Calculer le nouveau déficit/surplus
+                let newDeficitOrSurplus;
+                if (currentGoal === 'cut') {
+                    newDeficitOrSurplus = (1 - (minTargetCalories / tdee)) * 100;
+                    // Mettre à jour l'input
+                    const deficitInput = document.getElementById('deficit');
+                    if (deficitInput) deficitInput.value = Math.round(newDeficitOrSurplus);
+                } else if (currentGoal === 'bulk') {
+                    newDeficitOrSurplus = ((minTargetCalories / tdee) - 1) * 100;
+                    // Mettre à jour l'input
+                    const surplusInput = document.getElementById('surplus');
+                    if (surplusInput) surplusInput.value = Math.round(newDeficitOrSurplus);
+                }
+
+                // Recalculer avec les nouvelles valeurs
+                targetCalories = minTargetCalories;
+                carbs = MIN_CARBS;
+                adjustedAutomatically = true;
+            }
 
             // Validation : vérifier que les glucides ne sont pas négatifs
             if (carbs < 0) {
@@ -905,6 +945,11 @@ Solutions possibles :
             document.getElementById('carbsCal').textContent = carbsCal;
             document.getElementById('fatCal').textContent = fatCal;
             document.getElementById('totalCal').textContent = totalCal;
+
+            // Message discret si ajusté automatiquement
+            if (adjustedAutomatically) {
+                showProfileAlert('<i data-lucide="info" class="icon-inline"></i> Ajusté automatiquement pour préserver ton énergie et garantir un apport en glucides suffisant.', 'info', true);
+            }
 
             // Animer les barres de progression
             setTimeout(() => {
