@@ -1427,6 +1427,13 @@
 
             .app-layout {
                 flex-direction: column;
+                position: relative; /* Pour que le fixed fonctionne correctement */
+            }
+
+            /* Forcer le body à avoir la bonne structure pour fixed positioning */
+            body {
+                position: relative;
+                min-height: 100vh;
             }
 
             /* Footers responsive */
@@ -1572,23 +1579,29 @@
 
             /* Résumé hebdomadaire collapsible sur mobile */
             #weekly-summary {
-                margin-bottom: var(--space-lg) !important;
+                margin-bottom: var(--space-xl) !important;
             }
 
             #weekly-summary > div:first-child {
                 cursor: pointer;
                 user-select: none;
                 -webkit-tap-highlight-color: transparent;
+                margin-bottom: 0 !important;
             }
 
             #weekly-summary-content {
                 max-height: 0;
                 overflow: hidden;
-                transition: max-height 0.3s ease;
+                transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             #weekly-summary-content.open {
-                max-height: 1000px;
+                max-height: 800px;
+                transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            #weekly-summary-content > div {
+                grid-template-columns: 1fr !important;
             }
 
             /* Réorganiser les sections dans Paramètres sur mobile */
@@ -2241,8 +2254,13 @@
 
             /* SUMMARY GRID 5 colonnes -> responsive */
             .summary-grid {
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: var(--space-xs) !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: var(--space-sm) !important;
+            }
+
+            /* Override inline styles for summary grid */
+            .day-totals .summary-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
             }
 
             .summary-card {
