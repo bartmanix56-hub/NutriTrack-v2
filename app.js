@@ -357,44 +357,84 @@
         window.toggleAdvancedMode = function() {
             const guidedMode = document.getElementById('guided-mode');
             const advancedMode = document.getElementById('advanced-mode');
+            const guidedPreview = document.getElementById('guided-preview');
 
             if (advancedMode.style.display === 'none') {
-                // Passer en mode avancé
-                guidedMode.style.display = 'none';
-                advancedMode.style.display = 'block';
-                localStorage.setItem('calculatorMode', 'advanced');
-
-                // Afficher les options correspondant à l'objectif actuel
-                document.getElementById('cut-options').style.display = 'none';
-                document.getElementById('maintain-options').style.display = 'none';
-                document.getElementById('bulk-options').style.display = 'none';
-
-                if (currentGoal === 'cut') {
-                    document.getElementById('cut-options').style.display = 'block';
-                } else if (currentGoal === 'maintain') {
-                    document.getElementById('maintain-options').style.display = 'block';
-                } else if (currentGoal === 'bulk') {
-                    document.getElementById('bulk-options').style.display = 'block';
+                // Animation de sortie de la preview
+                if (guidedPreview) {
+                    guidedPreview.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    guidedPreview.style.opacity = '0';
+                    guidedPreview.style.transform = 'translateY(-10px)';
                 }
-            } else {
-                // Revenir en mode guidé
-                advancedMode.style.display = 'none';
-                guidedMode.style.display = 'block';
-                localStorage.setItem('calculatorMode', 'guided');
 
-                // Masquer toutes les options en mode guidé
-                document.getElementById('cut-options').style.display = 'none';
-                document.getElementById('maintain-options').style.display = 'none';
-                document.getElementById('bulk-options').style.display = 'none';
+                // Passer en mode avancé après l'animation
+                setTimeout(() => {
+                    guidedMode.style.display = 'none';
+                    advancedMode.style.display = 'block';
+                    advancedMode.style.opacity = '0';
+                    advancedMode.style.transform = 'translateY(10px)';
 
-                // Réappliquer le rythme sélectionné
-                const selectedPaceBtn = document.querySelector('.pace-btn.active');
-                if (selectedPaceBtn) {
-                    const pace = selectedPaceBtn.getAttribute('data-pace');
-                    if (pace && typeof window.selectPace === 'function') {
-                        window.selectPace(pace);
+                    // Animation d'entrée du mode avancé
+                    setTimeout(() => {
+                        advancedMode.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                        advancedMode.style.opacity = '1';
+                        advancedMode.style.transform = 'translateY(0)';
+                    }, 10);
+
+                    localStorage.setItem('calculatorMode', 'advanced');
+
+                    // Afficher les options correspondant à l'objectif actuel
+                    document.getElementById('cut-options').style.display = 'none';
+                    document.getElementById('maintain-options').style.display = 'none';
+                    document.getElementById('bulk-options').style.display = 'none';
+
+                    if (currentGoal === 'cut') {
+                        document.getElementById('cut-options').style.display = 'block';
+                    } else if (currentGoal === 'maintain') {
+                        document.getElementById('maintain-options').style.display = 'block';
+                    } else if (currentGoal === 'bulk') {
+                        document.getElementById('bulk-options').style.display = 'block';
                     }
-                }
+                }, 300);
+
+            } else {
+                // Animation de sortie du mode avancé
+                advancedMode.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                advancedMode.style.opacity = '0';
+                advancedMode.style.transform = 'translateY(10px)';
+
+                // Revenir en mode guidé après l'animation
+                setTimeout(() => {
+                    advancedMode.style.display = 'none';
+                    guidedMode.style.display = 'block';
+
+                    // Réinitialiser et animer la preview
+                    if (guidedPreview) {
+                        guidedPreview.style.opacity = '0';
+                        guidedPreview.style.transform = 'translateY(-10px)';
+                        setTimeout(() => {
+                            guidedPreview.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                            guidedPreview.style.opacity = '1';
+                            guidedPreview.style.transform = 'translateY(0)';
+                        }, 10);
+                    }
+
+                    localStorage.setItem('calculatorMode', 'guided');
+
+                    // Masquer toutes les options en mode guidé
+                    document.getElementById('cut-options').style.display = 'none';
+                    document.getElementById('maintain-options').style.display = 'none';
+                    document.getElementById('bulk-options').style.display = 'none';
+
+                    // Réappliquer le rythme sélectionné
+                    const selectedPaceBtn = document.querySelector('.pace-btn.active');
+                    if (selectedPaceBtn) {
+                        const pace = selectedPaceBtn.getAttribute('data-pace');
+                        if (pace && typeof window.selectPace === 'function') {
+                            window.selectPace(pace);
+                        }
+                    }
+                }, 300);
             }
         };
 
