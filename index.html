@@ -984,8 +984,30 @@
                             </div>
                         </div>
 
+                        <!-- Preview des paramètres automatiques -->
+                        <div id="guided-preview" style="margin-top: var(--space-lg); padding: var(--space-md); background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.05);">
+                            <div style="display: flex; align-items: center; gap: var(--space-xs); margin-bottom: var(--space-sm); color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">
+                                <i data-lucide="lock" style="width: 14px; height: 14px;"></i>
+                                Paramètres automatiques
+                            </div>
+                            <div style="display: grid; gap: var(--space-xs); font-size: 0.8rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-xs) 0;">
+                                    <span style="color: var(--text-secondary);">Déficit/Surplus</span>
+                                    <span style="color: var(--text-primary); font-weight: 500;">Calculé automatiquement</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-xs) 0;">
+                                    <span style="color: var(--text-secondary);">Protéines</span>
+                                    <span style="color: var(--text-primary); font-weight: 500;">Optimisées pour ton objectif</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-xs) 0;">
+                                    <span style="color: var(--text-secondary);">Lipides</span>
+                                    <span style="color: var(--text-primary); font-weight: 500;">Ajustés selon ton poids</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Toggle vers mode avancé -->
-                        <div style="text-align: center; padding-top: var(--space-md); border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                        <div style="text-align: center; padding-top: var(--space-md);">
                             <button onclick="toggleAdvancedMode()" style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); transition: all 0.3s;">
                                 <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
                                 Afficher les paramètres avancés
