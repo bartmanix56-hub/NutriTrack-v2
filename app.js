@@ -235,7 +235,7 @@
 
         function selectGoal(goal) {
             currentGoal = goal;
-            document.querySelectorAll('.goal-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.goal-btn:not(.pace-btn)').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`[data-goal="${goal}"]`)?.classList.add('active');
 
             // Masquer toutes les options
@@ -243,20 +243,40 @@
             document.getElementById('maintain-options').style.display = 'none';
             document.getElementById('bulk-options').style.display = 'none';
 
-            // Afficher les options correspondantes
-            if (goal === 'cut') {
-                document.getElementById('cut-options').style.display = 'block';
-            } else if (goal === 'maintain') {
-                document.getElementById('maintain-options').style.display = 'block';
-            } else if (goal === 'bulk') {
-                document.getElementById('bulk-options').style.display = 'block';
+            // Afficher les options correspondantes SEULEMENT si en mode avancé
+            const advancedMode = document.getElementById('advanced-mode');
+            const isAdvancedMode = advancedMode && advancedMode.style.display !== 'none';
+
+            if (isAdvancedMode) {
+                if (goal === 'cut') {
+                    document.getElementById('cut-options').style.display = 'block';
+                } else if (goal === 'maintain') {
+                    document.getElementById('maintain-options').style.display = 'block';
+                } else if (goal === 'bulk') {
+                    document.getElementById('bulk-options').style.display = 'block';
+                }
             }
 
             // Sauvegarder le goal
             localStorage.setItem('calc_goal', goal);
 
-            // Revalider après changement d'objectif
-            validateMacroInputs();
+            // Si en mode guidé, réappliquer le rythme sélectionné
+            const guidedMode = document.getElementById('guided-mode');
+            const isGuidedMode = guidedMode && guidedMode.style.display !== 'none';
+
+            if (isGuidedMode) {
+                const selectedPaceBtn = document.querySelector('.pace-btn.active');
+                if (selectedPaceBtn) {
+                    const pace = selectedPaceBtn.getAttribute('data-pace');
+                    if (pace && typeof window.selectPace === 'function') {
+                        // Réappliquer le rythme avec le nouvel objectif
+                        window.selectPace(pace);
+                    }
+                }
+            } else {
+                // En mode avancé, juste revalider
+                validateMacroInputs();
+            }
         }
 
         // Sélection du rythme en mode guidé
@@ -264,42 +284,73 @@
             // Mise à jour visuelle des boutons
             document.querySelectorAll('.pace-btn').forEach(btn => {
                 btn.classList.remove('active');
-                btn.style.borderColor = 'transparent';
-                // Reset icon color
-                const icon = btn.querySelector('i');
-                if (icon) icon.style.color = 'var(--text-secondary)';
             });
 
             const selectedBtn = document.querySelector(`[data-pace="${pace}"]`);
             if (selectedBtn) {
                 selectedBtn.classList.add('active');
-                selectedBtn.style.borderColor = 'var(--accent-ui)';
-                // Highlight icon
-                const icon = selectedBtn.querySelector('i');
-                if (icon) icon.style.color = 'var(--accent-ui)';
             }
 
-            // Définir les déficits/surplus selon le rythme
-            const paceDeficits = {
-                gentle: { cut: 250, bulk: 250 },
-                normal: { cut: 500, bulk: 500 },
-                fast: { cut: 750, bulk: 750 }
+            // Définir les valeurs selon le rythme et l'objectif
+            const paceSettings = {
+                gentle: {
+                    deficit: 15,      // 15% déficit
+                    surplus: 5,       // 5% surplus
+                    protein: 1.8,     // g/kg
+                    fat: 0.8          // g/kg
+                },
+                normal: {
+                    deficit: 20,      // 20% déficit
+                    surplus: 10,      // 10% surplus
+                    protein: 2.0,     // g/kg
+                    fat: 1.0          // g/kg
+                },
+                fast: {
+                    deficit: 25,      // 25% déficit
+                    surplus: 15,      // 15% surplus
+                    protein: 2.2,     // g/kg
+                    fat: 1.0          // g/kg
+                }
             };
+
+            const settings = paceSettings[pace];
 
             // Appliquer les valeurs selon l'objectif actuel
             if (currentGoal === 'cut') {
-                const deficitInput = document.getElementById('custom-deficit');
-                if (deficitInput) deficitInput.value = paceDeficits[pace].cut;
+                const deficitInput = document.getElementById('deficit');
+                const proteinInput = document.getElementById('proteinCoeff');
+                const fatInput = document.getElementById('fatCoeff');
+
+                if (deficitInput) deficitInput.value = settings.deficit;
+                if (proteinInput) proteinInput.value = settings.protein;
+                if (fatInput) fatInput.value = settings.fat;
+
             } else if (currentGoal === 'bulk') {
-                const surplusInput = document.getElementById('custom-surplus');
-                if (surplusInput) surplusInput.value = paceDeficits[pace].bulk;
+                const surplusInput = document.getElementById('surplus');
+                const proteinInput = document.getElementById('proteinCoeffBulk');
+                const fatInput = document.getElementById('fatCoeffBulk');
+
+                if (surplusInput) surplusInput.value = settings.surplus;
+                if (proteinInput) proteinInput.value = settings.protein;
+                if (fatInput) fatInput.value = settings.fat;
+
+            } else if (currentGoal === 'maintain') {
+                const proteinInput = document.getElementById('proteinCoeffMaintain');
+                const fatInput = document.getElementById('fatCoeffMaintain');
+
+                if (proteinInput) proteinInput.value = settings.protein;
+                if (fatInput) fatInput.value = settings.fat;
             }
 
             // Sauvegarder le rythme sélectionné
             localStorage.setItem('selectedPace', pace);
 
-            // Recalculer les macros
-            validateMacroInputs();
+            // Calculer automatiquement les macros
+            setTimeout(() => {
+                if (typeof calculateMacros === 'function') {
+                    calculateMacros();
+                }
+            }, 100);
         };
 
         // Toggle entre mode guidé et mode avancé
@@ -312,11 +363,38 @@
                 guidedMode.style.display = 'none';
                 advancedMode.style.display = 'block';
                 localStorage.setItem('calculatorMode', 'advanced');
+
+                // Afficher les options correspondant à l'objectif actuel
+                document.getElementById('cut-options').style.display = 'none';
+                document.getElementById('maintain-options').style.display = 'none';
+                document.getElementById('bulk-options').style.display = 'none';
+
+                if (currentGoal === 'cut') {
+                    document.getElementById('cut-options').style.display = 'block';
+                } else if (currentGoal === 'maintain') {
+                    document.getElementById('maintain-options').style.display = 'block';
+                } else if (currentGoal === 'bulk') {
+                    document.getElementById('bulk-options').style.display = 'block';
+                }
             } else {
                 // Revenir en mode guidé
                 advancedMode.style.display = 'none';
                 guidedMode.style.display = 'block';
                 localStorage.setItem('calculatorMode', 'guided');
+
+                // Masquer toutes les options en mode guidé
+                document.getElementById('cut-options').style.display = 'none';
+                document.getElementById('maintain-options').style.display = 'none';
+                document.getElementById('bulk-options').style.display = 'none';
+
+                // Réappliquer le rythme sélectionné
+                const selectedPaceBtn = document.querySelector('.pace-btn.active');
+                if (selectedPaceBtn) {
+                    const pace = selectedPaceBtn.getAttribute('data-pace');
+                    if (pace && typeof window.selectPace === 'function') {
+                        window.selectPace(pace);
+                    }
+                }
             }
         };
 
