@@ -259,6 +259,67 @@
             validateMacroInputs();
         }
 
+        // Sélection du rythme en mode guidé
+        window.selectPace = function(pace) {
+            // Mise à jour visuelle des boutons
+            document.querySelectorAll('.pace-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.borderColor = 'transparent';
+                // Reset icon color
+                const icon = btn.querySelector('i');
+                if (icon) icon.style.color = 'var(--text-secondary)';
+            });
+
+            const selectedBtn = document.querySelector(`[data-pace="${pace}"]`);
+            if (selectedBtn) {
+                selectedBtn.classList.add('active');
+                selectedBtn.style.borderColor = 'var(--accent-ui)';
+                // Highlight icon
+                const icon = selectedBtn.querySelector('i');
+                if (icon) icon.style.color = 'var(--accent-ui)';
+            }
+
+            // Définir les déficits/surplus selon le rythme
+            const paceDeficits = {
+                gentle: { cut: 250, bulk: 250 },
+                normal: { cut: 500, bulk: 500 },
+                fast: { cut: 750, bulk: 750 }
+            };
+
+            // Appliquer les valeurs selon l'objectif actuel
+            if (currentGoal === 'cut') {
+                const deficitInput = document.getElementById('custom-deficit');
+                if (deficitInput) deficitInput.value = paceDeficits[pace].cut;
+            } else if (currentGoal === 'bulk') {
+                const surplusInput = document.getElementById('custom-surplus');
+                if (surplusInput) surplusInput.value = paceDeficits[pace].bulk;
+            }
+
+            // Sauvegarder le rythme sélectionné
+            localStorage.setItem('selectedPace', pace);
+
+            // Recalculer les macros
+            validateMacroInputs();
+        };
+
+        // Toggle entre mode guidé et mode avancé
+        window.toggleAdvancedMode = function() {
+            const guidedMode = document.getElementById('guided-mode');
+            const advancedMode = document.getElementById('advanced-mode');
+
+            if (advancedMode.style.display === 'none') {
+                // Passer en mode avancé
+                guidedMode.style.display = 'none';
+                advancedMode.style.display = 'block';
+                localStorage.setItem('calculatorMode', 'advanced');
+            } else {
+                // Revenir en mode guidé
+                advancedMode.style.display = 'none';
+                guidedMode.style.display = 'block';
+                localStorage.setItem('calculatorMode', 'guided');
+            }
+        };
+
         // === VALIDATION EN TEMPS RÉEL DES MACROS ===
         function validateMacroInputs() {
             // 1. Récupérer toutes les données nécessaires
@@ -6829,4 +6890,3 @@ Solutions possibles :
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(initOnboarding, 500);
         });
-
