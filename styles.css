@@ -1427,13 +1427,18 @@
 
             .app-layout {
                 flex-direction: column;
-                position: relative; /* Pour que le fixed fonctionne correctement */
+                /* Removed position: relative - breaks position: fixed for sidebar */
             }
 
             /* Forcer le body à avoir la bonne structure pour fixed positioning */
+            html, body {
+                height: 100%;
+                overflow-x: hidden;
+            }
+
             body {
-                position: relative;
                 min-height: 100vh;
+                padding-bottom: 90px; /* Space for fixed navbar */
             }
 
             /* Footers responsive */
@@ -1590,14 +1595,17 @@
             }
 
             #weekly-summary-content {
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                max-height: 0 !important;
+                overflow: hidden !important;
+                opacity: 0;
+                transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
             }
 
             #weekly-summary-content.open {
-                max-height: 800px;
-                transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                max-height: 2000px !important;
+                opacity: 1;
+                overflow: visible !important;
+                transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
             }
 
             #weekly-summary-content > div {

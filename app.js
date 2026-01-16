@@ -113,15 +113,12 @@
 
             if (window.innerWidth <= 768) {
                 toggle.style.display = 'block';
-                if (!content.classList.contains('open')) {
-                    content.style.maxHeight = '0';
-                    content.style.overflow = 'hidden';
-                }
+                // Don't set inline styles - let CSS handle it
             } else {
                 toggle.style.display = 'none';
                 content.classList.remove('open');
-                content.style.maxHeight = 'none';
-                content.style.overflow = 'visible';
+                content.style.maxHeight = '';
+                content.style.overflow = '';
                 toggle.style.transform = 'rotate(0deg)';
             }
         }
