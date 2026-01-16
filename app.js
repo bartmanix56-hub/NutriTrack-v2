@@ -66,9 +66,21 @@
         // Afficher bouton install sur mobile (iOS n'a pas beforeinstallprompt)
         function checkMobileInstall() {
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-            if (isMobile && !isStandalone) {
+            // Vérifier si l'app est déjà installée (plusieurs méthodes)
+            const isStandalone =
+                window.matchMedia('(display-mode: standalone)').matches ||
+                window.navigator.standalone === true ||
+                document.referrer.includes('android-app://');
+
+            // Aussi vérifier si on est sur iOS en mode standalone
+            const isIOSStandalone = window.navigator.standalone === true;
+
+            // Seulement afficher le bouton si mobile ET PAS standalone
+            if (isMobile && !isStandalone && !isIOSStandalone) {
                 showInstallButton();
+            } else if (isStandalone || isIOSStandalone) {
+                // Si déjà installé, cacher le bouton
+                hideInstallButton();
             }
         }
         // Exécuter au chargement
