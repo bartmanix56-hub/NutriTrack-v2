@@ -1663,11 +1663,14 @@
 
                 <!-- Résumé Hebdomadaire -->
                 <div id="weekly-summary" style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border-radius: var(--radius-lg); padding: var(--space-xl); margin-bottom: var(--space-2xl); border: 2px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
-                    <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-xl); padding-bottom: var(--space-md); border-bottom: 2px solid rgba(255, 255, 255, 0.1);">
-                        <i data-lucide="bar-chart-3" style="width: 28px; height: 28px; color: var(--accent-ui);"></i>
-                        <h3 style="font-size: 1.3rem; font-weight: 700; margin: 0; color: var(--text-primary);">Résumé de la semaine</h3>
+                    <div onclick="window.innerWidth <= 768 && toggleWeeklySummary()" style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); margin-bottom: var(--space-xl); padding-bottom: var(--space-md); border-bottom: 2px solid rgba(255, 255, 255, 0.1);">
+                        <div style="display: flex; align-items: center; gap: var(--space-md);">
+                            <i data-lucide="bar-chart-3" style="width: 28px; height: 28px; color: var(--accent-ui);"></i>
+                            <h3 style="font-size: 1.3rem; font-weight: 700; margin: 0; color: var(--text-primary);">Résumé de la semaine</h3>
+                        </div>
+                        <i id="weekly-summary-toggle" data-lucide="chevron-down" style="width: 24px; height: 24px; color: var(--text-secondary); transition: transform 0.3s; display: none;"></i>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl);">
+                    <div id="weekly-summary-content" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl);">
                         <!-- Calories moyennes -->
                         <div style="text-align: center; padding: var(--space-lg); background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.2);">
                             <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
@@ -1697,6 +1700,7 @@
                             <div id="weekly-macro-success" style="font-size: 2rem; font-weight: 700; color: var(--accent-fat);">—</div>
                             <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--space-xs);">% de respect</div>
                         </div>
+                    </div>
                     </div>
                 </div>
 
