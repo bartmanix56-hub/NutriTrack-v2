@@ -1445,9 +1445,9 @@
                 right: 0 !important;
                 top: auto !important;
                 width: 100% !important;
-                height: 85px !important;
-                min-height: 85px !important;
-                max-height: 85px !important;
+                height: 70px !important;
+                min-height: 70px !important;
+                max-height: 70px !important;
                 display: flex !important;
                 flex-direction: row !important;
                 flex-wrap: nowrap !important;
@@ -1456,16 +1456,18 @@
                 overflow: visible !important;
                 border-right: none !important;
                 border-top: 1px solid rgba(255, 255, 255, 0.1);
-                padding: 10px 8px 25px 8px !important; /* padding-bottom pour safe area iPhone */
+                padding: 8px 8px 8px 8px !important;
+                padding-bottom: max(8px, env(safe-area-inset-bottom)) !important; /* iPhone safe area */
                 gap: 0 !important;
-                z-index: 1000;
+                z-index: 9999 !important;
                 background: var(--bg-secondary) !important;
-                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(10px);
             }
 
             .sidebar.collapsed {
                 width: 100% !important;
-                height: 85px !important;
+                height: 70px !important;
             }
 
             .sidebar-toggle { display: none !important; }
@@ -1556,12 +1558,70 @@
 
             .main-content {
                 padding: var(--space-md);
-                padding-bottom: 100px; /* Espace pour la navbar */
+                padding-bottom: 90px; /* Espace pour la navbar */
             }
 
             /* Header mobile */
             header h1 { font-size: 1.5rem; }
             header .subtitle { font-size: 0.85rem; }
+
+            /* Masquer "Salut, Username" sur mobile */
+            #header-greeting {
+                display: none !important;
+            }
+
+            /* Résumé hebdomadaire collapsible sur mobile */
+            #weekly-summary {
+                margin-bottom: var(--space-lg) !important;
+            }
+
+            #weekly-summary > div:first-child {
+                cursor: pointer;
+                user-select: none;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            #weekly-summary-content {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+            }
+
+            #weekly-summary-content.open {
+                max-height: 1000px;
+            }
+
+            /* Réorganiser les sections dans Paramètres sur mobile */
+            #settings > div:nth-child(2) {
+                /* Grille de paramètres - activer flexbox pour réorganiser */
+                display: flex !important;
+                flex-direction: column !important;
+            }
+
+            /* Mettre la section "Mes Données" (Export/Import) en premier */
+            #settings > div:nth-child(2) > div:nth-child(3) {
+                order: -1;
+            }
+
+            /* Profil & Préférences en second */
+            #settings > div:nth-child(2) > div:nth-child(1) {
+                order: 0;
+            }
+
+            /* Notifications en troisième */
+            #settings > div:nth-child(2) > div:nth-child(2) {
+                order: 1;
+            }
+
+            /* Sync Cloud en quatrième */
+            #settings > div:nth-child(2) > div:nth-child(4) {
+                order: 2;
+            }
+
+            /* Danger Zone reste en dernier */
+            #settings > div:nth-child(2) > div:last-child {
+                order: 999;
+            }
 
             /* Meals grid becomes vertical on mobile */
             #meals > div:first-of-type { grid-template-columns: 1fr !important; }
