@@ -1421,10 +1421,6 @@
 
         /* Responsive - Bottom navbar mobile style iOS/Android */
         @media (max-width: 768px) {
-            body {
-                padding-bottom: 0;
-            }
-
             .app-layout {
                 flex-direction: column;
                 /* Removed position: relative - breaks position: fixed for sidebar */
@@ -1438,7 +1434,8 @@
 
             body {
                 min-height: 100vh;
-                padding-bottom: 90px; /* Space for fixed navbar */
+                /* CRITICAL: Combine navbar space with safe area inset */
+                padding-bottom: max(90px, calc(90px + env(safe-area-inset-bottom))) !important;
             }
 
             /* Footers responsive */
@@ -4324,13 +4321,15 @@
         }
 
 
-        /* iOS Safe Area Support */
-        @supports (padding-top: env(safe-area-inset-top)) {
-            body {
-                padding-top: env(safe-area-inset-top);
-                padding-bottom: env(safe-area-inset-bottom);
-                padding-left: env(safe-area-inset-left);
-                padding-right: env(safe-area-inset-right);
+        /* iOS Safe Area Support - Desktop only */
+        @media (min-width: 769px) {
+            @supports (padding-top: env(safe-area-inset-top)) {
+                body {
+                    padding-top: env(safe-area-inset-top);
+                    padding-bottom: env(safe-area-inset-bottom);
+                    padding-left: env(safe-area-inset-left);
+                    padding-right: env(safe-area-inset-right);
+                }
             }
         }
 

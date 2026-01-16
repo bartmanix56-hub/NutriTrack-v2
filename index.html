@@ -266,7 +266,7 @@
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 border-radius: var(--radius-lg);
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-                z-index: 99999;
+                z-index: 100000;
                 overflow: visible;
             }
 
@@ -362,6 +362,20 @@
 
             .user-menu-logout i {
                 color: var(--color-danger);
+            }
+
+            /* User Menu Mobile Fixes */
+            @media (max-width: 768px) {
+                .user-menu {
+                    position: fixed;
+                    top: auto !important;
+                    bottom: 90px;
+                    right: var(--space-md);
+                    left: auto;
+                    width: calc(100% - var(--space-2xl));
+                    max-width: 320px;
+                    z-index: 100000;
+                }
             }
         </style>
 
@@ -1671,7 +1685,7 @@
                         <i id="weekly-summary-toggle" data-lucide="chevron-down" style="width: 24px; height: 24px; color: var(--text-secondary); transition: transform 0.3s; display: none;"></i>
                     </div>
                     <div id="weekly-summary-content">
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); margin-top: var(--space-xl);">
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); margin-top: var(--space-xl);">
                         <!-- Calories moyennes -->
                         <div style="text-align: center; padding: var(--space-lg); background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.2);">
                             <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
