@@ -2440,9 +2440,9 @@ Solutions possibles :
         let trackingData = [];
 
         // Initialisation V2
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', async function() {
             updateSectionsAvailability();
-            initV2();
+            await initV2();
 
             // Attach save listeners to all objective inputs
             const inputsToSave = ['deficit', 'surplus', 'proteinCoeff', 'fatCoeff', 'proteinCoeffBulk', 'fatCoeffBulk', 'activity', 'weight', 'bodyFat'];
@@ -2714,7 +2714,12 @@ Solutions possibles :
             document.body.style.overflow = '';
         }
 
-        function initV2() {
+        async function initV2() {
+            // NOUVEAU: Charger foodDatabase depuis Firestore AVANT tout le reste
+            if (typeof window.loadFoodDatabaseFromFirestore === 'function') {
+                await window.loadFoodDatabaseFromFirestore();
+            }
+
             loadCustomFoods();
             loadMealTemplates();
             loadAllMeals();
@@ -3718,6 +3723,7 @@ Solutions possibles :
                                         <div style="display: flex; gap: var(--space-sm); align-items: center;">
                                             <button class="icon-btn" style="background: rgba(255, 230, 109, 0.2); border: 1px solid var(--accent-fat); width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${food.name.replace(/'/g, "\\'")}')"><i data-lucide="star" style="width: 16px; height: 16px; fill: var(--accent-fat); color: var(--accent-fat);"></i></button>
                                             ${food.custom ? `<button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editFoodByIndex(${globalIndex})"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>` : ''}
+                                            ${food.fromFirestore && typeof window.isAdmin === 'function' && window.isAdmin() ? `<button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="window.editFood('${(food.barcode || food.id || '').replace(/'/g, "\\'")}')"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>` : ''}
                                             ${food.custom ? `<button class="delete-btn" style="font-size: 1.1rem; width: 36px; height: 36px;" onclick="deleteFoodByIndex(${globalIndex})"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>` : ''}
                                         </div></div></div>
                             `;
@@ -3748,6 +3754,7 @@ Solutions possibles :
                                 <div style="display: flex; gap: var(--space-sm); align-items: center;">
                                     <button class="icon-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${food.name.replace(/'/g, "\\'")}')"><i data-lucide="star" style="width: 16px; height: 16px;"></i></button>
                                     ${food.custom ? `<button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editFoodByIndex(${globalIndex})"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>` : ''}
+                                    ${food.fromFirestore && typeof window.isAdmin === 'function' && window.isAdmin() ? `<button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="window.editFood('${(food.barcode || food.id || '').replace(/'/g, "\\'")}')"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>` : ''}
                                     ${food.custom ? `<button class="delete-btn" style="font-size: 1.1rem; width: 36px; height: 36px;" onclick="deleteFoodByIndex(${globalIndex})"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>` : ''}
                                 </div></div></div>
                     `;

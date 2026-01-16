@@ -5417,6 +5417,63 @@
             }
         };
 
+        // ===== CHARGER FOODDATABASE DEPUIS FIRESTORE (Source unique) =====
+        window.loadFoodDatabaseFromFirestore = async function() {
+            // Si déjà chargé, ne pas recharger
+            if (foodDatabaseLoaded) {
+                console.log('✅ foodDatabase déjà chargé depuis Firestore');
+                return;
+            }
+
+            // Si Firebase pas disponible, utiliser fallback
+            if (!db) {
+                console.warn('⚠️ Firebase non disponible, utilisation de foodDatabaseLegacy');
+                foodDatabase = [...foodDatabaseLegacy];
+                foodDatabaseLoaded = true;
+                return;
+            }
+
+            try {
+                console.log('🔄 Chargement foodDatabase depuis Firestore...');
+
+                // Charger TOUS les aliments de Firestore (sans limite ou avec limite élevée)
+                const q = query(collection(db, 'aliments_communs'));
+                const querySnapshot = await getDocs(q);
+
+                // Réinitialiser foodDatabase
+                foodDatabase = [];
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.name) {
+                        foodDatabase.push({
+                            name: data.name,
+                            calories: parseFloat(data.calories) || 0,
+                            protein: parseFloat(data.proteins || data.protein) || 0,
+                            carbs: parseFloat(data.carbs) || 0,
+                            fat: parseFloat(data.fats || data.fat) || 0,
+                            fiber: parseFloat(data.fibers || data.fiber) || 0,
+                            category: data.category || 'autres',
+                            barcode: doc.id,
+                            unit: data.unit || '100g',
+                            custom: false,
+                            fromFirestore: true
+                        });
+                    }
+                });
+
+                foodDatabaseLoaded = true;
+                console.log(`✅ foodDatabase chargé depuis Firestore: ${foodDatabase.length} aliments`);
+
+            } catch (error) {
+                console.error('❌ Erreur chargement foodDatabase depuis Firestore:', error);
+                // Fallback vers la base legacy
+                console.warn('⚠️ Utilisation de foodDatabaseLegacy en fallback');
+                foodDatabase = [...foodDatabaseLegacy];
+                foodDatabaseLoaded = true;
+            }
+        };
+
         // 🧪 FONCTION DE TEST - Utilise dans la console: testFirestoreSearch("3017620422003") ou testFirestoreSearch("nutella")
         window.testFirestoreSearch = async function(searchText) {
 
@@ -6731,8 +6788,29 @@
         window.editFood = async function(foodId) {
             if (!isAdmin()) return;
 
-            // Find food in cache
-            const food = adminFoodsCache.find(f => f.id === foodId);
+            let food = null;
+
+            // Find food in cache first
+            food = adminFoodsCache.find(f => f.id === foodId);
+
+            // If not in cache, try to load from Firestore
+            if (!food) {
+                try {
+                    const docRef = doc(db, 'aliments_communs', foodId);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        food = {
+                            id: docSnap.id,
+                            ...docSnap.data()
+                        };
+                    }
+                } catch (error) {
+                    console.error('Erreur chargement aliment depuis Firestore:', error);
+                }
+            }
+
+            // If still not found, show error
             if (!food) {
                 if (typeof showToast === 'function') {
                     showToast('<i data-lucide="x-circle" class="icon-inline"></i> Aliment introuvable', 'error');
@@ -6743,14 +6821,14 @@
             // Store current editing food ID
             currentEditingFoodId = foodId;
 
-            // Pre-fill form
+            // Pre-fill form (support both 'protein' and 'proteins' fields)
             document.getElementById('edit-food-name').value = food.name || '';
             document.getElementById('edit-food-category').value = food.category || 'autres';
             document.getElementById('edit-food-unit').value = food.unit || '100g';
             document.getElementById('edit-food-calories').value = food.calories || 0;
-            document.getElementById('edit-food-protein').value = food.protein || 0;
+            document.getElementById('edit-food-protein').value = food.protein || food.proteins || 0;
             document.getElementById('edit-food-carbs').value = food.carbs || 0;
-            document.getElementById('edit-food-fat').value = food.fat || 0;
+            document.getElementById('edit-food-fat').value = food.fat || food.fats || 0;
 
             // Validate on input
             const inputs = ['edit-food-calories', 'edit-food-protein', 'edit-food-carbs', 'edit-food-fat'];
