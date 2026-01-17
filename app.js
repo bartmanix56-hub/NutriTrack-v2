@@ -220,22 +220,29 @@
             document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-            // Activer l'onglet ciblé
+            // Activer le bouton sidebar s'il existe
             const targetBtn = document.querySelector(`[data-tab="${tabName}"]`);
+            if (targetBtn) targetBtn.classList.add('active');
+
+            // Activer le tab content
             const targetContent = document.getElementById(tabName);
+            if (targetContent) targetContent.classList.add('active');
 
-            if (targetBtn && targetContent) {
-                targetBtn.classList.add('active');
-                targetContent.classList.add('active');
-
-                // Actions spécifiques par onglet
-                if (tabName === 'planner') {
-                    renderWeeklyPlan();
-                } else if (tabName === 'tracking')  { renderTrackingList(); }
-
-                // Scroll vers le haut
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Actions spécifiques par onglet (comme switchToTab)
+            if (tabName === 'home') {
+                if (typeof updateHomeTab === 'function') updateHomeTab();
+            } else if (tabName === 'planner') {
+                renderWeeklyPlan();
+            } else if (tabName === 'tracking') {
+                renderTrackingList();
+            } else if (tabName === 'meal-templates') {
+                renderMealTemplatesList();
+            } else if (tabName === 'settings') {
+                if (typeof updateSettingsStats === 'function') updateSettingsStats();
             }
+
+            // Scroll vers le haut
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Tab switching - EXCLURE le bouton Plus qui n'a pas de data-tab
