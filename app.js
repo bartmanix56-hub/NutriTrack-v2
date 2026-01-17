@@ -191,6 +191,7 @@
 
             drawer.classList.toggle('active');
             overlay.classList.toggle('active');
+            document.documentElement.classList.toggle('drawer-open');
             document.body.classList.toggle('drawer-open');
 
             if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -201,6 +202,7 @@
             const overlay = document.getElementById('mobile-drawer-overlay');
             drawer.classList.remove('active');
             overlay.classList.remove('active');
+            document.documentElement.classList.remove('drawer-open');
             document.body.classList.remove('drawer-open');
         }
 
