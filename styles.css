@@ -1423,6 +1423,7 @@
         @media (max-width: 768px) {
             .app-layout {
                 flex-direction: column;
+                animation: none !important; /* CRITICAL: Remove animation that creates transform context */
                 /* Removed position: relative - breaks position: fixed for sidebar */
             }
 
@@ -2719,6 +2720,13 @@
         }
 
         .mobile-drawer-overlay.active { display: block; }
+
+        /* Bloquer le scroll du body quand drawer ouvert */
+        body.drawer-open {
+            overflow: hidden !important;
+            position: fixed !important;
+            width: 100% !important;
+        }
 
         .mobile-drawer-item {
             display: flex;
