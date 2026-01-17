@@ -185,6 +185,8 @@
         }
 
         // ===== MOBILE DRAWER =====
+        let scrollPosition = 0;
+
         function toggleMobileDrawer() {
             const drawer = document.getElementById('mobile-drawer');
             const overlay = document.getElementById('mobile-drawer-overlay');
@@ -195,9 +197,15 @@
 
             // Bloquer le scroll du body quand drawer ouvert
             if (isOpening) {
+                // Sauvegarder la position de scroll
+                scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                document.body.style.top = `-${scrollPosition}px`;
                 document.body.classList.add('drawer-open');
             } else {
                 document.body.classList.remove('drawer-open');
+                document.body.style.top = '';
+                // Restaurer la position de scroll
+                window.scrollTo(0, scrollPosition);
             }
 
             if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -210,6 +218,9 @@
             overlay.classList.remove('active');
             // Débloquer le scroll
             document.body.classList.remove('drawer-open');
+            document.body.style.top = '';
+            // Restaurer la position de scroll
+            window.scrollTo(0, scrollPosition);
         }
 
         function navigateFromDrawer(tabName) {
