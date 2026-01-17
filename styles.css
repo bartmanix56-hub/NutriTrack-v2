@@ -1439,12 +1439,12 @@
                 padding-bottom: max(70px, calc(70px + env(safe-area-inset-bottom))) !important;
             }
 
-            /* Footers responsive */
+            /* Footers responsive - Cacher footer mobile (liens dans drawer) */
             .footer-desktop {
                 display: none !important;
             }
             .footer-mobile {
-                display: block !important;
+                display: none !important;
             }
 
             /* NAVBAR MOBILE STYLE IOS/ANDROID */
@@ -2726,6 +2726,11 @@
             overflow: hidden !important;
             position: fixed !important;
             width: 100% !important;
+        }
+
+        /* Bloquer les clics sur la navbar quand drawer ouvert */
+        body.drawer-open .sidebar {
+            pointer-events: none !important;
         }
 
         .mobile-drawer-item {
