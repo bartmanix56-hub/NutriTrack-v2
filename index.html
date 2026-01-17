@@ -555,7 +555,28 @@
                     <span style="color: var(--accent-main); font-weight: 600;">Installer l'application</span>
                 </div>
 
-                <!-- Menu Items -->
+                <!-- SECTION OUTILS -->
+                <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-sm); padding-left: 4px;">Outils</div>
+
+                <div class="mobile-drawer-item" onclick="navigateFromDrawer('foods')">
+                    <i data-lucide="apple" style="color: var(--accent-main);"></i>
+                    <span>Base d'aliments</span>
+                </div>
+                <div class="mobile-drawer-item" onclick="navigateFromDrawer('meal-templates')">
+                    <i data-lucide="clipboard-list" style="color: var(--accent-main);"></i>
+                    <span>Repas Types</span>
+                </div>
+
+                <!-- Bouton Admin dans drawer (visible uniquement pour admin) -->
+                <div class="mobile-drawer-item" id="drawer-admin-btn" onclick="navigateFromDrawer('admin')" style="display: none; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3);">
+                    <i data-lucide="shield" style="color: var(--accent-purple);"></i>
+                    <span style="color: var(--accent-purple); font-weight: 600;">Panel Admin</span>
+                </div>
+
+                <!-- Séparateur -->
+                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: var(--space-md) 0;"></div>
+
+                <!-- SECTION PRINCIPALE -->
                 <div class="mobile-drawer-item" onclick="navigateFromDrawer('settings')">
                     <i data-lucide="settings" style="color: var(--accent-main);"></i>
                     <span>Paramètres</span>
@@ -572,28 +593,25 @@
                     <i data-lucide="help-circle" style="color: var(--accent-main);"></i>
                     <span>Aide</span>
                 </div>
+                <div class="mobile-drawer-item" onclick="navigateFromDrawer('about')">
+                    <i data-lucide="info" style="color: var(--accent-main);"></i>
+                    <span>À propos</span>
+                </div>
+                <div class="mobile-drawer-item" onclick="navigateFromDrawer('health-warning')">
+                    <i data-lucide="heart-pulse" style="color: var(--accent-main);"></i>
+                    <span>Santé</span>
+                </div>
+                <div class="mobile-drawer-item" onclick="navigateFromDrawer('terms')">
+                    <i data-lucide="file-text" style="color: var(--accent-main);"></i>
+                    <span>CGU</span>
+                </div>
+                <div class="mobile-drawer-item" onclick="navigateFromDrawer('legal')">
+                    <i data-lucide="scale" style="color: var(--accent-main);"></i>
+                    <span>Mentions légales</span>
+                </div>
                 <div class="mobile-drawer-item" onclick="openFeedbackModal(); closeMobileDrawer();">
                     <i data-lucide="alert-triangle" style="color: var(--accent-main);"></i>
                     <span>Signaler un bug</span>
-                </div>
-
-                <!-- Séparateur -->
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: var(--space-md) 0;"></div>
-                <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-sm); padding-left: 4px;">Outils</div>
-
-                <div class="mobile-drawer-item" onclick="navigateFromDrawer('foods')">
-                    <i data-lucide="apple" style="color: var(--accent-main);"></i>
-                    <span>Base d'aliments</span>
-                </div>
-                <div class="mobile-drawer-item" onclick="navigateFromDrawer('meal-templates')">
-                    <i data-lucide="clipboard-list" style="color: var(--accent-main);"></i>
-                    <span>Repas Types</span>
-                </div>
-
-                <!-- Bouton Admin dans drawer (visible uniquement pour admin) -->
-                <div class="mobile-drawer-item" id="drawer-admin-btn" onclick="navigateFromDrawer('admin')" style="display: none; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3);">
-                    <i data-lucide="shield" style="color: var(--accent-purple);"></i>
-                    <span style="color: var(--accent-purple); font-weight: 600;">Panel Admin</span>
                 </div>
 
                 <!-- Séparateur + Déconnexion -->
