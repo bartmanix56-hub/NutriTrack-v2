@@ -370,6 +370,15 @@
             width: 0;
             overflow: hidden; }
 
+        /* Label desktop/mobile - Desktop par défaut */
+        .label-desktop {
+            display: inline;
+        }
+
+        .label-mobile {
+            display: none;
+        }
+
         .sidebar-group-title {
             padding: var(--space-lg) var(--space-md) var(--space-sm);
             color: var(--text-secondary);
@@ -1447,7 +1456,7 @@
                 display: none !important;
             }
 
-            /* NAVBAR MOBILE STYLE IOS/ANDROID */
+            /* NAVBAR MOBILE STYLE IOS/ANDROID - Natural app feel */
             .sidebar {
                 position: fixed !important;
                 bottom: 0 !important;
@@ -1466,7 +1475,8 @@
                 overflow: visible !important;
                 border-right: none !important;
                 border-top: 1px solid rgba(255, 255, 255, 0.1);
-                padding: 8px 8px 8px 8px !important;
+                /* CRITICAL: Add padding-top for natural app spacing like TikTok */
+                padding: 12px 8px 8px 8px !important;
                 padding-bottom: max(8px, env(safe-area-inset-bottom)) !important; /* iPhone safe area */
                 gap: 0 !important;
                 z-index: 9999 !important;
@@ -1561,6 +1571,28 @@
                 opacity: 1 !important;
                 width: auto !important;
                 display: block !important;
+            }
+
+            /* Label desktop/mobile pour Calculateur → Calcul */
+            .label-desktop {
+                display: none !important;
+            }
+
+            .label-mobile {
+                display: inline !important;
+            }
+
+            /* Bouton + eau rond sur mobile */
+            button[onclick*="updateWater(1)"] {
+                width: 28px !important;
+                height: 28px !important;
+                min-width: 28px !important;
+                min-height: 28px !important;
+                border-radius: 50% !important;
+                padding: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
 
             /* Bouton Plus visible sur mobile */
@@ -2960,11 +2992,11 @@
         }
 
         .week-nav-btn {
-            background: var(--accent-ui);
-            border: none;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             pointer-events: all;
-            color: white;
-            padding: 10px 20px;
+            color: var(--text-primary);
+            padding: var(--space-sm) var(--space-lg);
             border-radius: var(--radius-md);
             cursor: pointer;
             font-size: 1rem;
@@ -2973,13 +3005,15 @@
         }
 
         .week-nav-btn:hover {
-            background: #34d399;
-            transform: translateY(-2px);
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--accent-main);
+            color: var(--accent-main);
         }
 
         .week-nav-btn.this-week-btn {
-            background: var(--accent-ui);
+            background: var(--accent-main);
             color: white;
+            border-color: var(--accent-main);
         }
 
         .day-card.today {
