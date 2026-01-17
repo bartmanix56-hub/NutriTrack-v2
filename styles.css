@@ -2746,10 +2746,17 @@
 
         .mobile-drawer-overlay.active { display: block; }
 
-        /* Bloquer le scroll du body quand drawer ouvert */
+        /* Bloquer le scroll quand drawer ouvert */
+        html.drawer-open,
         body.drawer-open {
             overflow: hidden !important;
-            /* Ne PAS mettre position: fixed car ça fait sauter la navbar */
+        }
+
+        /* Sur mobile, empêcher le scroll avec touch-action */
+        @media (max-width: 768px) {
+            body.drawer-open {
+                touch-action: none !important;
+            }
         }
 
         /* Bloquer les clics sur la navbar quand drawer ouvert */
