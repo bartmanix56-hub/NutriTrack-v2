@@ -1434,8 +1434,8 @@
 
             body {
                 min-height: 100vh;
-                /* CRITICAL: Combine navbar space with safe area inset */
-                padding-bottom: max(90px, calc(90px + env(safe-area-inset-bottom))) !important;
+                /* CRITICAL: Combine navbar space (70px) with safe area inset */
+                padding-bottom: max(70px, calc(70px + env(safe-area-inset-bottom))) !important;
             }
 
             /* Footers responsive */
@@ -2711,7 +2711,7 @@
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
+            bottom: 70px; /* S'arrête AVANT la navbar (70px de haut) */
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
