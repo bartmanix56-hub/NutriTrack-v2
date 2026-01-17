@@ -1444,8 +1444,8 @@
 
             body {
                 min-height: 100vh;
-                /* CRITICAL: Combine navbar space (85px) with safe area inset */
-                padding-bottom: max(85px, calc(85px + env(safe-area-inset-bottom))) !important;
+                /* CRITICAL: Combine navbar space (90px) with safe area inset */
+                padding-bottom: max(90px, calc(90px + env(safe-area-inset-bottom))) !important;
             }
 
             /* Footers responsive - Cacher footer mobile (liens dans drawer) */
@@ -1464,9 +1464,9 @@
                 right: 0 !important;
                 top: auto !important;
                 width: 100% !important;
-                height: 85px !important;
-                min-height: 85px !important;
-                max-height: 85px !important;
+                height: 90px !important;
+                min-height: 90px !important;
+                max-height: 90px !important;
                 display: flex !important;
                 flex-direction: row !important;
                 flex-wrap: nowrap !important;
@@ -1477,7 +1477,7 @@
                 border-top: 1px solid rgba(255, 255, 255, 0.1);
                 /* CRITICAL: Spacing naturel + safe area iOS */
                 padding: 12px 8px 0 8px !important;
-                padding-bottom: max(20px, env(safe-area-inset-bottom)) !important; /* Safe area iOS home indicator */
+                padding-bottom: max(24px, env(safe-area-inset-bottom)) !important; /* Safe area iOS home indicator + extra space */
                 gap: 0 !important;
                 z-index: 9999 !important;
                 background: var(--bg-secondary) !important;
@@ -1489,7 +1489,7 @@
                 position: fixed !important;
                 bottom: 0 !important;
                 width: 100% !important;
-                height: 85px !important;
+                height: 90px !important;
             }
 
             .sidebar-toggle { display: none !important; }
@@ -1708,6 +1708,9 @@
 
             /* Flex container - alignement gauche (pas center!) */
             .tab-content > div:first-child[style*="background: linear-gradient"] > div[style*="display: flex"] {
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
                 gap: 12px !important;
                 margin-bottom: 0 !important;
                 justify-content: flex-start !important;
@@ -2704,7 +2707,7 @@
         .mobile-drawer {
             display: none;
             position: fixed;
-            bottom: 85px; /* Au-dessus de la navbar (85px de haut) */
+            bottom: 90px; /* Au-dessus de la navbar (90px de haut) */
             left: 0;
             right: 0;
             background: var(--bg-secondary);
@@ -2731,7 +2734,7 @@
             top: 0;
             left: 0;
             right: 0;
-            bottom: 85px; /* S'arrête AVANT la navbar (85px de haut) */
+            bottom: 90px; /* S'arrête AVANT la navbar (90px de haut) */
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
