@@ -5933,7 +5933,7 @@
             }
         }
 
-        function restoreDataFromCloud(cloudData) {
+        function restoreDataFromCloud(cloudData, silent = false) {
             const allKeys = [...SYNC_KEYS]; // All synced keys
 
             allKeys.forEach(key => {
@@ -5956,11 +5956,13 @@
                 }
             } catch (e) { /* ignore parse errors */ }
 
-            // Reload page to apply restored data
-            if (typeof showToast === 'function') {
-                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Données restaurées depuis le cloud !', 'success');
+            // Reload page SEULEMENT si restauration manuelle (pas lors de l'init)
+            if (!silent) {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Données restaurées depuis le cloud !', 'success');
+                }
+                setTimeout(() => location.reload(), 1500);
             }
-            setTimeout(() => location.reload(), 1500);
         }
 
         // ===== LOCALSTORAGE HOOK =====
@@ -6158,9 +6160,9 @@
                         });
                         updateSyncStatus(`Dernière sync: ${syncDate}`);
 
-                        // Restaurer les données depuis le cloud
+                        // Restaurer les données depuis le cloud SILENCIEUSEMENT (pas de reload lors de l'init)
                         if (cloudData.allDailyMeals || cloudData.trackingData) {
-                            restoreDataFromCloud(cloudData);
+                            restoreDataFromCloud(cloudData, true); // silent = true
                         }
                     }
 
