@@ -45,7 +45,17 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
-<body style="opacity: 0; transition: opacity 0.3s;">
+<body>
+    <!-- Splash Screen - Visible during boot -->
+    <div id="app-splash" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: var(--bg-primary); z-index: 99999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px;">
+        <div style="width: 60px; height: 60px; border: 3px solid rgba(16, 185, 129, 0.2); border-top-color: var(--accent-main); border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+        <style>
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        </style>
+    </div>
+
     <!-- Login Screen -->
     <div class="container" id="main-app" style="display: none;">
         <!-- Bannière statut connexion -->
@@ -4845,37 +4855,102 @@
 
         let currentSlideIndex = 0;
 
-        // Initialize on page load
-        window.addEventListener('DOMContentLoaded', function() {
+        // ===== INITIALIZATION GATING SYSTEM =====
+        // Fonction principale d'initialisation - Aucune vue n'est affichée tant que cette fonction n'est pas terminée
+        window.initApp = function() {
+            // Charger l'état depuis localStorage
             const hasSeenLanding = localStorage.getItem('hasSeenLanding');
+            const onboardingState = JSON.parse(localStorage.getItem('onboardingState') || '{"profile": false, "goal": false, "meal": false}');
+            const lastTab = localStorage.getItem('lastActiveTab') || 'meals';
+
+            // Déterminer la vue cible
+            let targetView = null;
+            let targetTab = null;
 
             if (!hasSeenLanding) {
-                // Première visite : afficher landing page
+                // Première visite : landing page
+                targetView = 'landing';
+            } else {
+                // Utilisateur connu : main app
+                targetView = 'main';
+                targetTab = lastTab;
+            }
+
+            // Préparer et afficher la vue cible
+            if (targetView === 'landing') {
+                // Afficher landing page
                 document.getElementById('landing-page').style.display = 'block';
                 document.body.style.overflow = 'hidden';
                 document.documentElement.style.overflow = 'hidden';
-            } else {
-                // Déjà vu : afficher main-app immédiatement (pas d'attente Firebase)
-                document.getElementById('main-app').style.display = 'block';
-                // S'assurer que le scroll fonctionne
+            } else if (targetView === 'main') {
+                // Afficher main app sur le bon onglet
+                const mainApp = document.getElementById('main-app');
+                mainApp.style.display = 'block';
                 document.body.style.overflow = '';
                 document.documentElement.style.overflow = '';
+
+                // Charger l'onglet ciblé (si la fonction existe)
+                if (typeof switchTab === 'function' && targetTab) {
+                    setTimeout(() => switchTab(targetTab), 0);
+                }
             }
+
+            // Cacher le splash screen et révéler l'UI
+            const splash = document.getElementById('app-splash');
+            if (splash) {
+                splash.style.opacity = '0';
+                splash.style.transition = 'opacity 0.2s ease';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                }, 200);
+            }
+
+            // Initialiser les icônes Lucide si disponible
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Lancer l'onboarding si nécessaire (non bloquant)
+            setTimeout(() => {
+                if (typeof initOnboarding === 'function') {
+                    initOnboarding();
+                }
+            }, 500);
+        };
+
+        // Lancer l'initialisation au chargement du DOM
+        window.addEventListener('DOMContentLoaded', function() {
+            // Petit délai pour s'assurer que tout est chargé (scripts, etc.)
+            setTimeout(() => {
+                if (typeof window.initApp === 'function') {
+                    window.initApp();
+                }
+            }, 100);
         });
 
         // Enter app button
         function enterApp() {
+            // Marquer la landing comme vue
+            localStorage.setItem('hasSeenLanding', 'true');
+
+            // Cacher la landing page
             document.getElementById('landing-page').style.display = 'none';
+
+            // Afficher l'app
             document.getElementById('main-app').style.display = 'block';
-            // Remove overflow locks and show body
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
-            document.body.style.opacity = '1';
-            localStorage.setItem('hasSeenLanding', 'true');
-            // Force reflow for Chrome
-            document.body.offsetHeight;
-            window// Initialize app
-            setTimeout(() => initV2(), 0);
+
+            // Charger l'onglet par défaut
+            if (typeof switchTab === 'function') {
+                const lastTab = localStorage.getItem('lastActiveTab') || 'meals';
+                setTimeout(() => switchTab(lastTab), 0);
+            }
+
+            // Initialiser les icônes
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
         }
 
         // Start tutorial from landing page (requires login now)
@@ -4948,13 +5023,27 @@
 
         // Close tutorial and go to app
         function closeTutorialFullscreen() {
+            // Marquer comme vu
+            localStorage.setItem('hasSeenLanding', 'true');
+
+            // Cacher le tutorial
             document.getElementById('tutorial-fullscreen').style.display = 'none';
+
+            // Afficher l'app
             document.getElementById('main-app').style.display = 'block';
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
-            document.body.style.opacity = '1';
-            localStorage.setItem('hasSeenLanding', 'true');
-            setTimeout(() => initV2(), 0);
+
+            // Charger l'onglet par défaut
+            if (typeof switchTab === 'function') {
+                const lastTab = localStorage.getItem('lastActiveTab') || 'meals';
+                setTimeout(() => switchTab(lastTab), 0);
+            }
+
+            // Initialiser les icônes
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
         }
 
         // Initialize tutorial
@@ -5060,15 +5149,6 @@
             const prevBtn = document.getElementById('tutorial-prev');
             prevBtn.disabled = currentSlideIndex === 0;
         }
-        // Show body after everything is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.body.style.opacity = '1';
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
-            }, 100);
-        });
 
         // ===== RACCOURCIS CLAVIER GLOBAUX =====
         let searchSelectedIndex = -1;
@@ -6126,17 +6206,7 @@
                     }
                 }
 
-                // Afficher le main-app après vérification de l'auth state
-                const hasSeenLanding = localStorage.getItem('hasSeenLanding');
-                if (hasSeenLanding) {
-                    const mainApp = document.getElementById('main-app');
-                    if (mainApp && mainApp.style.display === 'none') {
-                        mainApp.style.display = 'block';
-                        document.body.style.overflow = '';
-                        document.documentElement.style.overflow = '';
-                    }
-                }
-
+                // Ne pas interférer avec le système d'initialisation - juste rafraîchir les icônes
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             };
 
