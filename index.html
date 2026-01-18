@@ -4858,40 +4858,18 @@
         // ===== INITIALIZATION GATING SYSTEM =====
         // Fonction principale d'initialisation - Aucune vue n'est affichée tant que cette fonction n'est pas terminée
         window.initApp = function() {
-            // Charger l'état depuis localStorage
-            const hasSeenLanding = localStorage.getItem('hasSeenLanding');
-            const onboardingState = JSON.parse(localStorage.getItem('onboardingState') || '{"profile": false, "goal": false, "meal": false}');
+            // FORCER hasSeenLanding pour tous les utilisateurs existants
+            // Si pas set, le setter immédiatement pour éviter le flash de landing page
+            if (!localStorage.getItem('hasSeenLanding')) {
+                localStorage.setItem('hasSeenLanding', 'true');
+            }
+
+            // Charger l'onglet à afficher
             const lastTab = localStorage.getItem('lastActiveTab') || 'home';
 
-            // Vérifier si l'utilisateur a un token Firebase (même si hasSeenLanding est perdu)
-            // Firebase stocke ses tokens avec des clés commençant par 'firebase:authUser:'
-            let hasFirebaseAuth = false;
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith('firebase:authUser:')) {
-                    hasFirebaseAuth = true;
-                    break;
-                }
-            }
-
             // Déterminer la vue cible
-            let targetView = null;
-            let targetTab = null;
-
-            // Si user connecté OU a déjà vu l'app → main app directement
-            // Sinon → landing page (première visite uniquement)
-            if (hasSeenLanding || hasFirebaseAuth) {
-                // Utilisateur connu ou connecté : main app
-                targetView = 'main';
-                targetTab = lastTab;
-                // S'assurer que hasSeenLanding est set (au cas où seul le token Firebase existe)
-                if (!hasSeenLanding) {
-                    localStorage.setItem('hasSeenLanding', 'true');
-                }
-            } else {
-                // Première visite : landing page
-                targetView = 'landing';
-            }
+            let targetView = 'main';  // TOUJOURS main-app (landing désactivée temporairement)
+            let targetTab = lastTab;
 
             // Préparer et afficher la vue cible
             if (targetView === 'landing') {
