@@ -65,7 +65,10 @@
         }
 
         /* ===== SYSTÈME D'AUTHENTIFICATION OBLIGATOIRE ===== */
-        /* Par défaut: cacher l'app, montrer landing page */
+        /* DÉSACTIVÉ: Ces règles CSS causaient le flash de landing page
+           La logique d'affichage est maintenant 100% gérée par initApp() en JavaScript
+           pour un contrôle précis et éviter les conflits CSS vs JS
+
         body:not(.user-connected) header,
         body:not(.user-connected) .app-layout {
             display: none !important;
@@ -75,7 +78,6 @@
             display: block !important;
         }
 
-        /* Quand connecté: montrer l'app, cacher landing */
         body.user-connected #landing-page {
             display: none !important;
         }
@@ -87,6 +89,7 @@
         body.user-connected .app-layout {
             display: flex !important;
         }
+        */
 
         *  { margin: 0;
             padding: 0;
