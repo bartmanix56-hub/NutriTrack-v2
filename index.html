@@ -4863,17 +4863,34 @@
             const onboardingState = JSON.parse(localStorage.getItem('onboardingState') || '{"profile": false, "goal": false, "meal": false}');
             const lastTab = localStorage.getItem('lastActiveTab') || 'home';
 
+            // Vérifier si l'utilisateur a un token Firebase (même si hasSeenLanding est perdu)
+            // Firebase stocke ses tokens avec des clés commençant par 'firebase:authUser:'
+            let hasFirebaseAuth = false;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('firebase:authUser:')) {
+                    hasFirebaseAuth = true;
+                    break;
+                }
+            }
+
             // Déterminer la vue cible
             let targetView = null;
             let targetTab = null;
 
-            if (!hasSeenLanding) {
-                // Première visite : landing page
-                targetView = 'landing';
-            } else {
-                // Utilisateur connu : main app
+            // Si user connecté OU a déjà vu l'app → main app directement
+            // Sinon → landing page (première visite uniquement)
+            if (hasSeenLanding || hasFirebaseAuth) {
+                // Utilisateur connu ou connecté : main app
                 targetView = 'main';
                 targetTab = lastTab;
+                // S'assurer que hasSeenLanding est set (au cas où seul le token Firebase existe)
+                if (!hasSeenLanding) {
+                    localStorage.setItem('hasSeenLanding', 'true');
+                }
+            } else {
+                // Première visite : landing page
+                targetView = 'landing';
             }
 
             // Préparer et afficher la vue cible
