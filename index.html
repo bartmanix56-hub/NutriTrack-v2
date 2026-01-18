@@ -4855,42 +4855,59 @@
 
         let currentSlideIndex = 0;
 
-        // ===== INITIALIZATION GATING SYSTEM =====
-        // Fonction principale d'initialisation - Aucune vue n'est affichée tant que cette fonction n'est pas terminée
-        window.initApp = function() {
-            // FORCER hasSeenLanding pour tous les utilisateurs existants
-            // Si pas set, le setter immédiatement pour éviter le flash de landing page
-            if (!localStorage.getItem('hasSeenLanding')) {
-                localStorage.setItem('hasSeenLanding', 'true');
-            }
+        // ===== INITIALIZATION SYSTEM - 100% FIREBASE AUTH REQUIRED =====
+        // Splash screen reste visible jusqu'à ce que Firebase décide quelle vue afficher
+        // Pas de mode local, pas de hasSeenLanding, uniquement Firebase comme source de vérité
 
-            // Charger l'onglet à afficher
+        let appInitialized = false;
+
+        window.showApp = function(user) {
+            if (appInitialized) return; // Éviter les doubles initialisations
+            appInitialized = true;
+
             const lastTab = localStorage.getItem('lastActiveTab') || 'home';
+            const mainApp = document.getElementById('main-app');
 
-            // Déterminer la vue cible
-            let targetView = 'main';  // TOUJOURS main-app (landing désactivée temporairement)
-            let targetTab = lastTab;
+            // Afficher l'app
+            mainApp.style.display = 'block';
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
 
-            // Préparer et afficher la vue cible
-            if (targetView === 'landing') {
-                // Afficher landing page
-                document.getElementById('landing-page').style.display = 'block';
-                document.body.style.overflow = 'hidden';
-                document.documentElement.style.overflow = 'hidden';
-            } else if (targetView === 'main') {
-                // Afficher main app sur le bon onglet
-                const mainApp = document.getElementById('main-app');
-                mainApp.style.display = 'block';
-                document.body.style.overflow = '';
-                document.documentElement.style.overflow = '';
-
-                // Charger l'onglet ciblé (si la fonction existe)
-                if (typeof switchTab === 'function' && targetTab) {
-                    setTimeout(() => switchTab(targetTab), 0);
-                }
+            // Charger l'onglet ciblé
+            if (typeof switchTab === 'function') {
+                setTimeout(() => switchTab(lastTab), 0);
             }
 
-            // Cacher le splash screen et révéler l'UI
+            // Cacher le splash screen
+            hideSplash();
+
+            // Initialiser les icônes Lucide
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        };
+
+        window.showLanding = function() {
+            if (appInitialized) return; // Éviter les doubles initialisations
+            appInitialized = true;
+
+            const landingPage = document.getElementById('landing-page');
+
+            // Afficher la landing page (écran de login)
+            landingPage.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+
+            // Cacher le splash screen
+            hideSplash();
+
+            // Initialiser les icônes Lucide
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        };
+
+        function hideSplash() {
             const splash = document.getElementById('app-splash');
             if (splash) {
                 splash.style.opacity = '0';
@@ -4899,60 +4916,16 @@
                     splash.style.display = 'none';
                 }, 200);
             }
-
-            // Initialiser les icônes Lucide si disponible
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-
-            // Lancer l'onboarding si nécessaire (non bloquant)
-            setTimeout(() => {
-                if (typeof initOnboarding === 'function') {
-                    initOnboarding();
-                }
-            }, 500);
-        };
-
-        // Lancer l'initialisation au chargement du DOM (IMMÉDIAT - pas de délai)
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                if (typeof window.initApp === 'function') {
-                    window.initApp();
-                }
-            });
-        } else {
-            // DOM déjà chargé, lancer immédiatement
-            window.initApp();
         }
 
-        // Enter app button
+        // NOTE: L'initialisation réelle se fait dans onAuthStateChanged
+        // Le splash screen reste visible jusqu'à ce que Firebase réponde
+
+        // ===== LANDING PAGE ACTIONS - TOUTES REDIRIGENT VERS CONNEXION =====
+        // Auth Firebase obligatoire pour accéder à l'app
+
         function enterApp() {
-            // Marquer la landing comme vue
-            localStorage.setItem('hasSeenLanding', 'true');
-
-            // Cacher la landing page
-            document.getElementById('landing-page').style.display = 'none';
-
-            // Afficher l'app
-            document.getElementById('main-app').style.display = 'block';
-            document.body.style.overflow = '';
-            document.documentElement.style.overflow = '';
-
-            // Charger l'onglet par défaut
-            if (typeof switchTab === 'function') {
-                const lastTab = localStorage.getItem('lastActiveTab') || 'home';
-                setTimeout(() => switchTab(lastTab), 0);
-            }
-
-            // Initialiser les icônes
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        }
-
-        // Start tutorial from landing page (requires login now)
-        function startTutorial() {
-            // Auth obligatoire - rediriger vers login
+            // Connexion Firebase obligatoire
             if (typeof window.firebaseSignIn === 'function') {
                 window.firebaseSignIn();
             } else {
@@ -4960,9 +4933,17 @@
             }
         }
 
-        // Skip to app directly (requires login now)
+        function startTutorial() {
+            // Connexion Firebase obligatoire
+            if (typeof window.firebaseSignIn === 'function') {
+                window.firebaseSignIn();
+            } else {
+                showToast('<i data-lucide="info" class="icon-inline"></i> Connexion en cours de chargement...');
+            }
+        }
+
         function skipToApp() {
-            // Auth obligatoire - rediriger vers login
+            // Connexion Firebase obligatoire
             if (typeof window.firebaseSignIn === 'function') {
                 window.firebaseSignIn();
             } else {
@@ -5020,27 +5001,14 @@
 
         // Close tutorial and go to app
         function closeTutorialFullscreen() {
-            // Marquer comme vu
-            localStorage.setItem('hasSeenLanding', 'true');
-
-            // Cacher le tutorial
-            document.getElementById('tutorial-fullscreen').style.display = 'none';
-
-            // Afficher l'app
-            document.getElementById('main-app').style.display = 'block';
+            // Simplement cacher le tutorial fullscreen
+            // L'app est déjà affichée (l'utilisateur est forcément connecté pour voir le tutorial)
+            const tutorial = document.getElementById('tutorial-fullscreen');
+            if (tutorial) {
+                tutorial.style.display = 'none';
+            }
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
-
-            // Charger l'onglet par défaut
-            if (typeof switchTab === 'function') {
-                const lastTab = localStorage.getItem('lastActiveTab') || 'home';
-                setTimeout(() => switchTab(lastTab), 0);
-            }
-
-            // Initialiser les icônes
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
         }
 
         // Initialize tutorial
@@ -6164,22 +6132,18 @@
             return !!auth.currentUser;
         };
 
-        // ===== AUTH STATE LISTENER =====
+        // ===== AUTH STATE LISTENER - CONTRÔLE L'AFFICHAGE INITIAL =====
         onAuthStateChanged(auth, (user) => {
-            // Wait for DOM to be ready
             const initUI = async () => {
+                // Mettre à jour l'UI Firebase (header, boutons, etc.)
                 updateFirebaseUI(user);
-                if (user) {
-                    // Check for new device scenario: local empty but cloud has data
-                    const cloudData = await loadFromFirestore(user);
 
-                    // Check if local data is essentially empty
-                    const hasLocalMeals = localStorage.getItem('allDailyMeals') &&
-                                          JSON.parse(localStorage.getItem('allDailyMeals') || '{}') &&
-                                          Object.keys(JSON.parse(localStorage.getItem('allDailyMeals') || '{}')).length > 0;
-                    const hasLocalTracking = localStorage.getItem('trackingData') &&
-                                             JSON.parse(localStorage.getItem('trackingData') || '[]').length > 0;
-                    const hasLocalData = hasLocalMeals || hasLocalTracking;
+                if (user) {
+                    // USER CONNECTÉ → Charger données + afficher l'app
+                    console.log('✅ User connecté:', user.email);
+
+                    // Charger les données depuis Firestore (source de vérité)
+                    const cloudData = await loadFromFirestore(user);
 
                     if (cloudData && cloudData.lastSync) {
                         const syncDate = new Date(cloudData.lastSync).toLocaleString('fr-FR', {
@@ -6190,28 +6154,37 @@
                         });
                         updateSyncStatus(`Dernière sync: ${syncDate}`);
 
-                        // NEW DEVICE DETECTION: If no local data but cloud has data
-                        if (!hasLocalData && cloudData.allDailyMeals) {
-                            // Auto-restore without asking - simpler UX
-                            if (typeof showToast === 'function') {
-                                showToast('<i data-lucide="cloud-download" class="icon-inline"></i> Récupération automatique de tes données...', 'info');
-                            }
-                            setTimeout(() => {
-                                restoreDataFromCloud(cloudData);
-                            }, 1000);
+                        // Restaurer les données depuis le cloud
+                        if (cloudData.allDailyMeals || cloudData.trackingData) {
+                            restoreDataFromCloud(cloudData);
                         }
+                    }
+
+                    // Afficher l'app + cacher splash
+                    if (typeof window.showApp === 'function') {
+                        window.showApp(user);
+                    }
+                } else {
+                    // USER NON CONNECTÉ → Afficher landing page (écran de login)
+                    console.log('❌ User non connecté');
+
+                    // Afficher landing page + cacher splash
+                    if (typeof window.showLanding === 'function') {
+                        window.showLanding();
                     }
                 }
 
-                // Ne pas interférer avec le système d'initialisation - juste rafraîchir les icônes
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                // Rafraîchir les icônes Lucide
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
             };
 
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initUI);
             } else {
-                // Small delay to ensure all elements are rendered
-                setTimeout(initUI, 100);
+                // Lancer immédiatement si DOM déjà prêt
+                initUI();
             }
         });
 
