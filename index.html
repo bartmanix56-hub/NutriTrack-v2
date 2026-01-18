@@ -4859,11 +4859,12 @@
         // Splash screen reste visible jusqu'à ce que Firebase décide quelle vue afficher
         // Pas de mode local, pas de hasSeenLanding, uniquement Firebase comme source de vérité
 
-        let appInitialized = false;
+        // IMPORTANT: Sur window pour être accessible depuis le module Firebase
+        window.appInitialized = false;
 
         window.showApp = function(user) {
-            if (appInitialized) return; // Éviter les doubles initialisations
-            appInitialized = true;
+            if (window.appInitialized) return; // Éviter les doubles initialisations
+            window.appInitialized = true;
 
             const lastTab = localStorage.getItem('lastActiveTab') || 'home';
             const mainApp = document.getElementById('main-app');
@@ -4888,8 +4889,8 @@
         };
 
         window.showLanding = function() {
-            if (appInitialized) return; // Éviter les doubles initialisations
-            appInitialized = true;
+            if (window.appInitialized) return; // Éviter les doubles initialisations
+            window.appInitialized = true;
 
             const landingPage = document.getElementById('landing-page');
 
@@ -6138,6 +6139,9 @@
                 // Mettre à jour l'UI Firebase (header, boutons, etc.)
                 updateFirebaseUI(user);
 
+                // Mettre à jour la visibilité du bouton admin
+                updateAdminVisibility();
+
                 if (user) {
                     // USER CONNECTÉ → Charger données + afficher l'app
                     console.log('✅ User connecté:', user.email);
@@ -6160,7 +6164,7 @@
                         }
                     }
 
-                    // Afficher l'app + cacher splash
+                    // Afficher l'app + cacher splash (SEULEMENT si pas déjà fait)
                     if (typeof window.showApp === 'function') {
                         window.showApp(user);
                     }
@@ -6168,7 +6172,7 @@
                     // USER NON CONNECTÉ → Afficher landing page (écran de login)
                     console.log('❌ User non connecté');
 
-                    // Afficher landing page + cacher splash
+                    // Afficher landing page + cacher splash (SEULEMENT si pas déjà fait)
                     if (typeof window.showLanding === 'function') {
                         window.showLanding();
                     }
@@ -6218,12 +6222,7 @@
             }
         }
 
-        // Call updateAdminVisibility when auth state changes
-        onAuthStateChanged(auth, (user) => {
-            updateAdminVisibility();
-            if (user && isAdmin()) {
-            }
-        });
+        // NOTE: updateAdminVisibility est maintenant appelé dans le listener onAuthStateChanged principal (ligne 6143)
 
         // ===== FEEDBACK MODAL =====
         window.openFeedbackModal = function() {
