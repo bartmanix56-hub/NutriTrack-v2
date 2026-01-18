@@ -6223,8 +6223,10 @@ Solutions possibles :
         // Appeler au chargement
         window.addEventListener('DOMContentLoaded', function() {
             updateSectionsAvailability();
-            // Afficher l'app directement
-            document.getElementById('main-app').style.display = 'block';
+
+            // NOTE: Ne pas afficher main-app ici !
+            // L'affichage est maintenant géré par onAuthStateChanged dans index.html
+            // qui attend Firebase pour décider : showApp(user) ou showLanding()
 
             // Display username in header
             displayUsername();
