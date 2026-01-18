@@ -614,10 +614,10 @@
             if (validation.valid) { calculateMacros(); }
         }
 
-        function calculateMacros() {
-            // FEEDBACK VISUEL DU BOUTON
+        function calculateMacros(silent = false) {
+            // FEEDBACK VISUEL DU BOUTON (seulement si pas silencieux)
             const btn = document.getElementById('calculate-btn');
-            if (btn) {
+            if (btn && !silent) {
                 btn.innerHTML = '<i data-lucide="loader" style="width: 18px; height: 18px; animation: spin 1s linear infinite;"></i> Calcul en cours...';
                 if (typeof lucide !== "undefined") lucide.createIcons();
                 btn.disabled = true;
@@ -1048,8 +1048,8 @@ Solutions possibles :
             // Mettre à jour les sections disponibles
             updateSectionsAvailability();
 
-            // FEEDBACK SUCCÈS DU BOUTON
-            if (btn) {
+            // FEEDBACK SUCCÈS DU BOUTON (seulement si pas silencieux)
+            if (btn && !silent) {
                 btn.innerHTML = '<i data-lucide="check" style="width: 22px; height: 22px;"></i> Calcul effectué <i data-lucide="check-circle" class="icon-inline"></i>';
                 if (typeof lucide !== "undefined") lucide.createIcons();
                 setTimeout(() => {
@@ -1061,10 +1061,12 @@ Solutions possibles :
             }
 
 
-            // MESSAGE DE TRANSITION
-            setTimeout(() => {
-                showToast('<i data-lucide="check-circle" class="icon-inline"></i> C\'est calculé ! Tu peux maintenant noter tes repas.', 'success');
-            }, 2100); // Juste après le feedback du bouton
+            // MESSAGE DE TRANSITION (seulement si pas silencieux)
+            if (!silent) {
+                setTimeout(() => {
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> C\'est calculé ! Tu peux maintenant noter tes repas.', 'success');
+                }, 2100); // Juste après le feedback du bouton
+            }
         }
 
         // === VALIDATION DU PROFIL ===
@@ -4854,7 +4856,7 @@ Solutions possibles :
 
             // If all data present, recalculate silently
             if (weight && height && age && gender && activity)  { try {
-                    calculateMacros(); } catch (error) {
+                    calculateMacros(true); } catch (error) {
                     console.error('<i data-lucide="x-circle" class="icon-inline"></i> Error during auto-recalculation:', error);
                 }
             }
@@ -6331,7 +6333,7 @@ Solutions possibles :
                 const hasResults = localStorage.getItem('macroTargets');
                 if (!hasResults) {
                     // Premier calcul automatique silencieux
-                    calculateMacros();
+                    calculateMacros(true);
                 }
             }
         }

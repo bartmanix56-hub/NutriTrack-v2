@@ -6064,6 +6064,9 @@
                         if (typeof showToast === 'function') {
                             showToast('<i data-lucide="log-out" class="icon-inline"></i> Déconnecté');
                         }
+                        // Rediriger vers la landing page
+                        window.appInitialized = false;
+                        window.location.reload();
                     } catch (error) {
                         console.error('Erreur déconnexion:', error);
                     }
@@ -6073,6 +6076,9 @@
                 if (confirm('Voulez-vous vous déconnecter ?')) {
                     try {
                         await signOut(auth);
+                        // Rediriger vers la landing page
+                        window.appInitialized = false;
+                        window.location.reload();
                     } catch (error) {
                         console.error('Erreur déconnexion:', error);
                     }
