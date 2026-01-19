@@ -7203,3 +7203,4 @@ Solutions possibles :
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(initOnboarding, 500);
         });
+
