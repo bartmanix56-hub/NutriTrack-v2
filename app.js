@@ -1811,7 +1811,7 @@ Solutions possibles :
                 if (allDailyMeals[dateKey] && allDailyMeals[dateKey][mealType]) {
                     allDailyMeals[dateKey][mealType].recipe = '';
                 }
-                saveDailyMeals();
+                // Pas besoin d'appeler saveDailyMeals() ici, on l'appelle à la fin
             }
 
             renderMeal(mealType);
@@ -2519,6 +2519,12 @@ Solutions possibles :
             const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
             const macroTargets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
 
+            console.log('=== UPDATE WEEKLY SUMMARY ===');
+            console.log('currentWeekStart:', currentWeekStart);
+            console.log('weekStart:', weekStart);
+            console.log('savedMeals:', savedMeals);
+            console.log('Object.keys(savedMeals):', Object.keys(savedMeals));
+
             let totalCalories = 0;
             let daysWithData = 0;
             let closedDaysCount = 0;
@@ -2530,6 +2536,8 @@ Solutions possibles :
                 const date = new Date(weekStart);
                 date.setDate(date.getDate() + i);
                 const dateKey = getDateKey(date);
+
+                console.log(`Day ${i}: date=${date.toISOString()}, dateKey=${dateKey}, hasMeals=${!!savedMeals[dateKey]}, isClosed=${!!closedDays[dateKey]}`);
 
                 // Compter les jours clôturés
                 if (closedDays[dateKey]) {
@@ -2597,10 +2605,19 @@ Solutions possibles :
             // Calculer le pourcentage de réussite des objectifs macros
             const macroSuccessRate = totalDaysChecked > 0 ? Math.round((macroSuccessDays / totalDaysChecked) * 100) : 0;
 
+            console.log('RESULTS:');
+            console.log('totalCalories:', totalCalories);
+            console.log('daysWithData:', daysWithData);
+            console.log('avgCalories:', avgCalories);
+            console.log('closedDaysCount:', closedDaysCount);
+            console.log('macroSuccessRate:', macroSuccessRate);
+
             // Mettre à jour l'interface
             const avgCaloriesEl = document.getElementById('weekly-avg-calories');
             const closedDaysEl = document.getElementById('weekly-closed-days');
             const macroSuccessEl = document.getElementById('weekly-macro-success');
+
+            console.log('Elements:', {avgCaloriesEl, closedDaysEl, macroSuccessEl});
 
             if (avgCaloriesEl) {
                 avgCaloriesEl.textContent = daysWithData > 0 ? avgCalories.toLocaleString() : '—';
