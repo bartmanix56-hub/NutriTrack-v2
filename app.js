@@ -4630,6 +4630,9 @@ Solutions possibles :
 
             // Reinitialize Lucide icons after dynamic content
             if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            // Update weekly summary
+            updateWeeklySummary();
         };
 
         function goToCurrentWeek() {
