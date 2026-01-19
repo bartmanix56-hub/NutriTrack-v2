@@ -14,7 +14,15 @@
         };
 
         let weeklyPlan = {};
-        let currentWeekStart = getMonday(new Date());
+
+        // Charger currentWeekStart depuis localStorage ou utiliser la semaine actuelle
+        let currentWeekStart = (() => {
+            const saved = localStorage.getItem('currentWeekStart');
+            if (saved) {
+                return new Date(saved);
+            }
+            return getMonday(new Date());
+        })();
 
         function getMonday(d) {
             const date = new Date(d);
@@ -284,9 +292,8 @@
 
             if (tab === 'home') { if (typeof updateHomeTab === 'function') updateHomeTab(); }
             else if (tab === 'planner')  {
-                // Synchroniser currentWeekStart avec la semaine de currentMealDate
-                const currentMealWeekStart = getMonday(new Date(currentMealDate));
-                currentWeekStart = currentMealWeekStart;
+                // Ne pas réinitialiser currentWeekStart pour garder la semaine sélectionnée par l'utilisateur
+                // currentWeekStart garde sa valeur actuelle ou celle sauvegardée
                 renderWeeklyPlan();
             } else if (tab === 'tracking')  { renderTrackingList(); } else if (tab === 'meal-templates')  { renderMealTemplatesList(); } else if (tab === 'settings')  { if (typeof updateSettingsStats === 'function') updateSettingsStats(); }
 
@@ -2411,6 +2418,8 @@ Solutions possibles :
         // Weekly planner functions
         function changeWeek(direction) {
             currentWeekStart.setDate(currentWeekStart.getDate() + (direction * 7));
+            // Sauvegarder la semaine actuelle dans localStorage
+            localStorage.setItem('currentWeekStart', currentWeekStart.toISOString());
             renderWeeklyPlan();
         }
 
@@ -4469,14 +4478,15 @@ Solutions possibles :
 
         // Wrapper les fonctions existantes
         const origUpdateQuantity = updateMealQuantity;
-        updateMealQuantity = function(mealType, id, quantity)  { origUpdateQuantity(mealType, id, quantity);
-            saveDailyMeals(); };
+        updateMealQuantity = function(mealType, id, quantity)  {
+            origUpdateQuantity(mealType, id, quantity);
+            // saveDailyMeals() est déjà appelé dans origUpdateQuantity
+        };
 
         const origRemoveFood = removeFoodFromMeal;
         removeFoodFromMeal = function(mealType, id) {
             origRemoveFood(mealType, id);
-            saveDailyMeals();
-            syncMealsToPlanning();
+            // saveDailyMeals() et syncMealsToPlanning() sont déjà appelés dans origRemoveFood
         };
 
         // ===== QUANTITÉ DANS MODAL =====
@@ -4611,6 +4621,8 @@ Solutions possibles :
             currentWeekStart = new Date(today);
             currentWeekStart.setDate(today.getDate() + mondayOffset);
             currentWeekStart.setHours(0, 0, 0, 0);
+            // Sauvegarder la semaine actuelle dans localStorage
+            localStorage.setItem('currentWeekStart', currentWeekStart.toISOString());
             renderWeeklyPlan();
         }
 
