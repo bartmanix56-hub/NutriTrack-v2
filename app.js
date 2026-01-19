@@ -283,7 +283,12 @@
             if (tabContent)  { tabContent.classList.add('active'); }
 
             if (tab === 'home') { if (typeof updateHomeTab === 'function') updateHomeTab(); }
-            else if (tab === 'planner')  { renderWeeklyPlan(); } else if (tab === 'tracking')  { renderTrackingList(); } else if (tab === 'meal-templates')  { renderMealTemplatesList(); } else if (tab === 'settings')  { if (typeof updateSettingsStats === 'function') updateSettingsStats(); }
+            else if (tab === 'planner')  {
+                // Synchroniser currentWeekStart avec la semaine de currentMealDate
+                const currentMealWeekStart = getMonday(new Date(currentMealDate));
+                currentWeekStart = currentMealWeekStart;
+                renderWeeklyPlan();
+            } else if (tab === 'tracking')  { renderTrackingList(); } else if (tab === 'meal-templates')  { renderMealTemplatesList(); } else if (tab === 'settings')  { if (typeof updateSettingsStats === 'function') updateSettingsStats(); }
 
             // Scroll to top
             window.scrollTo({top: 0, behavior: 'smooth'});
@@ -2119,6 +2124,9 @@ Solutions possibles :
             // Update UI
             updateCloseDayUI(true);
 
+            // Mettre à jour le résumé hebdomadaire
+            if (typeof updateWeeklySummary === 'function') updateWeeklySummary();
+
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Journée enregistrée dans ton planning !');
         }
 
@@ -2128,6 +2136,9 @@ Solutions possibles :
             localStorage.setItem('closedDays', JSON.stringify(closedDays));
 
             updateCloseDayUI(false);
+
+            // Mettre à jour le résumé hebdomadaire
+            if (typeof updateWeeklySummary === 'function') updateWeeklySummary();
 
             showToast('<i data-lucide="unlock" class="icon-inline"></i> Journée rouverte, tu peux la modifier');
         }
@@ -4418,6 +4429,8 @@ Solutions possibles :
             localStorage.setItem('allDailyMeals', JSON.stringify(allDailyMeals));
             // Mettre à jour le streak en temps réel
             if (typeof updateStreakDisplay === 'function') updateStreakDisplay();
+            // Mettre à jour le résumé hebdomadaire si visible
+            if (typeof updateWeeklySummary === 'function') updateWeeklySummary();
         }
 
         // ===== GESTION HYDRATATION (EAU) =====
