@@ -614,6 +614,9 @@
             if (validation.valid) { calculateMacros(); }
         }
 
+        // Tracker pour éviter les notifications en double
+        let lastCalculationNotificationTime = 0;
+
         function calculateMacros(silent = false) {
             // FEEDBACK VISUEL DU BOUTON (seulement si pas silencieux)
             const btn = document.getElementById('calculate-btn');
@@ -1061,11 +1064,16 @@ Solutions possibles :
             }
 
 
-            // MESSAGE DE TRANSITION (seulement si pas silencieux)
+            // MESSAGE DE TRANSITION (seulement si pas silencieux et pas déjà affiché récemment)
             if (!silent) {
-                setTimeout(() => {
-                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> C\'est calculé ! Tu peux maintenant noter tes repas.', 'success');
-                }, 2100); // Juste après le feedback du bouton
+                const now = Date.now();
+                // N'afficher la notification que si plus de 4 secondes se sont écoulées depuis la dernière
+                if (now - lastCalculationNotificationTime > 4000) {
+                    lastCalculationNotificationTime = now;
+                    setTimeout(() => {
+                        showToast('<i data-lucide="check-circle" class="icon-inline"></i> C\'est calculé ! Tu peux maintenant noter tes repas.', 'success');
+                    }, 2100); // Juste après le feedback du bouton
+                }
             }
         }
 
