@@ -1079,8 +1079,9 @@ Solutions possibles :
             // MESSAGE DE TRANSITION (seulement si pas silencieux et pas déjà affiché récemment)
             if (!silent) {
                 const now = Date.now();
-                // N'afficher la notification que si plus de 4 secondes se sont écoulées depuis la dernière
-                if (now - lastCalculationNotificationTime > 4000) {
+                // N'afficher la notification que si plus de 5 secondes se sont écoulées depuis la dernière
+                if (now - lastCalculationNotificationTime > 5000) {
+                    // Mettre à jour immédiatement pour bloquer les appels suivants
                     lastCalculationNotificationTime = now;
                     setTimeout(() => {
                         showToast('<i data-lucide="check-circle" class="icon-inline"></i> C\'est calculé ! Tu peux maintenant noter tes repas.', 'success');
