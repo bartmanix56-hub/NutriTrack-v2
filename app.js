@@ -629,10 +629,6 @@
             if (validation.valid) { calculateMacros(); }
         }
 
-        // Tracker pour éviter les notifications en double
-        let lastCalculationNotificationTime = 0;
-        let calculationNotificationTimeout = null;
-
         function calculateMacros(silent = false) {
             // FEEDBACK VISUEL DU BOUTON (seulement si pas silencieux)
             const btn = document.getElementById('calculate-btn');
@@ -1080,22 +1076,12 @@ Solutions possibles :
             }
 
 
-            // MESSAGE DE TRANSITION (seulement si pas silencieux et pas déjà affiché récemment)
+            // MESSAGE DE TRANSITION (seulement si pas silencieux)
+            // showToast gère maintenant automatiquement les doublons
             if (!silent) {
-                const now = Date.now();
-                // N'afficher la notification que si plus de 5 secondes se sont écoulées depuis la dernière
-                if (now - lastCalculationNotificationTime > 5000) {
-                    // Annuler toute notification en attente pour éviter les doublons
-                    if (calculationNotificationTimeout) {
-                        clearTimeout(calculationNotificationTimeout);
-                    }
-                    // Mettre à jour immédiatement pour bloquer les appels suivants
-                    lastCalculationNotificationTime = now;
-                    calculationNotificationTimeout = setTimeout(() => {
-                        showToast('<i data-lucide="check-circle" class="icon-inline"></i> C\'est calculé ! Tu peux maintenant noter tes repas.', 'success');
-                        calculationNotificationTimeout = null;
-                    }, 2100); // Juste après le feedback du bouton
-                }
+                setTimeout(() => {
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> C\'est calculé ! Tu peux maintenant noter tes repas.', 'success');
+                }, 2100); // Juste après le feedback du bouton
             }
         }
 
@@ -6790,7 +6776,24 @@ Solutions possibles :
             }
         }
 
+        // SYSTÈME ANTI-DOUBLON POUR NOTIFICATIONS
+        const toastHistory = new Map(); // message -> timestamp de dernière notification
+        let currentToastTimeout = null;
+
         function showToast(message, type = 'success') {
+            // Vérifier si cette notification exacte a été affichée récemment
+            const now = Date.now();
+            const lastShown = toastHistory.get(message);
+
+            if (lastShown && (now - lastShown < 4000)) {
+                // Cette notification a été affichée il y a moins de 4 secondes, ignorer
+                console.log('🚫 Notification dupliquée ignorée:', message);
+                return;
+            }
+
+            // Enregistrer cette notification
+            toastHistory.set(message, now);
+
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toast-message');
             toastMsg.innerHTML = message;
@@ -6805,7 +6808,23 @@ Solutions possibles :
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             }, 0);
 
-            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+            // Annuler le timeout précédent si existant
+            if (currentToastTimeout) {
+                clearTimeout(currentToastTimeout);
+            }
+
+            // Programmer la disparition
+            currentToastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+                currentToastTimeout = null;
+            }, 3000);
+
+            // Nettoyer l'historique des vieilles entrées (> 10 secondes)
+            for (const [msg, timestamp] of toastHistory.entries()) {
+                if (now - timestamp > 10000) {
+                    toastHistory.delete(msg);
+                }
+            }
         }
 
         // Fermer avec Échap
