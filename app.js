@@ -1436,6 +1436,7 @@ Solutions possibles :
         }
 
         let currentModalSearchResults = [];
+        let currentQuickAddResults = [];
 
         function renderModalSearchResults(foods) {
             const modalSearchResults = document.getElementById('modalSearchResults');
@@ -1648,17 +1649,27 @@ Solutions possibles :
             const dropdown = getGlobalDropdown();
             if (!dropdown || !currentQuickAddMealType) return;
 
+            // Store current results for favorite toggle refresh
+            currentQuickAddResults = foods;
+
             dropdown.innerHTML = foods.map(food => {
                 const displayName = (typeof getDisplayName === 'function') ? getDisplayName(food) : food.name;
+                const isFav = isFavorite(food.name);
                 return `
-                <div class="quick-add-item" onclick="quickAddFood('${currentQuickAddMealType}', ${JSON.stringify(food).replace(/"/g, '&quot;')})">
-                    <div class="quick-add-item-name">
-                        ${isFavorite(food.name) ? '<span class="quick-add-favorite">⭐</span>' : ''}
-                        ${displayName}
-                        ${food.fromFirestore ? ' <span style="color: var(--accent-main); font-size: 0.75rem;">☁️</span>' : ''}
-                    </div>
-                    <div class="quick-add-item-macros">
-                        P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
+                <div class="quick-add-item" onclick="quickAddFood('${currentQuickAddMealType}', ${JSON.stringify(food).replace(/"/g, '&quot;')})" style="display: flex; align-items: center; gap: var(--space-xs);">
+                    <button onclick="event.stopPropagation(); toggleFavorite('${food.name.replace(/'/g, "\\'")}')"
+                            style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: var(--space-xs); line-height: 1; flex-shrink: 0;"
+                            title="${isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
+                        ${isFav ? '⭐' : '☆'}
+                    </button>
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="quick-add-item-name">
+                            ${displayName}
+                            ${food.fromFirestore ? ' <span style="color: var(--accent-main); font-size: 0.75rem;">☁️</span>' : ''}
+                        </div>
+                        <div class="quick-add-item-macros">
+                            P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
+                        </div>
                     </div>
                 </div>
             `}).join('');
@@ -4251,6 +4262,11 @@ Solutions possibles :
             // Re-render modal search results if they exist
             if (typeof renderModalSearchResults === 'function' && currentModalSearchResults && currentModalSearchResults.length > 0) {
                 renderModalSearchResults(currentModalSearchResults);
+            }
+
+            // Re-render quick add results if they exist
+            if (typeof renderGlobalQuickAddResults === 'function' && currentQuickAddResults && currentQuickAddResults.length > 0) {
+                renderGlobalQuickAddResults(currentQuickAddResults);
             }
         }
 
