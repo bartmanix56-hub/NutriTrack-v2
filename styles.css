@@ -4323,7 +4323,7 @@
             border-radius: var(--radius-md);
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             z-index: 10001;
-            display: flex;
+            display: none;
             align-items: center;
             gap: 10px;
             opacity: 0;
@@ -4336,6 +4336,7 @@
         }
 
         .toast.show  {
+            display: flex;
             opacity: 1;
             animation: slideInRight 0.3s ease;
         }
