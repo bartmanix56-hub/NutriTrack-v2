@@ -6147,8 +6147,11 @@ Solutions possibles :
         }
 
         const origCalculateMacros = calculateMacros;
-        calculateMacros = function()  { origCalculateMacros();
-            saveCalcSettings(); };
+        calculateMacros = function(...args)  {
+            console.log('🔄 Wrapper calculateMacros, args:', args);
+            origCalculateMacros(...args);
+            saveCalcSettings();
+        };
 
         // ===== USER MENU =====
         function toggleUserMenu() {
@@ -6795,16 +6798,19 @@ Solutions possibles :
         let currentToastTimeout = null;
 
         function showToast(message, type = 'success') {
+            console.log('🔔 showToast appelé:', message.substring(0, 50), 'type:', type);
+
             // Vérifier si cette notification exacte a été affichée récemment
             const now = Date.now();
             const lastShown = toastHistory.get(message);
 
             if (lastShown && (now - lastShown < 4000)) {
                 // Cette notification a été affichée il y a moins de 4 secondes, ignorer
-                console.log('🚫 Notification dupliquée ignorée:', message);
+                console.log('🚫 Notification dupliquée ignorée:', message.substring(0, 50), 'délai:', now - lastShown, 'ms');
                 return;
             }
 
+            console.log('✓ Notification acceptée, affichage en cours');
             // Enregistrer cette notification
             toastHistory.set(message, now);
 
