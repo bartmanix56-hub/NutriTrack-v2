@@ -313,7 +313,7 @@
             if (fatValue > 1.2) { warningElement.style.display = 'block'; } else  { warningElement.style.display = 'none'; }
         }
 
-        function selectGoal(goal) {
+        function selectGoal(goal, isLoading = false) {
             currentGoal = goal;
             document.querySelectorAll('.goal-btn:not(.pace-btn)').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`[data-goal="${goal}"]`)?.classList.add('active');
@@ -341,10 +341,11 @@
             localStorage.setItem('calc_goal', goal);
 
             // Si en mode guidé, réappliquer le rythme sélectionné
+            // SAUF si on est en train de charger (isLoading = true)
             const guidedMode = document.getElementById('guided-mode');
             const isGuidedMode = guidedMode && guidedMode.style.display !== 'none';
 
-            if (isGuidedMode) {
+            if (isGuidedMode && !isLoading) {
                 const selectedPaceBtn = document.querySelector('.pace-btn.active');
                 if (selectedPaceBtn) {
                     const pace = selectedPaceBtn.getAttribute('data-pace');
@@ -353,8 +354,8 @@
                         window.selectPace(pace);
                     }
                 }
-            } else {
-                // En mode avancé, juste revalider
+            } else if (!isLoading) {
+                // En mode avancé, juste revalider (sauf au chargement)
                 validateMacroInputs();
             }
         }
@@ -6044,7 +6045,7 @@ Solutions possibles :
             });
 
             const savedGoal = localStorage.getItem('calc_goal');
-            if (savedGoal) selectGoal(savedGoal);
+            if (savedGoal) selectGoal(savedGoal, true); // true = isLoading, ne pas recalculer
 
             // Load saved macro targets and display results
             const savedTargets = localStorage.getItem('macroTargets');
@@ -6362,8 +6363,12 @@ Solutions possibles :
                 if (field) { field.addEventListener('change', checkAndAutoCalculate); }
             });
 
-            // Vérifier au chargement si le profil est complet
-            checkAndAutoCalculate();
+            // Ne PAS auto-calculer au chargement (ligne 6366 supprimée)
+            // L'utilisateur veut que ça recalcule uniquement quand il change:
+            // - le rythme (selectPace)
+            // - le niveau d'activité (listener ci-dessus)
+            // - le poids (listener ci-dessus)
+            // PAS au F5!
 
             // ===== NOTIFICATION PREFERENCES =====
             const notifGoals = document.getElementById('notification-goals');
