@@ -629,7 +629,12 @@
             if (validation.valid) { calculateMacros(); }
         }
 
+        // Variable globale pour suivre le setTimeout de notification de calcul
+        let pendingCalculationNotification = null;
+
         function calculateMacros(silent = false) {
+            // LOG pour debug - à retirer plus tard si besoin
+            console.log('📊 calculateMacros appelé, silent:', silent, new Error().stack);
             // FEEDBACK VISUEL DU BOUTON (seulement si pas silencieux)
             const btn = document.getElementById('calculate-btn');
             if (btn && !silent) {
@@ -1077,10 +1082,19 @@ Solutions possibles :
 
 
             // MESSAGE DE TRANSITION (seulement si pas silencieux)
-            // showToast gère maintenant automatiquement les doublons
             if (!silent) {
-                setTimeout(() => {
+                // ANNULER toute notification en attente pour éviter les doublons
+                if (pendingCalculationNotification) {
+                    console.log('🚫 Annulation de la notification en attente');
+                    clearTimeout(pendingCalculationNotification);
+                    pendingCalculationNotification = null;
+                }
+
+                // Programmer la nouvelle notification
+                pendingCalculationNotification = setTimeout(() => {
+                    console.log('✅ Affichage de la notification de calcul');
                     showToast('<i data-lucide="check-circle" class="icon-inline"></i> C\'est calculé ! Tu peux maintenant noter tes repas.', 'success');
+                    pendingCalculationNotification = null;
                 }, 2100); // Juste après le feedback du bouton
             }
         }
