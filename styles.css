@@ -4326,16 +4326,19 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            animation: slideInRight 0.3s ease, slideOutRight 0.3s ease 2.7s;
             opacity: 0;
             pointer-events: all;
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             font-weight: 500;
             max-width: 400px;
+            transition: opacity 0.3s ease;
         }
 
-        .toast.show  { opacity: 1; }
+        .toast.show  {
+            opacity: 1;
+            animation: slideInRight 0.3s ease;
+        }
 
         /* Variantes de toast */
         .toast.toast-success { background: var(--color-success); }
