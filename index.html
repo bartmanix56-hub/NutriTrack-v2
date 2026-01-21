@@ -1901,7 +1901,7 @@
                 </div>
 
                 <div class="search-box">
-                    <input type="text" id="foodDbSearch" placeholder="Rechercher dans la base..." autocomplete="off">
+                    <input type="text" id="foodDbSearch" placeholder="Ex: Poulet, Riz basmati, Œufs..." autocomplete="off">
                 </div>
 
                 <div class="food-list" id="foodDatabase"></div></div></div>
@@ -2056,7 +2056,7 @@
                 <div class="grid-2">
                     <div class="input-group">
                         <label>Poids (kg) *</label>
-                        <input type="number" id="tracking-weight" inputmode="decimal" pattern="[0-9]*" step="0.1" placeholder="Ex: 80">
+                        <input type="number" id="tracking-weight" inputmode="decimal" pattern="[0-9]*" step="0.1" placeholder="Ex: 80.5 kg">
 						<p class="info-text">Idéalement le matin, à jeun, pour plus de régularité</p>
                     </div>
 
@@ -3850,7 +3850,7 @@
             <div class="modal-body">
                 <div class="search-box">
                     <div class="search-with-scanner">
-                        <input type="text" id="modalFoodSearch" placeholder="Rechercher un aliment..." autocomplete="off">
+                        <input type="text" id="modalFoodSearch" placeholder="Ex: Poulet, Banane, Flocons d'avoine..." autocomplete="off">
                         <button type="button" class="scanner-btn" onclick="openBarcodeScanner()" title="Scanner un code-barres">
                             <i data-lucide="scan-barcode" style="width: 20px; height: 20px;"></i>
                         </button>
@@ -3859,7 +3859,7 @@
 
                 <div class="input-group">
                     <label>Quantité (g)</label>
-                    <input type="number" id="modal-quantity" inputmode="numeric" pattern="[0-9]*" value="100" min="1" step="1">
+                    <input type="number" id="modal-quantity" inputmode="numeric" pattern="[0-9]*" value="100" min="1" step="1" placeholder="Ex: 150 (grammes)">
                 </div></div></div></div>
     </div>
 

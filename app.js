@@ -1368,6 +1368,16 @@ Solutions possibles :
 
                 // Chercher dans Firestore (avec debounce) - dès 2 caractères
                 modalSearchTimeout = setTimeout(async () => {
+                    // Afficher le loading spinner
+                    modalSearchResults.innerHTML = `
+                        <div style="text-align: center; padding: var(--space-xl); color: var(--text-secondary);">
+                            <i data-lucide="loader" class="spinner" style="width: 24px; height: 24px; margin: 0 auto;"></i>
+                            <p style="margin-top: var(--space-sm); font-size: 0.9rem; opacity: 0.7;">Recherche en cours...</p>
+                        </div>
+                    `;
+                    modalSearchResults.style.display = 'block';
+                    if (typeof lucide !== "undefined") lucide.createIcons();
+
                     if (typeof window.searchAlimentsCommuns === 'function') {
                         try {
                             const firestoreResults = await window.searchAlimentsCommuns(query);
@@ -1398,9 +1408,21 @@ Solutions possibles :
                             }
                         } catch (err) {
                             console.error('❌ [QuickAdd] Erreur Firestore:', err);
+                            // Masquer le loading en cas d'erreur
+                            if (localResults.length > 0) {
+                                renderModalSearchResults(localResults);
+                            } else {
+                                modalSearchResults.style.display = 'none';
+                            }
                         }
                     } else {
                         console.warn('⚠️ [QuickAdd] searchAlimentsCommuns non disponible');
+                        // Masquer le loading si pas de Firestore
+                        if (localResults.length > 0) {
+                            renderModalSearchResults(localResults);
+                        } else {
+                            modalSearchResults.style.display = 'none';
+                        }
                     }
                 }, 300);
             });
@@ -1413,18 +1435,33 @@ Solutions possibles :
             initQuickAddSearch();
         }
 
+        let currentModalSearchResults = [];
+
         function renderModalSearchResults(foods) {
             const modalSearchResults = document.getElementById('modalSearchResults');
             if (!modalSearchResults) return;
 
+            // Store current results for favorite toggle refresh
+            currentModalSearchResults = foods;
+
             modalSearchResults.innerHTML = foods.map(food => {
                 const displayName = (typeof getDisplayName === 'function') ? getDisplayName(food) : food.name;
+                const isFav = isFavorite(food.name);
                 return `
-                <div class="search-result-item" onclick='addFoodToMeal(${JSON.stringify(food).replace(/'/g, "&apos;")})'>
-                    <div class="search-result-name">${displayName}${food.fromFirestore ? ' <span style="color: var(--accent-main); font-size: 0.75rem;">☁️</span>' : ''}</div>
-                    <div class="search-result-macros">
-                        P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
-                    </div></div>
+                <div class="search-result-item" onclick='addFoodToMeal(${JSON.stringify(food).replace(/'/g, "&apos;")})'
+                     style="display: flex; align-items: center; gap: var(--space-sm); cursor: pointer;">
+                    <button onclick="event.stopPropagation(); toggleFavorite('${food.name.replace(/'/g, "\\'")}')"
+                            style="background: none; border: none; font-size: 1.3rem; cursor: pointer; padding: 0; line-height: 1; flex-shrink: 0;"
+                            title="${isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
+                        ${isFav ? '⭐' : '☆'}
+                    </button>
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="search-result-name">${displayName}${food.fromFirestore ? ' <span style="color: var(--accent-main); font-size: 0.75rem;">☁️</span>' : ''}</div>
+                        <div class="search-result-macros">
+                            P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
+                        </div>
+                    </div>
+                </div>
             `}).join('');
             modalSearchResults.style.display = 'block';
         }
@@ -1542,6 +1579,20 @@ Solutions possibles :
 
             // Search Firestore with debounce
             quickAddTimeout = setTimeout(async () => {
+                const dropdown = getGlobalDropdown();
+
+                // Afficher le loading spinner si des résultats locaux sont déjà affichés
+                if (dropdown && localFiltered.length > 0) {
+                    const loadingIndicator = `
+                        <div style="padding: var(--space-sm); text-align: center; border-top: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.85rem;">
+                            <i data-lucide="loader" class="spinner" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i>
+                            <span style="margin-left: var(--space-xs); vertical-align: middle;">Recherche Cloud...</span>
+                        </div>
+                    `;
+                    dropdown.innerHTML += loadingIndicator;
+                    if (typeof lucide !== "undefined") lucide.createIcons();
+                }
+
                 if (typeof window.searchAlimentsCommuns === 'function') {
                     try {
                         const firestoreResults = await window.searchAlimentsCommuns(query);
@@ -1576,9 +1627,18 @@ Solutions possibles :
                             if (allResults.length > 0) {
                                 renderGlobalQuickAddResults(allResults);
                             }
+                        } else {
+                            // Pas de résultats Firestore, re-render juste les résultats locaux (retire le loading)
+                            if (localFiltered.length > 0) {
+                                renderGlobalQuickAddResults(localFiltered);
+                            }
                         }
                     } catch (err) {
                         console.error('❌ [QuickAdd] Erreur Firestore:', err);
+                        // En cas d'erreur, re-render les résultats locaux (retire le loading)
+                        if (localFiltered.length > 0) {
+                            renderGlobalQuickAddResults(localFiltered);
+                        }
                     }
                 }
             }, 300);
@@ -1707,7 +1767,26 @@ Solutions possibles :
             const foods = meal.foods || [];
 
             if (foods.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: var(--space-xl); font-size: 0.9rem;">Aucun aliment</p>';
+                const mealIcons = {
+                    breakfast: 'sunrise',
+                    lunch: 'sun',
+                    snack: 'cookie',
+                    dinner: 'moon'
+                };
+                const mealNames = {
+                    breakfast: 'petit-déjeuner',
+                    lunch: 'déjeuner',
+                    snack: 'snack',
+                    dinner: 'dîner'
+                };
+                container.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-2xl) var(--space-lg); color: var(--text-secondary);">
+                        <div style="margin-bottom: var(--space-md);"><i data-lucide="${mealIcons[mealType]}" style="width: 48px; height: 48px; opacity: 0.3;"></i></div>
+                        <p style="font-size: 0.95rem; margin: 0; opacity: 0.8;">Ton ${mealNames[mealType]} est vide</p>
+                        <p style="font-size: 0.85rem; margin-top: var(--space-xs); margin-bottom: 0; opacity: 0.6;">Ajoute des aliments pour commencer ✨</p>
+                    </div>
+                `;
+                if (typeof lucide !== "undefined") lucide.createIcons();
                 document.getElementById(`${mealType}-total`).textContent = '0 kcal';
                 return;
             }
@@ -3916,6 +3995,20 @@ Solutions possibles :
             const filter = document.getElementById('foodFilter').value;
             const sortBy = document.getElementById('foodSort').value;
 
+            // Afficher le loading spinner si une recherche est en cours
+            if (query && query.length >= 2) {
+                const container = document.getElementById('foodDatabase');
+                if (container) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
+                            <i data-lucide="loader" class="spinner" style="width: 32px; height: 32px; margin: 0 auto;"></i>
+                            <p style="margin-top: var(--space-md); font-size: 1rem; opacity: 0.8;">Recherche en cours...</p>
+                        </div>
+                    `;
+                    if (typeof lucide !== "undefined") lucide.createIcons();
+                }
+            }
+
             // Utiliser foodDatabase qui contient déjà les customFoods (ajoutés par loadCustomFoods)
             // Dédupliquer en utilisant un Map par nom
             const foodMap = new Map();
@@ -4154,6 +4247,11 @@ Solutions possibles :
 
             // Re-render food database if open
             if (typeof filterFoodDatabase === 'function')  { filterFoodDatabase(); }
+
+            // Re-render modal search results if they exist
+            if (typeof renderModalSearchResults === 'function' && currentModalSearchResults && currentModalSearchResults.length > 0) {
+                renderModalSearchResults(currentModalSearchResults);
+            }
         }
 
         function editFoodByIndex(index) {
@@ -6488,7 +6586,14 @@ Solutions possibles :
             if (!container) return;
 
             if (advancedTrackingData.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 40px;">Aucune mesure</p>';
+                container.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
+                        <div style="margin-bottom: var(--space-lg);"><i data-lucide="trending-up" style="width: 64px; height: 64px; opacity: 0.3;"></i></div>
+                        <p style="font-size: 1.1rem; margin: 0; opacity: 0.9;">Aucune mesure enregistrée</p>
+                        <p style="font-size: 0.9rem; margin-top: var(--space-sm); margin-bottom: 0; opacity: 0.6;">Commence ton suivi ci-dessus pour visualiser ta progression 📊</p>
+                    </div>
+                `;
+                if (typeof lucide !== "undefined") lucide.createIcons();
                 return;
             }
 
