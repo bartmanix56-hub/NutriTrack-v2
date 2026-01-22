@@ -6647,6 +6647,9 @@
         window.showAdminSection = function(section) {
             if (!isAdmin()) return;
 
+            // Sauvegarder la sous-section admin pour la restaurer après F5
+            localStorage.setItem('lastAdminSection', section);
+
             // Hide all sections
             document.querySelectorAll('.admin-section').forEach(el => el.style.display = 'none');
 
