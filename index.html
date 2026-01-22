@@ -3498,6 +3498,9 @@
                     <button onclick="loadAdminUsers()" class="btn" style="background: var(--accent-ui); color: white;">
                         <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i> Rafraîchir
                     </button>
+                    <button onclick="migrateUsersData()" class="btn" style="background: var(--accent-protein); color: white;">
+                        <i data-lucide="database" style="width: 16px; height: 16px;"></i> Migrer données
+                    </button>
                 </div>
             </div>
 
@@ -5404,7 +5407,7 @@
 
         const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
         const { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-        const { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection, query, getDocs, limit, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection, query, getDocs, limit, updateDoc, Timestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
         const { getMessaging, getToken, onMessage } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js');
 
         const firebaseConfig = {
@@ -6933,6 +6936,82 @@
                 console.error('Erreur suppression utilisateur:', error);
                 if (typeof showToast === 'function') {
                     showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur de suppression', 'error');
+                }
+            }
+        };
+
+        window.migrateUsersData = async function() {
+            if (!isAdmin()) return;
+
+            const confirmMsg = `Cette opération va mettre à jour les données de tous les utilisateurs :\n\n` +
+                `- Ajouter createdAt pour les utilisateurs qui n'en ont pas\n` +
+                `- Convertir lastSync en Timestamp Firestore\n` +
+                `- Les emails/noms seront ajoutés lors de la prochaine sync de chaque utilisateur\n\n` +
+                `Continuer ?`;
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="loader" class="icon-inline"></i> Migration en cours...', 'info');
+                }
+
+                const usersSnap = await getDocs(collection(db, 'users'));
+                let migratedCount = 0;
+                let errorCount = 0;
+
+                for (const userDoc of usersSnap.docs) {
+                    try {
+                        const userData = userDoc.data();
+                        const updates = {};
+                        let needsUpdate = false;
+
+                        // Add createdAt if missing (use updatedAt as fallback, or current time)
+                        if (!userData.createdAt) {
+                            if (userData.updatedAt) {
+                                updates.createdAt = userData.updatedAt;
+                            } else {
+                                updates.createdAt = serverTimestamp();
+                            }
+                            needsUpdate = true;
+                        }
+
+                        // Convert lastSync from ISO string to Timestamp if needed
+                        if (userData.lastSync && typeof userData.lastSync === 'string') {
+                            try {
+                                const lastSyncDate = new Date(userData.lastSync);
+                                // Create a Firestore Timestamp from the date
+                                updates.lastSync = Timestamp.fromDate(lastSyncDate);
+                                needsUpdate = true;
+                            } catch (e) {
+                                console.error(`Error converting lastSync for ${userDoc.id}:`, e);
+                            }
+                        }
+
+                        // Update if needed
+                        if (needsUpdate) {
+                            await updateDoc(doc(db, 'users', userDoc.id), updates);
+                            migratedCount++;
+                        }
+                    } catch (error) {
+                        console.error(`Error migrating user ${userDoc.id}:`, error);
+                        errorCount++;
+                    }
+                }
+
+                await logAdminAction('migrate_users', { migratedCount, errorCount });
+
+                if (typeof showToast === 'function') {
+                    showToast(`<i data-lucide="check-circle" class="icon-inline"></i> Migration terminée : ${migratedCount} utilisateurs mis à jour${errorCount > 0 ? `, ${errorCount} erreurs` : ''}`, 'success');
+                }
+
+                // Reload users list
+                loadAdminUsers();
+
+            } catch (error) {
+                console.error('Erreur migration:', error);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur de migration', 'error');
                 }
             }
         };
