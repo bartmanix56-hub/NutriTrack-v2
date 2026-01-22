@@ -1452,7 +1452,8 @@ Solutions possibles :
                 <div class="search-result-item" onclick='addFoodToMeal(${JSON.stringify(food).replace(/'/g, "&apos;")})'
                      style="display: flex; align-items: center; gap: var(--space-sm); cursor: pointer;">
                     <button onclick="event.stopPropagation(); toggleFavorite('${food.name.replace(/'/g, "\\'")}')"
-                            style="background: none; border: none; font-size: 1.3rem; cursor: pointer; padding: 0; line-height: 1; flex-shrink: 0;"
+                            class="star-btn"
+                            style="background: none; border: none; font-size: 1.3rem; cursor: pointer; padding: 0; line-height: 1; flex-shrink: 0; color: ${isFav ? 'inherit' : 'var(--text-secondary)'};"
                             title="${isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
                         ${isFav ? '⭐' : '☆'}
                     </button>
@@ -1503,9 +1504,8 @@ Solutions possibles :
             updateRemainingWidget();
             closeFoodModal();
 
-            // Flying animation + macro feedback
+            // Flying animation only (feedback will appear when user adjusts quantity)
             createFlyingFoodAnimation(food.name, startPos);
-            showMacroFeedback(food, quantity);
 
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Ajouté !');
         }
@@ -1671,7 +1671,8 @@ Solutions possibles :
                 return `
                 <div class="quick-add-item" onclick="quickAddFood('${currentQuickAddMealType}', ${JSON.stringify(food).replace(/"/g, '&quot;')})" style="display: flex; align-items: center; gap: var(--space-xs);">
                     <button onclick="event.stopPropagation(); toggleFavorite('${food.name.replace(/'/g, "\\'")}')"
-                            style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: var(--space-xs); line-height: 1; flex-shrink: 0;"
+                            class="star-btn"
+                            style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: var(--space-xs); line-height: 1; flex-shrink: 0; color: ${isFav ? 'inherit' : 'var(--text-secondary)'};"
                             title="${isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
                         ${isFav ? '⭐' : '☆'}
                     </button>
@@ -1725,11 +1726,10 @@ Solutions possibles :
             currentQuickAddMealType = null;
             currentQuickAddInput = null;
 
-            // Flying animation + macro feedback
+            // Flying animation only (feedback will appear when user adjusts quantity)
             if (startPos) {
                 createFlyingFoodAnimation(food.name, startPos);
             }
-            showMacroFeedback(food, 100);
 
             showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${food.name} ajouté (100g)`);
         }
@@ -1831,6 +1831,112 @@ Solutions possibles :
             } else {
                 message = `✅ +${Math.round(added.calories)} kcal`;
                 type = 'success';
+            }
+
+            // Remove existing feedback if any
+            const existingFeedback = document.getElementById('macro-feedback-message');
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
+
+            // Create feedback element
+            const feedbackEl = document.createElement('div');
+            feedbackEl.id = 'macro-feedback-message';
+            feedbackEl.className = `macro-feedback ${type}`;
+            feedbackEl.innerHTML = `<span>${message}</span>`;
+
+            // Insert after widget
+            widget.parentNode.insertBefore(feedbackEl, widget.nextSibling);
+
+            // Remove after 4 seconds
+            setTimeout(() => {
+                feedbackEl.remove();
+            }, 4000);
+        }
+
+        function showMacroFeedbackFromChange(food, oldQuantity, newQuantity) {
+            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            if (!targets.calories) return;
+
+            const widget = document.getElementById('remaining-widget');
+            if (!widget || widget.style.display === 'none') return;
+
+            // Calculate the DIFFERENCE in macros
+            const oldMultiplier = oldQuantity / 100;
+            const newMultiplier = newQuantity / 100;
+            const diff = {
+                protein: food.protein * (newMultiplier - oldMultiplier),
+                carbs: food.carbs * (newMultiplier - oldMultiplier),
+                fat: food.fat * (newMultiplier - oldMultiplier),
+                calories: food.calories * (newMultiplier - oldMultiplier)
+            };
+
+            // Calculate current totals
+            let totals = { protein: 0, carbs: 0, fat: 0, calories: 0 };
+            Object.keys(dailyMeals).forEach(mealType => {
+                const foods = dailyMeals[mealType].foods || [];
+                foods.forEach(f => {
+                    const m = f.quantity / 100;
+                    totals.protein += f.protein * m;
+                    totals.carbs += f.carbs * m;
+                    totals.fat += f.fat * m;
+                    totals.calories += f.calories * m;
+                });
+            });
+
+            const remaining = {
+                protein: targets.protein - totals.protein,
+                carbs: targets.carbs - totals.carbs,
+                fat: targets.fat - totals.fat,
+                calories: targets.calories - totals.calories
+            };
+
+            // Determine feedback message
+            let message = '';
+            let type = 'success';
+
+            // Find the most relevant macro (highest absolute change)
+            const macros = [
+                { name: 'protéines', value: Math.abs(diff.protein), sign: Math.sign(diff.protein), remaining: remaining.protein, emoji: '💪', actualDiff: diff.protein },
+                { name: 'glucides', value: Math.abs(diff.carbs), sign: Math.sign(diff.carbs), remaining: remaining.carbs, emoji: '⚡', actualDiff: diff.carbs },
+                { name: 'lipides', value: Math.abs(diff.fat), sign: Math.sign(diff.fat), remaining: remaining.fat, emoji: '🥑', actualDiff: diff.fat }
+            ].sort((a, b) => b.value - a.value);
+
+            const topMacro = macros[0];
+
+            if (topMacro.value > 0.5) { // Ignore changes < 0.5g
+                const roundedValue = Math.round(topMacro.value);
+                const prefix = topMacro.sign > 0 ? '+' : '';
+
+                if (topMacro.sign > 0) {
+                    // Adding macros
+                    if (remaining.calories < 0) {
+                        message = `${topMacro.emoji} ${prefix}${roundedValue}g ${topMacro.name} • Objectif dépassé`;
+                        type = 'warning';
+                    } else if (topMacro.remaining < 0) {
+                        message = `${topMacro.emoji} ${prefix}${roundedValue}g ${topMacro.name} • Quota ${topMacro.name} atteint`;
+                        type = 'warning';
+                    } else if (topMacro.remaining > 0 && topMacro.remaining < topMacro.value * 2) {
+                        message = `${topMacro.emoji} ${prefix}${roundedValue}g ${topMacro.name} • Parfait!`;
+                        type = 'success';
+                    } else {
+                        message = `${topMacro.emoji} ${prefix}${roundedValue}g ${topMacro.name}`;
+                        type = 'success';
+                    }
+                } else {
+                    // Removing macros
+                    message = `${topMacro.emoji} ${roundedValue}g ${topMacro.name} retirées`;
+                    type = 'success';
+                }
+            } else {
+                // Very small change, just show calories
+                const caloriesDiff = Math.round(diff.calories);
+                if (Math.abs(caloriesDiff) > 1) {
+                    message = `${caloriesDiff > 0 ? '+' : ''}${caloriesDiff} kcal`;
+                    type = 'success';
+                } else {
+                    return; // Too small to show feedback
+                }
             }
 
             // Remove existing feedback if any
@@ -2040,10 +2146,21 @@ Solutions possibles :
                     renderMeal(mealType);
                     return;
                 }
+
+                // Store old quantity for feedback
+                const oldQuantity = food.quantity;
+                const quantityDiff = parsedQuantity - oldQuantity;
+
                 food.quantity = parsedQuantity;
                 renderMeal(mealType);
                 updateDayTotals();
                 saveDailyMeals();
+                updateRemainingWidget();
+
+                // Show macro feedback based on the CHANGE in quantity
+                if (Math.abs(quantityDiff) > 0) {
+                    showMacroFeedbackFromChange(food, oldQuantity, parsedQuantity);
+                }
             }
         }
 
