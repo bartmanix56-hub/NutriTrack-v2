@@ -6734,11 +6734,25 @@
                             });
 
                             // Count total meal items across all days
-                            Object.values(meals).forEach(dayMeals => {
-                                if (dayMeals && typeof dayMeals === 'object') {
-                                    Object.values(dayMeals).forEach(mealType => {
+                            Object.entries(meals).forEach(([dateKey, dayMeals]) => {
+                                console.log(`  📅 Date ${dateKey}:`, {
+                                    type: typeof dayMeals,
+                                    isObject: typeof dayMeals === 'object',
+                                    isArray: Array.isArray(dayMeals),
+                                    keys: typeof dayMeals === 'object' ? Object.keys(dayMeals) : 'N/A'
+                                });
+
+                                if (dayMeals && typeof dayMeals === 'object' && !Array.isArray(dayMeals)) {
+                                    Object.entries(dayMeals).forEach(([mealTypeName, mealType]) => {
+                                        console.log(`    🍽️ Meal type ${mealTypeName}:`, {
+                                            type: typeof mealType,
+                                            isArray: Array.isArray(mealType),
+                                            length: Array.isArray(mealType) ? mealType.length : 'N/A',
+                                            value: mealType
+                                        });
+
                                         if (Array.isArray(mealType)) {
-                                            console.log('  📍 Found meal array:', mealType.length, 'items');
+                                            console.log('      ✅ Found meal array:', mealType.length, 'items');
                                             totalMeals += mealType.length;
                                         }
                                     });
