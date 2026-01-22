@@ -3390,12 +3390,28 @@
                     <div style="font-size: 0.85rem; color: var(--text-secondary);">Utilisateurs</div>
                 </div>
                 <div class="card" style="text-align: center; padding: var(--space-lg);">
-                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-main);" id="stat-users-active">0</div>
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-main);" id="stat-users-active-7d">0</div>
                     <div style="font-size: 0.85rem; color: var(--text-secondary);">Actifs (7j)</div>
                 </div>
                 <div class="card" style="text-align: center; padding: var(--space-lg);">
-                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-danger);" id="stat-feedbacks-unresolved">0</div>
-                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Feedbacks non résolus</div>
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-carbs);" id="stat-users-active-30d">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Actifs (30j)</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-protein);" id="stat-meals-total">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Repas saisis</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-fat);" id="stat-custom-foods-total">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Aliments persos</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-ui);" id="stat-barcode-scans">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Scans code-barres</div>
+                </div>
+                <div class="card" style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-danger);" id="stat-feedbacks-total">0</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Feedbacks total</div>
                 </div>
                 <div class="card" style="text-align: center; padding: var(--space-lg);">
                     <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent-protein);" id="stat-foods-total">0</div>
@@ -6682,24 +6698,70 @@
                 const usersSnap = await getDocs(collection(db, 'users'));
                 const totalUsers = usersSnap.size;
 
-                // Count active users (7 days)
-                const sevenDaysAgo = new Date();
-                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                // Count active users (7 days & 30 days)
+                const now = new Date();
+                const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
                 let activeUsers7d = 0;
+                let activeUsers30d = 0;
+                let totalMeals = 0;
+                let totalCustomFoods = 0;
+                let totalBarcodeScans = 0;
+
                 usersSnap.forEach(doc => {
                     const data = doc.data();
+
+                    // Count active users
                     if (data.lastSync) {
                         const lastSync = data.lastSync.toDate ? data.lastSync.toDate() : new Date(data.lastSync);
                         if (lastSync >= sevenDaysAgo) activeUsers7d++;
+                        if (lastSync >= thirtyDaysAgo) activeUsers30d++;
+                    }
+
+                    // Count meals
+                    if (data.allDailyMeals) {
+                        try {
+                            const meals = typeof data.allDailyMeals === 'string'
+                                ? JSON.parse(data.allDailyMeals)
+                                : data.allDailyMeals;
+
+                            // Count total meal items across all days
+                            Object.values(meals).forEach(dayMeals => {
+                                if (dayMeals && typeof dayMeals === 'object') {
+                                    Object.values(dayMeals).forEach(mealType => {
+                                        if (Array.isArray(mealType)) {
+                                            totalMeals += mealType.length;
+                                        }
+                                    });
+                                }
+                            });
+                        } catch (e) {
+                            // Ignore parsing errors
+                        }
+                    }
+
+                    // Count custom foods
+                    if (data.customFoods) {
+                        try {
+                            const customFoods = Array.isArray(data.customFoods)
+                                ? data.customFoods
+                                : (typeof data.customFoods === 'string' ? JSON.parse(data.customFoods) : []);
+                            totalCustomFoods += customFoods.length;
+                        } catch (e) {
+                            // Ignore parsing errors
+                        }
+                    }
+
+                    // Count barcode scans
+                    if (data.barcodeScans) {
+                        totalBarcodeScans += parseInt(data.barcodeScans) || 0;
                     }
                 });
 
-                // Count feedbacks non résolus
+                // Count feedbacks
                 const feedbacksSnap = await getDocs(collection(db, 'feedbacks'));
-                let unresolvedFeedbacks = 0;
-                feedbacksSnap.forEach(doc => {
-                    if (doc.data().status !== 'resolved') unresolvedFeedbacks++;
-                });
+                const totalFeedbacks = feedbacksSnap.size;
 
                 // Count aliments communs
                 const foodsSnap = await getDocs(collection(db, 'aliments_communs'));
@@ -6707,8 +6769,12 @@
 
                 // Update stats
                 document.getElementById('stat-users-total').textContent = totalUsers;
-                document.getElementById('stat-users-active').textContent = activeUsers7d;
-                document.getElementById('stat-feedbacks-unresolved').textContent = unresolvedFeedbacks;
+                document.getElementById('stat-users-active-7d').textContent = activeUsers7d;
+                document.getElementById('stat-users-active-30d').textContent = activeUsers30d;
+                document.getElementById('stat-meals-total').textContent = totalMeals;
+                document.getElementById('stat-custom-foods-total').textContent = totalCustomFoods;
+                document.getElementById('stat-barcode-scans').textContent = totalBarcodeScans;
+                document.getElementById('stat-feedbacks-total').textContent = totalFeedbacks;
                 document.getElementById('stat-foods-total').textContent = totalFoods;
 
                 // Load 5 derniers feedbacks
@@ -6880,9 +6946,12 @@
                 const displayName = user.firstName || user.displayName || user.email || 'Utilisateur inconnu';
 
                 return `
-                    <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md);">
+                    <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); ${user.disabled ? 'opacity: 0.6; border: 2px solid var(--accent-danger);' : ''}">
                         <div style="flex: 1; min-width: 250px;">
-                            <div style="font-weight: 600; margin-bottom: 4px;">${escapeHtml(displayName)}</div>
+                            <div style="font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: var(--space-sm);">
+                                ${escapeHtml(displayName)}
+                                ${user.disabled ? '<span style="background: var(--accent-danger); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">DÉSACTIVÉ</span>' : ''}
+                            </div>
                             <div style="font-size: 0.85rem; color: var(--text-secondary);">
                                 UID: <code style="background: var(--bg-primary); padding: 2px 4px; border-radius: 3px; font-size: 0.75rem;">${user.uid}</code>
                             </div>
@@ -6890,7 +6959,13 @@
                                 📅 Inscrit: ${createdAt} | 🔄 Dernière sync: ${lastSync} | 📊 Jours de repas: ${mealsCount}
                             </div>
                         </div>
-                        <div style="display: flex; gap: var(--space-sm);">
+                        <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+                            <button class="btn btn-sm" style="background: ${user.disabled ? '#10b981' : '#f59e0b'};" onclick="toggleUserDisabled('${user.uid}', ${!user.disabled}, '${escapeHtml(displayName)}')">
+                                <i data-lucide="${user.disabled ? 'unlock' : 'lock'}" style="width: 14px; height: 14px;"></i> ${user.disabled ? 'Activer' : 'Désactiver'}
+                            </button>
+                            <button class="btn btn-sm" style="background: #dc2626;" onclick="deleteUserDataRGPD('${user.uid}', '${escapeHtml(displayName)}')">
+                                <i data-lucide="shield-alert" style="width: 14px; height: 14px;"></i> RGPD
+                            </button>
                             <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.uid}', '${escapeHtml(user.email || user.displayName || 'cet utilisateur')}')">
                                 <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i> Supprimer
                             </button>
@@ -6934,6 +7009,75 @@
                 }
             } catch (error) {
                 console.error('Erreur suppression utilisateur:', error);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur de suppression', 'error');
+                }
+            }
+        };
+
+        window.toggleUserDisabled = async function(uid, setDisabled, displayName) {
+            if (!isAdmin()) return;
+
+            const action = setDisabled ? 'désactiver' : 'activer';
+            const confirmMsg = setDisabled
+                ? `Désactiver le compte de ${displayName} ? L'utilisateur ne pourra plus se connecter.`
+                : `Réactiver le compte de ${displayName} ?`;
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                await updateDoc(doc(db, 'users', uid), {
+                    disabled: setDisabled,
+                    disabledAt: setDisabled ? serverTimestamp() : null
+                });
+                await logAdminAction(setDisabled ? 'disable_user' : 'enable_user', { uid, displayName });
+                loadAdminUsers();
+                if (typeof showToast === 'function') {
+                    showToast(`<i data-lucide="${setDisabled ? 'lock' : 'unlock'}" class="icon-inline"></i> Compte ${action}`);
+                }
+            } catch (error) {
+                console.error('Erreur modification statut utilisateur:', error);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur de modification', 'error');
+                }
+            }
+        };
+
+        window.deleteUserDataRGPD = async function(uid, displayName) {
+            if (!isAdmin()) return;
+
+            const confirmMsg = `Supprimer TOUTES les données de ${displayName} (RGPD) ?\n\n` +
+                `Cela supprimera :\n` +
+                `- Tous les repas et données nutritionnelles\n` +
+                `- Tous les aliments personnalisés\n` +
+                `- Toutes les préférences et paramètres\n` +
+                `- L'historique de tracking\n\n` +
+                `Le compte restera actif mais sera vide.\n` +
+                `Cette action est IRRÉVERSIBLE.\n\n` +
+                `Continuer ?`;
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                // Réinitialiser toutes les données utilisateur
+                await updateDoc(doc(db, 'users', uid), {
+                    allDailyMeals: {},
+                    customFoods: [],
+                    macroTargets: {},
+                    userProfile: {},
+                    trackingData: [],
+                    mealTemplates: [],
+                    foodAliases: {},
+                    dataDeletedRGPD: true,
+                    dataDeletedAt: serverTimestamp()
+                });
+                await logAdminAction('delete_user_data_rgpd', { uid, displayName });
+                loadAdminUsers();
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="shield-alert" class="icon-inline"></i> Données utilisateur supprimées (RGPD)');
+                }
+            } catch (error) {
+                console.error('Erreur suppression données RGPD:', error);
                 if (typeof showToast === 'function') {
                     showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur de suppression', 'error');
                 }
@@ -7114,6 +7258,7 @@
                         <div style="flex: 1; min-width: 200px;">
                             <div style="font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: var(--space-sm);">
                                 ${escapeHtml(food.name || 'Sans nom')}
+                                ${food.verified ? '<span style="color: #10b981; font-size: 1rem; cursor: help;" title="Aliment vérifié par un administrateur">✓</span>' : ''}
                                 ${!isValid ? '<span style="color: var(--accent-danger); font-size: 0.8rem;">⚠️ Macros incohérentes</span>' : ''}
                             </div>
                             <div style="font-size: 0.85rem; color: var(--text-secondary);">
@@ -7124,6 +7269,9 @@
                             </div>
                         </div>
                         <div style="display: flex; gap: var(--space-sm);">
+                            <button class="btn btn-sm" style="background: ${food.verified ? '#dc2626' : '#10b981'};" onclick="toggleFoodVerified('${food.id}', ${!food.verified})">
+                                <i data-lucide="${food.verified ? 'x' : 'check'}" style="width: 14px; height: 14px;"></i> ${food.verified ? 'Dévérifier' : 'Vérifier'}
+                            </button>
                             <button class="btn btn-sm" style="background: var(--accent-ui);" onclick="editFood('${food.id}')">
                                 <i data-lucide="edit" style="width: 14px; height: 14px;"></i> Modifier
                             </button>
@@ -7369,6 +7517,26 @@
                 console.error('Erreur suppression aliment:', error);
                 if (typeof showToast === 'function') {
                     showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur de suppression', 'error');
+                }
+            }
+        };
+
+        window.toggleFoodVerified = async function(foodId, setVerified) {
+            if (!isAdmin()) return;
+
+            try {
+                await updateDoc(doc(db, 'aliments_communs', foodId), {
+                    verified: setVerified
+                });
+                await logAdminAction(setVerified ? 'verify_food' : 'unverify_food', { foodId });
+                loadAdminFoods();
+                if (typeof showToast === 'function') {
+                    showToast(`<i data-lucide="check" class="icon-inline"></i> Aliment ${setVerified ? 'vérifié' : 'dévérifié'}`);
+                }
+            } catch (error) {
+                console.error('Erreur modification statut vérifié:', error);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur de modification', 'error');
                 }
             }
         };
