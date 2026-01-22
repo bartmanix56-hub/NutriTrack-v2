@@ -1769,11 +1769,7 @@
                         <p style="margin: 0; margin-top: var(--space-xs); color: var(--text-secondary); font-size: 1rem;">
                             Garde une vue d'ensemble sur ta semaine
                         </p>
-                    </div>
-                    <button onclick="showCalendarView()" class="btn" style="background: var(--accent-ui); color: white; padding: var(--space-md) var(--space-xl); display: flex; align-items: center; gap: var(--space-sm);">
-                        <i data-lucide="calendar" style="width: 20px; height: 20px;"></i> Vue Calendrier
-                    </button>
-                </div></div>
+                    </div></div></div>
 
             <div class="card">
                 <div class="week-selector">
@@ -1781,9 +1777,12 @@
                     <div class="current-week" id="current-week">Semaine du 15 Déc 2025</div>
                     <button class="week-nav-btn" onclick="changeWeek(1)">Semaine suiv. <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i></button>
                 </div>
-                <div style="text-align: center; margin-bottom: var(--space-xl);">
+                <div style="text-align: center; margin-bottom: var(--space-xl); display: flex; gap: var(--space-md); justify-content: center; align-items: center;">
                     <button class="week-nav-btn this-week-btn" onclick="goToCurrentWeek()" style="background: var(--accent-main); color: white; border-color: var(--accent-main);">
                         <i data-lucide="calendar-check" style="width: 16px; height: 16px;"></i> Cette semaine
+                    </button>
+                    <button class="week-nav-btn" onclick="showCalendarView()" style="background: var(--accent-ui); color: white; border-color: var(--accent-ui);">
+                        <i data-lucide="calendar" style="width: 16px; height: 16px;"></i> Vue Calendrier
                     </button>
                 </div>
 
