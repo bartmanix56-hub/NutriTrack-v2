@@ -1861,9 +1861,17 @@ Solutions possibles :
             const widget = document.getElementById('remaining-widget');
             if (!widget || widget.style.display === 'none') return;
 
-            // Calculate the DIFFERENCE in macros
-            const oldMultiplier = oldQuantity / 100;
+            // Calculate the TOTAL macros for this food item with new quantity
             const newMultiplier = newQuantity / 100;
+            const totalMacros = {
+                protein: food.protein * newMultiplier,
+                carbs: food.carbs * newMultiplier,
+                fat: food.fat * newMultiplier,
+                calories: food.calories * newMultiplier
+            };
+
+            // Calculate the DIFFERENCE (for before/after comparison logic only)
+            const oldMultiplier = oldQuantity / 100;
             const diff = {
                 protein: food.protein * (newMultiplier - oldMultiplier),
                 carbs: food.carbs * (newMultiplier - oldMultiplier),
@@ -1911,18 +1919,17 @@ Solutions possibles :
             let message = '';
             let type = 'success';
 
-            // Find the most relevant macro (highest absolute change)
+            // Find the most relevant macro (highest in TOTAL, not change)
             const macros = [
-                { name: 'protéines', value: Math.abs(diff.protein), sign: Math.sign(diff.protein), remaining: remaining.protein, beforeRemaining: beforeRemaining.protein, emoji: '💪', actualDiff: diff.protein },
-                { name: 'glucides', value: Math.abs(diff.carbs), sign: Math.sign(diff.carbs), remaining: remaining.carbs, beforeRemaining: beforeRemaining.carbs, emoji: '⚡', actualDiff: diff.carbs },
-                { name: 'lipides', value: Math.abs(diff.fat), sign: Math.sign(diff.fat), remaining: remaining.fat, beforeRemaining: beforeRemaining.fat, emoji: '🥑', actualDiff: diff.fat }
-            ].sort((a, b) => b.value - a.value);
+                { name: 'protéines', total: totalMacros.protein, diff: Math.abs(diff.protein), sign: Math.sign(diff.protein), remaining: remaining.protein, beforeRemaining: beforeRemaining.protein, emoji: '💪' },
+                { name: 'glucides', total: totalMacros.carbs, diff: Math.abs(diff.carbs), sign: Math.sign(diff.carbs), remaining: remaining.carbs, beforeRemaining: beforeRemaining.carbs, emoji: '⚡' },
+                { name: 'lipides', total: totalMacros.fat, diff: Math.abs(diff.fat), sign: Math.sign(diff.fat), remaining: remaining.fat, beforeRemaining: beforeRemaining.fat, emoji: '🥑' }
+            ].sort((a, b) => b.total - a.total);
 
             const topMacro = macros[0];
 
-            if (topMacro.value > 0.5) { // Ignore changes < 0.5g
-                const roundedValue = Math.round(topMacro.value);
-                const prefix = topMacro.sign > 0 ? '+' : '';
+            if (topMacro.total > 0.5) { // Ignore if total < 0.5g
+                const roundedTotal = Math.round(topMacro.total * 10) / 10; // 1 decimal for display
 
                 if (topMacro.sign > 0) {
                     // Adding macros
@@ -1931,31 +1938,34 @@ Solutions possibles :
 
                     if (wasAlreadyOver && isNowOver) {
                         // Was already over, still over
-                        message = `${topMacro.emoji} ${prefix}${roundedValue}g ${topMacro.name} • Objectif déjà dépassé`;
+                        message = `${topMacro.emoji} ${roundedTotal}g ${topMacro.name} • Objectif déjà dépassé`;
                         type = 'danger';
                     } else if (!wasAlreadyOver && isNowOver) {
                         // Just went over the limit
-                        message = `${topMacro.emoji} ${prefix}${roundedValue}g ${topMacro.name} • Quota ${topMacro.name} atteint`;
+                        message = `${topMacro.emoji} ${roundedTotal}g ${topMacro.name} • Quota ${topMacro.name} atteint`;
                         type = 'warning';
-                    } else if (topMacro.remaining > 0 && topMacro.remaining < topMacro.value * 2) {
+                    } else if (topMacro.remaining > 0 && topMacro.remaining < topMacro.total * 2) {
                         // Good addition, getting close to target
-                        message = `${topMacro.emoji} ${prefix}${roundedValue}g ${topMacro.name} • Parfait!`;
+                        message = `${topMacro.emoji} ${roundedTotal}g ${topMacro.name} • Parfait!`;
                         type = 'success';
                     } else {
                         // Neutral addition
-                        message = `${topMacro.emoji} ${prefix}${roundedValue}g ${topMacro.name}`;
+                        message = `${topMacro.emoji} ${roundedTotal}g ${topMacro.name}`;
                         type = 'success';
                     }
-                } else {
+                } else if (topMacro.sign < 0) {
                     // Removing macros
-                    message = `${topMacro.emoji} ${roundedValue}g ${topMacro.name} retirées`;
+                    message = `${topMacro.emoji} ${roundedTotal}g ${topMacro.name} retirées`;
                     type = 'success';
+                } else {
+                    // No change (shouldn't happen)
+                    return;
                 }
             } else {
-                // Very small change, just show calories
-                const caloriesDiff = Math.round(diff.calories);
-                if (Math.abs(caloriesDiff) > 1) {
-                    message = `${caloriesDiff > 0 ? '+' : ''}${caloriesDiff} kcal`;
+                // Very small total, just show calories
+                const totalCals = Math.round(totalMacros.calories);
+                if (totalCals > 1) {
+                    message = `${totalCals} kcal`;
                     type = 'success';
                 } else {
                     return; // Too small to show feedback
