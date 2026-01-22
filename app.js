@@ -1483,6 +1483,13 @@ Solutions possibles :
 
             const quantity = parseFloat(document.getElementById('modal-quantity')?.value) || 100;
 
+            // Store modal position for flying animation
+            const modalRect = modal.getBoundingClientRect();
+            const startPos = {
+                x: modalRect.left + modalRect.width / 2,
+                y: modalRect.top + modalRect.height / 2
+            };
+
             dailyMeals[currentMealType].foods.push({
                 ...food,
                 id: Date.now(),
@@ -1493,7 +1500,13 @@ Solutions possibles :
             updateDayTotals();
             saveDailyMeals();
             syncMealsToPlanning();
+            updateRemainingWidget();
             closeFoodModal();
+
+            // Flying animation + macro feedback
+            createFlyingFoodAnimation(food.name, startPos);
+            showMacroFeedback(food, quantity);
+
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Ajouté !');
         }
 
@@ -1684,6 +1697,14 @@ Solutions possibles :
         }
 
         function quickAddFood(mealType, food) {
+            // Store position for flying animation
+            const dropdown = getGlobalDropdown();
+            let startPos = null;
+            if (dropdown) {
+                const rect = dropdown.getBoundingClientRect();
+                startPos = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+            }
+
             // Add food with default 100g
             dailyMeals[mealType].foods.push({
                 ...food,
@@ -1699,13 +1720,138 @@ Solutions possibles :
 
             // Clear input and hide global dropdown
             const input = document.getElementById(`quick-add-${mealType}`);
-            const dropdown = getGlobalDropdown();
             if (input) input.value = '';
             if (dropdown) dropdown.style.display = 'none';
             currentQuickAddMealType = null;
             currentQuickAddInput = null;
 
+            // Flying animation + macro feedback
+            if (startPos) {
+                createFlyingFoodAnimation(food.name, startPos);
+            }
+            showMacroFeedback(food, 100);
+
             showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${food.name} ajouté (100g)`);
+        }
+
+        // ===== FEEDBACK ANIMATIONS =====
+
+        function createFlyingFoodAnimation(foodName, startPos) {
+            const widget = document.getElementById('remaining-widget');
+            if (!widget || widget.style.display === 'none') return;
+
+            const widgetRect = widget.getBoundingClientRect();
+            const endPos = {
+                x: widgetRect.left + widgetRect.width / 2,
+                y: widgetRect.top + widgetRect.height / 2
+            };
+
+            // Create flying element
+            const flyingEl = document.createElement('div');
+            flyingEl.className = 'flying-food';
+            flyingEl.textContent = foodName;
+            flyingEl.style.left = startPos.x + 'px';
+            flyingEl.style.top = startPos.y + 'px';
+            flyingEl.style.setProperty('--fly-x', (endPos.x - startPos.x) + 'px');
+            flyingEl.style.setProperty('--fly-y', (endPos.y - startPos.y) + 'px');
+
+            document.body.appendChild(flyingEl);
+
+            // Remove after animation
+            setTimeout(() => {
+                flyingEl.remove();
+            }, 800);
+        }
+
+        function showMacroFeedback(food, quantity) {
+            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            if (!targets.calories) return;
+
+            const widget = document.getElementById('remaining-widget');
+            if (!widget || widget.style.display === 'none') return;
+
+            // Calculate what was added
+            const multiplier = quantity / 100;
+            const added = {
+                protein: food.protein * multiplier,
+                carbs: food.carbs * multiplier,
+                fat: food.fat * multiplier,
+                calories: food.calories * multiplier
+            };
+
+            // Calculate current totals to know what's remaining
+            let totals = { protein: 0, carbs: 0, fat: 0, calories: 0 };
+            Object.keys(dailyMeals).forEach(mealType => {
+                const foods = dailyMeals[mealType].foods || [];
+                foods.forEach(f => {
+                    const m = f.quantity / 100;
+                    totals.protein += f.protein * m;
+                    totals.carbs += f.carbs * m;
+                    totals.fat += f.fat * m;
+                    totals.calories += f.calories * m;
+                });
+            });
+
+            const remaining = {
+                protein: targets.protein - totals.protein,
+                carbs: targets.carbs - totals.carbs,
+                fat: targets.fat - totals.fat,
+                calories: targets.calories - totals.calories
+            };
+
+            // Determine feedback message
+            let message = '';
+            let type = 'success';
+
+            // Find the most relevant macro (highest in food)
+            const macros = [
+                { name: 'protéines', value: added.protein, remaining: remaining.protein, emoji: '💪' },
+                { name: 'glucides', value: added.carbs, remaining: remaining.carbs, emoji: '⚡' },
+                { name: 'lipides', value: added.fat, remaining: remaining.fat, emoji: '🥑' }
+            ].sort((a, b) => b.value - a.value);
+
+            const topMacro = macros[0];
+
+            if (topMacro.value > 0) {
+                const roundedValue = Math.round(topMacro.value);
+
+                if (remaining.calories < 0) {
+                    message = `${topMacro.emoji} +${roundedValue}g ${topMacro.name} • Objectif dépassé`;
+                    type = 'warning';
+                } else if (topMacro.remaining < 0) {
+                    message = `${topMacro.emoji} +${roundedValue}g ${topMacro.name} • Quota ${topMacro.name} atteint`;
+                    type = 'warning';
+                } else if (topMacro.remaining > 0 && topMacro.remaining < topMacro.value * 2) {
+                    message = `${topMacro.emoji} +${roundedValue}g ${topMacro.name} • Parfait!`;
+                    type = 'success';
+                } else {
+                    message = `${topMacro.emoji} +${roundedValue}g ${topMacro.name}`;
+                    type = 'success';
+                }
+            } else {
+                message = `✅ +${Math.round(added.calories)} kcal`;
+                type = 'success';
+            }
+
+            // Remove existing feedback if any
+            const existingFeedback = document.getElementById('macro-feedback-message');
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
+
+            // Create feedback element
+            const feedbackEl = document.createElement('div');
+            feedbackEl.id = 'macro-feedback-message';
+            feedbackEl.className = `macro-feedback ${type}`;
+            feedbackEl.innerHTML = `<span>${message}</span>`;
+
+            // Insert after widget
+            widget.parentNode.insertBefore(feedbackEl, widget.nextSibling);
+
+            // Remove after 4 seconds
+            setTimeout(() => {
+                feedbackEl.remove();
+            }, 4000);
         }
 
         // Close global quick add dropdown when clicking outside
