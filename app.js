@@ -233,6 +233,9 @@
                 }
             }
 
+            // Sauvegarder l'onglet actif pour le restaurer après F5
+            localStorage.setItem('lastActiveTab', tabName);
+
             // Désactiver tous les onglets
             document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -284,6 +287,9 @@
                 }
             }
 
+            // Sauvegarder l'onglet actif pour le restaurer après F5
+            localStorage.setItem('lastActiveTab', tab);
+
             document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
@@ -305,6 +311,27 @@
             // Scroll to top
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
+
+        // Restaurer l'onglet actif après F5
+        document.addEventListener('DOMContentLoaded', () => {
+            const lastTab = localStorage.getItem('lastActiveTab');
+            if (lastTab && lastTab !== 'home') {
+                // Attendre un peu pour que tout soit initialisé
+                setTimeout(() => {
+                    switchToTab(lastTab);
+
+                    // Si c'était l'admin, restaurer aussi la sous-section admin
+                    if (lastTab === 'admin') {
+                        const lastAdminSection = localStorage.getItem('lastAdminSection');
+                        if (lastAdminSection && typeof window.showAdminSection === 'function') {
+                            setTimeout(() => {
+                                window.showAdminSection(lastAdminSection);
+                            }, 200);
+                        }
+                    }
+                }, 100);
+            }
+        });
 
         // Goal selection
         function checkFatWarning(value, type) {
