@@ -1579,7 +1579,7 @@
         }
 
         .tab-content > div:first-child[style*="background: linear-gradient"] p {
-            margin-top: -4px !important;
+            margin-top: -2px !important;
         }
 
         /* ===== HOME MOBILE ===== */
