@@ -3595,7 +3595,10 @@ Solutions possibles :
         function renderFoodDatabase(foods = foodDatabase) {
             foodDatabaseContainer.innerHTML = foods.map(food => `
                 <div class="food-item">
-                    <div class="food-name">${getDisplayName(food)}</div>
+                    <div class="food-name">
+                        ${getDisplayName(food)}
+                        ${food.verified ? '<span style="color: #10b981; font-size: 1rem; margin-left: 4px; cursor: help;" title="Aliment vérifié par un administrateur">✓</span>' : ''}
+                    </div>
                     <div class="food-macros">
                         <span>
                             <div class="label">Prot</div>
@@ -4565,11 +4568,33 @@ Solutions possibles :
             }
         }
 
+        // Track barcode scan count for analytics
+        async function incrementBarcodeScanCount() {
+            if (!auth?.currentUser) return;
+
+            try {
+                const userRef = doc(db, 'users', auth.currentUser.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    const currentCount = parseInt(userSnap.data().barcodeScans) || 0;
+                    await updateDoc(userRef, {
+                        barcodeScans: currentCount + 1
+                    });
+                }
+            } catch (error) {
+                console.error('Erreur tracking scan barcode:', error);
+                // Don't show error to user, this is background tracking
+            }
+        }
+
         async function onBarcodeScanned(decodedText, decodedResult) {
             // Éviter les scans multiples
             if (scannerScannedBarcode === decodedText) return;
             scannerScannedBarcode = decodedText;
 
+            // Track barcode scan for analytics
+            incrementBarcodeScanCount();
 
             try {
                 // Afficher loader
