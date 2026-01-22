@@ -1567,6 +1567,11 @@
             text-align: center;
         }
 
+        /* ===== HERO HEADERS DESKTOP - PADDING RÉDUIT ===== */
+        .tab-content > div:first-child[style*="background: linear-gradient"] {
+            padding: 16px 32px !important;
+        }
+
         /* ===== HOME MOBILE ===== */
         @media (max-width: 768px) {
             .home-hero { min-height: auto; padding: var(--space-lg) var(--space-md); }
