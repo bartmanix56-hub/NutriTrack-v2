@@ -1572,6 +1572,11 @@
             padding: 12px 32px !important;
         }
 
+        /* Centrer le contenu flex (icône + texte) */
+        .tab-content > div:first-child[style*="background: linear-gradient"] > div[style*="display: flex"] {
+            align-items: center !important;
+        }
+
         /* Réduire l'espace entre titre et sous-titre */
         .tab-content > div:first-child[style*="background: linear-gradient"] h1 {
             margin-bottom: 0px !important;
