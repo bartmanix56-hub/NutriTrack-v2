@@ -1871,7 +1871,7 @@ Solutions possibles :
                 calories: food.calories * (newMultiplier - oldMultiplier)
             };
 
-            // Calculate current totals
+            // Calculate current totals (AFTER modification)
             let totals = { protein: 0, carbs: 0, fat: 0, calories: 0 };
             Object.keys(dailyMeals).forEach(mealType => {
                 const foods = dailyMeals[mealType].foods || [];
@@ -1884,11 +1884,27 @@ Solutions possibles :
                 });
             });
 
+            // Calculate remaining AFTER modification
             const remaining = {
                 protein: targets.protein - totals.protein,
                 carbs: targets.carbs - totals.carbs,
                 fat: targets.fat - totals.fat,
                 calories: targets.calories - totals.calories
+            };
+
+            // Calculate what it was BEFORE modification
+            const beforeTotals = {
+                protein: totals.protein - diff.protein,
+                carbs: totals.carbs - diff.carbs,
+                fat: totals.fat - diff.fat,
+                calories: totals.calories - diff.calories
+            };
+
+            const beforeRemaining = {
+                protein: targets.protein - beforeTotals.protein,
+                carbs: targets.carbs - beforeTotals.carbs,
+                fat: targets.fat - beforeTotals.fat,
+                calories: targets.calories - beforeTotals.calories
             };
 
             // Determine feedback message
@@ -1897,9 +1913,9 @@ Solutions possibles :
 
             // Find the most relevant macro (highest absolute change)
             const macros = [
-                { name: 'protéines', value: Math.abs(diff.protein), sign: Math.sign(diff.protein), remaining: remaining.protein, emoji: '💪', actualDiff: diff.protein },
-                { name: 'glucides', value: Math.abs(diff.carbs), sign: Math.sign(diff.carbs), remaining: remaining.carbs, emoji: '⚡', actualDiff: diff.carbs },
-                { name: 'lipides', value: Math.abs(diff.fat), sign: Math.sign(diff.fat), remaining: remaining.fat, emoji: '🥑', actualDiff: diff.fat }
+                { name: 'protéines', value: Math.abs(diff.protein), sign: Math.sign(diff.protein), remaining: remaining.protein, beforeRemaining: beforeRemaining.protein, emoji: '💪', actualDiff: diff.protein },
+                { name: 'glucides', value: Math.abs(diff.carbs), sign: Math.sign(diff.carbs), remaining: remaining.carbs, beforeRemaining: beforeRemaining.carbs, emoji: '⚡', actualDiff: diff.carbs },
+                { name: 'lipides', value: Math.abs(diff.fat), sign: Math.sign(diff.fat), remaining: remaining.fat, beforeRemaining: beforeRemaining.fat, emoji: '🥑', actualDiff: diff.fat }
             ].sort((a, b) => b.value - a.value);
 
             const topMacro = macros[0];
@@ -1910,16 +1926,23 @@ Solutions possibles :
 
                 if (topMacro.sign > 0) {
                     // Adding macros
-                    if (remaining.calories < 0) {
-                        message = `${topMacro.emoji} ${prefix}${roundedValue}g ${topMacro.name} • Objectif dépassé`;
-                        type = 'warning';
-                    } else if (topMacro.remaining < 0) {
+                    const wasAlreadyOver = topMacro.beforeRemaining < 0 || beforeRemaining.calories < 0;
+                    const isNowOver = topMacro.remaining < 0 || remaining.calories < 0;
+
+                    if (wasAlreadyOver && isNowOver) {
+                        // Was already over, still over
+                        message = `${topMacro.emoji} ${prefix}${roundedValue}g ${topMacro.name} • Objectif déjà dépassé`;
+                        type = 'danger';
+                    } else if (!wasAlreadyOver && isNowOver) {
+                        // Just went over the limit
                         message = `${topMacro.emoji} ${prefix}${roundedValue}g ${topMacro.name} • Quota ${topMacro.name} atteint`;
                         type = 'warning';
                     } else if (topMacro.remaining > 0 && topMacro.remaining < topMacro.value * 2) {
+                        // Good addition, getting close to target
                         message = `${topMacro.emoji} ${prefix}${roundedValue}g ${topMacro.name} • Parfait!`;
                         type = 'success';
                     } else {
+                        // Neutral addition
                         message = `${topMacro.emoji} ${prefix}${roundedValue}g ${topMacro.name}`;
                         type = 'success';
                     }
