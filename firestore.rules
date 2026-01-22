@@ -2,33 +2,37 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Fonction helper pour vérifier si l'utilisateur est admin
-    function isAdmin() {
-      return request.auth != null && request.auth.uid == 'qEuqSbWO73OwTEwL6LhEILS5djD2';
+    // 1. Bibliothèque commune d'aliments
+    match /aliments_communs/{barcode} {
+      allow read: if true;
+      allow write: if request.auth != null;
     }
 
-    // Collection users - Admin peut tout lire, utilisateurs peuvent lire/écrire leurs propres données
+    // 2. Documents utilisateurs à la racine (pour le panel admin)
     match /users/{userId} {
-      allow read: if isAdmin() || (request.auth != null && request.auth.uid == userId);
+      // Admin peut lire tous les documents users pour le panel admin
+      allow read: if request.auth != null &&
+                     (request.auth.uid == "qEuqSbWO73OwTEwL6LhEILS5djD2" || request.auth.uid == userId);
       allow write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Collection feedbacks - Tous les utilisateurs authentifiés peuvent créer, admin peut tout lire/modifier
-    match /feedbacks/{feedbackId} {
-      allow read: if isAdmin();
-      allow create: if request.auth != null;
-      allow update, delete: if isAdmin();
+    // 3. Journal personnel et aliments perso de l'utilisateur (sous-collections)
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Collection aliments_communs - Lecture publique pour tous, admin peut écrire
-    match /aliments_communs/{alimentId} {
-      allow read: if request.auth != null;
-      allow write: if isAdmin();
+    // 4. Système de Feedback sécurisé
+    match /feedbacks/{document=**} {
+      // Tout le monde peut envoyer un feedback (même non connecté)
+      allow create: if true;
+
+      // SEUL TOI peux lire, modifier (marquer comme lu) ou supprimer les feedbacks
+      allow read, update, delete: if request.auth != null && request.auth.uid == "qEuqSbWO73OwTEwL6LhEILS5djD2";
     }
 
-    // Collection admin_logs - Seulement admin peut lire/écrire
+    // 5. Logs admin (pour le panel admin)
     match /admin_logs/{logId} {
-      allow read, write: if isAdmin();
+      allow read, write: if request.auth != null && request.auth.uid == "qEuqSbWO73OwTEwL6LhEILS5djD2";
     }
   }
 }
