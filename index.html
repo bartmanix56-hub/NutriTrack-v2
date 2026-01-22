@@ -5976,12 +5976,37 @@
                     }
                 });
 
-                data.lastSync = new Date().toISOString();
+                // Add user info from Firebase Auth
+                data.email = user.email || null;
+                data.displayName = user.displayName || null;
 
-                await setDoc(doc(db, 'users', user.uid), {
+                // Extract firstName from userProfile if available
+                const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                if (userProfile.firstName) {
+                    data.firstName = userProfile.firstName;
+                }
+                if (userProfile.lastName) {
+                    data.lastName = userProfile.lastName;
+                }
+
+                // Use serverTimestamp for lastSync instead of ISO string
+                data.lastSync = serverTimestamp();
+
+                // Check if document exists to set createdAt only on first sync
+                const docRef = doc(db, 'users', user.uid);
+                const docSnap = await getDoc(docRef);
+
+                const updateData = {
                     ...data,
                     updatedAt: serverTimestamp()
-                }, { merge: true });
+                };
+
+                // Only set createdAt if document doesn't exist yet
+                if (!docSnap.exists()) {
+                    updateData.createdAt = serverTimestamp();
+                }
+
+                await setDoc(docRef, updateData, { merge: true });
 
                 const now = new Date().toLocaleString('fr-FR', {
                     day: '2-digit',
@@ -6820,19 +6845,41 @@
             const paginated = users.slice(start, end);
 
             container.innerHTML = paginated.map(user => {
-                const lastSync = user.lastSync?.toDate ? user.lastSync.toDate().toLocaleString('fr-FR', {
-                    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                }) : 'Jamais';
+                // Handle lastSync - can be either Firestore Timestamp or ISO string
+                let lastSync = 'Jamais';
+                if (user.lastSync) {
+                    try {
+                        const lastSyncDate = user.lastSync?.toDate ? user.lastSync.toDate() : new Date(user.lastSync);
+                        lastSync = lastSyncDate.toLocaleString('fr-FR', {
+                            day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                        });
+                    } catch (e) {
+                        lastSync = 'Erreur';
+                    }
+                }
 
                 const createdAt = user.createdAt?.toDate ? user.createdAt.toDate().toLocaleDateString('fr-FR') : '-';
 
-                // Count meals (if available in data)
-                const mealsCount = user.allDailyMeals ? Object.keys(user.allDailyMeals).length : 0;
+                // Count unique days with meals (parse allDailyMeals if it's a string)
+                let mealsCount = 0;
+                if (user.allDailyMeals) {
+                    try {
+                        const allDailyMeals = typeof user.allDailyMeals === 'string'
+                            ? JSON.parse(user.allDailyMeals)
+                            : user.allDailyMeals;
+                        mealsCount = Object.keys(allDailyMeals).length;
+                    } catch (e) {
+                        mealsCount = 0;
+                    }
+                }
+
+                // Display name priority: firstName > displayName > email > 'Utilisateur inconnu'
+                const displayName = user.firstName || user.displayName || user.email || 'Utilisateur inconnu';
 
                 return `
                     <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md);">
                         <div style="flex: 1; min-width: 250px;">
-                            <div style="font-weight: 600; margin-bottom: 4px;">${escapeHtml(user.email || user.displayName || 'Utilisateur inconnu')}</div>
+                            <div style="font-weight: 600; margin-bottom: 4px;">${escapeHtml(displayName)}</div>
                             <div style="font-size: 0.85rem; color: var(--text-secondary);">
                                 UID: <code style="background: var(--bg-primary); padding: 2px 4px; border-radius: 3px; font-size: 0.75rem;">${user.uid}</code>
                             </div>
