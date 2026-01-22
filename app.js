@@ -2117,6 +2117,233 @@ Solutions possibles :
             }, 4000);
         }
 
+        // ===== CALENDAR VIEW =====
+        window.showCalendarView = function() {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'calendar-modal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 900px;">
+                    <div class="modal-header">
+                        <h2 style="margin: 0; display: flex; align-items: center; gap: var(--space-sm);">
+                            <i data-lucide="calendar" style="width: 24px; height: 24px;"></i> Calendrier
+                        </h2>
+                        <button onclick="closeCalendarView()" class="modal-close">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <button class="btn-ghost" onclick="changeCalendarMonth(-1)"><i data-lucide="chevron-left"></i></button>
+                                <h3 id="calendar-month-year" style="margin: 0; font-size: 1.3rem; font-weight: 700;"></h3>
+                                <button class="btn-ghost" onclick="changeCalendarMonth(1)"><i data-lucide="chevron-right"></i></button>
+                            </div>
+                            <div id="calendar-content"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            renderCalendar(new Date());
+            if (typeof lucide !== "undefined") lucide.createIcons();
+        };
+
+        window.closeCalendarView = function() {
+            const modal = document.getElementById('calendar-modal');
+            if (modal) {
+                modal.remove();
+                document.body.style.overflow = '';
+            }
+        };
+
+        let currentCalendarDate = new Date();
+
+        window.changeCalendarMonth = function(delta) {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+            renderCalendar(currentCalendarDate);
+        };
+
+        function renderCalendar(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+            const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+
+            document.getElementById('calendar-month-year').textContent = `${monthNames[month]} ${year}`;
+
+            const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const today = new Date();
+
+            let html = '<div class="calendar-grid">';
+            dayNames.forEach(day => {
+                html += `<div class="calendar-day-header">${day}</div>`;
+            });
+
+            for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) {
+                html += '<div class="calendar-day empty"></div>';
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayMeals = allMeals[dateKey];
+                const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
+
+                let classes = 'calendar-day';
+                let indicator = '';
+
+                if (dayMeals) {
+                    classes += ' has-data';
+                    const dayTotals = calculateDayTotals(dayMeals);
+
+                    if (targets.calories && dayTotals.calories > 0) {
+                        const calMatch = Math.abs(dayTotals.calories - targets.calories) <= targets.calories * 0.1;
+                        if (calMatch) {
+                            classes += ' goal-reached';
+                            indicator = '✓';
+                        } else {
+                            indicator = '•';
+                        }
+                    } else {
+                        indicator = '•';
+                    }
+                }
+
+                if (isToday) classes += ' today';
+
+                html += `
+                    <div class="${classes}" onclick="goToDate('${dateKey}')">
+                        <div class="calendar-day-number">${day}</div>
+                        <div class="calendar-day-indicator">${indicator}</div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            document.getElementById('calendar-content').innerHTML = html;
+        }
+
+        function calculateDayTotals(dayMeals) {
+            let totals = {calories: 0, protein: 0, carbs: 0, fat: 0};
+            ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
+                const foods = dayMeals[mealType]?.foods || [];
+                foods.forEach(f => {
+                    const m = f.quantity / 100;
+                    totals.calories += f.calories * m;
+                    totals.protein += f.protein * m;
+                    totals.carbs += f.carbs * m;
+                    totals.fat += f.fat * m;
+                });
+            });
+            return totals;
+        }
+
+        window.goToDate = function(dateKey) {
+            closeCalendarView();
+            switchToTab('meals');
+            const [y, m, d] = dateKey.split('-').map(Number);
+            currentMealDate = new Date(y, m - 1, d);
+            loadDailyMeals();
+        };
+
+        // ===== EXPORT AS IMAGE =====
+        window.exportDayAsImage = async function() {
+            showToast('<i data-lucide="loader" class="icon-inline spinning"></i> Génération en cours...');
+
+            const dateKey = getCurrentDateKey();
+            const dayMeals = allDailyMeals[dateKey] || {};
+            const totals = calculateDayTotals(dayMeals);
+            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 1080;
+            canvas.height = 1350;
+            const ctx = canvas.getContext('2d');
+
+            // Background
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#0a2f23');
+            gradient.addColorStop(1, '#0a1f18');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Header
+            ctx.fillStyle = '#10b981';
+            ctx.font = 'bold 48px DM Sans, sans-serif';
+            ctx.fillText('NutriTrack', 60, 100);
+            ctx.fillStyle = '#4ecdc4';
+            ctx.font = '28px DM Sans, sans-serif';
+            ctx.fillText(new Date().toLocaleDateString('fr-FR', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'}), 60, 150);
+
+            // Macros
+            let y = 250;
+            ctx.fillStyle = '#e0e0e0';
+            ctx.font = 'bold 36px DM Sans, sans-serif';
+            ctx.fillText('Macros du jour', 60, y);
+
+            y += 80;
+            const macros = [
+                {label: 'Protéines', value: totals.protein, target: targets.protein, color: '#ee6c4d'},
+                {label: 'Glucides', value: totals.carbs, target: targets.carbs, color: '#4ecdc4'},
+                {label: 'Lipides', value: totals.fat, target: targets.fat, color: '#ffe66d'},
+                {label: 'Calories', value: totals.calories, target: targets.calories, color: '#10b981'}
+            ];
+
+            macros.forEach(macro => {
+                ctx.fillStyle = macro.color;
+                ctx.font = 'bold 32px DM Sans, sans-serif';
+                ctx.fillText(macro.label, 60, y);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '28px DM Sans, sans-serif';
+                const text = macro.target ? `${Math.round(macro.value)} / ${Math.round(macro.target)}${macro.label === 'Calories' ? ' kcal' : 'g'}` : `${Math.round(macro.value)}${macro.label === 'Calories' ? ' kcal' : 'g'}`;
+                ctx.fillText(text, 300, y);
+                y += 70;
+            });
+
+            // Footer
+            ctx.fillStyle = '#4ecdc4';
+            ctx.font = '24px DM Sans, sans-serif';
+            ctx.fillText('Généré avec NutriTrack ✨', 60, canvas.height - 60);
+
+            // Export/Share
+            canvas.toBlob(async blob => {
+                const file = new File([blob], `nutritrack-${dateKey}.png`, { type: 'image/png' });
+
+                // Check if Web Share API is available (mobile)
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: 'Mes macros NutriTrack',
+                            text: `Mes macros du ${new Date().toLocaleDateString('fr-FR')} 💪`
+                        });
+                        showToast('<i data-lucide="check-circle" class="icon-inline"></i> Image partagée !');
+                    } catch (err) {
+                        if (err.name !== 'AbortError') { // User cancelled
+                            console.error('Erreur partage:', err);
+                            // Fallback to download
+                            downloadImage(blob, dateKey);
+                        }
+                    }
+                } else {
+                    // Desktop or unsupported: classic download
+                    downloadImage(blob, dateKey);
+                }
+            });
+        };
+
+        function downloadImage(blob, dateKey) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nutritrack-${dateKey}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Image téléchargée !');
+        }
+
         // Initialize smart suggestions on focus
         function initSmartSuggestions() {
             const mealTypes = ['breakfast', 'lunch', 'snack', 'dinner'];
@@ -2139,6 +2366,129 @@ Solutions possibles :
         } else {
             initSmartSuggestions();
         }
+
+        // ===== SMART TEMPLATES - RECURRENCE DETECTION =====
+
+        function calculateMealSimilarity(meal1, meal2) {
+            if (!meal1 || !meal2) return 0;
+            const foods1 = meal1.foods || [];
+            const foods2 = meal2.foods || [];
+
+            if (foods1.length === 0 || foods2.length === 0) return 0;
+
+            // Count matching foods (same name, similar quantity ±20%)
+            let matches = 0;
+            foods1.forEach(f1 => {
+                const match = foods2.find(f2 =>
+                    f2.name === f1.name &&
+                    Math.abs(f2.quantity - f1.quantity) <= f1.quantity * 0.2
+                );
+                if (match) matches++;
+            });
+
+            return (matches / Math.max(foods1.length, foods2.length)) * 100;
+        }
+
+        function detectRecurrentMeals(mealType) {
+            const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            const currentMeal = dailyMeals[mealType];
+
+            if (!currentMeal || !currentMeal.foods || currentMeal.foods.length === 0) return null;
+
+            // Find similar meals in history
+            const similarMeals = [];
+            Object.keys(allMeals).forEach(dateKey => {
+                const dayMeals = allMeals[dateKey];
+                if (dayMeals[mealType]) {
+                    const similarity = calculateMealSimilarity(currentMeal, dayMeals[mealType]);
+                    if (similarity >= 80) { // 80% similar
+                        similarMeals.push({ dateKey, similarity });
+                    }
+                }
+            });
+
+            // If found 3+ times, suggest saving as template
+            if (similarMeals.length >= 3) {
+                return {
+                    count: similarMeals.length,
+                    meal: currentMeal,
+                    mealType: mealType
+                };
+            }
+
+            return null;
+        }
+
+        function suggestTemplateCreation(mealType) {
+            const recurrent = detectRecurrentMeals(mealType);
+            if (!recurrent) return;
+
+            // Check if already dismissed for this meal combo
+            const dismissed = JSON.parse(localStorage.getItem('dismissedTemplateSuggestions') || '[]');
+            const mealHash = recurrent.meal.foods.map(f => f.name).sort().join('|');
+            if (dismissed.includes(mealHash)) return;
+
+            // Show suggestion
+            showTemplateSuggestion(recurrent);
+        }
+
+        function showTemplateSuggestion(recurrent) {
+            const mealNames = {
+                breakfast: 'petit-déjeuner',
+                lunch: 'déjeuner',
+                snack: 'snack',
+                dinner: 'dîner'
+            };
+
+            const existingBanner = document.getElementById('template-suggestion-banner');
+            if (existingBanner) existingBanner.remove();
+
+            const banner = document.createElement('div');
+            banner.id = 'template-suggestion-banner';
+            banner.className = 'template-suggestion-banner';
+            banner.innerHTML = `
+                <div style="display: flex; align-items: center; gap: var(--space-md); flex: 1;">
+                    <i data-lucide="lightbulb" style="width: 24px; height: 24px; color: var(--accent-main); flex-shrink: 0;"></i>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: var(--space-xs);">Tu manges souvent ce ${mealNames[recurrent.mealType]} !</div>
+                        <div style="font-size: 0.85rem; opacity: 0.8;">Tu l'as déjà mangé ${recurrent.count} fois. Veux-tu le sauvegarder comme repas type ?</div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: var(--space-sm);">
+                    <button onclick="saveRecurrentAsTemplate('${recurrent.mealType}')" class="btn" style="padding: var(--space-sm) var(--space-lg);">
+                        <i data-lucide="save" style="width: 16px; height: 16px;"></i> Sauvegarder
+                    </button>
+                    <button onclick="dismissTemplateSuggestion('${recurrent.mealType}')" class="btn-ghost" style="padding: var(--space-sm) var(--space-md);">
+                        Plus tard
+                    </button>
+                </div>
+            `;
+
+            const mealsSection = document.getElementById('meals');
+            if (mealsSection) {
+                mealsSection.insertBefore(banner, mealsSection.children[2]); // After hero and date nav
+                if (typeof lucide !== "undefined") lucide.createIcons();
+            }
+        }
+
+        window.saveRecurrentAsTemplate = function(mealType) {
+            saveMealAsTemplate(mealType);
+            const banner = document.getElementById('template-suggestion-banner');
+            if (banner) banner.remove();
+        };
+
+        window.dismissTemplateSuggestion = function(mealType) {
+            const meal = dailyMeals[mealType];
+            if (!meal || !meal.foods) return;
+
+            const mealHash = meal.foods.map(f => f.name).sort().join('|');
+            const dismissed = JSON.parse(localStorage.getItem('dismissedTemplateSuggestions') || '[]');
+            dismissed.push(mealHash);
+            localStorage.setItem('dismissedTemplateSuggestions', JSON.stringify(dismissed));
+
+            const banner = document.getElementById('template-suggestion-banner');
+            if (banner) banner.remove();
+        };
 
         // Close global quick add dropdown when clicking outside
         document.addEventListener('click', (e) => {
@@ -5031,6 +5381,16 @@ Solutions possibles :
             if (typeof updateStreakDisplay === 'function') updateStreakDisplay();
             // Mettre à jour le résumé hebdomadaire si visible
             if (typeof updateWeeklySummary === 'function') updateWeeklySummary();
+
+            // Check for recurrent meals (debounced to avoid spam)
+            clearTimeout(window.recurrentCheckTimeout);
+            window.recurrentCheckTimeout = setTimeout(() => {
+                ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
+                    if (dailyMeals[mealType]?.foods?.length > 0) {
+                        suggestTemplateCreation(mealType);
+                    }
+                });
+            }, 2000);
         }
 
         // ===== GESTION HYDRATATION (EAU) =====
@@ -7826,4 +8186,3 @@ Solutions possibles :
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(initOnboarding, 500);
         });
-
