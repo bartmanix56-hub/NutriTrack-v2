@@ -1356,10 +1356,8 @@ Solutions possibles :
                 // Annuler le timeout précédent
                 if (modalSearchTimeout) clearTimeout(modalSearchTimeout);
 
-                // Filtrer localement d'abord (résultats immédiats)
-                let localResults = foodDatabase.filter(food =>
-                    food.name.toLowerCase().includes(query)
-                ).slice(0, 10);
+                // Fuzzy search in local database (immediate results)
+                let localResults = fuzzySearchFoods(foodDatabase, query, 15);
 
                 // Afficher les résultats locaux immédiatement
                 if (localResults.length > 0) {
@@ -1523,6 +1521,83 @@ Solutions possibles :
 
         function isFavorite(foodName) { return favoriteFoods.includes(foodName); }
 
+        // ===== FUSE.JS FUZZY SEARCH =====
+        function fuzzySearchFoods(foods, query, limit = 10) {
+            if (!query || query.length < 2) return [];
+
+            const fuse = new Fuse(foods, {
+                keys: ['name'],
+                threshold: 0.3, // 0 = exact match, 1 = match anything
+                distance: 100,
+                minMatchCharLength: 2,
+                includeScore: true
+            });
+
+            const results = fuse.search(query);
+
+            // Extract items and sort by favorites first, then by score
+            return results
+                .map(result => result.item)
+                .sort((a, b) => {
+                    const aFav = isFavorite(a.name);
+                    const bFav = isFavorite(b.name);
+                    if (aFav && !bFav) return -1;
+                    if (!aFav && bFav) return 1;
+                    return 0;
+                })
+                .slice(0, limit);
+        }
+
+        // ===== SMART SUGGESTIONS =====
+        function getMealTypeFromTime() {
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour < 11) return 'breakfast';
+            if (hour >= 11 && hour < 15) return 'lunch';
+            if (hour >= 15 && hour < 19) return 'snack';
+            return 'dinner';
+        }
+
+        function getHistoricalFoods(mealType, limit = 10) {
+            const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            const foodFrequency = new Map();
+
+            // Count frequency of each food for this meal type
+            Object.keys(allMeals).forEach(dateKey => {
+                const dayMeals = allMeals[dateKey];
+                if (dayMeals[mealType] && dayMeals[mealType].foods) {
+                    dayMeals[mealType].foods.forEach(food => {
+                        const count = foodFrequency.get(food.name) || 0;
+                        foodFrequency.set(food.name, count + 1);
+                    });
+                }
+            });
+
+            // Sort by frequency and get top foods
+            return Array.from(foodFrequency.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, limit)
+                .map(([name]) => name);
+        }
+
+        function getSmartSuggestions(mealType, limit = 6) {
+            // 1. Get favorites
+            const favorites = favoriteFoods.slice(0, 3);
+
+            // 2. Get historical foods for this meal type
+            const historical = getHistoricalFoods(mealType, 5);
+
+            // 3. Combine and remove duplicates
+            const combined = [...new Set([...favorites, ...historical])];
+
+            // 4. Find actual food objects
+            const suggestions = combined
+                .map(name => foodDatabase.find(f => f.name === name))
+                .filter(f => f) // Remove null/undefined
+                .slice(0, limit);
+
+            return suggestions;
+        }
+
         // Get global dropdown element
         function getGlobalDropdown() {
             return document.getElementById('global-quick-add-results');
@@ -1566,7 +1641,16 @@ Solutions possibles :
             currentQuickAddMealType = mealType;
             currentQuickAddInput = input;
 
+            // Show smart suggestions if query is empty or too short
             if (query.length < 2) {
+                if (query.length === 0 && document.activeElement === input) {
+                    // Input is focused but empty - show smart suggestions
+                    const suggestions = getSmartSuggestions(mealType, 6);
+                    if (suggestions.length > 0) {
+                        renderGlobalQuickAddSuggestions(suggestions, mealType);
+                        return;
+                    }
+                }
                 dropdown.style.display = 'none';
                 return;
             }
@@ -1574,17 +1658,8 @@ Solutions possibles :
             // Cancel previous timeout
             if (quickAddTimeout) clearTimeout(quickAddTimeout);
 
-            // Filter foods locally first (immediate results)
-            const localFiltered = foodDatabase
-                .filter(food => food.name.toLowerCase().includes(query.toLowerCase()))
-                .sort((a, b) => {
-                    const aFav = isFavorite(a.name);
-                    const bFav = isFavorite(b.name);
-                    if (aFav && !bFav) return -1;
-                    if (!aFav && bFav) return 1;
-                    return a.name.localeCompare(b.name);
-                })
-                .slice(0, 10);
+            // Fuzzy search in local database (immediate results)
+            const localFiltered = fuzzySearchFoods(foodDatabase, query, 10);
 
             // Display local results immediately
             if (localFiltered.length > 0) {
@@ -1656,6 +1731,55 @@ Solutions possibles :
                     }
                 }
             }, 300);
+        }
+
+        function renderGlobalQuickAddSuggestions(foods, mealType) {
+            const dropdown = getGlobalDropdown();
+            if (!dropdown) return;
+
+            currentQuickAddResults = foods;
+
+            const mealNames = {
+                breakfast: 'ce petit-déjeuner',
+                lunch: 'ce déjeuner',
+                snack: 'ce snack',
+                dinner: 'ce dîner'
+            };
+
+            let html = `
+                <div style="padding: var(--space-sm) var(--space-md); background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: var(--space-xs);">
+                    <i data-lucide="sparkles" style="width: 14px; height: 14px; color: var(--accent-main);"></i>
+                    <span>Suggestions pour ${mealNames[mealType] || 'ce repas'}</span>
+                </div>
+            `;
+
+            html += foods.map(food => {
+                const isFav = isFavorite(food.name);
+                const displayName = (typeof getDisplayName === 'function') ? getDisplayName(food) : food.name;
+                return `
+                <div class="quick-add-item" onclick="quickAddFood('${currentQuickAddMealType}', ${JSON.stringify(food).replace(/"/g, '&quot;')})" style="display: flex; align-items: center; gap: var(--space-xs);">
+                    <button onclick="event.stopPropagation(); toggleFavorite('${food.name.replace(/'/g, "\\'")}')"
+                            class="star-btn"
+                            style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: var(--space-xs); line-height: 1; flex-shrink: 0; color: ${isFav ? 'inherit' : 'var(--text-secondary)'};"
+                            title="${isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
+                        ${isFav ? '⭐' : '☆'}
+                    </button>
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="quick-add-item-name">
+                            ${displayName}
+                            ${food.fromFirestore ? ' <span style="color: var(--accent-main); font-size: 0.75rem;">☁️</span>' : ''}
+                        </div>
+                        <div class="quick-add-item-macros">
+                            P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+
+            dropdown.innerHTML = html;
+            positionGlobalDropdown(currentQuickAddInput);
+            dropdown.style.display = 'block';
+            if (typeof lucide !== "undefined") lucide.createIcons();
         }
 
         function renderGlobalQuickAddResults(foods) {
@@ -1991,6 +2115,29 @@ Solutions possibles :
             setTimeout(() => {
                 feedbackEl.remove();
             }, 4000);
+        }
+
+        // Initialize smart suggestions on focus
+        function initSmartSuggestions() {
+            const mealTypes = ['breakfast', 'lunch', 'snack', 'dinner'];
+            mealTypes.forEach(mealType => {
+                const input = document.getElementById(`quick-add-${mealType}`);
+                if (input) {
+                    input.addEventListener('focus', () => {
+                        const value = input.value.trim();
+                        if (value.length === 0) {
+                            handleQuickAddSearch(mealType, '');
+                        }
+                    });
+                }
+            });
+        }
+
+        // Call init when DOM ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSmartSuggestions);
+        } else {
+            initSmartSuggestions();
         }
 
         // Close global quick add dropdown when clicking outside
@@ -4421,18 +4568,24 @@ Solutions possibles :
                 filtered = filtered.filter(f => !f.custom && !f.fromFirestore);
             }
 
-            if (query)  { filtered = filtered.filter(f => f.name.toLowerCase().includes(query)); }
+            // Fuzzy search if query provided
+            if (query) {
+                filtered = fuzzySearchFoods(filtered, query, 100); // No limit, we'll sort after
+            }
 
-            filtered.sort((a, b) => {
-                switch(sortBy) {
-                    case 'name': return a.name.localeCompare(b.name);
-                    case 'protein': return b.protein - a.protein;
-                    case 'carbs': return b.carbs - a.carbs;
-                    case 'fat': return b.fat - a.fat;
-                    case 'calories': return b.calories - a.calories;
-                    default: return 0;
-                }
-            });
+            // Sort (skip if already sorted by fuzzy search relevance)
+            if (!query || sortBy !== 'name') {
+                filtered.sort((a, b) => {
+                    switch(sortBy) {
+                        case 'name': return a.name.localeCompare(b.name);
+                        case 'protein': return b.protein - a.protein;
+                        case 'carbs': return b.carbs - a.carbs;
+                        case 'fat': return b.fat - a.fat;
+                        case 'calories': return b.calories - a.calories;
+                        default: return 0;
+                    }
+                });
+            }
 
             renderFoodDatabaseWithCustom(filtered);
         }
