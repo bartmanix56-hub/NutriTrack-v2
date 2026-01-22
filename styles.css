@@ -1569,7 +1569,16 @@
 
         /* ===== HERO HEADERS DESKTOP - PADDING RÉDUIT ===== */
         .tab-content > div:first-child[style*="background: linear-gradient"] {
-            padding: 16px 32px !important;
+            padding: 12px 32px !important;
+        }
+
+        /* Réduire l'espace entre titre et sous-titre */
+        .tab-content > div:first-child[style*="background: linear-gradient"] h1 {
+            margin-bottom: 4px !important;
+        }
+
+        .tab-content > div:first-child[style*="background: linear-gradient"] p {
+            margin-top: 0 !important;
         }
 
         /* ===== HOME MOBILE ===== */
