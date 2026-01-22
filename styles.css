@@ -1575,10 +1575,11 @@
         /* Réduire l'espace entre titre et sous-titre */
         .tab-content > div:first-child[style*="background: linear-gradient"] h1 {
             margin-bottom: 0px !important;
+            line-height: 1.2 !important;
         }
 
         .tab-content > div:first-child[style*="background: linear-gradient"] p {
-            margin-top: 0 !important;
+            margin-top: -4px !important;
         }
 
         /* ===== HOME MOBILE ===== */
