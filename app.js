@@ -2117,6 +2117,208 @@ Solutions possibles :
             }, 4000);
         }
 
+        // ===== CALENDAR VIEW =====
+        window.showCalendarView = function() {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'calendar-modal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 900px;">
+                    <div class="modal-header">
+                        <h2 style="margin: 0; display: flex; align-items: center; gap: var(--space-sm);">
+                            <i data-lucide="calendar" style="width: 24px; height: 24px;"></i> Calendrier
+                        </h2>
+                        <button onclick="closeCalendarView()" class="modal-close">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <button class="btn-ghost" onclick="changeCalendarMonth(-1)"><i data-lucide="chevron-left"></i></button>
+                                <h3 id="calendar-month-year" style="margin: 0; font-size: 1.3rem; font-weight: 700;"></h3>
+                                <button class="btn-ghost" onclick="changeCalendarMonth(1)"><i data-lucide="chevron-right"></i></button>
+                            </div>
+                            <div id="calendar-content"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            renderCalendar(new Date());
+            if (typeof lucide !== "undefined") lucide.createIcons();
+        };
+
+        window.closeCalendarView = function() {
+            const modal = document.getElementById('calendar-modal');
+            if (modal) {
+                modal.remove();
+                document.body.style.overflow = '';
+            }
+        };
+
+        let currentCalendarDate = new Date();
+
+        window.changeCalendarMonth = function(delta) {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+            renderCalendar(currentCalendarDate);
+        };
+
+        function renderCalendar(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+            const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+
+            document.getElementById('calendar-month-year').textContent = `${monthNames[month]} ${year}`;
+
+            const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const today = new Date();
+
+            let html = '<div class="calendar-grid">';
+            dayNames.forEach(day => {
+                html += `<div class="calendar-day-header">${day}</div>`;
+            });
+
+            for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) {
+                html += '<div class="calendar-day empty"></div>';
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayMeals = allMeals[dateKey];
+                const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
+
+                let classes = 'calendar-day';
+                let indicator = '';
+
+                if (dayMeals) {
+                    classes += ' has-data';
+                    const dayTotals = calculateDayTotals(dayMeals);
+
+                    if (targets.calories && dayTotals.calories > 0) {
+                        const calMatch = Math.abs(dayTotals.calories - targets.calories) <= targets.calories * 0.1;
+                        if (calMatch) {
+                            classes += ' goal-reached';
+                            indicator = '✓';
+                        } else {
+                            indicator = '•';
+                        }
+                    } else {
+                        indicator = '•';
+                    }
+                }
+
+                if (isToday) classes += ' today';
+
+                html += `
+                    <div class="${classes}" onclick="goToDate('${dateKey}')">
+                        <div class="calendar-day-number">${day}</div>
+                        <div class="calendar-day-indicator">${indicator}</div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            document.getElementById('calendar-content').innerHTML = html;
+        }
+
+        function calculateDayTotals(dayMeals) {
+            let totals = {calories: 0, protein: 0, carbs: 0, fat: 0};
+            ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
+                const foods = dayMeals[mealType]?.foods || [];
+                foods.forEach(f => {
+                    const m = f.quantity / 100;
+                    totals.calories += f.calories * m;
+                    totals.protein += f.protein * m;
+                    totals.carbs += f.carbs * m;
+                    totals.fat += f.fat * m;
+                });
+            });
+            return totals;
+        }
+
+        window.goToDate = function(dateKey) {
+            closeCalendarView();
+            switchToTab('meals');
+            const [y, m, d] = dateKey.split('-').map(Number);
+            currentMealDate = new Date(y, m - 1, d);
+            loadDailyMeals();
+        };
+
+        // ===== EXPORT AS IMAGE =====
+        window.exportDayAsImage = async function() {
+            showToast('<i data-lucide="loader" class="icon-inline spinning"></i> Génération en cours...');
+
+            const dateKey = getCurrentDateKey();
+            const dayMeals = allDailyMeals[dateKey] || {};
+            const totals = calculateDayTotals(dayMeals);
+            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 1080;
+            canvas.height = 1350;
+            const ctx = canvas.getContext('2d');
+
+            // Background
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#0a2f23');
+            gradient.addColorStop(1, '#0a1f18');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Header
+            ctx.fillStyle = '#10b981';
+            ctx.font = 'bold 48px DM Sans, sans-serif';
+            ctx.fillText('NutriTrack', 60, 100);
+            ctx.fillStyle = '#4ecdc4';
+            ctx.font = '28px DM Sans, sans-serif';
+            ctx.fillText(new Date().toLocaleDateString('fr-FR', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'}), 60, 150);
+
+            // Macros
+            let y = 250;
+            ctx.fillStyle = '#e0e0e0';
+            ctx.font = 'bold 36px DM Sans, sans-serif';
+            ctx.fillText('Macros du jour', 60, y);
+
+            y += 80;
+            const macros = [
+                {label: 'Protéines', value: totals.protein, target: targets.protein, color: '#ee6c4d'},
+                {label: 'Glucides', value: totals.carbs, target: targets.carbs, color: '#4ecdc4'},
+                {label: 'Lipides', value: totals.fat, target: targets.fat, color: '#ffe66d'},
+                {label: 'Calories', value: totals.calories, target: targets.calories, color: '#10b981'}
+            ];
+
+            macros.forEach(macro => {
+                ctx.fillStyle = macro.color;
+                ctx.font = 'bold 32px DM Sans, sans-serif';
+                ctx.fillText(macro.label, 60, y);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '28px DM Sans, sans-serif';
+                const text = macro.target ? `${Math.round(macro.value)} / ${Math.round(macro.target)}${macro.label === 'Calories' ? ' kcal' : 'g'}` : `${Math.round(macro.value)}${macro.label === 'Calories' ? ' kcal' : 'g'}`;
+                ctx.fillText(text, 300, y);
+                y += 70;
+            });
+
+            // Footer
+            ctx.fillStyle = '#4ecdc4';
+            ctx.font = '24px DM Sans, sans-serif';
+            ctx.fillText('Généré avec NutriTrack ✨', 60, canvas.height - 60);
+
+            // Download
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `nutritrack-${dateKey}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Image téléchargée !');
+            });
+        };
+
         // Initialize smart suggestions on focus
         function initSmartSuggestions() {
             const mealTypes = ['breakfast', 'lunch', 'snack', 'dinner'];

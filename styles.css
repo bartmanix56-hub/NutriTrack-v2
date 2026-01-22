@@ -890,7 +890,7 @@
             gap: var(--space-md);
         }
 
-        .scanner-result-content .spinner {
+        .scanner-result-content .spinner, .spinning {
             animation: spin 1s linear infinite;
         }
 

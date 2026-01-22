@@ -1419,6 +1419,11 @@
                         <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
                         <span>Copier hier</span>
                     </button>
+                    <!-- Bouton Export -->
+                    <button class="copy-yesterday-btn" onclick="exportDayAsImage()" title="Exporter la journée" style="background: var(--accent-carbs); border-color: var(--accent-carbs);">
+                        <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+                        <span>Exporter</span>
+                    </button>
                 </div>
             </div>
 
@@ -1764,7 +1769,11 @@
                         <p style="margin: 0; margin-top: var(--space-xs); color: var(--text-secondary); font-size: 1rem;">
                             Garde une vue d'ensemble sur ta semaine
                         </p>
-                    </div></div></div>
+                    </div>
+                    <button onclick="showCalendarView()" class="btn" style="background: var(--accent-ui); color: white; padding: var(--space-md) var(--space-xl); display: flex; align-items: center; gap: var(--space-sm);">
+                        <i data-lucide="calendar" style="width: 20px; height: 20px;"></i> Vue Calendrier
+                    </button>
+                </div></div>
 
             <div class="card">
                 <div class="week-selector">
