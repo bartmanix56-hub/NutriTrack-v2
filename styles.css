@@ -1880,7 +1880,7 @@
             /* ===== HERO HEADERS UNIFORMES ===== */
             /* Container - alignement gauche, padding compact */
             .tab-content > div:first-child[style*="background: linear-gradient"] {
-                padding: 16px !important;
+                padding: 12px !important;
                 margin-bottom: 16px !important;
                 border-radius: 12px !important;
             }
@@ -1935,7 +1935,7 @@
 
             /* ===== WIDGET "IL TE RESTE À MANGER" ===== */
             #remaining-widget {
-                padding: 12px !important;
+                padding: 10px !important;
                 margin-bottom: 16px !important;
             }
 
