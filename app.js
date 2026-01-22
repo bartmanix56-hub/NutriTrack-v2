@@ -2140,6 +2140,129 @@ Solutions possibles :
             initSmartSuggestions();
         }
 
+        // ===== SMART TEMPLATES - RECURRENCE DETECTION =====
+
+        function calculateMealSimilarity(meal1, meal2) {
+            if (!meal1 || !meal2) return 0;
+            const foods1 = meal1.foods || [];
+            const foods2 = meal2.foods || [];
+
+            if (foods1.length === 0 || foods2.length === 0) return 0;
+
+            // Count matching foods (same name, similar quantity ±20%)
+            let matches = 0;
+            foods1.forEach(f1 => {
+                const match = foods2.find(f2 =>
+                    f2.name === f1.name &&
+                    Math.abs(f2.quantity - f1.quantity) <= f1.quantity * 0.2
+                );
+                if (match) matches++;
+            });
+
+            return (matches / Math.max(foods1.length, foods2.length)) * 100;
+        }
+
+        function detectRecurrentMeals(mealType) {
+            const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+            const currentMeal = dailyMeals[mealType];
+
+            if (!currentMeal || !currentMeal.foods || currentMeal.foods.length === 0) return null;
+
+            // Find similar meals in history
+            const similarMeals = [];
+            Object.keys(allMeals).forEach(dateKey => {
+                const dayMeals = allMeals[dateKey];
+                if (dayMeals[mealType]) {
+                    const similarity = calculateMealSimilarity(currentMeal, dayMeals[mealType]);
+                    if (similarity >= 80) { // 80% similar
+                        similarMeals.push({ dateKey, similarity });
+                    }
+                }
+            });
+
+            // If found 3+ times, suggest saving as template
+            if (similarMeals.length >= 3) {
+                return {
+                    count: similarMeals.length,
+                    meal: currentMeal,
+                    mealType: mealType
+                };
+            }
+
+            return null;
+        }
+
+        function suggestTemplateCreation(mealType) {
+            const recurrent = detectRecurrentMeals(mealType);
+            if (!recurrent) return;
+
+            // Check if already dismissed for this meal combo
+            const dismissed = JSON.parse(localStorage.getItem('dismissedTemplateSuggestions') || '[]');
+            const mealHash = recurrent.meal.foods.map(f => f.name).sort().join('|');
+            if (dismissed.includes(mealHash)) return;
+
+            // Show suggestion
+            showTemplateSuggestion(recurrent);
+        }
+
+        function showTemplateSuggestion(recurrent) {
+            const mealNames = {
+                breakfast: 'petit-déjeuner',
+                lunch: 'déjeuner',
+                snack: 'snack',
+                dinner: 'dîner'
+            };
+
+            const existingBanner = document.getElementById('template-suggestion-banner');
+            if (existingBanner) existingBanner.remove();
+
+            const banner = document.createElement('div');
+            banner.id = 'template-suggestion-banner';
+            banner.className = 'template-suggestion-banner';
+            banner.innerHTML = `
+                <div style="display: flex; align-items: center; gap: var(--space-md); flex: 1;">
+                    <i data-lucide="lightbulb" style="width: 24px; height: 24px; color: var(--accent-main); flex-shrink: 0;"></i>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: var(--space-xs);">Tu manges souvent ce ${mealNames[recurrent.mealType]} !</div>
+                        <div style="font-size: 0.85rem; opacity: 0.8;">Tu l'as déjà mangé ${recurrent.count} fois. Veux-tu le sauvegarder comme repas type ?</div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: var(--space-sm);">
+                    <button onclick="saveRecurrentAsTemplate('${recurrent.mealType}')" class="btn" style="padding: var(--space-sm) var(--space-lg);">
+                        <i data-lucide="save" style="width: 16px; height: 16px;"></i> Sauvegarder
+                    </button>
+                    <button onclick="dismissTemplateSuggestion('${recurrent.mealType}')" class="btn-ghost" style="padding: var(--space-sm) var(--space-md);">
+                        Plus tard
+                    </button>
+                </div>
+            `;
+
+            const mealsSection = document.getElementById('meals');
+            if (mealsSection) {
+                mealsSection.insertBefore(banner, mealsSection.children[2]); // After hero and date nav
+                if (typeof lucide !== "undefined") lucide.createIcons();
+            }
+        }
+
+        window.saveRecurrentAsTemplate = function(mealType) {
+            saveMealAsTemplate(mealType);
+            const banner = document.getElementById('template-suggestion-banner');
+            if (banner) banner.remove();
+        };
+
+        window.dismissTemplateSuggestion = function(mealType) {
+            const meal = dailyMeals[mealType];
+            if (!meal || !meal.foods) return;
+
+            const mealHash = meal.foods.map(f => f.name).sort().join('|');
+            const dismissed = JSON.parse(localStorage.getItem('dismissedTemplateSuggestions') || '[]');
+            dismissed.push(mealHash);
+            localStorage.setItem('dismissedTemplateSuggestions', JSON.stringify(dismissed));
+
+            const banner = document.getElementById('template-suggestion-banner');
+            if (banner) banner.remove();
+        };
+
         // Close global quick add dropdown when clicking outside
         document.addEventListener('click', (e) => {
             const dropdown = document.getElementById('global-quick-add-results');
@@ -5031,6 +5154,16 @@ Solutions possibles :
             if (typeof updateStreakDisplay === 'function') updateStreakDisplay();
             // Mettre à jour le résumé hebdomadaire si visible
             if (typeof updateWeeklySummary === 'function') updateWeeklySummary();
+
+            // Check for recurrent meals (debounced to avoid spam)
+            clearTimeout(window.recurrentCheckTimeout);
+            window.recurrentCheckTimeout = setTimeout(() => {
+                ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
+                    if (dailyMeals[mealType]?.foods?.length > 0) {
+                        suggestTemplateCreation(mealType);
+                    }
+                });
+            }, 2000);
         }
 
         // ===== GESTION HYDRATATION (EAU) =====

@@ -979,6 +979,102 @@
             }
         }
 
+        /* Template suggestion banner */
+        .template-suggestion-banner {
+            background: linear-gradient(135deg, rgba(255, 230, 109, 0.15) 0%, rgba(255, 230, 109, 0.05) 100%);
+            border: 1px solid rgba(255, 230, 109, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            animation: slideInDown 0.4s ease;
+        }
+
+        /* Calendar view styles */
+        .calendar-container {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: var(--space-sm);
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: var(--space-sm);
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            background: var(--bg-tertiary);
+            border: 2px solid transparent;
+        }
+
+        .calendar-day:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-main);
+        }
+
+        .calendar-day.empty {
+            opacity: 0.3;
+            cursor: default;
+        }
+
+        .calendar-day.empty:hover {
+            transform: none;
+            border-color: transparent;
+        }
+
+        .calendar-day.has-data {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .calendar-day.goal-reached {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+            border-color: var(--accent-main);
+        }
+
+        .calendar-day.today {
+            border-color: var(--accent-ui);
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+        }
+
+        .calendar-day-number {
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+        }
+
+        .calendar-day-indicator {
+            font-size: 1.2rem;
+        }
+
         /* Scanner product found card */
         .scanned-product-card {
             background: var(--bg-tertiary);
