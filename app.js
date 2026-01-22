@@ -2307,17 +2307,42 @@ Solutions possibles :
             ctx.font = '24px DM Sans, sans-serif';
             ctx.fillText('Généré avec NutriTrack ✨', 60, canvas.height - 60);
 
-            // Download
-            canvas.toBlob(blob => {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `nutritrack-${dateKey}.png`;
-                a.click();
-                URL.revokeObjectURL(url);
-                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Image téléchargée !');
+            // Export/Share
+            canvas.toBlob(async blob => {
+                const file = new File([blob], `nutritrack-${dateKey}.png`, { type: 'image/png' });
+
+                // Check if Web Share API is available (mobile)
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: 'Mes macros NutriTrack',
+                            text: `Mes macros du ${new Date().toLocaleDateString('fr-FR')} 💪`
+                        });
+                        showToast('<i data-lucide="check-circle" class="icon-inline"></i> Image partagée !');
+                    } catch (err) {
+                        if (err.name !== 'AbortError') { // User cancelled
+                            console.error('Erreur partage:', err);
+                            // Fallback to download
+                            downloadImage(blob, dateKey);
+                        }
+                    }
+                } else {
+                    // Desktop or unsupported: classic download
+                    downloadImage(blob, dateKey);
+                }
             });
         };
+
+        function downloadImage(blob, dateKey) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nutritrack-${dateKey}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Image téléchargée !');
+        }
 
         // Initialize smart suggestions on focus
         function initSmartSuggestions() {
