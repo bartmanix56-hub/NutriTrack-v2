@@ -13,7 +13,9 @@ service cloud.firestore {
       // Admin peut lire tous les documents users pour le panel admin
       allow read: if request.auth != null &&
                      (request.auth.uid == "qEuqSbWO73OwTEwL6LhEILS5djD2" || request.auth.uid == userId);
-      allow write: if request.auth != null && request.auth.uid == userId;
+      // Admin peut modifier tous les documents (pour migrations), sinon chaque user modifie le sien
+      allow write: if request.auth != null &&
+                      (request.auth.uid == "qEuqSbWO73OwTEwL6LhEILS5djD2" || request.auth.uid == userId);
     }
 
     // 3. Journal personnel et aliments perso de l'utilisateur (sous-collections)
