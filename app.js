@@ -256,6 +256,8 @@
                 renderMealTemplatesList();
             } else if (tabName === 'settings') {
                 if (typeof updateSettingsStats === 'function') updateSettingsStats();
+            } else if (tabName === 'admin') {
+                if (typeof window.showAdminSection === 'function') window.showAdminSection('dashboard');
             }
 
             // Scroll vers le haut
@@ -298,7 +300,7 @@
                 // Ne pas réinitialiser currentWeekStart pour garder la semaine sélectionnée par l'utilisateur
                 // currentWeekStart garde sa valeur actuelle ou celle sauvegardée
                 renderWeeklyPlan();
-            } else if (tab === 'tracking')  { renderTrackingList(); } else if (tab === 'meal-templates')  { renderMealTemplatesList(); } else if (tab === 'settings')  { if (typeof updateSettingsStats === 'function') updateSettingsStats(); }
+            } else if (tab === 'tracking')  { renderTrackingList(); } else if (tab === 'meal-templates')  { renderMealTemplatesList(); } else if (tab === 'settings')  { if (typeof updateSettingsStats === 'function') updateSettingsStats(); } else if (tab === 'admin')  { if (typeof window.showAdminSection === 'function') window.showAdminSection('dashboard'); }
 
             // Scroll to top
             window.scrollTo({top: 0, behavior: 'smooth'});
