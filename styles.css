@@ -899,6 +899,86 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Flying food animation */
+        @keyframes flyToMacros {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(var(--fly-x), var(--fly-y)) scale(0.8);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(var(--fly-x), var(--fly-y)) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+        .flying-food {
+            position: fixed;
+            background: var(--accent-ui);
+            color: white;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            pointer-events: none;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: flyToMacros 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        /* Macro feedback message */
+        .macro-feedback {
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            animation: slideInDown 0.3s ease, fadeOut 0.3s ease 3.5s forwards;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .macro-feedback.success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--accent-main);
+            color: var(--accent-main);
+        }
+
+        .macro-feedback.warning {
+            background: rgba(255, 230, 109, 0.2);
+            border: 1px solid var(--accent-fat);
+            color: var(--accent-fat);
+        }
+
+        .macro-feedback.danger {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
         /* Scanner product found card */
         .scanned-product-card {
             background: var(--bg-tertiary);
