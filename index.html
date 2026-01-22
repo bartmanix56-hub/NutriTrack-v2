@@ -6726,34 +6726,14 @@
                                 ? JSON.parse(data.allDailyMeals)
                                 : data.allDailyMeals;
 
-                            console.log('📊 User meals structure:', doc.id, {
-                                type: typeof meals,
-                                isObject: typeof meals === 'object',
-                                keys: Object.keys(meals || {}),
-                                sample: Object.keys(meals || {}).slice(0, 2)
-                            });
-
                             // Count total meal items across all days
+                            // Structure: { "2026-01-22": { "breakfast": { foods: [...], recipe: '' } } }
                             Object.entries(meals).forEach(([dateKey, dayMeals]) => {
-                                console.log(`  📅 Date ${dateKey}:`, {
-                                    type: typeof dayMeals,
-                                    isObject: typeof dayMeals === 'object',
-                                    isArray: Array.isArray(dayMeals),
-                                    keys: typeof dayMeals === 'object' ? Object.keys(dayMeals) : 'N/A'
-                                });
-
                                 if (dayMeals && typeof dayMeals === 'object' && !Array.isArray(dayMeals)) {
                                     Object.entries(dayMeals).forEach(([mealTypeName, mealType]) => {
-                                        console.log(`    🍽️ Meal type ${mealTypeName}:`, {
-                                            type: typeof mealType,
-                                            isArray: Array.isArray(mealType),
-                                            length: Array.isArray(mealType) ? mealType.length : 'N/A',
-                                            value: mealType
-                                        });
-
-                                        if (Array.isArray(mealType)) {
-                                            console.log('      ✅ Found meal array:', mealType.length, 'items');
-                                            totalMeals += mealType.length;
+                                        // mealType = { foods: [...], recipe: '' }
+                                        if (mealType && typeof mealType === 'object' && Array.isArray(mealType.foods)) {
+                                            totalMeals += mealType.foods.length;
                                         }
                                     });
                                 }
