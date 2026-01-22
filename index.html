@@ -6726,19 +6726,29 @@
                                 ? JSON.parse(data.allDailyMeals)
                                 : data.allDailyMeals;
 
+                            console.log('📊 User meals structure:', doc.id, {
+                                type: typeof meals,
+                                isObject: typeof meals === 'object',
+                                keys: Object.keys(meals || {}),
+                                sample: Object.keys(meals || {}).slice(0, 2)
+                            });
+
                             // Count total meal items across all days
                             Object.values(meals).forEach(dayMeals => {
                                 if (dayMeals && typeof dayMeals === 'object') {
                                     Object.values(dayMeals).forEach(mealType => {
                                         if (Array.isArray(mealType)) {
+                                            console.log('  📍 Found meal array:', mealType.length, 'items');
                                             totalMeals += mealType.length;
                                         }
                                     });
                                 }
                             });
                         } catch (e) {
-                            // Ignore parsing errors
+                            console.error('❌ Error parsing meals for', doc.id, e);
                         }
+                    } else {
+                        console.log('⚠️ User has no allDailyMeals:', doc.id);
                     }
 
                     // Count custom foods
@@ -6749,12 +6759,13 @@
                                 : (typeof data.customFoods === 'string' ? JSON.parse(data.customFoods) : []);
                             totalCustomFoods += customFoods.length;
                         } catch (e) {
-                            // Ignore parsing errors
+                            console.error('❌ Error parsing customFoods for', doc.id, e);
                         }
                     }
 
                     // Count barcode scans
                     if (data.barcodeScans) {
+                        console.log('📷 User barcode scans:', doc.id, data.barcodeScans);
                         totalBarcodeScans += parseInt(data.barcodeScans) || 0;
                     }
                 });
@@ -6766,6 +6777,18 @@
                 // Count aliments communs
                 const foodsSnap = await getDocs(collection(db, 'aliments_communs'));
                 const totalFoods = foodsSnap.size;
+
+                // Log final counts for debugging
+                console.log('📊 ANALYTICS TOTALS:', {
+                    totalUsers,
+                    activeUsers7d,
+                    activeUsers30d,
+                    totalMeals,
+                    totalCustomFoods,
+                    totalBarcodeScans,
+                    totalFeedbacks,
+                    totalFoods
+                });
 
                 // Update stats
                 document.getElementById('stat-users-total').textContent = totalUsers;
