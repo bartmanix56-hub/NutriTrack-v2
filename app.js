@@ -6696,7 +6696,8 @@ Solutions possibles :
                     { foodName: 'Riz blanc cuit', role: 'carb', min: 80, max: 300, priority: 2 },
                     { foodName: 'Huile d\'olive', role: 'fat', min: 5, max: 15, priority: 3 },
                     { foodName: 'Haricots verts', role: 'fiber', min: 100, max: 250, priority: 4 }
-                ]
+                ],
+                recipe: 'Faire cuire le riz dans de l\'eau bouillante salée pendant 15-20 minutes.\n\nFaire revenir le poulet à la poêle avec un peu d\'huile d\'olive jusqu\'à ce qu\'il soit bien doré.\n\nCuire les haricots verts à la vapeur pendant 10 minutes.\n\nServir le poulet sur le riz, accompagné des haricots verts. Arroser d\'un filet d\'huile d\'olive.'
             },
             lunchLowCarb: {
                 mealType: 'lunch',
@@ -6712,7 +6713,8 @@ Solutions possibles :
                     { foodName: 'Avocat', role: 'fat', min: 50, max: 150, priority: 2 },
                     { foodName: 'Huile d\'olive', role: 'fat', min: 5, max: 12, priority: 3 },
                     { foodName: 'Haricots verts', role: 'fiber', min: 150, max: 300, priority: 4 }
-                ]
+                ],
+                recipe: 'Faire cuire le poulet à la poêle avec un peu d\'huile d\'olive jusqu\'à ce qu\'il soit bien doré et cuit à cœur.\n\nCuire les haricots verts à la vapeur pendant 10 minutes.\n\nCouper l\'avocat en tranches.\n\nServir le poulet avec les haricots verts et l\'avocat. Assaisonner avec l\'huile d\'olive, sel et poivre.'
             },
 
             // BREAKFAST TEMPLATE
@@ -6731,7 +6733,8 @@ Solutions possibles :
                     { foodName: 'Banane', role: 'carb', min: 80, max: 150, priority: 3 },
                     { foodName: 'Miel', role: 'carb', min: 5, max: 20, priority: 4 },
                     { foodName: 'Amandes', role: 'fat', min: 10, max: 30, priority: 5 }
-                ]
+                ],
+                recipe: 'Couper la banane en rondelles.\n\nDans un bol, mélanger le fromage blanc avec les flocons d\'avoine.\n\nAjouter les rondelles de banane et les amandes concassées.\n\nArroser de miel et bien mélanger.\n\nLaisser reposer 5 minutes pour que l\'avoine s\'hydrate. Déguster !'
             },
 
             // SNACK TEMPLATE
@@ -6748,7 +6751,8 @@ Solutions possibles :
                     { foodName: 'Yaourt grec', role: 'protein', min: 100, max: 250, priority: 1 },
                     { foodName: 'Pomme', role: 'carb', min: 100, max: 200, priority: 2 },
                     { foodName: 'Amandes', role: 'fat', min: 10, max: 30, priority: 3 }
-                ]
+                ],
+                recipe: 'Laver et couper la pomme en morceaux.\n\nDans un bol, verser le yaourt grec.\n\nAjouter les morceaux de pomme et les amandes entières ou concassées.\n\nMélanger et déguster immédiatement.'
             },
 
             // DINNER TEMPLATE
@@ -6766,7 +6770,8 @@ Solutions possibles :
                     { foodName: 'Pomme de terre', role: 'carb', min: 150, max: 350, priority: 2 },
                     { foodName: 'Brocoli', role: 'fiber', min: 120, max: 250, priority: 3 },
                     { foodName: 'Huile d\'olive', role: 'fat', min: 5, max: 15, priority: 4 }
-                ]
+                ],
+                recipe: 'Préchauffer le four à 180°C.\n\nLaver les pommes de terre et les couper en quartiers. Les disposer sur une plaque et arroser d\'un peu d\'huile d\'olive. Enfourner pour 30-35 minutes.\n\nCuire le brocoli à la vapeur pendant 10 minutes.\n\nFaire cuire le saumon à la poêle avec un peu d\'huile d\'olive, 4-5 minutes de chaque côté.\n\nServir le saumon avec les pommes de terre rôties et le brocoli. Assaisonner avec sel, poivre et un filet d\'huile d\'olive.'
             }
         };
 
@@ -6988,7 +6993,8 @@ Solutions possibles :
                 macros: actualMacros,
                 mealType: templateConfig.mealType,
                 templateName: templateConfig.displayName,
-                isLowCarb: selectedTemplateKey === 'lunchLowCarb'
+                isLowCarb: selectedTemplateKey === 'lunchLowCarb',
+                recipe: templateConfig.recipe || ''
             };
         }
 
@@ -7063,6 +7069,18 @@ Solutions possibles :
                                 `).join('')}
                             </div>
 
+                            ${result.recipe ? `
+                                <div style="background: var(--bg-tertiary); padding: var(--space-lg); border-radius: var(--radius-md); margin-bottom: var(--space-xl);">
+                                    <div style="font-size: 0.95rem; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-primary);">
+                                        <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+                                        Recette
+                                    </div>
+                                    <div style="color: var(--text-secondary); line-height: 1.6; white-space: pre-line;">
+                                        ${result.recipe}
+                                    </div>
+                                </div>
+                            ` : ''}
+
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
                                 <button class="btn btn-secondary" onclick="closeSmartMealModal()">
                                     Annuler
@@ -7126,6 +7144,22 @@ Solutions possibles :
                     id: Date.now() + Math.random() // Unique ID
                 });
             });
+
+            // Add recipe if present
+            if (result.recipe) {
+                allDailyMeals[dateKey][mealType].recipe = result.recipe;
+                // Update the recipe textarea
+                const recipeTextarea = document.getElementById(`${mealType}-recipe-input`);
+                if (recipeTextarea) {
+                    recipeTextarea.value = result.recipe;
+                }
+                // Show the recipe display section
+                const recipeDisplay = document.getElementById(`${mealType}-recipe`);
+                if (recipeDisplay) {
+                    recipeDisplay.style.display = 'block';
+                    recipeDisplay.textContent = result.recipe;
+                }
+            }
 
             dailyMeals = allDailyMeals[dateKey];
             renderMeal(mealType);
