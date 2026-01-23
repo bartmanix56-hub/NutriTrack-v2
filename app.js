@@ -6698,7 +6698,8 @@ Solutions possibles :
             // LUNCH TEMPLATES
             lunch: {
                 mealType: 'lunch',
-                displayName: 'Déjeuner',
+                variant: 'standard',
+                displayName: 'Déjeuner standard',
                 targetPercentOfDay: 0.30, // 30% of daily budget
                 macroSplit: {
                     proteins: 0.40, // 40% of meal calories from protein
@@ -6715,7 +6716,8 @@ Solutions possibles :
             },
             lunchLowCarb: {
                 mealType: 'lunch',
-                displayName: 'Déjeuner (low-carb)',
+                variant: 'lowCarb',
+                displayName: 'Déjeuner low-carb',
                 targetPercentOfDay: 0.30,
                 macroSplit: {
                     proteins: 0.45,
@@ -6734,7 +6736,8 @@ Solutions possibles :
             // BREAKFAST TEMPLATE
             breakfast: {
                 mealType: 'breakfast',
-                displayName: 'Petit-déjeuner',
+                variant: 'standard',
+                displayName: 'Petit-déjeuner standard',
                 targetPercentOfDay: 0.25,
                 macroSplit: {
                     proteins: 0.30,
@@ -6754,7 +6757,8 @@ Solutions possibles :
             // SNACK TEMPLATE
             snack: {
                 mealType: 'snack',
-                displayName: 'Goûter',
+                variant: 'standard',
+                displayName: 'Goûter standard',
                 targetPercentOfDay: 0.15,
                 macroSplit: {
                     proteins: 0.35,
@@ -6772,7 +6776,8 @@ Solutions possibles :
             // DINNER TEMPLATE
             dinner: {
                 mealType: 'dinner',
-                displayName: 'Dîner',
+                variant: 'standard',
+                displayName: 'Dîner standard',
                 targetPercentOfDay: 0.30,
                 macroSplit: {
                     proteins: 0.40,
