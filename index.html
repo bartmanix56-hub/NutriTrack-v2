@@ -8047,10 +8047,10 @@
                                             <select name="mealType" id="template-meal-type" required ${isEdit ? 'disabled' : ''}
                                                     onchange="updateTemplateId(document.getElementById('template-display-name').value, ${!isEdit})"
                                                     style="width: 100%; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
-                                                <option value="breakfast" ${templateData?.mealType === 'breakfast' ? 'selected' : ''}>🌅 Petit-déjeuner</option>
-                                                <option value="lunch" ${templateData?.mealType === 'lunch' ? 'selected' : ''}>☀️ Déjeuner</option>
-                                                <option value="snack" ${templateData?.mealType === 'snack' ? 'selected' : ''}>🍪 Goûter</option>
-                                                <option value="dinner" ${templateData?.mealType === 'dinner' ? 'selected' : ''}>🌙 Dîner</option>
+                                                <option value="breakfast" ${templateData?.mealType === 'breakfast' ? 'selected' : ''}>Petit-déjeuner</option>
+                                                <option value="lunch" ${templateData?.mealType === 'lunch' ? 'selected' : ''}>Déjeuner</option>
+                                                <option value="snack" ${templateData?.mealType === 'snack' ? 'selected' : ''}>Goûter</option>
+                                                <option value="dinner" ${templateData?.mealType === 'dinner' ? 'selected' : ''}>Dîner</option>
                                             </select>
                                             ${isEdit ? '<input type="hidden" name="mealType" value="' + templateData?.mealType + '">' : ''}
                                         </div>
@@ -8061,9 +8061,9 @@
                                             <select name="variant" id="template-variant"
                                                     style="width: 100%; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
                                                 <option value="" ${!templateData?.variant || templateData?.variant === '' ? 'selected' : ''}>Aucune</option>
-                                                <option value="vegan" ${templateData?.variant === 'vegan' ? 'selected' : ''}>🌱 Vegan</option>
-                                                <option value="glutenFree" ${templateData?.variant === 'glutenFree' ? 'selected' : ''}>🌾 Sans gluten</option>
-                                                <option value="vegetarian" ${templateData?.variant === 'vegetarian' ? 'selected' : ''}>🥗 Végétarien</option>
+                                                <option value="vegan" ${templateData?.variant === 'vegan' ? 'selected' : ''}>Vegan</option>
+                                                <option value="glutenFree" ${templateData?.variant === 'glutenFree' ? 'selected' : ''}>Sans gluten</option>
+                                                <option value="vegetarian" ${templateData?.variant === 'vegetarian' ? 'selected' : ''}>Végétarien</option>
                                             </select>
                                             <small style="color: var(--text-secondary); font-size: 0.75rem;">Affiche juste un badge, ne change pas les calculs</small>
                                         </div>
