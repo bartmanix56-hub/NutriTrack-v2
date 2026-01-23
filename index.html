@@ -1079,24 +1079,43 @@
 
                     <!-- MODE GUIDÉ (par défaut) -->
                     <div id="guided-mode" style="margin-bottom: var(--space-2xl);">
-                        <!-- Sélecteur de Rythme -->
+                        <!-- Sélecteur de Rythme/Répartition -->
                         <div style="margin-bottom: var(--space-xl);">
-                            <label style="display: block; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-primary); font-size: 0.95rem;">
+                            <label id="pace-label" style="display: block; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-primary); font-size: 0.95rem;">
                                 <i data-lucide="gauge" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 4px;"></i>
                                 Quel rythme souhaites-tu ?
                             </label>
-                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md);">
-                                <div class="goal-btn pace-btn active" data-pace="gentle" onclick="selectPace('gentle')">
-                                    <div class="goal-title"><i data-lucide="smile" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Doux</div>
-                                    <div class="goal-desc">Facile à tenir</div>
+                            <div id="pace-buttons-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md);">
+                                <!-- Boutons Sèche/Prise -->
+                                <div id="pace-btns-deficit" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); grid-column: 1 / -1;">
+                                    <div class="goal-btn pace-btn active" data-pace="gentle" onclick="selectPace('gentle')">
+                                        <div class="goal-title"><i data-lucide="smile" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Doux</div>
+                                        <div class="goal-desc">Facile à tenir</div>
+                                    </div>
+                                    <div class="goal-btn pace-btn" data-pace="normal" onclick="selectPace('normal')">
+                                        <div class="goal-title"><i data-lucide="arrow-right" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Normal</div>
+                                        <div class="goal-desc">Équilibré</div>
+                                    </div>
+                                    <div class="goal-btn pace-btn" data-pace="fast" onclick="selectPace('fast')">
+                                        <div class="goal-title"><i data-lucide="zap" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Rapide</div>
+                                        <div class="goal-desc">Plus exigeant</div>
+                                    </div>
                                 </div>
-                                <div class="goal-btn pace-btn" data-pace="normal" onclick="selectPace('normal')">
-                                    <div class="goal-title"><i data-lucide="arrow-right" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Normal</div>
-                                    <div class="goal-desc">Équilibré</div>
-                                </div>
-                                <div class="goal-btn pace-btn" data-pace="fast" onclick="selectPace('fast')">
-                                    <div class="goal-title"><i data-lucide="zap" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Rapide</div>
-                                    <div class="goal-desc">Plus exigeant</div>
+
+                                <!-- Boutons Maintien (répartition) -->
+                                <div id="pace-btns-maintain" style="display: none; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); grid-column: 1 / -1;">
+                                    <div class="goal-btn pace-btn" data-pace="high-carb" onclick="selectPace('high-carb')">
+                                        <div class="goal-title"><i data-lucide="wheat" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Plus de glucides</div>
+                                        <div class="goal-desc">Énergie rapide</div>
+                                    </div>
+                                    <div class="goal-btn pace-btn active" data-pace="balanced" onclick="selectPace('balanced')">
+                                        <div class="goal-title"><i data-lucide="scale" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Équilibré</div>
+                                        <div class="goal-desc">Répartition classique</div>
+                                    </div>
+                                    <div class="goal-btn pace-btn" data-pace="high-fat" onclick="selectPace('high-fat')">
+                                        <div class="goal-title"><i data-lucide="droplet" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Plus de lipides</div>
+                                        <div class="goal-desc">Satiété durable</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
