@@ -6625,6 +6625,316 @@ Solutions possibles :
             if (document.getElementById('meal-templates').classList.contains('active'))  { renderMealTemplatesList(); }
         }
 
+        // ===== SMART MEAL TEMPLATES (INTELLIGENT GENERATION) =====
+
+        // Template configurations (extensible for breakfast, dinner, snack)
+        const smartMealTemplates = {
+            lunch: {
+                mealType: 'lunch',
+                displayName: 'Déjeuner',
+                targetPercentOfDay: 0.30, // 30% of daily budget
+                macroSplit: {
+                    proteins: 0.40, // 40% of meal calories from protein
+                    carbs: 0.35,    // 35% from carbs
+                    fats: 0.25      // 25% from fats
+                },
+                foods: [
+                    { foodName: 'Poulet rôti', role: 'protein', macroType: 'protein' },
+                    { foodName: 'Riz blanc cuit', role: 'carb', macroType: 'carbs' },
+                    { foodName: 'Huile d\'olive', role: 'fat', macroType: 'fats' },
+                    { foodName: 'Haricots verts', role: 'fiber', macroType: 'carbs' }
+                ]
+            }
+            // Future templates can be added here (breakfast, dinner, snack)
+        };
+
+        // Smart rounding function - returns human-friendly quantities
+        function smartRound(value) {
+            if (value < 50) {
+                return Math.round(value / 5) * 5; // Round to 5g for small quantities
+            } else if (value <= 200) {
+                return Math.round(value / 10) * 10; // Round to 10g for medium quantities
+            } else {
+                return Math.round(value / 20) * 20; // Round to 20g for large quantities
+            }
+        }
+
+        // Get remaining macros for the day
+        function getRemainingMacros() {
+            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const dateKey = getCurrentDateKey();
+            const dayMeals = allDailyMeals[dateKey] || {};
+            const consumed = calculateDayTotals(dayMeals);
+
+            return {
+                calories: Math.max(0, (targets.calories || 0) - consumed.calories),
+                protein: Math.max(0, (targets.protein || 0) - consumed.protein),
+                carbs: Math.max(0, (targets.carbs || 0) - consumed.carbs),
+                fat: Math.max(0, (targets.fat || 0) - consumed.fat),
+                hasTargets: !!(targets.calories && targets.protein && targets.carbs && targets.fat)
+            };
+        }
+
+        // Generate smart meal template
+        function generateSmartMeal(templateConfig) {
+            const remaining = getRemainingMacros();
+
+            // If no targets set, show error
+            if (!remaining.hasTargets) {
+                return {
+                    success: false,
+                    error: 'Aucun objectif macro défini',
+                    message: 'Va dans l\'onglet Calculateur pour définir tes objectifs avant de générer un repas conseillé.'
+                };
+            }
+
+            // Determine base budget: remaining calories or daily targets
+            const dateKey = getCurrentDateKey();
+            const dayMeals = allDailyMeals[dateKey] || {};
+            const hasExistingMeals = Object.values(dayMeals).some(meal =>
+                meal && meal.foods && meal.foods.length > 0
+            );
+
+            const baseBudget = hasExistingMeals ? remaining : JSON.parse(localStorage.getItem('macroTargets') || '{}');
+
+            // Calculate meal targets (30% of base budget)
+            const mealCalories = baseBudget.calories * templateConfig.targetPercentOfDay;
+
+            // Calculate macro targets based on meal split
+            const proteinCals = mealCalories * templateConfig.macroSplit.proteins;
+            const carbsCals = mealCalories * templateConfig.macroSplit.carbs;
+            const fatsCals = mealCalories * templateConfig.macroSplit.fats;
+
+            // Convert calories to grams (protein: 4 cal/g, carbs: 4 cal/g, fats: 9 cal/g)
+            const targetMacros = {
+                protein: proteinCals / 4,
+                carbs: carbsCals / 4,
+                fat: fatsCals / 9
+            };
+
+            // Find foods in database
+            const generatedFoods = [];
+            const foodDb = window.foodDatabase || [];
+
+            templateConfig.foods.forEach(foodConfig => {
+                const dbFood = foodDb.find(f => f.name === foodConfig.foodName);
+                if (!dbFood) return;
+
+                let quantity = 0;
+
+                // Calculate quantity based on role
+                if (foodConfig.role === 'protein') {
+                    // Main protein source - aim for target protein grams
+                    quantity = (targetMacros.protein / dbFood.protein) * 100;
+                } else if (foodConfig.role === 'carb') {
+                    // Main carb source - aim for target carbs grams
+                    quantity = (targetMacros.carbs / dbFood.carbs) * 100;
+                } else if (foodConfig.role === 'fat') {
+                    // Main fat source - aim for target fat grams
+                    quantity = (targetMacros.fat / dbFood.fat) * 100;
+                } else if (foodConfig.role === 'fiber') {
+                    // Vegetables - fixed reasonable portion
+                    quantity = 150; // 150g of vegetables
+                }
+
+                // Apply smart rounding
+                quantity = smartRound(quantity);
+
+                // Ensure minimum quantity
+                if (quantity < 5) quantity = 5;
+
+                generatedFoods.push({
+                    ...dbFood,
+                    quantity: quantity,
+                    id: Date.now() + Math.random()
+                });
+            });
+
+            // Calculate actual macros from generated foods
+            let actualMacros = {
+                calories: 0,
+                protein: 0,
+                carbs: 0,
+                fat: 0
+            };
+
+            generatedFoods.forEach(food => {
+                actualMacros.calories += (food.calories * food.quantity / 100);
+                actualMacros.protein += (food.protein * food.quantity / 100);
+                actualMacros.carbs += (food.carbs * food.quantity / 100);
+                actualMacros.fat += (food.fat * food.quantity / 100);
+            });
+
+            // Check if adjustment needed (if calories off by more than 5%)
+            const calorieError = Math.abs(actualMacros.calories - mealCalories);
+            const errorPercent = calorieError / mealCalories;
+
+            if (errorPercent > 0.05) {
+                // Adjust carb source (rice) first
+                const carbFood = generatedFoods.find(f => f.name === 'Riz blanc cuit');
+                if (carbFood) {
+                    const calorieDiff = mealCalories - actualMacros.calories;
+                    const adjustmentGrams = (calorieDiff / carbFood.calories) * 100;
+                    carbFood.quantity = smartRound(carbFood.quantity + adjustmentGrams);
+
+                    // Ensure minimum
+                    if (carbFood.quantity < 10) carbFood.quantity = 10;
+
+                    // Recalculate macros
+                    actualMacros = {calories: 0, protein: 0, carbs: 0, fat: 0};
+                    generatedFoods.forEach(food => {
+                        actualMacros.calories += (food.calories * food.quantity / 100);
+                        actualMacros.protein += (food.protein * food.quantity / 100);
+                        actualMacros.carbs += (food.carbs * food.quantity / 100);
+                        actualMacros.fat += (food.fat * food.quantity / 100);
+                    });
+                }
+            }
+
+            return {
+                success: true,
+                foods: generatedFoods,
+                macros: actualMacros,
+                mealType: templateConfig.mealType
+            };
+        }
+
+        // Open smart meal modal
+        window.openSmartMealModal = function(mealType) {
+            const templateConfig = smartMealTemplates[mealType];
+            if (!templateConfig) {
+                showToast('<i data-lucide="x-circle" class="icon-inline"></i> Template non disponible pour ce repas');
+                return;
+            }
+
+            // Generate the meal
+            const result = generateSmartMeal(templateConfig);
+
+            if (!result.success) {
+                customAlert('<i data-lucide="alert-circle" class="icon-inline"></i> ' + result.error, result.message);
+                return;
+            }
+
+            // Create modal HTML
+            const modalHtml = `
+                <div id="smartMealModal" class="modal active">
+                    <div class="modal-content">
+                        <button class="modal-close" onclick="closeSmartMealModal()">×</button>
+                        <h2 class="modal-title">${templateConfig.displayName} conseillé</h2>
+
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-lg); line-height: 1.6;">
+                            Ce repas est adapté à ton objectif et à ce qu'il te reste aujourd'hui.
+                        </p>
+
+                        <div style="background: var(--bg-tertiary); padding: var(--space-lg); border-radius: var(--radius-md); margin-bottom: var(--space-lg);">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); margin-bottom: var(--space-md);">
+                                <div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Calories</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-main);">${Math.round(result.macros.calories)} kcal</div>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md);">
+                                <div>
+                                    <div style="font-size: 0.85rem; color: var(--accent-protein);">Protéines</div>
+                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">${Math.round(result.macros.protein)}g</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.85rem; color: var(--accent-carbs);">Glucides</div>
+                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">${Math.round(result.macros.carbs)}g</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.85rem; color: var(--accent-fat);">Lipides</div>
+                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">${Math.round(result.macros.fat)}g</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-secondary); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-xl);">
+                            <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: var(--space-sm); color: var(--text-primary);">
+                                <i data-lucide="utensils" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+                                Composition du repas
+                            </div>
+                            ${result.foods.map(food => `
+                                <div style="display: flex; justify-content: space-between; padding: var(--space-xs) 0; color: var(--text-secondary); font-size: 0.9rem;">
+                                    <span>${food.name}</span>
+                                    <span style="color: var(--text-primary); font-weight: 600;">${food.quantity}g</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+                            <button class="btn btn-secondary" onclick="closeSmartMealModal()">
+                                Annuler
+                            </button>
+                            <button class="btn" onclick="applySmartMeal('${mealType}')" style="background: var(--accent-main);">
+                                <i data-lucide="check" style="width: 16px; height: 16px;"></i>
+                                Charger le repas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Add modal to DOM
+            const existingModal = document.getElementById('smartMealModal');
+            if (existingModal) existingModal.remove();
+
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            document.body.style.overflow = 'hidden';
+
+            // Re-init lucide icons for modal
+            if (window.lucide) lucide.createIcons();
+
+            // Store result for applying
+            window.currentSmartMealResult = result;
+        };
+
+        window.closeSmartMealModal = function() {
+            const modal = document.getElementById('smartMealModal');
+            if (modal) modal.remove();
+            document.body.style.overflow = '';
+            window.currentSmartMealResult = null;
+        };
+
+        window.applySmartMeal = function(mealType) {
+            if (!window.currentSmartMealResult) return;
+
+            const result = window.currentSmartMealResult;
+            const dateKey = getCurrentDateKey();
+
+            // Ensure day structure exists
+            if (!allDailyMeals[dateKey]) {
+                allDailyMeals[dateKey] = {
+                    breakfast: { foods: [], recipe: '' },
+                    lunch: { foods: [], recipe: '' },
+                    snack: { foods: [], recipe: '' },
+                    dinner: { foods: [], recipe: '' }
+                };
+            }
+
+            // Add foods to meal (append, don't replace)
+            if (!allDailyMeals[dateKey][mealType]) {
+                allDailyMeals[dateKey][mealType] = { foods: [], recipe: '' };
+            }
+
+            // Add each generated food
+            result.foods.forEach(food => {
+                allDailyMeals[dateKey][mealType].foods.push({
+                    ...food,
+                    id: Date.now() + Math.random() // Unique ID
+                });
+            });
+
+            dailyMeals = allDailyMeals[dateKey];
+            renderMeal(mealType);
+            updateDayTotals();
+            saveDailyMeals();
+            syncMealsToPlanning();
+
+            closeSmartMealModal();
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Déjeuner conseillé ajouté');
+        };
+
         // ===== DEDICATED MEAL TEMPLATES PAGE =====
         let currentTemplateFoods = [];
 
