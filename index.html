@@ -1508,7 +1508,7 @@
                         <textarea id="breakfast-recipe-input"
                                   placeholder="URL d'une recette, instructions, notes..."
                                   style="width: 100%; min-height: 80px; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.9rem; resize: vertical; font-family: inherit;"
-                                  oninput="saveRecipe('breakfast', this.value)"></textarea>
+                                  oninput="autoResizeTextarea(this); saveRecipe('breakfast', this.value)"></textarea>
                     </div>
 
                     <!-- Quick Add -->
@@ -1563,7 +1563,7 @@
                         <textarea id="lunch-recipe-input"
                                   placeholder="URL d'une recette, instructions, notes..."
                                   style="width: 100%; min-height: 80px; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.9rem; resize: vertical; font-family: inherit;"
-                                  oninput="saveRecipe('lunch', this.value)"></textarea>
+                                  oninput="autoResizeTextarea(this); saveRecipe('lunch', this.value)"></textarea>
                     </div>
 
                     <!-- Quick Add -->
@@ -1618,7 +1618,7 @@
                         <textarea id="snack-recipe-input"
                                   placeholder="URL d'une recette, instructions, notes..."
                                   style="width: 100%; min-height: 80px; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.9rem; resize: vertical; font-family: inherit;"
-                                  oninput="saveRecipe('snack', this.value)"></textarea>
+                                  oninput="autoResizeTextarea(this); saveRecipe('snack', this.value)"></textarea>
                     </div>
 
                     <!-- Quick Add -->
@@ -1673,7 +1673,7 @@
                         <textarea id="dinner-recipe-input"
                                   placeholder="URL d'une recette, instructions, notes..."
                                   style="width: 100%; min-height: 80px; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.9rem; resize: vertical; font-family: inherit;"
-                                  oninput="saveRecipe('dinner', this.value)"></textarea>
+                                  oninput="autoResizeTextarea(this); saveRecipe('dinner', this.value)"></textarea>
                     </div>
 
                     <!-- Quick Add -->
@@ -3407,6 +3407,9 @@
             <button onclick="showAdminSection('foods')" class="admin-subnav-btn" data-section="foods" style="padding: var(--space-md) var(--space-lg); background: var(--bg-tertiary); color: var(--text-secondary); border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;">
                 <i data-lucide="apple" style="width: 16px; height: 16px; margin-right: 6px;"></i> Aliments
             </button>
+            <button onclick="showAdminSection('smart-templates')" class="admin-subnav-btn" data-section="smart-templates" style="padding: var(--space-md) var(--space-lg); background: var(--bg-tertiary); color: var(--text-secondary); border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;">
+                <i data-lucide="sparkles" style="width: 16px; height: 16px; margin-right: 6px;"></i> Repas conseillés
+            </button>
             <button onclick="showAdminSection('settings')" class="admin-subnav-btn" data-section="settings" style="padding: var(--space-md) var(--space-lg); background: var(--bg-tertiary); color: var(--text-secondary); border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;">
                 <i data-lucide="settings" style="width: 16px; height: 16px; margin-right: 6px;"></i> Paramètres
             </button>
@@ -3655,6 +3658,49 @@
                     </div>
                 </div>
                 <div id="foods-pagination" style="display: flex; justify-content: center; gap: var(--space-md); margin-top: var(--space-xl);"></div>
+            </div>
+        </div>
+
+        <!-- SECTION: Smart Templates (Repas conseillés) -->
+        <div id="admin-section-smart-templates" class="admin-section" style="display: none;">
+            <!-- Header avec bouton créer -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl);">
+                <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);">
+                    <i data-lucide="sparkles" style="width: 24px; height: 24px;"></i>
+                    <span>Gestion des Repas Conseillés</span>
+                </h2>
+                <button onclick="openSmartTemplateModal()" class="btn" style="background: var(--accent-main); display: flex; align-items: center; gap: var(--space-xs);">
+                    <i data-lucide="plus" style="width: 18px; height: 18px;"></i>
+                    Créer un template
+                </button>
+            </div>
+
+            <!-- Migration tool -->
+            <div class="card" style="margin-bottom: var(--space-md); background: rgba(255, 193, 7, 0.1); border-left: 3px solid #ffc107;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: var(--space-xs); color: var(--text-primary);">
+                            <i data-lucide="database" style="width: 18px; height: 18px;"></i> Migration des templates
+                        </h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">
+                            Importez les templates par défaut depuis le code vers Firestore (à faire une seule fois)
+                        </p>
+                    </div>
+                    <button onclick="migrateSmartTemplatesToFirestore()" class="btn" style="background: #ffc107; color: #000;">
+                        <i data-lucide="upload" style="width: 16px; height: 16px;"></i>
+                        Migrer
+                    </button>
+                </div>
+            </div>
+
+            <!-- Liste des templates -->
+            <div class="card">
+                <div id="smart-templates-list" style="display: flex; flex-direction: column; gap: var(--space-md);">
+                    <div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);">
+                        <i data-lucide="loader" style="width: 32px; height: 32px;"></i>
+                        <p>Chargement des templates...</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -6715,6 +6761,9 @@
                 case 'foods':
                     loadAdminFoods();
                     break;
+                case 'smart-templates':
+                    loadAdminSmartTemplates();
+                    break;
                 case 'settings':
                     loadAdminSettings();
                     break;
@@ -7729,6 +7778,650 @@
             }
 
             if (typeof lucide !== 'undefined') lucide.createIcons();
+        };
+
+        // ===== ADMIN SMART TEMPLATES =====
+        window.loadAdminSmartTemplates = async function() {
+            if (!isAdmin()) return;
+
+            const container = document.getElementById('smart-templates-list');
+            container.innerHTML = '<div style="text-align: center; padding: var(--space-xl);"><i data-lucide="loader" class="spin"></i> Chargement...</div>';
+
+            try {
+                const templatesSnap = await getDocs(collection(db, 'smartTemplates'));
+                const templates = [];
+                templatesSnap.forEach(doc => {
+                    templates.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Sort by mealType then by displayName
+                templates.sort((a, b) => {
+                    const mealOrder = {breakfast: 1, lunch: 2, snack: 3, dinner: 4};
+                    if (mealOrder[a.mealType] !== mealOrder[b.mealType]) {
+                        return mealOrder[a.mealType] - mealOrder[b.mealType];
+                    }
+                    return (a.displayName || '').localeCompare(b.displayName || '');
+                });
+
+                if (templates.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
+                            <i data-lucide="sparkles" style="width: 48px; height: 48px; margin-bottom: var(--space-md);"></i>
+                            <p>Aucun template de repas conseillé pour le moment.</p>
+                            <p style="font-size: 0.9rem;">Créez votre premier template !</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = templates.map(template => {
+                        const activeClass = template.active ? 'success' : 'danger';
+                        const activeLabel = template.active ? 'Actif' : 'Inactif';
+                        const mealTypeLabels = {
+                            breakfast: '🌅 Petit-déjeuner',
+                            lunch: '🍽️ Déjeuner',
+                            snack: '🍎 Goûter',
+                            dinner: '🌙 Dîner'
+                        };
+
+                        return `
+                            <div class="card" style="padding: var(--space-lg);">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: var(--space-md);">
+                                    <div style="flex: 1;">
+                                        <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-xs);">
+                                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin: 0;">
+                                                ${template.displayName || template.id}
+                                            </h3>
+                                            <span class="badge badge-${activeClass}" style="font-size: 0.75rem; padding: 2px 8px;">
+                                                ${activeLabel}
+                                            </span>
+                                        </div>
+                                        <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                                            ${mealTypeLabels[template.mealType] || template.mealType} • ID: ${template.id}
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; gap: var(--space-xs);">
+                                        <button onclick="editSmartTemplate('${template.id}')" class="btn-icon" title="Modifier">
+                                            <i data-lucide="edit-2" style="width: 16px; height: 16px;"></i>
+                                        </button>
+                                        <button onclick="toggleSmartTemplateActive('${template.id}', ${!template.active})" class="btn-icon" title="${template.active ? 'Désactiver' : 'Activer'}">
+                                            <i data-lucide="${template.active ? 'eye-off' : 'eye'}" style="width: 16px; height: 16px;"></i>
+                                        </button>
+                                        <button onclick="deleteSmartTemplate('${template.id}')" class="btn-icon danger" title="Supprimer">
+                                            <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-sm); margin-bottom: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Objectif/Jour</div>
+                                        <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-main);">${Math.round((template.targetPercentOfDay || 0) * 100)}%</div>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Protéines</div>
+                                        <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-protein);">${Math.round((template.macroSplit?.proteins || 0) * 100)}%</div>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Glucides</div>
+                                        <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-carbs);">${Math.round((template.macroSplit?.carbs || 0) * 100)}%</div>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Lipides</div>
+                                        <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-fat);">${Math.round((template.macroSplit?.fats || 0) * 100)}%</div>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: var(--space-md);">
+                                    <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: var(--space-xs); color: var(--text-primary);">
+                                        <i data-lucide="utensils" style="width: 14px; height: 14px;"></i> Aliments (${(template.foods || []).length})
+                                    </div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+                                        ${(template.foods || []).map(food => `
+                                            <span style="background: var(--bg-tertiary); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--text-secondary);">
+                                                ${food.foodName} (${food.min}-${food.max}g)
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+
+                                ${template.recipe ? `
+                                    <div style="margin-top: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md); border-left: 3px solid var(--accent-carbs);">
+                                        <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: var(--space-xs); color: var(--accent-carbs);">
+                                            <i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Recette
+                                        </div>
+                                        <div style="font-size: 0.85rem; color: var(--text-secondary); white-space: pre-line; max-height: 120px; overflow-y: auto;">
+                                            ${template.recipe}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            } catch (error) {
+                console.error('Erreur chargement smart templates:', error);
+                container.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-xl); color: var(--text-danger);">
+                        <i data-lucide="alert-circle" style="width: 32px; height: 32px;"></i>
+                        <p>Erreur lors du chargement des templates</p>
+                    </div>
+                `;
+            }
+        };
+
+        // Toggle Smart Template Active Status
+        window.toggleSmartTemplateActive = async function(templateId, active) {
+            if (!isAdmin()) return;
+
+            try {
+                await updateDoc(doc(db, 'smartTemplates', templateId), { active });
+                showToast(`<i data-lucide="check-circle" class="icon-inline"></i> Template ${active ? 'activé' : 'désactivé'}`);
+                loadAdminSmartTemplates();
+            } catch (error) {
+                console.error('Erreur toggle active:', error);
+                customAlert('Erreur', 'Impossible de modifier le statut du template');
+            }
+        };
+
+        // Delete Smart Template
+        window.deleteSmartTemplate = async function(templateId) {
+            if (!isAdmin()) return;
+
+            const confirmed = await customConfirm(
+                'Supprimer ce template ?',
+                'Cette action est irréversible. Le template sera définitivement supprimé.',
+                true
+            );
+
+            if (!confirmed) return;
+
+            try {
+                await deleteDoc(doc(db, 'smartTemplates', templateId));
+                showToast('<i data-lucide="trash-2" class="icon-inline"></i> Template supprimé');
+                loadAdminSmartTemplates();
+                await logAdminAction('delete_smart_template', { templateId });
+            } catch (error) {
+                console.error('Erreur suppression template:', error);
+                customAlert('Erreur', 'Impossible de supprimer le template');
+            }
+        };
+
+        // Open Smart Template Modal (Create or Edit)
+        window.openSmartTemplateModal = function(templateData = null) {
+            if (!isAdmin()) return;
+
+            const isEdit = !!templateData;
+            const modalHtml = `
+                <div id="smart-template-modal" class="modal active" style="z-index: 10000;">
+                    <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+                        <div class="modal-header">
+                            <h2 class="modal-title">${isEdit ? 'Modifier' : 'Créer'} un repas conseillé</h2>
+                            <button class="modal-close" onclick="closeSmartTemplateModal()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="smart-template-form" onsubmit="saveSmartTemplate(event); return false;">
+                                <!-- Section 1: Informations générales -->
+                                <div style="margin-bottom: var(--space-xl);">
+                                    <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-primary);">
+                                        Informations générales
+                                    </h3>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+                                        <div>
+                                            <label style="display: block; margin-bottom: var(--space-xs); color: var(--text-secondary); font-size: 0.9rem;">
+                                                ID du template *
+                                            </label>
+                                            <input type="text" name="id" required ${isEdit ? 'readonly' : ''}
+                                                   placeholder="ex: lunch, breakfast"
+                                                   value="${templateData?.id || ''}"
+                                                   style="width: 100%; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                                            <small style="color: var(--text-secondary); font-size: 0.75rem;">Identifiant unique (non modifiable après création)</small>
+                                        </div>
+                                        <div>
+                                            <label style="display: block; margin-bottom: var(--space-xs); color: var(--text-secondary); font-size: 0.9rem;">
+                                                Nom affiché *
+                                            </label>
+                                            <input type="text" name="displayName" required
+                                                   placeholder="ex: Déjeuner"
+                                                   value="${templateData?.displayName || ''}"
+                                                   style="width: 100%; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                                        </div>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); margin-top: var(--space-md);">
+                                        <div>
+                                            <label style="display: block; margin-bottom: var(--space-xs); color: var(--text-secondary); font-size: 0.9rem;">
+                                                Type de repas *
+                                            </label>
+                                            <select name="mealType" required
+                                                    style="width: 100%; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                                                <option value="breakfast" ${templateData?.mealType === 'breakfast' ? 'selected' : ''}>Petit-déjeuner</option>
+                                                <option value="lunch" ${templateData?.mealType === 'lunch' ? 'selected' : ''}>Déjeuner</option>
+                                                <option value="snack" ${templateData?.mealType === 'snack' ? 'selected' : ''}>Goûter</option>
+                                                <option value="dinner" ${templateData?.mealType === 'dinner' ? 'selected' : ''}>Dîner</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style="display: block; margin-bottom: var(--space-xs); color: var(--text-secondary); font-size: 0.9rem;">
+                                                Statut
+                                            </label>
+                                            <label style="display: flex; align-items: center; gap: var(--space-sm); cursor: pointer; padding: var(--space-sm);">
+                                                <input type="checkbox" name="active" ${templateData?.active !== false ? 'checked' : ''}
+                                                       style="width: 20px; height: 20px;">
+                                                <span style="color: var(--text-primary);">Actif (visible par les utilisateurs)</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section 2: Paramètres de calcul -->
+                                <div style="margin-bottom: var(--space-xl);">
+                                    <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-primary);">
+                                        Paramètres de calcul
+                                    </h3>
+                                    <div style="margin-bottom: var(--space-md);">
+                                        <label style="display: block; margin-bottom: var(--space-xs); color: var(--text-secondary); font-size: 0.9rem;">
+                                            Pourcentage de l'objectif journalier * (0 à 1)
+                                        </label>
+                                        <input type="number" name="targetPercentOfDay" required min="0" max="1" step="0.05"
+                                               placeholder="0.30" value="${templateData?.targetPercentOfDay || 0.30}"
+                                               style="width: 200px; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                                        <small style="display: block; margin-top: var(--space-xs); color: var(--text-secondary); font-size: 0.75rem;">
+                                            Ex: 0.30 = 30% des objectifs de la journée
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; margin-bottom: var(--space-sm); color: var(--text-secondary); font-weight: 600;">
+                                            Répartition des macros du repas (total doit faire 1.0)
+                                        </label>
+                                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md);">
+                                            <div>
+                                                <label style="display: block; margin-bottom: var(--space-xs); color: var(--accent-protein); font-size: 0.9rem;">
+                                                    Protéines
+                                                </label>
+                                                <input type="number" name="macroSplit.proteins" required min="0" max="1" step="0.05"
+                                                       placeholder="0.40" value="${templateData?.macroSplit?.proteins || 0.40}"
+                                                       style="width: 100%; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                                            </div>
+                                            <div>
+                                                <label style="display: block; margin-bottom: var(--space-xs); color: var(--accent-carbs); font-size: 0.9rem;">
+                                                    Glucides
+                                                </label>
+                                                <input type="number" name="macroSplit.carbs" required min="0" max="1" step="0.05"
+                                                       placeholder="0.35" value="${templateData?.macroSplit?.carbs || 0.35}"
+                                                       style="width: 100%; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                                            </div>
+                                            <div>
+                                                <label style="display: block; margin-bottom: var(--space-xs); color: var(--accent-fat); font-size: 0.9rem;">
+                                                    Lipides
+                                                </label>
+                                                <input type="number" name="macroSplit.fats" required min="0" max="1" step="0.05"
+                                                       placeholder="0.25" value="${templateData?.macroSplit?.fats || 0.25}"
+                                                       style="width: 100%; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section 3: Aliments -->
+                                <div style="margin-bottom: var(--space-xl);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
+                                        <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin: 0;">
+                                            Aliments du repas
+                                        </h3>
+                                        <button type="button" onclick="addTemplateFood()" class="btn btn-secondary" style="display: flex; align-items: center; gap: var(--space-xs);">
+                                            <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+                                            Ajouter un aliment
+                                        </button>
+                                    </div>
+                                    <div id="template-foods-list" style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                                        <!-- Foods will be added here -->
+                                    </div>
+                                </div>
+
+                                <!-- Section 4: Recette -->
+                                <div style="margin-bottom: var(--space-xl);">
+                                    <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-primary);">
+                                        Recette
+                                    </h3>
+                                    <textarea name="recipe" rows="8" placeholder="Instructions de préparation..."
+                                              style="width: 100%; padding: var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary); font-family: inherit; resize: vertical;">${templateData?.recipe || ''}</textarea>
+                                </div>
+
+                                <!-- Boutons -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+                                    <button type="button" onclick="closeSmartTemplateModal()" class="btn btn-secondary">
+                                        Annuler
+                                    </button>
+                                    <button type="submit" class="btn" style="background: var(--accent-main);">
+                                        ${isEdit ? 'Mettre à jour' : 'Créer le template'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Remove existing modal if any
+            const existing = document.getElementById('smart-template-modal');
+            if (existing) existing.remove();
+
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            document.body.style.overflow = 'hidden';
+
+            // Initialize foods list
+            window.templateFoodsData = templateData?.foods || [];
+            renderTemplateFoods();
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        };
+
+        window.closeSmartTemplateModal = function() {
+            const modal = document.getElementById('smart-template-modal');
+            if (modal) modal.remove();
+            document.body.style.overflow = '';
+            window.templateFoodsData = null;
+        };
+
+        window.addTemplateFood = function() {
+            if (!window.templateFoodsData) window.templateFoodsData = [];
+
+            window.templateFoodsData.push({
+                foodName: '',
+                role: 'protein',
+                min: 100,
+                max: 300,
+                priority: window.templateFoodsData.length + 1
+            });
+
+            renderTemplateFoods();
+        };
+
+        window.removeTemplateFood = function(index) {
+            window.templateFoodsData.splice(index, 1);
+            // Recalculate priorities
+            window.templateFoodsData.forEach((food, i) => {
+                food.priority = i + 1;
+            });
+            renderTemplateFoods();
+        };
+
+        window.renderTemplateFoods = function() {
+            const container = document.getElementById('template-foods-list');
+            if (!container) return;
+
+            if (!window.templateFoodsData || window.templateFoodsData.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-xl); color: var(--text-secondary); background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                        <p>Aucun aliment ajouté. Cliquez sur "Ajouter un aliment" pour commencer.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = window.templateFoodsData.map((food, index) => `
+                <div style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md);">
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto; gap: var(--space-sm); align-items: end;">
+                        <div>
+                            <label style="display: block; margin-bottom: var(--space-xs); color: var(--text-secondary); font-size: 0.85rem;">
+                                Nom de l'aliment
+                            </label>
+                            <input type="text" value="${food.foodName || ''}"
+                                   onchange="window.templateFoodsData[${index}].foodName = this.value"
+                                   placeholder="ex: Poulet rôti"
+                                   style="width: 100%; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: var(--space-xs); color: var(--text-secondary); font-size: 0.85rem;">
+                                Rôle
+                            </label>
+                            <select onchange="window.templateFoodsData[${index}].role = this.value"
+                                    style="width: 100%; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                                <option value="protein" ${food.role === 'protein' ? 'selected' : ''}>Protéine</option>
+                                <option value="carb" ${food.role === 'carb' ? 'selected' : ''}>Glucide</option>
+                                <option value="fat" ${food.role === 'fat' ? 'selected' : ''}>Lipide</option>
+                                <option value="fiber" ${food.role === 'fiber' ? 'selected' : ''}>Fibre</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: var(--space-xs); color: var(--text-secondary); font-size: 0.85rem;">
+                                Min (g)
+                            </label>
+                            <input type="number" value="${food.min || 0}"
+                                   onchange="window.templateFoodsData[${index}].min = parseInt(this.value)"
+                                   min="0"
+                                   style="width: 100%; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: var(--space-xs); color: var(--text-secondary); font-size: 0.85rem;">
+                                Max (g)
+                            </label>
+                            <input type="number" value="${food.max || 0}"
+                                   onchange="window.templateFoodsData[${index}].max = parseInt(this.value)"
+                                   min="0"
+                                   style="width: 100%; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: var(--space-xs); color: var(--text-secondary); font-size: 0.85rem;">
+                                Priorité
+                            </label>
+                            <input type="number" value="${food.priority || index + 1}"
+                                   onchange="window.templateFoodsData[${index}].priority = parseInt(this.value)"
+                                   min="1"
+                                   style="width: 100%; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <button type="button" onclick="removeTemplateFood(${index})" class="btn-icon danger" title="Supprimer">
+                                <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        };
+
+        window.editSmartTemplate = async function(templateId) {
+            if (!isAdmin()) return;
+
+            try {
+                const templateDoc = await getDoc(doc(db, 'smartTemplates', templateId));
+                if (!templateDoc.exists()) {
+                    customAlert('Erreur', 'Template introuvable');
+                    return;
+                }
+
+                const templateData = { id: templateDoc.id, ...templateDoc.data() };
+                openSmartTemplateModal(templateData);
+            } catch (error) {
+                console.error('Erreur chargement template:', error);
+                customAlert('Erreur', 'Impossible de charger le template');
+            }
+        };
+
+        window.saveSmartTemplate = async function(event) {
+            event.preventDefault();
+            if (!isAdmin()) return;
+
+            const form = event.target;
+            const formData = new FormData(form);
+
+            // Validate macro split total
+            const proteins = parseFloat(formData.get('macroSplit.proteins'));
+            const carbs = parseFloat(formData.get('macroSplit.carbs'));
+            const fats = parseFloat(formData.get('macroSplit.fats'));
+            const total = proteins + carbs + fats;
+
+            if (Math.abs(total - 1.0) > 0.01) {
+                customAlert('Erreur', `La somme des macros doit faire 1.0 (actuellement: ${total.toFixed(2)})`);
+                return;
+            }
+
+            // Build template object
+            const templateData = {
+                id: formData.get('id').trim(),
+                displayName: formData.get('displayName').trim(),
+                mealType: formData.get('mealType'),
+                targetPercentOfDay: parseFloat(formData.get('targetPercentOfDay')),
+                macroSplit: {
+                    proteins,
+                    carbs,
+                    fats
+                },
+                foods: window.templateFoodsData || [],
+                recipe: formData.get('recipe') || '',
+                active: formData.get('active') === 'on',
+                updatedAt: new Date()
+            };
+
+            // Validate foods
+            if (templateData.foods.length === 0) {
+                customAlert('Erreur', 'Ajoutez au moins un aliment au template');
+                return;
+            }
+
+            // Validate all foods have names
+            const emptyFoods = templateData.foods.filter(f => !f.foodName || !f.foodName.trim());
+            if (emptyFoods.length > 0) {
+                customAlert('Erreur', 'Tous les aliments doivent avoir un nom');
+                return;
+            }
+
+            try {
+                const isEdit = !!document.querySelector('[name="id"][readonly]');
+
+                if (isEdit) {
+                    // Update existing
+                    await updateDoc(doc(db, 'smartTemplates', templateData.id), templateData);
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Template mis à jour');
+                    await logAdminAction('update_smart_template', { templateId: templateData.id });
+                } else {
+                    // Create new
+                    templateData.createdAt = new Date();
+                    await setDoc(doc(db, 'smartTemplates', templateData.id), templateData);
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Template créé');
+                    await logAdminAction('create_smart_template', { templateId: templateData.id });
+                }
+
+                closeSmartTemplateModal();
+                loadAdminSmartTemplates();
+            } catch (error) {
+                console.error('Erreur sauvegarde template:', error);
+                customAlert('Erreur', 'Impossible de sauvegarder le template');
+            }
+        };
+
+        // Migrate Smart Templates from code to Firestore
+        window.migrateSmartTemplatesToFirestore = async function() {
+            if (!isAdmin()) return;
+
+            const confirmed = await customConfirm(
+                'Migrer les templates ?',
+                'Ceci va importer les 5 templates par défaut dans Firestore. Les templates existants avec les mêmes IDs seront écrasés.',
+                false
+            );
+
+            if (!confirmed) return;
+
+            try {
+                // Define the default templates from app.js
+                const defaultTemplates = {
+                    lunch: {
+                        id: 'lunch',
+                        mealType: 'lunch',
+                        displayName: 'Déjeuner',
+                        targetPercentOfDay: 0.30,
+                        macroSplit: { proteins: 0.40, carbs: 0.35, fats: 0.25 },
+                        foods: [
+                            { foodName: 'Poulet rôti', role: 'protein', min: 100, max: 300, priority: 1 },
+                            { foodName: 'Riz blanc cuit', role: 'carb', min: 80, max: 300, priority: 2 },
+                            { foodName: 'Huile d\'olive', role: 'fat', min: 5, max: 15, priority: 3 },
+                            { foodName: 'Haricots verts', role: 'fiber', min: 100, max: 250, priority: 4 }
+                        ],
+                        recipe: 'Faire cuire le riz dans de l\'eau bouillante salée pendant 15-20 minutes.\n\nFaire revenir le poulet à la poêle avec un peu d\'huile d\'olive jusqu\'à ce qu\'il soit bien doré.\n\nCuire les haricots verts à la vapeur pendant 10 minutes.\n\nServir le poulet sur le riz, accompagné des haricots verts. Arroser d\'un filet d\'huile d\'olive.',
+                        active: true
+                    },
+                    lunchLowCarb: {
+                        id: 'lunchLowCarb',
+                        mealType: 'lunch',
+                        displayName: 'Déjeuner (low-carb)',
+                        targetPercentOfDay: 0.30,
+                        macroSplit: { proteins: 0.45, carbs: 0.15, fats: 0.40 },
+                        foods: [
+                            { foodName: 'Poulet rôti', role: 'protein', min: 150, max: 350, priority: 1 },
+                            { foodName: 'Avocat', role: 'fat', min: 50, max: 150, priority: 2 },
+                            { foodName: 'Huile d\'olive', role: 'fat', min: 5, max: 12, priority: 3 },
+                            { foodName: 'Haricots verts', role: 'fiber', min: 150, max: 300, priority: 4 }
+                        ],
+                        recipe: 'Faire cuire le poulet à la poêle avec un peu d\'huile d\'olive jusqu\'à ce qu\'il soit bien doré et cuit à cœur.\n\nCuire les haricots verts à la vapeur pendant 10 minutes.\n\nCouper l\'avocat en tranches.\n\nServir le poulet avec les haricots verts et l\'avocat. Assaisonner avec l\'huile d\'olive, sel et poivre.',
+                        active: true
+                    },
+                    breakfast: {
+                        id: 'breakfast',
+                        mealType: 'breakfast',
+                        displayName: 'Petit-déjeuner',
+                        targetPercentOfDay: 0.25,
+                        macroSplit: { proteins: 0.30, carbs: 0.50, fats: 0.20 },
+                        foods: [
+                            { foodName: 'Fromage blanc 0%', role: 'protein', min: 100, max: 300, priority: 1 },
+                            { foodName: 'Flocons d\'avoine', role: 'carb', min: 40, max: 100, priority: 2 },
+                            { foodName: 'Banane', role: 'carb', min: 80, max: 150, priority: 3 },
+                            { foodName: 'Miel', role: 'carb', min: 5, max: 20, priority: 4 },
+                            { foodName: 'Amandes', role: 'fat', min: 10, max: 30, priority: 5 }
+                        ],
+                        recipe: 'Couper la banane en rondelles.\n\nDans un bol, mélanger le fromage blanc avec les flocons d\'avoine.\n\nAjouter les rondelles de banane et les amandes concassées.\n\nArroser de miel et bien mélanger.\n\nLaisser reposer 5 minutes pour que l\'avoine s\'hydrate. Déguster !',
+                        active: true
+                    },
+                    snack: {
+                        id: 'snack',
+                        mealType: 'snack',
+                        displayName: 'Goûter',
+                        targetPercentOfDay: 0.15,
+                        macroSplit: { proteins: 0.35, carbs: 0.45, fats: 0.20 },
+                        foods: [
+                            { foodName: 'Yaourt grec', role: 'protein', min: 100, max: 250, priority: 1 },
+                            { foodName: 'Pomme', role: 'carb', min: 100, max: 200, priority: 2 },
+                            { foodName: 'Amandes', role: 'fat', min: 10, max: 30, priority: 3 }
+                        ],
+                        recipe: 'Laver et couper la pomme en morceaux.\n\nDans un bol, verser le yaourt grec.\n\nAjouter les morceaux de pomme et les amandes entières ou concassées.\n\nMélanger et déguster immédiatement.',
+                        active: true
+                    },
+                    dinner: {
+                        id: 'dinner',
+                        mealType: 'dinner',
+                        displayName: 'Dîner',
+                        targetPercentOfDay: 0.30,
+                        macroSplit: { proteins: 0.40, carbs: 0.35, fats: 0.25 },
+                        foods: [
+                            { foodName: 'Saumon frais', role: 'protein', min: 120, max: 250, priority: 1 },
+                            { foodName: 'Pomme de terre', role: 'carb', min: 150, max: 350, priority: 2 },
+                            { foodName: 'Brocoli', role: 'fiber', min: 120, max: 250, priority: 3 },
+                            { foodName: 'Huile d\'olive', role: 'fat', min: 5, max: 15, priority: 4 }
+                        ],
+                        recipe: 'Préchauffer le four à 180°C.\n\nLaver les pommes de terre et les couper en quartiers. Les disposer sur une plaque et arroser d\'un peu d\'huile d\'olive. Enfourner pour 30-35 minutes.\n\nCuire le brocoli à la vapeur pendant 10 minutes.\n\nFaire cuire le saumon à la poêle avec un peu d\'huile d\'olive, 4-5 minutes de chaque côté.\n\nServir le saumon avec les pommes de terre rôties et le brocoli. Assaisonner avec sel, poivre et un filet d\'huile d\'olive.',
+                        active: true
+                    }
+                };
+
+                // Migrate each template
+                let migrated = 0;
+                for (const [key, template] of Object.entries(defaultTemplates)) {
+                    template.createdAt = new Date();
+                    template.updatedAt = new Date();
+                    await setDoc(doc(db, 'smartTemplates', template.id), template);
+                    migrated++;
+                }
+
+                await logAdminAction('migrate_smart_templates', { count: migrated });
+                showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${migrated} templates migrés avec succès`);
+                loadAdminSmartTemplates();
+
+            } catch (error) {
+                console.error('Erreur migration:', error);
+                customAlert('Erreur', 'Impossible de migrer les templates');
+            }
         };
 
         window.addAdminUID = function() {
