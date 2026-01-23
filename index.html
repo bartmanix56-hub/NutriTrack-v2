@@ -7811,9 +7811,9 @@
 
                         // Variant badges
                         const variantBadges = {
-                            'vegan': '<span style="font-size: 0.75rem; padding: 3px 8px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: var(--radius-md); font-weight: 600;">🌱 Vegan</span>',
-                            'glutenFree': '<span style="font-size: 0.75rem; padding: 3px 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-radius: var(--radius-md); font-weight: 600;">🌾 Sans gluten</span>',
-                            'vegetarian': '<span style="font-size: 0.75rem; padding: 3px 8px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: var(--radius-md); font-weight: 600;">🥗 Végétarien</span>'
+                            'vegan': '<span style="display: inline-flex; align-items: center; gap: 3px; font-size: 0.75rem; padding: 3px 8px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: var(--radius-md); font-weight: 600;"><i data-lucide="leaf" style="width: 11px; height: 11px;"></i> Vegan</span>',
+                            'glutenFree': '<span style="display: inline-flex; align-items: center; gap: 3px; font-size: 0.75rem; padding: 3px 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-radius: var(--radius-md); font-weight: 600;"><i data-lucide="wheat-off" style="width: 11px; height: 11px;"></i> Sans gluten</span>',
+                            'vegetarian': '<span style="display: inline-flex; align-items: center; gap: 3px; font-size: 0.75rem; padding: 3px 8px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: var(--radius-md); font-weight: 600;"><i data-lucide="salad" style="width: 11px; height: 11px;"></i> Végétarien</span>'
                         };
                         const variantBadge = template.variant && variantBadges[template.variant] ? variantBadges[template.variant] : '';
 
