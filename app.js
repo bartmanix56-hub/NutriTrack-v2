@@ -2288,53 +2288,157 @@ Solutions possibles :
 
             const canvas = document.createElement('canvas');
             canvas.width = 1080;
-            canvas.height = 1350;
+            canvas.height = 1750;
             const ctx = canvas.getContext('2d');
 
-            // Background
+            // Background gradient (dark green)
             const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            gradient.addColorStop(0, '#0a2f23');
-            gradient.addColorStop(1, '#0a1f18');
+            gradient.addColorStop(0, '#0d1f1a');
+            gradient.addColorStop(1, '#081410');
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Header
-            ctx.fillStyle = '#10b981';
-            ctx.font = 'bold 48px DM Sans, sans-serif';
-            ctx.fillText('NutriTrack', 60, 100);
-            ctx.fillStyle = '#4ecdc4';
+            // Load and draw logo
+            const logo = new Image();
+            logo.src = 'logo.svg';
+            await new Promise(resolve => {
+                logo.onload = () => {
+                    ctx.drawImage(logo, 80, 60, 120, 120);
+                    resolve();
+                };
+                logo.onerror = () => resolve(); // Continue even if logo fails
+            });
+
+            // Header - App name
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 56px DM Sans, sans-serif';
+            ctx.fillText('NutriTrack', 220, 140);
+
+            // Date
+            ctx.fillStyle = '#9ca3af';
+            ctx.font = '32px DM Sans, sans-serif';
+            const dateStr = new Date().toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+            ctx.fillText(dateStr, 80, 220);
+
+            // Title "Bilan du jour"
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 52px DM Sans, sans-serif';
+            ctx.fillText('Bilan du jour', 80, 320);
+
+            // Circular progress for calories
+            const centerX = canvas.width / 2;
+            const centerY = 580;
+            const radius = 180;
+            const calorieProgress = targets.calories ? Math.min(totals.calories / targets.calories, 1) : 0;
+            const startAngle = -0.5 * Math.PI;
+            const endAngle = startAngle + (calorieProgress * 2 * Math.PI);
+
+            // Background circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 24;
+            ctx.stroke();
+
+            // Progress circle (green)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 24;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Calories text in center
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 72px DM Sans, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(Math.round(totals.calories), centerX, centerY - 10);
+            ctx.font = '32px DM Sans, sans-serif';
+            ctx.fillStyle = '#9ca3af';
+            ctx.fillText('kcal', centerX, centerY + 40);
+
+            // Goal achieved badge (if within 5% of target)
+            if (targets.calories && Math.abs(totals.calories - targets.calories) <= targets.calories * 0.05) {
+                const badgeY = centerY + radius + 60;
+                const badgeHeight = 60;
+                const badgeWidth = 400;
+                const badgeX = centerX - badgeWidth / 2;
+
+                // Badge background
+                ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+                ctx.beginPath();
+                ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 30);
+                ctx.fill();
+
+                // Checkmark icon
+                ctx.fillStyle = '#10b981';
+                ctx.font = '32px Arial';
+                ctx.fillText('✓', badgeX + 30, badgeY + 42);
+
+                // Badge text
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold 28px DM Sans, sans-serif';
+                ctx.fillText('Objectif atteint', centerX + 20, badgeY + 42);
+            }
+
+            // Target calories text
+            ctx.fillStyle = '#6b7280';
             ctx.font = '28px DM Sans, sans-serif';
-            ctx.fillText(new Date().toLocaleDateString('fr-FR', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'}), 60, 150);
+            ctx.fillText(`sur ${Math.round(targets.calories || 0)} kcal`, centerX, centerY + radius + 140);
 
-            // Macros
-            let y = 250;
-            ctx.fillStyle = '#e0e0e0';
-            ctx.font = 'bold 36px DM Sans, sans-serif';
-            ctx.fillText('Macros du jour', 60, y);
+            // Macros section title
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 42px DM Sans, sans-serif';
+            ctx.fillText('Macros', 80, 980);
 
-            y += 80;
+            // Macro bars
             const macros = [
                 {label: 'Protéines', value: totals.protein, target: targets.protein, color: '#ee6c4d'},
                 {label: 'Glucides', value: totals.carbs, target: targets.carbs, color: '#4ecdc4'},
-                {label: 'Lipides', value: totals.fat, target: targets.fat, color: '#ffe66d'},
-                {label: 'Calories', value: totals.calories, target: targets.calories, color: '#10b981'}
+                {label: 'Lipides', value: totals.fat, target: targets.fat, color: '#ffe66d'}
             ];
 
+            let yPos = 1080;
+            const barWidth = 900;
+            const barHeight = 40;
+            const barX = 80;
+
             macros.forEach(macro => {
+                // Macro label
                 ctx.fillStyle = macro.color;
-                ctx.font = 'bold 32px DM Sans, sans-serif';
-                ctx.fillText(macro.label, 60, y);
+                ctx.font = 'bold 36px DM Sans, sans-serif';
+                ctx.fillText(macro.label, barX, yPos);
+
+                // Progress bar background
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.beginPath();
+                ctx.roundRect(barX, yPos + 20, barWidth, barHeight, 20);
+                ctx.fill();
+
+                // Progress bar fill
+                const progress = macro.target ? Math.min(macro.value / macro.target, 1) : 0;
+                ctx.fillStyle = macro.color;
+                ctx.beginPath();
+                ctx.roundRect(barX, yPos + 20, barWidth * progress, barHeight, 20);
+                ctx.fill();
+
+                // Values text
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '28px DM Sans, sans-serif';
-                const text = macro.target ? `${Math.round(macro.value)} / ${Math.round(macro.target)}${macro.label === 'Calories' ? ' kcal' : 'g'}` : `${Math.round(macro.value)}${macro.label === 'Calories' ? ' kcal' : 'g'}`;
-                ctx.fillText(text, 300, y);
-                y += 70;
+                ctx.font = '32px DM Sans, sans-serif';
+                ctx.textAlign = 'right';
+                const valueText = `${Math.round(macro.value)}g / ${Math.round(macro.target || 0)}g`;
+                ctx.fillText(valueText, barX + barWidth, yPos + 52);
+                ctx.textAlign = 'left';
+
+                yPos += 160;
             });
 
             // Footer
-            ctx.fillStyle = '#4ecdc4';
-            ctx.font = '24px DM Sans, sans-serif';
-            ctx.fillText('Généré avec NutriTrack ✨', 60, canvas.height - 60);
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '28px DM Sans, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Généré avec NutriTrack', centerX, canvas.height - 60);
 
             // Export/Share
             canvas.toBlob(async blob => {
@@ -2345,8 +2449,8 @@ Solutions possibles :
                     try {
                         await navigator.share({
                             files: [file],
-                            title: 'Mes macros NutriTrack',
-                            text: `Mes macros du ${new Date().toLocaleDateString('fr-FR')} 💪`
+                            title: 'Mon bilan NutriTrack',
+                            text: `Mon bilan du ${new Date().toLocaleDateString('fr-FR')} 💪`
                         });
                         showToast('<i data-lucide="check-circle" class="icon-inline"></i> Image partagée !');
                     } catch (err) {
