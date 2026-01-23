@@ -1546,6 +1546,9 @@ Solutions possibles :
                 </div>
             `}).join('');
             modalSearchResults.style.display = 'block';
+
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         // Add food to specific meal
@@ -3789,11 +3792,13 @@ Solutions possibles :
         }
 
         function renderFoodDatabase(foods = foodDatabase) {
+            const verifiedBadgeHtml = '<span style="display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600; margin-left: 6px;" title="Aliment vérifié"><i data-lucide="shield-check" style="width: 11px; height: 11px;"></i> Vérifié</span>';
+
             foodDatabaseContainer.innerHTML = foods.map(food => `
                 <div class="food-item">
                     <div class="food-name">
                         ${getDisplayName(food)}
-                        ${food.verified ? '<span style="color: #10b981; font-size: 1rem; margin-left: 4px; cursor: help;" title="Aliment vérifié par un administrateur">✓</span>' : ''}
+                        ${food.verified ? verifiedBadgeHtml : ''}
                     </div>
                     <div class="food-macros">
                         <span>
@@ -3817,6 +3822,9 @@ Solutions possibles :
                         pour ${food.unit}
                     </div></div>
             `).join('');
+
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         // Debounce pour éviter trop d'appels Firestore
