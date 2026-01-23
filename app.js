@@ -2717,6 +2717,13 @@ Solutions possibles :
         // Debounce pour la sauvegarde de recette
         let recipeDebounceTimer = null;
 
+        // Auto-resize textarea to fit content
+        function autoResizeTextarea(textarea) {
+            if (!textarea) return;
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.max(80, textarea.scrollHeight) + 'px';
+        }
+
         // Sauvegarder la recette d'un repas (avec debounce)
         function saveRecipe(mealType, recipeText) {
             const dateKey = getCurrentDateKey();
@@ -5565,6 +5572,7 @@ Solutions possibles :
                 // Mettre à jour le textarea
                 if (recipeInput) {
                     recipeInput.value = recipe;
+                    autoResizeTextarea(recipeInput);
                 }
 
                 // Afficher ou masquer la div de recette selon si elle existe
@@ -6638,7 +6646,10 @@ Solutions possibles :
                 allDailyMeals[dateKey][mealType].recipe = template.recipe;
                 // Mettre à jour le textarea de recette
                 const recipeInput = document.getElementById(`${mealType}-recipe-input`);
-                if (recipeInput) recipeInput.value = template.recipe;
+                if (recipeInput) {
+                    recipeInput.value = template.recipe;
+                    autoResizeTextarea(recipeInput);
+                }
             }
 
             dailyMeals = allDailyMeals[dateKey];
@@ -6679,8 +6690,11 @@ Solutions possibles :
 
         // ===== SMART MEAL TEMPLATES (INTELLIGENT GENERATION) =====
 
-        // Template configurations (extensible for all meal types)
-        const smartMealTemplates = {
+        // Template configurations (loaded from Firestore, with fallback to defaults)
+        let smartMealTemplates = {};
+
+        // Default templates (fallback if Firestore unavailable)
+        const defaultSmartMealTemplates = {
             // LUNCH TEMPLATES
             lunch: {
                 mealType: 'lunch',
@@ -6774,6 +6788,63 @@ Solutions possibles :
                 recipe: 'Préchauffer le four à 180°C.\n\nLaver les pommes de terre et les couper en quartiers. Les disposer sur une plaque et arroser d\'un peu d\'huile d\'olive. Enfourner pour 30-35 minutes.\n\nCuire le brocoli à la vapeur pendant 10 minutes.\n\nFaire cuire le saumon à la poêle avec un peu d\'huile d\'olive, 4-5 minutes de chaque côté.\n\nServir le saumon avec les pommes de terre rôties et le brocoli. Assaisonner avec sel, poivre et un filet d\'huile d\'olive.'
             }
         };
+
+        // Load Smart Templates from Firestore (with offline cache and fallback)
+        async function loadSmartMealTemplates() {
+            try {
+                // Try to load from Firestore
+                if (typeof firebase !== 'undefined' && firebase.firestore) {
+                    const db = firebase.firestore();
+                    const templatesSnap = await db.collection('smartTemplates')
+                        .where('active', '==', true)
+                        .get();
+
+                    const firestoreTemplates = {};
+                    templatesSnap.forEach(doc => {
+                        const data = doc.data();
+                        firestoreTemplates[doc.id] = data;
+                    });
+
+                    // If we got templates from Firestore, use them
+                    if (Object.keys(firestoreTemplates).length > 0) {
+                        smartMealTemplates = firestoreTemplates;
+                        // Cache in localStorage for offline use
+                        localStorage.setItem('smartTemplatesCache', JSON.stringify(firestoreTemplates));
+                        console.log(`✅ Loaded ${Object.keys(firestoreTemplates).length} smart templates from Firestore`);
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.warn('⚠️ Could not load smart templates from Firestore:', error.message);
+            }
+
+            // Fallback 1: Try to load from cache
+            try {
+                const cached = localStorage.getItem('smartTemplatesCache');
+                if (cached) {
+                    smartMealTemplates = JSON.parse(cached);
+                    console.log('📦 Loaded smart templates from cache');
+                    return;
+                }
+            } catch (error) {
+                console.warn('⚠️ Could not load smart templates from cache:', error.message);
+            }
+
+            // Fallback 2: Use default templates
+            smartMealTemplates = defaultSmartMealTemplates;
+            console.log('🔄 Using default smart templates (hardcoded)');
+        }
+
+        // Initialize templates on page load
+        if (typeof document !== 'undefined') {
+            document.addEventListener('DOMContentLoaded', () => {
+                loadSmartMealTemplates().catch(err => {
+                    console.error('Failed to load smart templates:', err);
+                    // Use default templates if all else fails
+                    smartMealTemplates = defaultSmartMealTemplates;
+                });
+            });
+        }
 
         // Smart rounding function - returns human-friendly quantities
         function smartRound(value) {
@@ -7152,6 +7223,7 @@ Solutions possibles :
                 const recipeTextarea = document.getElementById(`${mealType}-recipe-input`);
                 if (recipeTextarea) {
                     recipeTextarea.value = result.recipe;
+                    autoResizeTextarea(recipeTextarea);
                 }
                 // Show the recipe display section
                 const recipeDisplay = document.getElementById(`${mealType}-recipe`);
