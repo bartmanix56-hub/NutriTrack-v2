@@ -1527,7 +1527,7 @@ Solutions possibles :
             modalSearchResults.innerHTML = foods.map(food => {
                 const displayName = (typeof getDisplayName === 'function') ? getDisplayName(food) : food.name;
                 const isFav = isFavorite(food.name);
-                const verifiedBadge = food.verified ? ' <span style="display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600;" title="Aliment vérifié"><i data-lucide="shield-check" style="width: 11px; height: 11px;"></i> Vérifié</span>' : '';
+                const verifiedBadge = food.verified ? ' <span style="display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600;" title="Aliment vérifié">✅ Vérifié</span>' : '';
                 return `
                 <div class="search-result-item" onclick='addFoodToMeal(${JSON.stringify(food).replace(/'/g, "&apos;")})'
                      style="display: flex; align-items: center; gap: var(--space-sm); cursor: pointer;">
@@ -2796,7 +2796,7 @@ Solutions possibles :
                 mealCarbs += food.carbs * multiplier;
                 mealFat += food.fat * multiplier;
 
-                const verifiedBadge = food.verified ? ' <span style="display: inline-flex; align-items: center; gap: 2px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600;"><i data-lucide="shield-check" style="width: 10px; height: 10px;"></i> Vérifié</span>' : '';
+                const verifiedBadge = food.verified ? ' <span style="display: inline-flex; align-items: center; gap: 2px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600;">✅ Vérifié</span>' : '';
 
                 return `
                     <div class="food-item">
@@ -3792,7 +3792,7 @@ Solutions possibles :
         }
 
         function renderFoodDatabase(foods = foodDatabase) {
-            const verifiedBadgeHtml = '<span style="display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600; margin-left: 6px;" title="Aliment vérifié"><i data-lucide="shield-check" style="width: 11px; height: 11px;"></i> Vérifié</span>';
+            const verifiedBadgeHtml = '<span style="display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600; margin-left: 6px;" title="Aliment vérifié">✅ Vérifié</span>';
 
             foodDatabaseContainer.innerHTML = foods.map(food => `
                 <div class="food-item">
@@ -7122,9 +7122,9 @@ Solutions possibles :
 
             // Generate variant badge if applicable
             const variantBadges = {
-                'vegan': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;"><i data-lucide="leaf" style="width: 12px; height: 12px;"></i> Vegan</span>',
-                'glutenFree': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;"><i data-lucide="wheat-off" style="width: 12px; height: 12px;"></i> Sans gluten</span>',
-                'vegetarian': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;"><i data-lucide="salad" style="width: 12px; height: 12px;"></i> Végétarien</span>'
+                'vegan': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;">🌱 Vegan</span>',
+                'glutenFree': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;">🌾 Sans gluten</span>',
+                'vegetarian': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;">🥗 Végétarien</span>'
             };
             const variantBadge = result.variant && variantBadges[result.variant] ? variantBadges[result.variant] : '';
 
