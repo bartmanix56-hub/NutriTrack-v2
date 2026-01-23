@@ -4,9 +4,10 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // Helper function to check if user is admin
+    // NOTE: Update this UID if you change the admin user
     function isAdmin() {
       return request.auth != null &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+             request.auth.uid == 'qEuqSbWO73OwTEwL6LhEILS5djD2';
     }
 
     // Helper function to check if user is authenticated
