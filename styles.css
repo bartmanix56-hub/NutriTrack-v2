@@ -130,19 +130,19 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
+            background: var(--accent-main);
             border-radius: var(--radius-full);
             transition: background 0.2s ease;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: var(--accent-ui);
         }
 
         /* Firefox scrollbar */
         * {
             scrollbar-width: thin;
-            scrollbar-color: rgba(255, 255, 255, 0.15) var(--bg-tertiary);
+            scrollbar-color: var(--accent-main) var(--bg-tertiary);
         }
 
         html {
@@ -3032,10 +3032,10 @@
 
         ::-webkit-scrollbar-track  { background: var(--bg-secondary); }
 
-        ::-webkit-scrollbar-thumb  { background: var(--bg-tertiary);
+        ::-webkit-scrollbar-thumb  { background: var(--accent-main);
             border-radius: var(--radius-sm); }
 
-        ::-webkit-scrollbar-thumb:hover  { background: var(--accent-main); }
+        ::-webkit-scrollbar-thumb:hover  { background: var(--accent-ui); }
 
         /* Info helper */
         .info-text {
@@ -3380,12 +3380,12 @@
         }
 
         .modal-body::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
+            background: var(--accent-main);
             border-radius: var(--radius-full);
         }
 
         .modal-body::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: var(--accent-ui);
         }
 
         .modal-title {
