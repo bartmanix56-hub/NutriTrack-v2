@@ -6627,8 +6627,9 @@ Solutions possibles :
 
         // ===== SMART MEAL TEMPLATES (INTELLIGENT GENERATION) =====
 
-        // Template configurations (extensible for breakfast, dinner, snack)
+        // Template configurations (extensible for all meal types)
         const smartMealTemplates = {
+            // LUNCH TEMPLATES
             lunch: {
                 mealType: 'lunch',
                 displayName: 'Déjeuner',
@@ -6659,6 +6660,60 @@ Solutions possibles :
                     { foodName: 'Avocat', role: 'fat', min: 50, max: 150, priority: 2 },
                     { foodName: 'Huile d\'olive', role: 'fat', min: 5, max: 12, priority: 3 },
                     { foodName: 'Haricots verts', role: 'fiber', min: 150, max: 300, priority: 4 }
+                ]
+            },
+
+            // BREAKFAST TEMPLATE
+            breakfast: {
+                mealType: 'breakfast',
+                displayName: 'Petit-déjeuner',
+                targetPercentOfDay: 0.25,
+                macroSplit: {
+                    proteins: 0.30,
+                    carbs: 0.50,
+                    fats: 0.20
+                },
+                foods: [
+                    { foodName: 'Fromage blanc 0%', role: 'protein', min: 100, max: 300, priority: 1 },
+                    { foodName: 'Flocons d\'avoine', role: 'carb', min: 40, max: 100, priority: 2 },
+                    { foodName: 'Banane', role: 'carb', min: 80, max: 150, priority: 3 },
+                    { foodName: 'Miel', role: 'carb', min: 5, max: 20, priority: 4 },
+                    { foodName: 'Amandes', role: 'fat', min: 10, max: 30, priority: 5 }
+                ]
+            },
+
+            // SNACK TEMPLATE
+            snack: {
+                mealType: 'snack',
+                displayName: 'Goûter',
+                targetPercentOfDay: 0.15,
+                macroSplit: {
+                    proteins: 0.35,
+                    carbs: 0.45,
+                    fats: 0.20
+                },
+                foods: [
+                    { foodName: 'Yaourt grec', role: 'protein', min: 100, max: 250, priority: 1 },
+                    { foodName: 'Pomme', role: 'carb', min: 100, max: 200, priority: 2 },
+                    { foodName: 'Amandes', role: 'fat', min: 10, max: 30, priority: 3 }
+                ]
+            },
+
+            // DINNER TEMPLATE
+            dinner: {
+                mealType: 'dinner',
+                displayName: 'Dîner',
+                targetPercentOfDay: 0.30,
+                macroSplit: {
+                    proteins: 0.40,
+                    carbs: 0.35,
+                    fats: 0.25
+                },
+                foods: [
+                    { foodName: 'Saumon frais', role: 'protein', min: 120, max: 250, priority: 1 },
+                    { foodName: 'Pomme de terre', role: 'carb', min: 150, max: 350, priority: 2 },
+                    { foodName: 'Brocoli', role: 'fiber', min: 120, max: 250, priority: 3 },
+                    { foodName: 'Huile d\'olive', role: 'fat', min: 5, max: 15, priority: 4 }
                 ]
             }
         };
@@ -6907,63 +6962,64 @@ Solutions possibles :
                     </div>
                 </div>` : '';
 
-            // Create modal HTML
+            // Create modal HTML with proper structure
             const modalHtml = `
                 <div id="smartMealModal" class="modal active">
                     <div class="modal-content">
-                        <button class="modal-close" onclick="closeSmartMealModal()">×</button>
-                        <h2 class="modal-title">${result.templateName}</h2>
-
-                        <p style="color: var(--text-secondary); margin-bottom: var(--space-lg); line-height: 1.6;">
-                            Ce repas est adapté à ton objectif et à ce qu'il te reste aujourd'hui.
-                        </p>
-
-                        ${lowCarbNotice}
-
-                        <div style="background: var(--bg-tertiary); padding: var(--space-lg); border-radius: var(--radius-md); margin-bottom: var(--space-lg);">
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); margin-bottom: var(--space-md);">
-                                <div>
-                                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Calories</div>
-                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-main);">${Math.round(result.macros.calories)} kcal</div>
-                                </div>
-                            </div>
-                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md);">
-                                <div>
-                                    <div style="font-size: 0.85rem; color: var(--accent-protein);">Protéines</div>
-                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">${Math.round(result.macros.protein)}g</div>
-                                </div>
-                                <div>
-                                    <div style="font-size: 0.85rem; color: var(--accent-carbs);">Glucides</div>
-                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">${Math.round(result.macros.carbs)}g</div>
-                                </div>
-                                <div>
-                                    <div style="font-size: 0.85rem; color: var(--accent-fat);">Lipides</div>
-                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">${Math.round(result.macros.fat)}g</div>
-                                </div>
-                            </div>
+                        <div class="modal-header">
+                            <h2 class="modal-title">${result.templateName} conseillé</h2>
+                            <p style="color: var(--text-secondary); font-style: italic; margin: var(--space-xs) 0 0 0;">
+                                Ce repas est adapté à ton objectif et à ce qu'il te reste aujourd'hui.
+                            </p>
+                            <button class="modal-close" onclick="closeSmartMealModal()">×</button>
                         </div>
 
-                        <div style="background: var(--bg-secondary); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-xl);">
-                            <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: var(--space-sm); color: var(--text-primary);">
-                                <i data-lucide="utensils" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
-                                Composition du repas
-                            </div>
-                            ${result.foods.map(food => `
-                                <div style="display: flex; justify-content: space-between; padding: var(--space-xs) 0; color: var(--text-secondary); font-size: 0.9rem;">
-                                    <span>${food.name}</span>
-                                    <span style="color: var(--text-primary); font-weight: 600;">${food.quantity}g</span>
-                                </div>
-                            `).join('')}
-                        </div>
+                        <div class="modal-body">
+                            ${lowCarbNotice}
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
-                            <button class="btn btn-secondary" onclick="closeSmartMealModal()">
-                                Annuler
-                            </button>
-                            <button class="btn" onclick="applySmartMeal('${mealType}')" style="background: var(--accent-main);">
-                                <i data-lucide="check" style="width: 16px; height: 16px;"></i>
-                                Charger le repas
-                            </button>
+                            <div style="margin-bottom: var(--space-xl);">
+                                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md);">
+                                    <div style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); text-align: center;">
+                                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Calories (kcal)</div>
+                                        <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-main);">${Math.round(result.macros.calories)}</div>
+                                    </div>
+                                    <div style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); text-align: center;">
+                                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Protéines (g) *</div>
+                                        <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-protein);">${Math.round(result.macros.protein)}</div>
+                                    </div>
+                                    <div style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); text-align: center;">
+                                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Glucides (g) *</div>
+                                        <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-carbs);">${Math.round(result.macros.carbs)}</div>
+                                    </div>
+                                    <div style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); text-align: center;">
+                                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Lipides (g) *</div>
+                                        <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-fat);">${Math.round(result.macros.fat)}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--bg-tertiary); padding: var(--space-lg); border-radius: var(--radius-md); margin-bottom: var(--space-xl);">
+                                <div style="font-size: 0.95rem; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-primary);">
+                                    <i data-lucide="utensils" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+                                    Composition du repas
+                                </div>
+                                ${result.foods.map(food => `
+                                    <div style="display: flex; justify-content: space-between; padding: var(--space-sm) 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <span style="color: var(--text-secondary);">${food.name}</span>
+                                        <span style="color: var(--text-primary); font-weight: 600;">${food.quantity}g</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+                                <button class="btn btn-secondary" onclick="closeSmartMealModal()">
+                                    Annuler
+                                </button>
+                                <button class="btn" onclick="applySmartMeal('${mealType}')" style="background: var(--accent-main); display: flex; align-items: center; justify-content: center; gap: var(--space-xs);">
+                                    <i data-lucide="check" style="width: 18px; height: 18px;"></i>
+                                    Charger le repas
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -7024,6 +7080,7 @@ Solutions possibles :
             updateDayTotals();
             saveDailyMeals();
             syncMealsToPlanning();
+            updateRemainingWidget();
 
             closeSmartMealModal();
 
