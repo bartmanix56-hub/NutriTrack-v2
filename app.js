@@ -1527,6 +1527,7 @@ Solutions possibles :
             modalSearchResults.innerHTML = foods.map(food => {
                 const displayName = (typeof getDisplayName === 'function') ? getDisplayName(food) : food.name;
                 const isFav = isFavorite(food.name);
+                const verifiedBadge = food.verified ? ' <span style="display: inline-flex; align-items: center; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 8px; font-size: 0.7rem; font-weight: 600;" title="Aliment vérifié">✓ Vérifié</span>' : '';
                 return `
                 <div class="search-result-item" onclick='addFoodToMeal(${JSON.stringify(food).replace(/'/g, "&apos;")})'
                      style="display: flex; align-items: center; gap: var(--space-sm); cursor: pointer;">
@@ -1537,7 +1538,7 @@ Solutions possibles :
                         ${isFav ? '⭐' : '☆'}
                     </button>
                     <div style="flex: 1; min-width: 0;">
-                        <div class="search-result-name">${displayName}${food.fromFirestore ? ' <span style="color: var(--accent-main); font-size: 0.75rem;">☁️</span>' : ''}</div>
+                        <div class="search-result-name">${displayName}${verifiedBadge}</div>
                         <div class="search-result-macros">
                             P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
                         </div>
@@ -7069,6 +7070,7 @@ Solutions possibles :
                 macros: actualMacros,
                 mealType: templateConfig.mealType,
                 templateName: templateConfig.displayName,
+                variant: templateConfig.variant || '',
                 isLowCarb: selectedTemplateKey === 'lunchLowCarb',
                 recipe: templateConfig.recipe || ''
             };
@@ -7096,12 +7098,20 @@ Solutions possibles :
                     </div>
                 </div>` : '';
 
+            // Generate variant badge if applicable
+            const variantBadges = {
+                'vegan': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;">🌱 Vegan</span>',
+                'glutenFree': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;">🌾 Sans gluten</span>',
+                'vegetarian': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;">🥗 Végétarien</span>'
+            };
+            const variantBadge = result.variant && variantBadges[result.variant] ? variantBadges[result.variant] : '';
+
             // Create modal HTML with proper structure
             const modalHtml = `
                 <div id="smartMealModal" class="modal active">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h2 class="modal-title">${result.templateName} conseillé</h2>
+                            <h2 class="modal-title">${result.templateName} conseillé ${variantBadge}</h2>
                             <p style="color: var(--text-secondary); font-style: italic; margin: var(--space-xs) 0 0 0;">
                                 Ce repas est adapté à ton objectif et à ce qu'il te reste aujourd'hui.
                             </p>
