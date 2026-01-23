@@ -1569,7 +1569,7 @@
 
         /* ===== HERO HEADERS DESKTOP - PADDING RÉDUIT ===== */
         .tab-content > div:first-child[style*="background: linear-gradient"] {
-            padding: 12px 32px !important;
+            padding: 16px !important;
             display: flex !important;
             align-items: center !important;
             min-height: auto !important;
@@ -1581,14 +1581,30 @@
             margin-bottom: 0 !important;
         }
 
+        /* Réduire la taille de l'icône container */
+        .tab-content > div:first-child[style*="background: linear-gradient"] > div > div:first-child[style*="width: 60px"] {
+            width: 50px !important;
+            height: 50px !important;
+            min-width: 50px !important;
+        }
+
+        /* Réduire la taille de l'icône SVG */
+        .tab-content > div:first-child[style*="background: linear-gradient"] > div > div:first-child i,
+        .tab-content > div:first-child[style*="background: linear-gradient"] > div > div:first-child svg {
+            width: 30px !important;
+            height: 30px !important;
+        }
+
         /* Réduire l'espace entre titre et sous-titre */
         .tab-content > div:first-child[style*="background: linear-gradient"] h1 {
             margin-bottom: 0px !important;
             line-height: 1.2 !important;
+            font-size: 1.6rem !important;
         }
 
         .tab-content > div:first-child[style*="background: linear-gradient"] p {
             margin-top: 2px !important;
+            font-size: 0.9rem !important;
         }
 
         /* ===== HOME MOBILE ===== */
