@@ -7157,7 +7157,6 @@ Solutions possibles :
                 const recipeDisplay = document.getElementById(`${mealType}-recipe`);
                 if (recipeDisplay) {
                     recipeDisplay.style.display = 'block';
-                    recipeDisplay.textContent = result.recipe;
                 }
             }
 
