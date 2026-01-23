@@ -2796,6 +2796,9 @@ Solutions possibles :
                 mealCarbs += food.carbs * multiplier;
                 mealFat += food.fat * multiplier;
 
+                // DEBUG: Log verified status
+                console.log(`[renderMeal] ${food.name}: verified = ${food.verified}`);
+
                 const verifiedBadge = food.verified ? ' <span style="display: inline-flex; align-items: center; gap: 2px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600;">✅ Vérifié</span>' : '';
 
                 return `
@@ -6984,6 +6987,9 @@ Solutions possibles :
             if (proteinFood) {
                 const dbFood = foodDb.find(f => f.name === proteinFood.foodName);
                 if (dbFood) {
+                    // DEBUG: Log verified status from foodDatabase
+                    console.log(`[generateSmartMeal] ${dbFood.name}: verified = ${dbFood.verified}, fromFirestore = ${dbFood.fromFirestore}`);
+
                     // Target: provide ~70% of protein needs from main protein source
                     let quantity = (mealTargets.protein * 0.7 / dbFood.protein) * 100;
                     quantity = smartRound(quantity);
