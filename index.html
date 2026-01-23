@@ -5774,7 +5774,8 @@
                             barcode: doc.id,
                             unit: data.unit || '100g',
                             custom: false,
-                            fromFirestore: true
+                            fromFirestore: true,
+                            verified: data.verified || false
                         });
                     }
                 });
