@@ -7093,7 +7093,7 @@ Solutions possibles :
                 mealType: templateConfig.mealType,
                 templateName: templateConfig.displayName,
                 variant: templateConfig.variant || '',
-                isLowCarb: selectedTemplateKey === 'lunchLowCarb',
+                isLowCarb: templateConfig.variant === 'lowCarb',
                 recipe: templateConfig.recipe || ''
             };
         }
