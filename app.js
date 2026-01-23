@@ -2444,8 +2444,11 @@ Solutions possibles :
             canvas.toBlob(async blob => {
                 const file = new File([blob], `nutritrack-${dateKey}.png`, { type: 'image/png' });
 
-                // Check if Web Share API is available (mobile)
-                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                // Detect if mobile device (not desktop)
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                // Only use Web Share API on mobile devices
+                if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                     try {
                         await navigator.share({
                             files: [file],
@@ -2461,7 +2464,7 @@ Solutions possibles :
                         }
                     }
                 } else {
-                    // Desktop or unsupported: classic download
+                    // Desktop: direct download
                     downloadImage(blob, dateKey);
                 }
             });
