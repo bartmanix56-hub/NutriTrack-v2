@@ -3675,6 +3675,24 @@
                 </button>
             </div>
 
+            <!-- Migration tool -->
+            <div class="card" style="margin-bottom: var(--space-md); background: rgba(255, 193, 7, 0.1); border-left: 3px solid #ffc107;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: var(--space-xs); color: var(--text-primary);">
+                            <i data-lucide="database" style="width: 18px; height: 18px;"></i> Migration des templates
+                        </h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">
+                            Importez les templates par défaut depuis le code vers Firestore (à faire une seule fois)
+                        </p>
+                    </div>
+                    <button onclick="migrateSmartTemplatesToFirestore()" class="btn" style="background: #ffc107; color: #000;">
+                        <i data-lucide="upload" style="width: 16px; height: 16px;"></i>
+                        Migrer
+                    </button>
+                </div>
+            </div>
+
             <!-- Liste des templates -->
             <div class="card">
                 <div id="smart-templates-list" style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -8292,6 +8310,117 @@
             } catch (error) {
                 console.error('Erreur sauvegarde template:', error);
                 customAlert('Erreur', 'Impossible de sauvegarder le template');
+            }
+        };
+
+        // Migrate Smart Templates from code to Firestore
+        window.migrateSmartTemplatesToFirestore = async function() {
+            if (!isAdmin()) return;
+
+            const confirmed = await customConfirm(
+                'Migrer les templates ?',
+                'Ceci va importer les 5 templates par défaut dans Firestore. Les templates existants avec les mêmes IDs seront écrasés.',
+                false
+            );
+
+            if (!confirmed) return;
+
+            try {
+                // Define the default templates from app.js
+                const defaultTemplates = {
+                    lunch: {
+                        id: 'lunch',
+                        mealType: 'lunch',
+                        displayName: 'Déjeuner',
+                        targetPercentOfDay: 0.30,
+                        macroSplit: { proteins: 0.40, carbs: 0.35, fats: 0.25 },
+                        foods: [
+                            { foodName: 'Poulet rôti', role: 'protein', min: 100, max: 300, priority: 1 },
+                            { foodName: 'Riz blanc cuit', role: 'carb', min: 80, max: 300, priority: 2 },
+                            { foodName: 'Huile d\'olive', role: 'fat', min: 5, max: 15, priority: 3 },
+                            { foodName: 'Haricots verts', role: 'fiber', min: 100, max: 250, priority: 4 }
+                        ],
+                        recipe: 'Faire cuire le riz dans de l\'eau bouillante salée pendant 15-20 minutes.\n\nFaire revenir le poulet à la poêle avec un peu d\'huile d\'olive jusqu\'à ce qu\'il soit bien doré.\n\nCuire les haricots verts à la vapeur pendant 10 minutes.\n\nServir le poulet sur le riz, accompagné des haricots verts. Arroser d\'un filet d\'huile d\'olive.',
+                        active: true
+                    },
+                    lunchLowCarb: {
+                        id: 'lunchLowCarb',
+                        mealType: 'lunch',
+                        displayName: 'Déjeuner (low-carb)',
+                        targetPercentOfDay: 0.30,
+                        macroSplit: { proteins: 0.45, carbs: 0.15, fats: 0.40 },
+                        foods: [
+                            { foodName: 'Poulet rôti', role: 'protein', min: 150, max: 350, priority: 1 },
+                            { foodName: 'Avocat', role: 'fat', min: 50, max: 150, priority: 2 },
+                            { foodName: 'Huile d\'olive', role: 'fat', min: 5, max: 12, priority: 3 },
+                            { foodName: 'Haricots verts', role: 'fiber', min: 150, max: 300, priority: 4 }
+                        ],
+                        recipe: 'Faire cuire le poulet à la poêle avec un peu d\'huile d\'olive jusqu\'à ce qu\'il soit bien doré et cuit à cœur.\n\nCuire les haricots verts à la vapeur pendant 10 minutes.\n\nCouper l\'avocat en tranches.\n\nServir le poulet avec les haricots verts et l\'avocat. Assaisonner avec l\'huile d\'olive, sel et poivre.',
+                        active: true
+                    },
+                    breakfast: {
+                        id: 'breakfast',
+                        mealType: 'breakfast',
+                        displayName: 'Petit-déjeuner',
+                        targetPercentOfDay: 0.25,
+                        macroSplit: { proteins: 0.30, carbs: 0.50, fats: 0.20 },
+                        foods: [
+                            { foodName: 'Fromage blanc 0%', role: 'protein', min: 100, max: 300, priority: 1 },
+                            { foodName: 'Flocons d\'avoine', role: 'carb', min: 40, max: 100, priority: 2 },
+                            { foodName: 'Banane', role: 'carb', min: 80, max: 150, priority: 3 },
+                            { foodName: 'Miel', role: 'carb', min: 5, max: 20, priority: 4 },
+                            { foodName: 'Amandes', role: 'fat', min: 10, max: 30, priority: 5 }
+                        ],
+                        recipe: 'Couper la banane en rondelles.\n\nDans un bol, mélanger le fromage blanc avec les flocons d\'avoine.\n\nAjouter les rondelles de banane et les amandes concassées.\n\nArroser de miel et bien mélanger.\n\nLaisser reposer 5 minutes pour que l\'avoine s\'hydrate. Déguster !',
+                        active: true
+                    },
+                    snack: {
+                        id: 'snack',
+                        mealType: 'snack',
+                        displayName: 'Goûter',
+                        targetPercentOfDay: 0.15,
+                        macroSplit: { proteins: 0.35, carbs: 0.45, fats: 0.20 },
+                        foods: [
+                            { foodName: 'Yaourt grec', role: 'protein', min: 100, max: 250, priority: 1 },
+                            { foodName: 'Pomme', role: 'carb', min: 100, max: 200, priority: 2 },
+                            { foodName: 'Amandes', role: 'fat', min: 10, max: 30, priority: 3 }
+                        ],
+                        recipe: 'Laver et couper la pomme en morceaux.\n\nDans un bol, verser le yaourt grec.\n\nAjouter les morceaux de pomme et les amandes entières ou concassées.\n\nMélanger et déguster immédiatement.',
+                        active: true
+                    },
+                    dinner: {
+                        id: 'dinner',
+                        mealType: 'dinner',
+                        displayName: 'Dîner',
+                        targetPercentOfDay: 0.30,
+                        macroSplit: { proteins: 0.40, carbs: 0.35, fats: 0.25 },
+                        foods: [
+                            { foodName: 'Saumon frais', role: 'protein', min: 120, max: 250, priority: 1 },
+                            { foodName: 'Pomme de terre', role: 'carb', min: 150, max: 350, priority: 2 },
+                            { foodName: 'Brocoli', role: 'fiber', min: 120, max: 250, priority: 3 },
+                            { foodName: 'Huile d\'olive', role: 'fat', min: 5, max: 15, priority: 4 }
+                        ],
+                        recipe: 'Préchauffer le four à 180°C.\n\nLaver les pommes de terre et les couper en quartiers. Les disposer sur une plaque et arroser d\'un peu d\'huile d\'olive. Enfourner pour 30-35 minutes.\n\nCuire le brocoli à la vapeur pendant 10 minutes.\n\nFaire cuire le saumon à la poêle avec un peu d\'huile d\'olive, 4-5 minutes de chaque côté.\n\nServir le saumon avec les pommes de terre rôties et le brocoli. Assaisonner avec sel, poivre et un filet d\'huile d\'olive.',
+                        active: true
+                    }
+                };
+
+                // Migrate each template
+                let migrated = 0;
+                for (const [key, template] of Object.entries(defaultTemplates)) {
+                    template.createdAt = new Date();
+                    template.updatedAt = new Date();
+                    await setDoc(doc(db, 'smartTemplates', template.id), template);
+                    migrated++;
+                }
+
+                await logAdminAction('migrate_smart_templates', { count: migrated });
+                showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${migrated} templates migrés avec succès`);
+                loadAdminSmartTemplates();
+
+            } catch (error) {
+                console.error('Erreur migration:', error);
+                customAlert('Erreur', 'Impossible de migrer les templates');
             }
         };
 
