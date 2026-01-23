@@ -18,7 +18,10 @@ service cloud.firestore {
     // ===== SMART TEMPLATES COLLECTION =====
     // Collection publique en lecture, admin seulement en écriture
     match /smartTemplates/{templateId} {
-      // Tout le monde peut lire les templates actifs (authentifié ou non)
+      // Les admins peuvent tout lire (actifs et inactifs)
+      allow read: if isAdmin();
+
+      // Tout le monde peut lire les templates actifs (pour le client)
       allow read: if resource.data.active == true;
 
       // Seuls les admins peuvent créer, modifier ou supprimer
