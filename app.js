@@ -366,6 +366,39 @@
                 }
             }
 
+            // Adapter le label et les boutons en mode guidé
+            const paceLabel = document.getElementById('pace-label');
+            const paceDeficitBtns = document.getElementById('pace-btns-deficit');
+            const paceMaintainBtns = document.getElementById('pace-btns-maintain');
+
+            if (goal === 'maintain') {
+                // Mode maintien : afficher la question de répartition
+                if (paceLabel) {
+                    paceLabel.innerHTML = '<i data-lucide="scale" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 4px;"></i>Quelle répartition préfères-tu ?';
+                    if (window.lucide) lucide.createIcons();
+                }
+                if (paceDeficitBtns) paceDeficitBtns.style.display = 'none';
+                if (paceMaintainBtns) {
+                    paceMaintainBtns.style.display = 'grid';
+                    // Sélectionner "Équilibré" par défaut si rien n'est actif
+                    if (!isLoading && !document.querySelector('#pace-btns-maintain .pace-btn.active')) {
+                        setTimeout(() => {
+                            if (typeof window.selectPace === 'function') {
+                                window.selectPace('balanced');
+                            }
+                        }, 50);
+                    }
+                }
+            } else {
+                // Mode sèche/prise : afficher la question de rythme
+                if (paceLabel) {
+                    paceLabel.innerHTML = '<i data-lucide="gauge" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 4px;"></i>Quel rythme souhaites-tu ?';
+                    if (window.lucide) lucide.createIcons();
+                }
+                if (paceDeficitBtns) paceDeficitBtns.style.display = 'grid';
+                if (paceMaintainBtns) paceMaintainBtns.style.display = 'none';
+            }
+
             // Sauvegarder le goal
             localStorage.setItem('calc_goal', goal);
 
@@ -406,6 +439,7 @@
 
             // Définir les valeurs selon le rythme, l'objectif ET l'activité
             const paceSettings = {
+                // Rythmes pour sèche/prise
                 gentle: {
                     deficit: 15,
                     surplus: 5,
@@ -427,10 +461,28 @@
                              12,                          // Actif: 12%
                     protein: activity <= 1.2 ? 1.8 : 2.0, // Sédentaire: moins de protéines
                     fat: 0.9
+                },
+                // Répartitions pour maintien
+                'high-carb': {
+                    protein: 1.8,
+                    fat: 0.7  // Moins de lipides = plus de glucides
+                },
+                'balanced': {
+                    protein: 2.0,
+                    fat: 0.9  // Équilibré classique
+                },
+                'high-fat': {
+                    protein: 1.8,
+                    fat: 1.1  // Plus de lipides = moins de glucides
                 }
             };
 
             const settings = paceSettings[pace];
+
+            if (!settings) {
+                console.error('Pace inconnu:', pace);
+                return;
+            }
 
             // Appliquer les valeurs selon l'objectif actuel
             if (currentGoal === 'cut') {
