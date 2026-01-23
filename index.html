@@ -2,7 +2,6 @@
 
 
 
-
 <!DOCTYPE html>
 <html lang="fr" style="overflow: hidden;">
 <head>
@@ -1503,16 +1502,19 @@
                                style="width: 100%; padding: var(--space-md); font-size: 0.95rem; background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary); transition: var(--transition-normal);">
                         <div id="quick-results-breakfast" class="quick-add-results" style="display: none;"></div></div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
-                       <button class="add-food-btn" onclick="openMealTemplatesModal('breakfast')" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                                Charger un repas type
-                            </button>
-                      <button class="add-food-btn" onclick="saveMealAsTemplate('breakfast')" style="border: 2px solid var(--accent-main); color: var(--accent-main);">
-                                Enregistrer comme repas type
-                            </button>
-                       <button class="add-food-btn" onclick="const div = document.getElementById('breakfast-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('breakfast-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                                <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
-                            </button>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
+                        <button class="add-food-btn" onclick="openSmartMealModal('breakfast')" style="border: 2px solid var(--accent-main); color: var(--accent-main); font-weight: 600;">
+                            <i data-lucide="sparkles" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Repas conseillé
+                        </button>
+                        <button class="add-food-btn" onclick="openMealTemplatesModal('breakfast')" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
+                            Charger un repas type
+                        </button>
+                        <button class="add-food-btn" onclick="saveMealAsTemplate('breakfast')" style="border: 2px solid var(--accent-purple); color: var(--accent-purple);">
+                            Enregistrer comme repas type
+                        </button>
+                        <button class="add-food-btn" onclick="const div = document.getElementById('breakfast-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('breakfast-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
+                            <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
+                        </button>
                     </div></div>
 
                 <!-- Déjeuner -->
@@ -1610,16 +1612,19 @@
                                style="width: 100%; padding: var(--space-md); font-size: 0.95rem; background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary); transition: var(--transition-normal);">
                         <div id="quick-results-snack" class="quick-add-results" style="display: none;"></div></div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
+                        <button class="add-food-btn" onclick="openSmartMealModal('snack')" style="border: 2px solid var(--accent-main); color: var(--accent-main); font-weight: 600;">
+                            <i data-lucide="sparkles" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Repas conseillé
+                        </button>
                         <button class="add-food-btn" onclick="openMealTemplatesModal('snack')" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                                Charger un repas type
-                            </button>
-                        <button class="add-food-btn" onclick="saveMealAsTemplate('snack')" style="border: 2px solid var(--accent-main); color: var(--accent-main);">
-                                Enregistrer comme repas type
-                            </button>
-                       <button class="add-food-btn" onclick="const div = document.getElementById('snack-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('snack-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                                <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
-                            </button>
+                            Charger un repas type
+                        </button>
+                        <button class="add-food-btn" onclick="saveMealAsTemplate('snack')" style="border: 2px solid var(--accent-purple); color: var(--accent-purple);">
+                            Enregistrer comme repas type
+                        </button>
+                        <button class="add-food-btn" onclick="const div = document.getElementById('snack-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('snack-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
+                            <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
+                        </button>
                     </div></div>
 
                 <!-- Dîner -->
@@ -1662,16 +1667,19 @@
                                style="width: 100%; padding: var(--space-md); font-size: 0.95rem; background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary); transition: var(--transition-normal);">
                         <div id="quick-results-dinner" class="quick-add-results" style="display: none;"></div></div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
+                        <button class="add-food-btn" onclick="openSmartMealModal('dinner')" style="border: 2px solid var(--accent-main); color: var(--accent-main); font-weight: 600;">
+                            <i data-lucide="sparkles" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Repas conseillé
+                        </button>
                         <button class="add-food-btn" onclick="openMealTemplatesModal('dinner')" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                                Charger un repas type
-                            </button>
-                        <button class="add-food-btn" onclick="saveMealAsTemplate('dinner')" style="border: 2px solid var(--accent-main); color: var(--accent-main);">
-                                Enregistrer comme repas type
-                            </button>
-                       <button class="add-food-btn" onclick="const div = document.getElementById('dinner-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('dinner-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                                <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
-                            </button>
+                            Charger un repas type
+                        </button>
+                        <button class="add-food-btn" onclick="saveMealAsTemplate('dinner')" style="border: 2px solid var(--accent-purple); color: var(--accent-purple);">
+                            Enregistrer comme repas type
+                        </button>
+                        <button class="add-food-btn" onclick="const div = document.getElementById('dinner-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('dinner-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
+                            <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
+                        </button>
                     </div></div></div>
 
             <div class="card">
