@@ -2717,6 +2717,13 @@ Solutions possibles :
         // Debounce pour la sauvegarde de recette
         let recipeDebounceTimer = null;
 
+        // Auto-resize textarea to fit content
+        function autoResizeTextarea(textarea) {
+            if (!textarea) return;
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.max(80, textarea.scrollHeight) + 'px';
+        }
+
         // Sauvegarder la recette d'un repas (avec debounce)
         function saveRecipe(mealType, recipeText) {
             const dateKey = getCurrentDateKey();
@@ -5565,6 +5572,7 @@ Solutions possibles :
                 // Mettre à jour le textarea
                 if (recipeInput) {
                     recipeInput.value = recipe;
+                    autoResizeTextarea(recipeInput);
                 }
 
                 // Afficher ou masquer la div de recette selon si elle existe
@@ -6638,7 +6646,10 @@ Solutions possibles :
                 allDailyMeals[dateKey][mealType].recipe = template.recipe;
                 // Mettre à jour le textarea de recette
                 const recipeInput = document.getElementById(`${mealType}-recipe-input`);
-                if (recipeInput) recipeInput.value = template.recipe;
+                if (recipeInput) {
+                    recipeInput.value = template.recipe;
+                    autoResizeTextarea(recipeInput);
+                }
             }
 
             dailyMeals = allDailyMeals[dateKey];
@@ -7152,6 +7163,7 @@ Solutions possibles :
                 const recipeTextarea = document.getElementById(`${mealType}-recipe-input`);
                 if (recipeTextarea) {
                     recipeTextarea.value = result.recipe;
+                    autoResizeTextarea(recipeTextarea);
                 }
                 // Show the recipe display section
                 const recipeDisplay = document.getElementById(`${mealType}-recipe`);
