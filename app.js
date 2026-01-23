@@ -6639,13 +6639,28 @@ Solutions possibles :
                     fats: 0.25      // 25% from fats
                 },
                 foods: [
-                    { foodName: 'Poulet rôti', role: 'protein', macroType: 'protein' },
-                    { foodName: 'Riz blanc cuit', role: 'carb', macroType: 'carbs' },
-                    { foodName: 'Huile d\'olive', role: 'fat', macroType: 'fats' },
-                    { foodName: 'Haricots verts', role: 'fiber', macroType: 'carbs' }
+                    { foodName: 'Poulet rôti', role: 'protein', min: 100, max: 300, priority: 1 },
+                    { foodName: 'Riz blanc cuit', role: 'carb', min: 80, max: 300, priority: 2 },
+                    { foodName: 'Huile d\'olive', role: 'fat', min: 5, max: 15, priority: 3 },
+                    { foodName: 'Haricots verts', role: 'fiber', min: 100, max: 250, priority: 4 }
+                ]
+            },
+            lunchLowCarb: {
+                mealType: 'lunch',
+                displayName: 'Déjeuner (low-carb)',
+                targetPercentOfDay: 0.30,
+                macroSplit: {
+                    proteins: 0.45,
+                    carbs: 0.15,
+                    fats: 0.40
+                },
+                foods: [
+                    { foodName: 'Poulet rôti', role: 'protein', min: 150, max: 350, priority: 1 },
+                    { foodName: 'Avocat', role: 'fat', min: 50, max: 150, priority: 2 },
+                    { foodName: 'Huile d\'olive', role: 'fat', min: 5, max: 12, priority: 3 },
+                    { foodName: 'Haricots verts', role: 'fiber', min: 150, max: 300, priority: 4 }
                 ]
             }
-            // Future templates can be added here (breakfast, dinner, snack)
         };
 
         // Smart rounding function - returns human-friendly quantities
@@ -6659,28 +6674,49 @@ Solutions possibles :
             }
         }
 
-        // Get remaining macros for the day
-        function getRemainingMacros() {
+        // Clamp value between min and max
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
+
+        // Get remaining macros for the day and context
+        function getRemainingMacrosWithContext() {
             const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
             const dateKey = getCurrentDateKey();
             const dayMeals = allDailyMeals[dateKey] || {};
             const consumed = calculateDayTotals(dayMeals);
 
-            return {
+            // Count existing meals
+            const mealsCount = ['breakfast', 'lunch', 'snack', 'dinner'].filter(mealType => {
+                const meal = dayMeals[mealType];
+                return meal && meal.foods && meal.foods.length > 0;
+            }).length;
+
+            const hasExistingMeals = mealsCount > 0;
+            const remainingMealsCount = 4 - mealsCount; // Assume 4 meals total
+
+            const remaining = {
                 calories: Math.max(0, (targets.calories || 0) - consumed.calories),
                 protein: Math.max(0, (targets.protein || 0) - consumed.protein),
                 carbs: Math.max(0, (targets.carbs || 0) - consumed.carbs),
                 fat: Math.max(0, (targets.fat || 0) - consumed.fat),
                 hasTargets: !!(targets.calories && targets.protein && targets.carbs && targets.fat)
             };
+
+            return {
+                targets,
+                remaining,
+                consumed,
+                hasExistingMeals,
+                remainingMealsCount: Math.max(1, remainingMealsCount)
+            };
         }
 
-        // Generate smart meal template
-        function generateSmartMeal(templateConfig) {
-            const remaining = getRemainingMacros();
+        // Generate smart meal template with improved logic
+        function generateSmartMeal(templateConfigKey) {
+            const context = getRemainingMacrosWithContext();
 
-            // If no targets set, show error
-            if (!remaining.hasTargets) {
+            if (!context.remaining.hasTargets) {
                 return {
                     success: false,
                     error: 'Aucun objectif macro défini',
@@ -6688,76 +6724,150 @@ Solutions possibles :
                 };
             }
 
-            // Determine base budget: remaining calories or daily targets
-            const dateKey = getCurrentDateKey();
-            const dayMeals = allDailyMeals[dateKey] || {};
-            const hasExistingMeals = Object.values(dayMeals).some(meal =>
-                meal && meal.foods && meal.foods.length > 0
-            );
+            // Check if we should use low-carb template
+            let selectedTemplateKey = templateConfigKey;
+            if (templateConfigKey === 'lunch' && context.hasExistingMeals) {
+                // If remaining carbs < 30g, switch to low-carb template
+                if (context.remaining.carbs < 30) {
+                    selectedTemplateKey = 'lunchLowCarb';
+                }
+            }
 
-            const baseBudget = hasExistingMeals ? remaining : JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const templateConfig = smartMealTemplates[selectedTemplateKey];
+            if (!templateConfig) {
+                return {
+                    success: false,
+                    error: 'Template non disponible',
+                    message: 'Ce template n\'existe pas.'
+                };
+            }
 
-            // Calculate meal targets (30% of base budget)
-            const mealCalories = baseBudget.calories * templateConfig.targetPercentOfDay;
+            // Calculate meal targets
+            let mealTargets;
+            if (context.hasExistingMeals) {
+                // Renormalize: distribute remaining macros across remaining meals
+                const percentForThisMeal = 1 / context.remainingMealsCount;
+                mealTargets = {
+                    protein: context.remaining.protein * percentForThisMeal,
+                    carbs: context.remaining.carbs * percentForThisMeal,
+                    fat: context.remaining.fat * percentForThisMeal
+                };
+            } else {
+                // Use fixed percentage of daily targets
+                mealTargets = {
+                    protein: context.targets.protein * templateConfig.targetPercentOfDay,
+                    carbs: context.targets.carbs * templateConfig.targetPercentOfDay,
+                    fat: context.targets.fat * templateConfig.targetPercentOfDay
+                };
+            }
 
-            // Calculate macro targets based on meal split
-            const proteinCals = mealCalories * templateConfig.macroSplit.proteins;
-            const carbsCals = mealCalories * templateConfig.macroSplit.carbs;
-            const fatsCals = mealCalories * templateConfig.macroSplit.fats;
-
-            // Convert calories to grams (protein: 4 cal/g, carbs: 4 cal/g, fats: 9 cal/g)
-            const targetMacros = {
-                protein: proteinCals / 4,
-                carbs: carbsCals / 4,
-                fat: fatsCals / 9
-            };
+            // Calculate target calories from macros
+            const targetCalories = (mealTargets.protein * 4) + (mealTargets.carbs * 4) + (mealTargets.fat * 9);
 
             // Find foods in database
-            const generatedFoods = [];
             const foodDb = window.foodDatabase || [];
+            const generatedFoods = [];
 
-            templateConfig.foods.forEach(foodConfig => {
-                const dbFood = foodDb.find(f => f.name === foodConfig.foodName);
-                if (!dbFood) return;
+            // Step 1: Calculate protein source quantity (highest priority)
+            const proteinFood = templateConfig.foods.find(f => f.role === 'protein');
+            if (proteinFood) {
+                const dbFood = foodDb.find(f => f.name === proteinFood.foodName);
+                if (dbFood) {
+                    // Target: provide ~70% of protein needs from main protein source
+                    let quantity = (mealTargets.protein * 0.7 / dbFood.protein) * 100;
+                    quantity = smartRound(quantity);
+                    quantity = clamp(quantity, proteinFood.min, proteinFood.max);
 
-                let quantity = 0;
-
-                // Calculate quantity based on role
-                if (foodConfig.role === 'protein') {
-                    // Main protein source - aim for target protein grams
-                    quantity = (targetMacros.protein / dbFood.protein) * 100;
-                } else if (foodConfig.role === 'carb') {
-                    // Main carb source - aim for target carbs grams
-                    quantity = (targetMacros.carbs / dbFood.carbs) * 100;
-                } else if (foodConfig.role === 'fat') {
-                    // Main fat source - aim for target fat grams
-                    quantity = (targetMacros.fat / dbFood.fat) * 100;
-                } else if (foodConfig.role === 'fiber') {
-                    // Vegetables - fixed reasonable portion
-                    quantity = 150; // 150g of vegetables
+                    generatedFoods.push({
+                        ...dbFood,
+                        quantity: quantity,
+                        role: 'protein',
+                        id: Date.now() + Math.random()
+                    });
                 }
+            }
 
-                // Apply smart rounding
-                quantity = smartRound(quantity);
-
-                // Ensure minimum quantity
-                if (quantity < 5) quantity = 5;
-
-                generatedFoods.push({
-                    ...dbFood,
-                    quantity: quantity,
-                    id: Date.now() + Math.random()
-                });
+            // Calculate macros from protein source
+            let providedMacros = { protein: 0, carbs: 0, fat: 0, calories: 0 };
+            generatedFoods.forEach(food => {
+                providedMacros.protein += (food.protein * food.quantity / 100);
+                providedMacros.carbs += (food.carbs * food.quantity / 100);
+                providedMacros.fat += (food.fat * food.quantity / 100);
+                providedMacros.calories += (food.calories * food.quantity / 100);
             });
 
-            // Calculate actual macros from generated foods
-            let actualMacros = {
-                calories: 0,
-                protein: 0,
-                carbs: 0,
-                fat: 0
-            };
+            // Step 2: Calculate carb source quantity (if not low-carb)
+            const carbFood = templateConfig.foods.find(f => f.role === 'carb');
+            if (carbFood) {
+                const dbFood = foodDb.find(f => f.name === carbFood.foodName);
+                if (dbFood) {
+                    // Remaining carbs needed
+                    const remainingCarbs = Math.max(0, mealTargets.carbs - providedMacros.carbs);
+                    let quantity = (remainingCarbs / dbFood.carbs) * 100;
+                    quantity = smartRound(quantity);
+                    quantity = clamp(quantity, carbFood.min, carbFood.max);
 
+                    generatedFoods.push({
+                        ...dbFood,
+                        quantity: quantity,
+                        role: 'carb',
+                        id: Date.now() + Math.random()
+                    });
+
+                    // Update provided macros
+                    providedMacros.protein += (dbFood.protein * quantity / 100);
+                    providedMacros.carbs += (dbFood.carbs * quantity / 100);
+                    providedMacros.fat += (dbFood.fat * quantity / 100);
+                    providedMacros.calories += (dbFood.calories * quantity / 100);
+                }
+            }
+
+            // Step 3: Add vegetables (fixed portion)
+            const fiberFood = templateConfig.foods.find(f => f.role === 'fiber');
+            if (fiberFood) {
+                const dbFood = foodDb.find(f => f.name === fiberFood.foodName);
+                if (dbFood) {
+                    let quantity = 150; // Standard portion
+                    quantity = smartRound(quantity);
+                    quantity = clamp(quantity, fiberFood.min, fiberFood.max);
+
+                    generatedFoods.push({
+                        ...dbFood,
+                        quantity: quantity,
+                        role: 'fiber',
+                        id: Date.now() + Math.random()
+                    });
+
+                    // Update provided macros
+                    providedMacros.protein += (dbFood.protein * quantity / 100);
+                    providedMacros.carbs += (dbFood.carbs * quantity / 100);
+                    providedMacros.fat += (dbFood.fat * quantity / 100);
+                    providedMacros.calories += (dbFood.calories * quantity / 100);
+                }
+            }
+
+            // Step 4: Calculate fat source quantity (oil) to reach target
+            const fatFood = templateConfig.foods.find(f => f.role === 'fat');
+            if (fatFood) {
+                const dbFood = foodDb.find(f => f.name === fatFood.foodName);
+                if (dbFood) {
+                    // Remaining fat needed
+                    const remainingFat = Math.max(0, mealTargets.fat - providedMacros.fat);
+                    let quantity = (remainingFat / dbFood.fat) * 100;
+                    quantity = smartRound(quantity);
+                    quantity = clamp(quantity, fatFood.min, fatFood.max);
+
+                    generatedFoods.push({
+                        ...dbFood,
+                        quantity: quantity,
+                        role: 'fat',
+                        id: Date.now() + Math.random()
+                    });
+                }
+            }
+
+            // Final calculation of actual macros
+            let actualMacros = { calories: 0, protein: 0, carbs: 0, fat: 0 };
             generatedFoods.forEach(food => {
                 actualMacros.calories += (food.calories * food.quantity / 100);
                 actualMacros.protein += (food.protein * food.quantity / 100);
@@ -6765,66 +6875,50 @@ Solutions possibles :
                 actualMacros.fat += (food.fat * food.quantity / 100);
             });
 
-            // Check if adjustment needed (if calories off by more than 5%)
-            const calorieError = Math.abs(actualMacros.calories - mealCalories);
-            const errorPercent = calorieError / mealCalories;
-
-            if (errorPercent > 0.05) {
-                // Adjust carb source (rice) first
-                const carbFood = generatedFoods.find(f => f.name === 'Riz blanc cuit');
-                if (carbFood) {
-                    const calorieDiff = mealCalories - actualMacros.calories;
-                    const adjustmentGrams = (calorieDiff / carbFood.calories) * 100;
-                    carbFood.quantity = smartRound(carbFood.quantity + adjustmentGrams);
-
-                    // Ensure minimum
-                    if (carbFood.quantity < 10) carbFood.quantity = 10;
-
-                    // Recalculate macros
-                    actualMacros = {calories: 0, protein: 0, carbs: 0, fat: 0};
-                    generatedFoods.forEach(food => {
-                        actualMacros.calories += (food.calories * food.quantity / 100);
-                        actualMacros.protein += (food.protein * food.quantity / 100);
-                        actualMacros.carbs += (food.carbs * food.quantity / 100);
-                        actualMacros.fat += (food.fat * food.quantity / 100);
-                    });
-                }
-            }
-
             return {
                 success: true,
                 foods: generatedFoods,
                 macros: actualMacros,
-                mealType: templateConfig.mealType
+                mealType: templateConfig.mealType,
+                templateName: templateConfig.displayName,
+                isLowCarb: selectedTemplateKey === 'lunchLowCarb'
             };
         }
 
         // Open smart meal modal
         window.openSmartMealModal = function(mealType) {
-            const templateConfig = smartMealTemplates[mealType];
-            if (!templateConfig) {
-                showToast('<i data-lucide="x-circle" class="icon-inline"></i> Template non disponible pour ce repas');
-                return;
-            }
-
             // Generate the meal
-            const result = generateSmartMeal(templateConfig);
+            const result = generateSmartMeal(mealType);
 
             if (!result.success) {
                 customAlert('<i data-lucide="alert-circle" class="icon-inline"></i> ' + result.error, result.message);
                 return;
             }
 
+            // Show info message if low-carb was auto-selected
+            const lowCarbNotice = result.isLowCarb ?
+                `<div style="background: rgba(255, 193, 7, 0.1); border-left: 3px solid #ffc107; padding: var(--space-md); border-radius: var(--radius-sm); margin-bottom: var(--space-lg);">
+                    <div style="display: flex; gap: var(--space-sm); align-items: start;">
+                        <i data-lucide="info" style="width: 18px; height: 18px; color: #ffc107; flex-shrink: 0; margin-top: 2px;"></i>
+                        <p style="margin: 0; color: var(--text-primary); font-size: 0.9rem; line-height: 1.5;">
+                            <strong>Version low-carb sélectionnée automatiquement</strong><br>
+                            Il te reste moins de 30g de glucides aujourd'hui, j'ai donc adapté le repas en conséquence.
+                        </p>
+                    </div>
+                </div>` : '';
+
             // Create modal HTML
             const modalHtml = `
                 <div id="smartMealModal" class="modal active">
                     <div class="modal-content">
                         <button class="modal-close" onclick="closeSmartMealModal()">×</button>
-                        <h2 class="modal-title">${templateConfig.displayName} conseillé</h2>
+                        <h2 class="modal-title">${result.templateName}</h2>
 
                         <p style="color: var(--text-secondary); margin-bottom: var(--space-lg); line-height: 1.6;">
                             Ce repas est adapté à ton objectif et à ce qu'il te reste aujourd'hui.
                         </p>
+
+                        ${lowCarbNotice}
 
                         <div style="background: var(--bg-tertiary); padding: var(--space-lg); border-radius: var(--radius-md); margin-bottom: var(--space-lg);">
                             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); margin-bottom: var(--space-md);">
@@ -6932,7 +7026,15 @@ Solutions possibles :
             syncMealsToPlanning();
 
             closeSmartMealModal();
-            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Déjeuner conseillé ajouté');
+
+            const mealNames = {
+                'breakfast': 'Petit-déjeuner',
+                'lunch': 'Déjeuner',
+                'snack': 'Goûter',
+                'dinner': 'Dîner'
+            };
+            const mealName = mealNames[mealType] || 'Repas';
+            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${mealName} conseillé ajouté`);
         };
 
         // ===== DEDICATED MEAL TEMPLATES PAGE =====
