@@ -7612,9 +7612,25 @@
             if (!isAdmin()) return;
 
             try {
+                // Update in Firestore
                 await updateDoc(doc(db, 'aliments_communs', foodId), {
                     verified: setVerified
                 });
+
+                // IMPORTANT: Also update in foodDatabase (used by users)
+                if (typeof foodDatabase !== 'undefined' && Array.isArray(foodDatabase)) {
+                    const foodInDb = foodDatabase.find(f => f.barcode === foodId);
+                    if (foodInDb) {
+                        foodInDb.verified = setVerified;
+                        console.log(`✅ Updated verified status in foodDatabase for ${foodInDb.name}`);
+
+                        // Refresh the user's food list if it's currently displayed
+                        if (typeof renderFoodDatabase === 'function') {
+                            renderFoodDatabase();
+                        }
+                    }
+                }
+
                 await logAdminAction(setVerified ? 'verify_food' : 'unverify_food', { foodId });
                 loadAdminFoods();
                 if (typeof showToast === 'function') {
