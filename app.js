@@ -6923,16 +6923,28 @@ Solutions possibles :
                 };
             }
 
-            // Check if we should use low-carb template
-            let selectedTemplateKey = templateConfigKey;
-            if (templateConfigKey === 'lunch' && context.hasExistingMeals) {
-                // If remaining carbs < 30g, switch to low-carb template
-                if (context.remaining.carbs < 30) {
-                    selectedTemplateKey = 'lunchLowCarb';
-                }
+            // Find all templates that match the meal type
+            const mealType = templateConfigKey === 'lunchLowCarb' ? 'lunch' : templateConfigKey;
+            const matchingTemplates = Object.values(smartMealTemplates).filter(t => t.mealType === mealType);
+
+            if (matchingTemplates.length === 0) {
+                return {
+                    success: false,
+                    error: 'Template non disponible',
+                    message: 'Aucun repas conseillé disponible pour ce type de repas.'
+                };
             }
 
-            const templateConfig = smartMealTemplates[selectedTemplateKey];
+            // Check if we should use low-carb template
+            let templateConfig;
+            if (templateConfigKey === 'lunch' && context.hasExistingMeals && context.remaining.carbs < 30) {
+                // Try to find a low-carb variant
+                templateConfig = matchingTemplates.find(t => t.variant === 'lowCarb') || matchingTemplates[0];
+            } else {
+                // Use the first matching template (priority: standard variant)
+                templateConfig = matchingTemplates.find(t => !t.variant || t.variant === 'standard' || t.variant === '') || matchingTemplates[0];
+            }
+
             if (!templateConfig) {
                 return {
                     success: false,
