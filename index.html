@@ -3669,37 +3669,23 @@
                     <i data-lucide="sparkles" style="width: 24px; height: 24px;"></i>
                     <span>Gestion des Repas Conseillés</span>
                 </h2>
-                <button onclick="openSmartTemplateModal()" class="btn" style="background: var(--accent-main); display: flex; align-items: center; gap: var(--space-xs);">
-                    <i data-lucide="plus" style="width: 18px; height: 18px;"></i>
-                    Créer un template
-                </button>
-            </div>
-
-            <!-- Migration tool -->
-            <div class="card" style="margin-bottom: var(--space-md); background: rgba(255, 193, 7, 0.1); border-left: 3px solid #ffc107;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: var(--space-xs); color: var(--text-primary);">
-                            <i data-lucide="database" style="width: 18px; height: 18px;"></i> Migration des templates
-                        </h3>
-                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">
-                            Importez les templates par défaut depuis le code vers Firestore (à faire une seule fois)
-                        </p>
-                    </div>
-                    <button onclick="migrateSmartTemplatesToFirestore()" class="btn" style="background: #ffc107; color: #000;">
+                <div style="display: flex; gap: var(--space-sm);">
+                    <button onclick="migrateSmartTemplatesToFirestore()" class="btn" style="background: #ffc107; color: #000;" title="Importer les 5 templates par défaut depuis le code vers Firestore (à faire une seule fois)">
                         <i data-lucide="upload" style="width: 16px; height: 16px;"></i>
                         Migrer
+                    </button>
+                    <button onclick="openSmartTemplateModal()" class="btn" style="background: var(--accent-main); display: flex; align-items: center; gap: var(--space-xs);">
+                        <i data-lucide="plus" style="width: 18px; height: 18px;"></i>
+                        Créer un template
                     </button>
                 </div>
             </div>
 
             <!-- Liste des templates -->
-            <div class="card">
-                <div id="smart-templates-list" style="display: flex; flex-direction: column; gap: var(--space-md);">
-                    <div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);">
-                        <i data-lucide="loader" style="width: 32px; height: 32px;"></i>
-                        <p>Chargement des templates...</p>
-                    </div>
+            <div id="smart-templates-list" style="display: flex; flex-direction: column; gap: var(--space-md);">
+                <div style="text-align: center; color: var(--text-secondary); padding: var(--space-3xl);">
+                    <i data-lucide="loader" style="width: 32px; height: 32px;"></i>
+                    <p>Chargement des templates...</p>
                 </div>
             </div>
         </div>
@@ -7812,8 +7798,9 @@
                         </div>
                     `;
                 } else {
-                    container.innerHTML = templates.map(template => {
-                        const activeClass = template.active ? 'success' : 'danger';
+                    container.innerHTML = templates.map((template, index) => {
+                        const activeBg = template.active ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+                        const activeColor = template.active ? '#10b981' : '#ef4444';
                         const activeLabel = template.active ? 'Actif' : 'Inactif';
                         const mealTypeLabels = {
                             breakfast: '🌅 Petit-déjeuner',
@@ -7823,76 +7810,83 @@
                         };
 
                         return `
-                            <div class="card" style="padding: var(--space-lg);">
-                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: var(--space-md);">
+                            <div class="card" style="padding: 0; overflow: hidden;">
+                                <!-- Header accordéon -->
+                                <div onclick="toggleTemplateAccordion('${template.id}')" style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-lg); cursor: pointer; transition: background 0.2s;">
                                     <div style="flex: 1;">
                                         <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-xs);">
                                             <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin: 0;">
                                                 ${template.displayName || template.id}
                                             </h3>
-                                            <span class="badge badge-${activeClass}" style="font-size: 0.75rem; padding: 2px 8px;">
+                                            <span style="font-size: 0.75rem; padding: 3px 10px; background: ${activeBg}; color: ${activeColor}; border-radius: var(--radius-md); font-weight: 600;">
                                                 ${activeLabel}
                                             </span>
                                         </div>
                                         <div style="color: var(--text-secondary); font-size: 0.9rem;">
-                                            ${mealTypeLabels[template.mealType] || template.mealType} • ID: ${template.id}
+                                            ${mealTypeLabels[template.mealType] || template.mealType} • ${Math.round((template.targetPercentOfDay || 0) * 100)}% objectif journalier
                                         </div>
                                     </div>
-                                    <div style="display: flex; gap: var(--space-xs);">
-                                        <button onclick="editSmartTemplate('${template.id}')" class="btn-icon" title="Modifier">
-                                            <i data-lucide="edit-2" style="width: 16px; height: 16px;"></i>
-                                        </button>
-                                        <button onclick="toggleSmartTemplateActive('${template.id}', ${!template.active})" class="btn-icon" title="${template.active ? 'Désactiver' : 'Activer'}">
-                                            <i data-lucide="${template.active ? 'eye-off' : 'eye'}" style="width: 16px; height: 16px;"></i>
-                                        </button>
-                                        <button onclick="deleteSmartTemplate('${template.id}')" class="btn-icon danger" title="Supprimer">
-                                            <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
-                                        </button>
+                                    <div style="display: flex; align-items: center; gap: var(--space-md);">
+                                        <div style="position: relative;">
+                                            <button onclick="event.stopPropagation(); toggleTemplateMenu('${template.id}')" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.5rem; padding: var(--space-xs); transition: color 0.2s;" title="Options">
+                                                ⋯
+                                            </button>
+                                            <div id="template-menu-${template.id}" class="meal-menu-dropdown" style="display: none; position: absolute; right: 0; top: 100%; background: var(--bg-secondary); border-radius: var(--radius-md); padding: var(--space-xs); min-width: 160px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1000;">
+                                                <div class="meal-menu-item" onclick="event.stopPropagation(); editSmartTemplate('${template.id}')"><i data-lucide="edit-2" style="width: 16px; height: 16px;"></i> Modifier</div>
+                                                <div class="meal-menu-item" onclick="event.stopPropagation(); editTemplateTitle('${template.id}', '${template.displayName}')"><i data-lucide="type" style="width: 16px; height: 16px;"></i> Modifier le titre</div>
+                                                <div class="meal-menu-item" onclick="event.stopPropagation(); toggleSmartTemplateActive('${template.id}', ${!template.active})"><i data-lucide="${template.active ? 'eye-off' : 'eye'}" style="width: 16px; height: 16px;"></i> ${template.active ? 'Désactiver' : 'Activer'}</div>
+                                                <div class="meal-menu-item danger" onclick="event.stopPropagation(); deleteSmartTemplate('${template.id}')"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Supprimer</div>
+                                            </div>
+                                        </div>
+                                        <i data-lucide="chevron-down" id="template-chevron-${template.id}" style="width: 20px; height: 20px; color: var(--text-secondary); transition: transform 0.3s;"></i>
                                     </div>
                                 </div>
 
-                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-sm); margin-bottom: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                                    <div style="text-align: center;">
-                                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Objectif/Jour</div>
-                                        <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-main);">${Math.round((template.targetPercentOfDay || 0) * 100)}%</div>
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Protéines</div>
-                                        <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-protein);">${Math.round((template.macroSplit?.proteins || 0) * 100)}%</div>
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Glucides</div>
-                                        <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-carbs);">${Math.round((template.macroSplit?.carbs || 0) * 100)}%</div>
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Lipides</div>
-                                        <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-fat);">${Math.round((template.macroSplit?.fats || 0) * 100)}%</div>
-                                    </div>
-                                </div>
-
-                                <div style="margin-bottom: var(--space-md);">
-                                    <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: var(--space-xs); color: var(--text-primary);">
-                                        <i data-lucide="utensils" style="width: 14px; height: 14px;"></i> Aliments (${(template.foods || []).length})
-                                    </div>
-                                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
-                                        ${(template.foods || []).map(food => `
-                                            <span style="background: var(--bg-tertiary); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--text-secondary);">
-                                                ${food.foodName} (${food.min}-${food.max}g)
-                                            </span>
-                                        `).join('')}
-                                    </div>
-                                </div>
-
-                                ${template.recipe ? `
-                                    <div style="margin-top: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md); border-left: 3px solid var(--accent-carbs);">
-                                        <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: var(--space-xs); color: var(--accent-carbs);">
-                                            <i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Recette
+                                <!-- Contenu accordéon -->
+                                <div id="template-content-${template.id}" style="display: none; padding: 0 var(--space-lg) var(--space-lg) var(--space-lg);">
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-sm); margin-bottom: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                                        <div style="text-align: center;">
+                                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Objectif/Jour</div>
+                                            <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-main);">${Math.round((template.targetPercentOfDay || 0) * 100)}%</div>
                                         </div>
-                                        <div style="font-size: 0.85rem; color: var(--text-secondary); white-space: pre-line; max-height: 120px; overflow-y: auto;">
-                                            ${template.recipe}
+                                        <div style="text-align: center;">
+                                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Protéines</div>
+                                            <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-protein);">${Math.round((template.macroSplit?.proteins || 0) * 100)}%</div>
+                                        </div>
+                                        <div style="text-align: center;">
+                                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Glucides</div>
+                                            <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-carbs);">${Math.round((template.macroSplit?.carbs || 0) * 100)}%</div>
+                                        </div>
+                                        <div style="text-align: center;">
+                                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Lipides</div>
+                                            <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-fat);">${Math.round((template.macroSplit?.fats || 0) * 100)}%</div>
                                         </div>
                                     </div>
-                                ` : ''}
+
+                                    <div style="margin-bottom: var(--space-md);">
+                                        <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: var(--space-xs); color: var(--text-primary);">
+                                            <i data-lucide="utensils" style="width: 14px; height: 14px;"></i> Aliments (${(template.foods || []).length})
+                                        </div>
+                                        <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+                                            ${(template.foods || []).map(food => `
+                                                <span style="background: var(--bg-tertiary); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--text-secondary);">
+                                                    ${food.foodName} (${food.min}-${food.max}g)
+                                                </span>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    ${template.recipe ? `
+                                        <div style="margin-top: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md); border-left: 3px solid var(--accent-carbs);">
+                                            <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: var(--space-xs); color: var(--accent-carbs);">
+                                                <i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Recette
+                                            </div>
+                                            <div style="font-size: 0.85rem; color: var(--text-secondary); white-space: pre-line; max-height: 200px; overflow-y: auto;">
+                                                ${template.recipe}
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                </div>
                             </div>
                         `;
                     }).join('');
@@ -7908,6 +7902,62 @@
                         <p>Erreur lors du chargement des templates</p>
                     </div>
                 `;
+            }
+        };
+
+        // Toggle Template Accordion
+        window.toggleTemplateAccordion = function(templateId) {
+            const content = document.getElementById(`template-content-${templateId}`);
+            const chevron = document.getElementById(`template-chevron-${templateId}`);
+
+            if (content.style.display === 'none' || !content.style.display) {
+                content.style.display = 'block';
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+            } else {
+                content.style.display = 'none';
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+            }
+        };
+
+        // Toggle Template Menu
+        window.toggleTemplateMenu = function(templateId) {
+            // Fermer tous les autres menus
+            document.querySelectorAll('[id^="template-menu-"]').forEach(menu => {
+                if (menu.id !== `template-menu-${templateId}`) {
+                    menu.style.display = 'none';
+                }
+            });
+
+            const menu = document.getElementById(`template-menu-${templateId}`);
+            if (menu) {
+                menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+            }
+        };
+
+        // Fermer les menus quand on clique ailleurs
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('[id^="template-menu-"]') && !e.target.closest('button[onclick*="toggleTemplateMenu"]')) {
+                document.querySelectorAll('[id^="template-menu-"]').forEach(menu => {
+                    menu.style.display = 'none';
+                });
+            }
+        });
+
+        // Edit Template Title
+        window.editTemplateTitle = async function(templateId, currentTitle) {
+            if (!isAdmin()) return;
+
+            const newTitle = prompt('Nouveau titre du template:', currentTitle);
+            if (!newTitle || newTitle === currentTitle) return;
+
+            try {
+                await updateDoc(doc(db, 'smartTemplates', templateId), { displayName: newTitle.trim() });
+                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Titre mis à jour');
+                loadAdminSmartTemplates();
+                await logAdminAction('update_template_title', { templateId, newTitle });
+            } catch (error) {
+                console.error('Erreur modification titre:', error);
+                customAlert('Erreur', 'Impossible de modifier le titre du template');
             }
         };
 
