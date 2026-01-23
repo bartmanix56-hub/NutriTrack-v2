@@ -1570,11 +1570,15 @@
         /* ===== HERO HEADERS DESKTOP - PADDING RÉDUIT ===== */
         .tab-content > div:first-child[style*="background: linear-gradient"] {
             padding: 12px 32px !important;
+            display: flex !important;
+            align-items: center !important;
+            min-height: auto !important;
         }
 
         /* Centrer le contenu flex (icône + texte) */
         .tab-content > div:first-child[style*="background: linear-gradient"] > div[style*="display: flex"] {
             align-items: center !important;
+            margin-bottom: 0 !important;
         }
 
         /* Réduire l'espace entre titre et sous-titre */
