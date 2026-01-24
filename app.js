@@ -1472,7 +1472,8 @@ Solutions possibles :
                                 category: item.category || 'autres',
                                 barcode: item.barcode || item.id,
                                 unit: '100g',
-                                fromFirestore: true
+                                fromFirestore: true,
+                                verified: item.verified || false
                             }));
 
                             // Fusionner : Firestore en premier, puis local (sans doublons)
@@ -1782,7 +1783,8 @@ Solutions possibles :
                                 category: item.category || 'autres',
                                 barcode: item.barcode || item.id,
                                 unit: '100g',
-                                fromFirestore: true
+                                fromFirestore: true,
+                                verified: item.verified || false
                             }));
 
                             // Merge: Firestore + local (no duplicates), favorites first
