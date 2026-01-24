@@ -5057,21 +5057,6 @@ Solutions possibles :
             });
             let allFoods = Array.from(foodMap.values());
 
-            // CHARGER ALIMENTS COMMUNAUTAIRES si filtre "community" sélectionné (même sans recherche)
-            if (filter === 'community' && typeof window.loadCommunityFoods === 'function') {
-                try {
-                    const communityFoods = await window.loadCommunityFoods();
-                    communityFoods.forEach(item => {
-                        if (!foodMap.has(item.name)) {
-                            foodMap.set(item.name, item);
-                        }
-                    });
-                    allFoods = Array.from(foodMap.values());
-                } catch (err) {
-                    console.error('Erreur chargement aliments communautaires:', err);
-                }
-            }
-
             // RECHERCHE FIRESTORE (si query >= 2 caractères ou code-barres numérique)
             if (query && (query.length >= 2 || /^\d+$/.test(query))) {
 
@@ -5091,7 +5076,8 @@ Solutions possibles :
                                 barcode: query,
                                 unit: '100g',
                                 custom: false,
-                                fromFirestore: true
+                                fromFirestore: true,
+                                verified: directResult.verified || false
                             };
 
                             if (!foodMap.has(foodItem.name)) {
@@ -5122,7 +5108,8 @@ Solutions possibles :
                                 barcode: item.barcode || item.id,
                                 unit: '100g',
                                 custom: false,
-                                fromFirestore: true // Marquer comme provenant de Firestore
+                                fromFirestore: true,
+                                verified: item.verified || false
                             };
 
                             // Ajouter uniquement si pas déjà présent (éviter doublons)
@@ -5146,11 +5133,8 @@ Solutions possibles :
 
             if (filter === 'custom') {
                 filtered = filtered.filter(f => f.custom === true);
-            } else if (filter === 'community') {
-                filtered = filtered.filter(f => f.fromFirestore === true);
-            } else if (filter === 'default') {
-                filtered = filtered.filter(f => !f.custom && !f.fromFirestore);
             }
+            // Plus de filtre "community" ou "default" car tous les aliments viennent de Firestore
 
             // Fuzzy search if query provided
             if (query) {
