@@ -5736,6 +5736,8 @@
 
         // ===== CHARGER FOODDATABASE DEPUIS FIRESTORE (Source unique) =====
         window.loadFoodDatabaseFromFirestore = async function() {
+            console.log('🎯 [DEBUG] loadFoodDatabaseFromFirestore appelée ! foodDatabaseLoaded =', foodDatabaseLoaded);
+
             // Si déjà chargé, ne pas recharger
             if (foodDatabaseLoaded) {
                 console.log('✅ foodDatabase déjà chargé depuis Firestore');
@@ -6352,9 +6354,16 @@
                     // USER CONNECTÉ → Charger données + afficher l'app
                     console.log('✅ User connecté:', user.email);
 
+                    // DEBUG: Vérifier si la fonction existe
+                    console.log('🔍 [DEBUG] typeof window.loadFoodDatabaseFromFirestore:', typeof window.loadFoodDatabaseFromFirestore);
+
                     // Charger la base d'aliments depuis Firestore (CRITIQUE pour badges vérifiés)
                     if (typeof window.loadFoodDatabaseFromFirestore === 'function') {
+                        console.log('🚀 [DEBUG] Appel de loadFoodDatabaseFromFirestore...');
                         await window.loadFoodDatabaseFromFirestore();
+                        console.log('✅ [DEBUG] loadFoodDatabaseFromFirestore terminé');
+                    } else {
+                        console.error('❌ [DEBUG] loadFoodDatabaseFromFirestore n\'existe pas !');
                     }
 
                     // Charger les données depuis Firestore (source de vérité)
