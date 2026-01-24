@@ -5209,9 +5209,8 @@ Solutions possibles :
                             return `
                                 <div class="food-item" data-food-index="${globalIndex}" style="background: rgba(0, 0, 0, 0.2);">
                                     <div>
-                                        <div class="food-name">${getDisplayName(food)} ${food.verified ? '<span style="display: inline-flex; align-items: center; gap: 2px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600;">✅ Vérifié</span>' : ''} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''} ${food.fromFirestore ? '<i data-lucide="cloud" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-ui);"></i>' : ''}</div>
+                                        <div class="food-name">${getDisplayName(food)} ${food.verified ? '<span style="display: inline-flex; align-items: center; gap: 2px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600;">✅ Vérifié</span>' : ''} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''}</div>
                                         ${food.custom ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Personnalisé</span>' : ''}
-                                        ${food.fromFirestore ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Base communautaire</span>' : ''}
                                     </div>
                                     <div class="food-macros">
                                         <span><div class="label">Prot</div><div class="value" style="color: var(--accent-protein)">${food.protein}g</div></span>
