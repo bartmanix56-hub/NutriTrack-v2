@@ -5761,8 +5761,8 @@
                 const q = query(collection(db, 'aliments_communs'));
                 const querySnapshot = await getDocs(q);
 
-                // Réinitialiser foodDatabase
-                foodDatabase = [];
+                // Créer un tableau temporaire pour les aliments Firestore
+                const firestoreFoods = [];
 
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
@@ -5787,18 +5787,23 @@
                             console.log(`✅ [loadFirestore] Aliment vérifié chargé: ${foodItem.name}`);
                         }
 
-                        foodDatabase.push(foodItem);
+                        firestoreFoods.push(foodItem);
                     }
                 });
 
-                foodDatabaseLoaded = true;
-                console.log(`✅ foodDatabase chargé depuis Firestore: ${foodDatabase.length} aliments`);
+                // Si on a récupéré des aliments de Firestore, remplacer foodDatabase
+                if (firestoreFoods.length > 0) {
+                    window.foodDatabase = firestoreFoods;
+                    foodDatabaseLoaded = true;
+                    console.log(`✅ foodDatabase chargé depuis Firestore: ${firestoreFoods.length} aliments`);
+                } else {
+                    console.warn('⚠️ Aucun aliment trouvé dans Firestore, utilisation de la base hardcodée');
+                    foodDatabaseLoaded = true;
+                }
 
             } catch (error) {
                 console.error('❌ Erreur chargement foodDatabase depuis Firestore:', error);
-                // Fallback vers la base legacy
-                console.warn('⚠️ Utilisation de foodDatabaseLegacy en fallback');
-                foodDatabase = [...foodDatabaseLegacy];
+                console.warn('⚠️ Utilisation de la base hardcodée en fallback');
                 foodDatabaseLoaded = true;
             }
         };
