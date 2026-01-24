@@ -6352,6 +6352,11 @@
                     // USER CONNECTÉ → Charger données + afficher l'app
                     console.log('✅ User connecté:', user.email);
 
+                    // Charger la base d'aliments depuis Firestore (CRITIQUE pour badges vérifiés)
+                    if (typeof window.loadFoodDatabaseFromFirestore === 'function') {
+                        await window.loadFoodDatabaseFromFirestore();
+                    }
+
                     // Charger les données depuis Firestore (source de vérité)
                     const cloudData = await loadFromFirestore(user);
 
