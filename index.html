@@ -5789,11 +5789,14 @@
                     }
                 });
 
-                // Si on a récupéré des aliments de Firestore, remplacer foodDatabase
+                // Si on a récupéré des aliments de Firestore, remplir foodDatabase
                 if (firestoreFoods.length > 0) {
-                    window.foodDatabase = firestoreFoods;
+                    // IMPORTANT : Ne pas remplacer window.foodDatabase par un nouveau tableau
+                    // car app.js a une référence locale. Il faut vider et remplir le tableau existant.
+                    window.foodDatabase.length = 0; // Vider
+                    firestoreFoods.forEach(f => window.foodDatabase.push(f)); // Remplir
                     foodDatabaseLoaded = true;
-                    console.log(`✅ foodDatabase chargé depuis Firestore: ${firestoreFoods.length} aliments`);
+                    console.log(`✅ foodDatabase chargé depuis Firestore: ${window.foodDatabase.length} aliments`);
                 } else {
                     console.warn('⚠️ Aucun aliment trouvé dans Firestore, utilisation de la base hardcodée');
                     foodDatabaseLoaded = true;
