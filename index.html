@@ -6367,6 +6367,12 @@
                         console.log('🚀 [DEBUG] Appel de loadFoodDatabaseFromFirestore...');
                         await window.loadFoodDatabaseFromFirestore();
                         console.log('✅ [DEBUG] loadFoodDatabaseFromFirestore terminé');
+
+                        // IMPORTANT : Re-render la base d'aliments après chargement Firestore
+                        if (typeof window.renderFoodDatabase === 'function') {
+                            console.log('🔄 Re-rendering foodDatabase après chargement Firestore...');
+                            window.renderFoodDatabase();
+                        }
                     } else {
                         console.error('❌ [DEBUG] loadFoodDatabaseFromFirestore n\'existe pas !');
                     }
