@@ -5763,7 +5763,7 @@
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
                     if (data.name) {
-                        foodDatabase.push({
+                        const foodItem = {
                             name: data.name,
                             calories: parseFloat(data.calories) || 0,
                             protein: parseFloat(data.proteins || data.protein) || 0,
@@ -5776,7 +5776,14 @@
                             custom: false,
                             fromFirestore: true,
                             verified: data.verified || false
-                        });
+                        };
+
+                        // DEBUG: Log if verified
+                        if (foodItem.verified) {
+                            console.log(`✅ [loadFirestore] Aliment vérifié chargé: ${foodItem.name}`);
+                        }
+
+                        foodDatabase.push(foodItem);
                     }
                 });
 
