@@ -1854,7 +1854,7 @@ Solutions possibles :
                     <div style="flex: 1; min-width: 0;">
                         <div class="quick-add-item-name">
                             ${displayName}
-                            ${food.verified ? ' <span style="display: inline-flex; align-items: center; gap: 2px; padding: 1px 4px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 4px; font-size: 0.65rem; font-weight: 600;">✅</span>' : ''}
+                            ${food.verified ? ' <span style="color: #10b981; font-size: 0.9rem; cursor: help;" title="Aliment vérifié par un administrateur">✓</span>' : ''}
                         </div>
                         <div class="quick-add-item-macros">
                             P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
@@ -1890,7 +1890,7 @@ Solutions possibles :
                     <div style="flex: 1; min-width: 0;">
                         <div class="quick-add-item-name">
                             ${displayName}
-                            ${food.verified ? ' <span style="display: inline-flex; align-items: center; gap: 2px; padding: 1px 4px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 4px; font-size: 0.65rem; font-weight: 600;">✅</span>' : ''}
+                            ${food.verified ? ' <span style="color: #10b981; font-size: 0.9rem; cursor: help;" title="Aliment vérifié par un administrateur">✓</span>' : ''}
                         </div>
                         <div class="quick-add-item-macros">
                             P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
@@ -2801,7 +2801,7 @@ Solutions possibles :
                 // DEBUG: Log verified status
                 console.log(`[renderMeal] ${food.name}: verified = ${food.verified}`);
 
-                const verifiedBadge = food.verified ? ' <span style="display: inline-flex; align-items: center; gap: 2px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600;">✅ Vérifié</span>' : '';
+                const verifiedBadge = food.verified ? ' <span style="color: #10b981; font-size: 1rem; cursor: help; margin-left: 4px;" title="Aliment vérifié par un administrateur">✓</span>' : '';
 
                 return `
                     <div class="food-item">
@@ -3797,7 +3797,7 @@ Solutions possibles :
         }
 
         function renderFoodDatabase(foods = foodDatabase) {
-            const verifiedBadgeHtml = '<span style="display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600; margin-left: 6px;" title="Aliment vérifié">✅ Vérifié</span>';
+            const verifiedBadgeHtml = '<span style="color: #10b981; font-size: 1rem; cursor: help; margin-left: 4px;" title="Aliment vérifié par un administrateur">✓</span>';
 
             foodDatabaseContainer.innerHTML = foods.map(food => `
                 <div class="food-item">
@@ -5135,27 +5135,26 @@ Solutions possibles :
 
             if (filter === 'custom') {
                 filtered = filtered.filter(f => f.custom === true);
+            } else if (filter === 'verified') {
+                filtered = filtered.filter(f => f.verified === true);
             }
-            // Plus de filtre "community" ou "default" car tous les aliments viennent de Firestore
 
             // Fuzzy search if query provided
             if (query) {
                 filtered = fuzzySearchFoods(filtered, query, 100); // No limit, we'll sort after
             }
 
-            // Sort (skip if already sorted by fuzzy search relevance)
-            if (!query || sortBy !== 'name') {
-                filtered.sort((a, b) => {
-                    switch(sortBy) {
-                        case 'name': return a.name.localeCompare(b.name);
-                        case 'protein': return b.protein - a.protein;
-                        case 'carbs': return b.carbs - a.carbs;
-                        case 'fat': return b.fat - a.fat;
-                        case 'calories': return b.calories - a.calories;
-                        default: return 0;
-                    }
-                });
-            }
+            // Sort
+            filtered.sort((a, b) => {
+                switch(sortBy) {
+                    case 'name': return a.name.localeCompare(b.name);
+                    case 'protein': return b.protein - a.protein;
+                    case 'carbs': return b.carbs - a.carbs;
+                    case 'fat': return b.fat - a.fat;
+                    case 'calories': return b.calories - a.calories;
+                    default: return a.name.localeCompare(b.name); // Par défaut, tri alphabétique
+                }
+            });
 
             renderFoodDatabaseWithCustom(filtered);
         }
@@ -5195,7 +5194,7 @@ Solutions possibles :
                             return `
                                 <div class="food-item" data-food-index="${globalIndex}" style="background: rgba(0, 0, 0, 0.2);">
                                     <div>
-                                        <div class="food-name">${getDisplayName(food)} ${food.verified ? '<span style="display: inline-flex; align-items: center; gap: 2px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600;">✅ Vérifié</span>' : ''} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''}</div>
+                                        <div class="food-name">${getDisplayName(food)} ${food.verified ? '<span style="color: #10b981; font-size: 1rem; cursor: help; margin-left: 4px;" title="Aliment vérifié par un administrateur">✓</span>' : ''} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''}</div>
                                         ${food.custom ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Personnalisé</span>' : ''}
                                     </div>
                                     <div class="food-macros">
