@@ -5735,6 +5735,8 @@
         };
 
         // ===== CHARGER FOODDATABASE DEPUIS FIRESTORE (Source unique) =====
+        let foodDatabaseLoaded = false; // Flag pour éviter de charger plusieurs fois
+
         window.loadFoodDatabaseFromFirestore = async function() {
             console.log('🎯 [DEBUG] loadFoodDatabaseFromFirestore appelée ! foodDatabaseLoaded =', foodDatabaseLoaded);
 
