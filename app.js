@@ -9074,6 +9074,22 @@ Solutions possibles :
         }
 
         // ===== TEMPLATE FOOD MANAGEMENT FUNCTIONS =====
+        // Create Fuse instance once for food selection (performance optimization)
+        let foodSelectionFuse = null;
+
+        function getFoodSelectionFuse() {
+            if (!foodSelectionFuse && window.foodDatabase) {
+                foodSelectionFuse = new Fuse(window.foodDatabase, {
+                    keys: ['name'],
+                    threshold: 0.3,
+                    distance: 100,
+                    minMatchCharLength: 2,
+                    includeScore: true
+                });
+            }
+            return foodSelectionFuse;
+        }
+
         // Helper functions for template food management (MUST be defined before openSmartTemplateModal)
         window.renderTemplateFoods = function() {
             const container = document.getElementById('smart-template-foods-list');
@@ -9145,7 +9161,7 @@ Solutions possibles :
                                    style="width: 100%; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
                         </div>
                         <div>
-                            <button type="button" onclick="removeTemplateFood(${index})" class="delete-btn" title="Supprimer" style="width: 32px; height: 32px; min-width: 32px; display: flex; align-items: center; justify-content: center; padding: 0;">
+                            <button type="button" onclick="removeTemplateFood(${index})" class="delete-btn" title="Supprimer">
                                 <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
                             </button>
                         </div>
@@ -9271,13 +9287,11 @@ Solutions possibles :
             }
 
             // Utiliser Fuse.js pour la recherche fuzzy (trouve "pâtes" avec "pate")
-            const fuse = new Fuse(allFoods, {
-                keys: ['name'],
-                threshold: 0.3, // 0 = exact match, 1 = match anything
-                distance: 100,
-                minMatchCharLength: 2,
-                includeScore: true
-            });
+            const fuse = getFoodSelectionFuse();
+            if (!fuse) {
+                console.error('Fuse instance not initialized');
+                return;
+            }
 
             const results = fuse.search(query);
             const filtered = results.map(result => result.item);
