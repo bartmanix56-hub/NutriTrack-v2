@@ -5485,7 +5485,7 @@
 
         const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
         const { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-        const { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection, query, getDocs, limit, updateDoc, Timestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection, query, getDocs, limit, updateDoc, Timestamp, where } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
         const { getMessaging, getToken, onMessage } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js');
 
         const firebaseConfig = {
@@ -5807,6 +5807,63 @@
                 console.error('❌ Erreur chargement foodDatabase depuis Firestore:', error);
                 console.warn('⚠️ Utilisation de la base hardcodée en fallback');
                 foodDatabaseLoaded = true;
+            }
+        };
+
+        // ===== CHARGER SMART TEMPLATES DEPUIS FIRESTORE =====
+        let smartTemplatesLoaded = false;
+
+        window.loadSmartMealTemplatesFromFirestore = async function() {
+            if (smartTemplatesLoaded) {
+                console.log('✅ Smart templates déjà chargés depuis Firestore');
+                return;
+            }
+
+            if (!db) {
+                console.warn('⚠️ Firebase non disponible pour smart templates');
+                smartTemplatesLoaded = true;
+                return;
+            }
+
+            try {
+                console.log('🔄 Chargement smart templates depuis Firestore...');
+
+                const templatesSnap = await getDocs(
+                    query(collection(db, 'smartTemplates'), where('active', '==', true))
+                );
+
+                const firestoreTemplates = {};
+                templatesSnap.forEach(doc => {
+                    const data = doc.data();
+                    firestoreTemplates[doc.id] = data;
+                    console.log(`📋 Template chargé: ${data.displayName} (${data.variant || 'standard'})`);
+                });
+
+                if (Object.keys(firestoreTemplates).length > 0) {
+                    // IMPORTANT : Ne pas remplacer window.smartMealTemplates par un nouveau objet
+                    // car app.js a une référence locale. Il faut vider et remplir l'objet existant.
+
+                    // Vider l'objet existant
+                    for (let key in window.smartMealTemplates) {
+                        delete window.smartMealTemplates[key];
+                    }
+
+                    // Remplir avec les templates de Firestore
+                    for (let key in firestoreTemplates) {
+                        window.smartMealTemplates[key] = firestoreTemplates[key];
+                    }
+
+                    localStorage.setItem('smartTemplatesCache', JSON.stringify(firestoreTemplates));
+                    smartTemplatesLoaded = true;
+                    console.log(`✅ ${Object.keys(window.smartMealTemplates).length} smart templates chargés depuis Firestore`);
+                } else {
+                    console.warn('⚠️ Aucun template actif trouvé dans Firestore');
+                    smartTemplatesLoaded = true;
+                }
+
+            } catch (error) {
+                console.error('❌ Erreur chargement smart templates depuis Firestore:', error);
+                smartTemplatesLoaded = true;
             }
         };
 
@@ -6379,6 +6436,15 @@
                         }
                     } else {
                         console.error('❌ [DEBUG] loadFoodDatabaseFromFirestore n\'existe pas !');
+                    }
+
+                    // Charger les smart templates depuis Firestore (CRITIQUE pour repas conseillés personnalisés)
+                    if (typeof window.loadSmartMealTemplatesFromFirestore === 'function') {
+                        console.log('🚀 [DEBUG] Appel de loadSmartMealTemplatesFromFirestore...');
+                        await window.loadSmartMealTemplatesFromFirestore();
+                        console.log('✅ [DEBUG] loadSmartMealTemplatesFromFirestore terminé');
+                    } else {
+                        console.error('❌ [DEBUG] loadSmartMealTemplatesFromFirestore n\'existe pas !');
                     }
 
                     // Charger les données depuis Firestore (source de vérité)
