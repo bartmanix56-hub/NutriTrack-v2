@@ -8203,18 +8203,142 @@
             if (typeof lucide !== 'undefined') lucide.createIcons();
         };
 
-        window.addTemplateFood = function() {
-            if (!window.templateFoodsData) window.templateFoodsData = [];
+        // Food selection modal helpers
+        window.closeFoodSelectionModal = function() {
+            const modal = document.getElementById('food-selection-modal');
+            if (modal) modal.remove();
+        };
 
+        window.renderFoodSelectionList = function(foods) {
+            const container = document.getElementById('food-selection-list');
+            if (!container) return;
+
+            if (!foods || foods.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-xl); color: var(--text-secondary);">
+                        Aucun aliment trouvé
+                    </div>
+                `;
+                return;
+            }
+
+            // Trier par ordre alphabétique
+            const sortedFoods = [...foods].sort((a, b) => a.name.localeCompare(b.name));
+
+            container.innerHTML = sortedFoods.map(food => {
+                const verifiedBadge = food.verified
+                    ? '<span style="color: #10b981; font-size: 0.9rem; margin-left: 4px;" title="Aliment vérifié">✓</span>'
+                    : '';
+
+                return `
+                    <button type="button" onclick="selectFoodForTemplate('${food.name.replace(/'/g, "\\'")}')"
+                            style="width: 100%; text-align: left; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary); cursor: pointer; transition: all 0.2s;"
+                            onmouseover="this.style.background='var(--bg-secondary)'; this.style.borderColor='var(--accent-main)'"
+                            onmouseout="this.style.background='var(--bg-tertiary)'; this.style.borderColor='rgba(255,255,255,0.1)'">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-weight: 500;">
+                                ${food.name}${verifiedBadge}
+                            </div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                P: ${food.protein}g | G: ${food.carbs}g | L: ${food.fat}g | ${food.calories} kcal
+                            </div>
+                        </div>
+                    </button>
+                `;
+            }).join('');
+        };
+
+        window.filterFoodSelection = function(query) {
+            const allFoods = window.foodDatabase || [];
+
+            if (!query || query.trim().length === 0) {
+                renderFoodSelectionList(allFoods);
+                return;
+            }
+
+            const lowerQuery = query.toLowerCase();
+            const filtered = allFoods.filter(food =>
+                food.name.toLowerCase().includes(lowerQuery)
+            );
+
+            renderFoodSelectionList(filtered);
+        };
+
+        window.selectFoodForTemplate = function(foodName) {
+            const food = (window.foodDatabase || []).find(f => f.name === foodName);
+            if (!food) {
+                console.error('Aliment non trouvé:', foodName);
+                return;
+            }
+
+            // Déterminer le rôle principal de l'aliment basé sur ses macros
+            let role = 'protein';
+            if (food.protein >= food.carbs && food.protein >= food.fat) {
+                role = 'protein';
+            } else if (food.carbs > food.protein && food.carbs >= food.fat) {
+                role = 'carb';
+            } else if (food.fat > food.protein && food.fat > food.carbs) {
+                role = 'fat';
+            }
+
+            // Ajouter l'aliment au template
             window.templateFoodsData.push({
-                foodName: '',
-                role: 'protein',
+                foodName: food.name,
+                role: role,
                 min: 100,
                 max: 300,
                 priority: window.templateFoodsData.length + 1
             });
 
+            // Fermer le modal
+            closeFoodSelectionModal();
+
+            // Re-render la liste des aliments du template
             renderTemplateFoods();
+        };
+
+        window.addTemplateFood = function() {
+            if (!window.templateFoodsData) window.templateFoodsData = [];
+
+            // Ouvrir un modal de sélection d'aliments depuis foodDatabase
+            const modalHtml = `
+                <div id="food-selection-modal" class="modal active" style="z-index: 10001;">
+                    <div class="modal-content" style="max-width: 700px; max-height: 80vh; display: flex; flex-direction: column;">
+                        <div class="modal-header">
+                            <h2 class="modal-title">Sélectionner un aliment</h2>
+                            <button class="modal-close" onclick="closeFoodSelectionModal()">×</button>
+                        </div>
+                        <div class="modal-body" style="flex: 1; overflow: hidden; display: flex; flex-direction: column;">
+                            <!-- Recherche -->
+                            <div style="margin-bottom: var(--space-md);">
+                                <input type="text" id="food-selection-search" placeholder="Rechercher un aliment..."
+                                       oninput="filterFoodSelection(this.value)"
+                                       style="width: 100%; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
+                            </div>
+
+                            <!-- Liste d'aliments -->
+                            <div id="food-selection-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: var(--space-xs);">
+                                <!-- Foods will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Supprimer modal existant si présent
+            const existing = document.getElementById('food-selection-modal');
+            if (existing) existing.remove();
+
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            // Rendre la liste initiale (tous les aliments)
+            renderFoodSelectionList(window.foodDatabase || []);
+
+            // Focus sur le champ de recherche
+            setTimeout(() => {
+                const searchInput = document.getElementById('food-selection-search');
+                if (searchInput) searchInput.focus();
+            }, 100);
         };
 
         window.removeTemplateFood = function(index) {
