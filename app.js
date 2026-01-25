@@ -7126,7 +7126,7 @@ Solutions possibles :
                 <div id="smartMealModal" class="modal active">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h2 class="modal-title">${result.templateName} conseillé ${variantBadge}</h2>
+                            <h2 class="modal-title">${result.templateName}${variantBadge}</h2>
                             <p style="color: var(--text-secondary); font-style: italic; margin: var(--space-xs) 0 0 0;">
                                 Ce repas est adapté à ton objectif et à ce qu'il te reste aujourd'hui.
                             </p>
