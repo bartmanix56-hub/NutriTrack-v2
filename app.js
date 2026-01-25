@@ -9090,6 +9090,15 @@ Solutions possibles :
             return foodSelectionFuse;
         }
 
+        // Debounce for search input to avoid blocking main thread
+        let filterFoodDebounceTimer = null;
+        function debouncedFilterFoodSelection(query) {
+            clearTimeout(filterFoodDebounceTimer);
+            filterFoodDebounceTimer = setTimeout(() => {
+                filterFoodSelection(query);
+            }, 180); // 180ms debounce as requested (150-200ms range)
+        }
+
         // Throttle lucide icon creation with requestAnimationFrame
         let lucideRafPending = false;
         function createIconsOptimized(container) {
@@ -9250,8 +9259,13 @@ Solutions possibles :
         };
 
         window.renderFoodSelectionList = function(foods) {
+            console.time('renderSuggestions');
+
             const container = document.getElementById('food-selection-list');
-            if (!container) return;
+            if (!container) {
+                console.timeEnd('renderSuggestions');
+                return;
+            }
 
             if (!foods || foods.length === 0) {
                 container.innerHTML = `
@@ -9259,11 +9273,12 @@ Solutions possibles :
                         Aucun aliment trouvé
                     </div>
                 `;
+                console.timeEnd('renderSuggestions');
                 return;
             }
 
-            // Limiter à 50 résultats max pour éviter la lenteur (sécurité)
-            const limitedFoods = foods.length > 50 ? foods.slice(0, 50) : foods;
+            // Limiter à 30 résultats max (optimisation perf - range 25-40)
+            const limitedFoods = foods.length > 30 ? foods.slice(0, 30) : foods;
 
             // Trier par ordre alphabétique
             const sortedFoods = [...limitedFoods].sort((a, b) => a.name.localeCompare(b.name));
@@ -9284,6 +9299,9 @@ Solutions possibles :
                     </button>
                 `;
             }).join('');
+
+            console.timeEnd('renderSuggestions');
+            // NO createIcons() call here - hover must be pure CSS
         };
 
         window.filterFoodSelection = function(query) {
@@ -9296,12 +9314,12 @@ Solutions possibles :
             if (!query || query.trim().length < 2) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: var(--space-xl); color: var(--text-secondary);">
-                        <i data-lucide="search" style="width: 48px; height: 48px; margin: 0 auto var(--space-md); opacity: 0.5;"></i>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto var(--space-md); opacity: 0.5; display: block;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                         <p style="font-size: 1.1rem; margin-bottom: var(--space-xs);">Recherchez un aliment</p>
                         <p style="font-size: 0.9rem; opacity: 0.7;">Tapez au moins 2 caractères pour afficher les résultats</p>
                     </div>
                 `;
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                // NO createIcons() - use inline SVG instead
                 return;
             }
 
@@ -9315,12 +9333,12 @@ Solutions possibles :
             const results = fuse.search(query);
             const filtered = results.map(result => result.item);
 
-            // Limiter à 50 résultats max pour éviter la lenteur
-            const limited = filtered.slice(0, 50);
+            // Limiter à 30 résultats max pour éviter la lenteur (range 25-40)
+            const limited = filtered.slice(0, 30);
 
-            // Afficher un avertissement si il y a plus de 50 résultats
-            if (filtered.length > 50) {
-                console.log(`⚠️ ${filtered.length} résultats trouvés, affichage des 50 premiers seulement`);
+            // Afficher un avertissement si il y a plus de 30 résultats
+            if (filtered.length > 30) {
+                console.log(`⚠️ ${filtered.length} résultats trouvés, affichage des 30 premiers seulement`);
             }
 
             renderFoodSelectionList(limited);
@@ -9398,7 +9416,7 @@ Solutions possibles :
                             <!-- Recherche -->
                             <div style="margin-bottom: var(--space-md);">
                                 <input type="text" id="food-selection-search" placeholder="Rechercher un aliment..."
-                                       oninput="filterFoodSelection(this.value)"
+                                       oninput="debouncedFilterFoodSelection(this.value)"
                                        style="width: 100%; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
                             </div>
 
