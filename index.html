@@ -8209,6 +8209,53 @@
             if (modal) modal.remove();
         };
 
+        window.renderSelectedFoodsPreview = function() {
+            const container = document.getElementById('selected-foods-preview');
+            if (!container) return;
+
+            const selectedFoods = window.templateFoodsData || [];
+
+            if (selectedFoods.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="background: var(--bg-secondary); padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid rgba(56, 189, 248, 0.3);">
+                    <div style="font-size: 0.9rem; font-weight: 600; color: var(--accent-main); margin-bottom: var(--space-sm); display: flex; align-items: center; gap: var(--space-xs);">
+                        <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
+                        Aliments déjà ajoutés (${selectedFoods.length})
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+                        ${selectedFoods.map((food, index) => `
+                            <div style="display: inline-flex; align-items: center; gap: var(--space-xs); background: var(--bg-tertiary); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.85rem;">
+                                <span style="color: var(--text-primary);">${food.foodName}</span>
+                                <button type="button" onclick="removeTemplateFoodFromModal(${index})"
+                                        style="background: none; border: none; color: var(--accent-danger); cursor: pointer; padding: 0; display: flex; align-items: center;"
+                                        title="Retirer">
+                                    <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        };
+
+        window.removeTemplateFoodFromModal = function(index) {
+            window.templateFoodsData.splice(index, 1);
+            // Recalculate priorities
+            window.templateFoodsData.forEach((food, i) => {
+                food.priority = i + 1;
+            });
+            // Update preview in modal
+            renderSelectedFoodsPreview();
+            // Update main modal list (if visible)
+            renderTemplateFoods();
+        };
+
         window.renderFoodSelectionList = function(foods) {
             const container = document.getElementById('food-selection-list');
             if (!container) return;
@@ -8313,11 +8360,19 @@
                 priority: window.templateFoodsData.length + 1
             });
 
-            // Fermer le modal
-            closeFoodSelectionModal();
+            // Update preview in modal to show newly added food
+            renderSelectedFoodsPreview();
 
-            // Re-render la liste des aliments du template
+            // Re-render la liste des aliments du template (dans le modal principal)
             renderTemplateFoods();
+
+            // Clear search to allow adding more foods easily
+            const searchInput = document.getElementById('food-selection-search');
+            if (searchInput) {
+                searchInput.value = '';
+                filterFoodSelection(''); // Reset to initial state
+                searchInput.focus(); // Keep focus for adding more foods
+            }
         };
 
         window.addTemplateFood = function() {
@@ -8332,6 +8387,11 @@
                             <button class="modal-close" onclick="closeFoodSelectionModal()">×</button>
                         </div>
                         <div class="modal-body" style="flex: 1; overflow: hidden; display: flex; flex-direction: column;">
+                            <!-- Aliments déjà ajoutés -->
+                            <div id="selected-foods-preview" style="margin-bottom: var(--space-md);">
+                                <!-- Will be filled by renderSelectedFoodsPreview() -->
+                            </div>
+
                             <!-- Recherche -->
                             <div style="margin-bottom: var(--space-md);">
                                 <input type="text" id="food-selection-search" placeholder="Rechercher un aliment..."
@@ -8353,6 +8413,9 @@
             if (existing) existing.remove();
 
             document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            // Afficher les aliments déjà sélectionnés
+            renderSelectedFoodsPreview();
 
             // Ne rien afficher au début (recherche obligatoire pour éviter de charger 159 aliments)
             const container = document.getElementById('food-selection-list');
