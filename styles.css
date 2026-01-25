@@ -5010,3 +5010,21 @@
         grid-template-columns: repeat(2, 1fr) !important;
     }
 }
+
+/* Food selection item for template modal - Optimized hover performance */
+.food-selection-item {
+    width: 100%;
+    text-align: left;
+    padding: var(--space-sm);
+    background: var(--bg-tertiary);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.food-selection-item:hover {
+    background: var(--bg-secondary);
+    border-color: var(--accent-main);
+}
