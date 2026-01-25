@@ -7117,9 +7117,9 @@ Solutions possibles :
 
             // Generate variant badge if applicable
             const variantBadges = {
-                'vegan': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;">🌱 Vegan</span>',
-                'glutenFree': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;">🌾 Sans gluten</span>',
-                'vegetarian': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;">🥗 Végétarien</span>'
+                'vegan': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;"><i data-lucide="leaf" style="width: 14px; height: 14px;"></i> Vegan</span>',
+                'glutenFree': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;"><i data-lucide="wheat-off" style="width: 14px; height: 14px;"></i> Sans gluten</span>',
+                'vegetarian': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;"><i data-lucide="salad" style="width: 14px; height: 14px;"></i> Végétarien</span>'
             };
             const variantBadge = result.variant && variantBadges[result.variant] ? variantBadges[result.variant] : '';
 
