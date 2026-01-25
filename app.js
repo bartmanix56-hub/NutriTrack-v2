@@ -9145,8 +9145,8 @@ Solutions possibles :
                                    style="width: 100%; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
                         </div>
                         <div>
-                            <button type="button" onclick="removeTemplateFood(${index})" class="btn-icon danger" title="Supprimer">
-                                <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                            <button type="button" onclick="removeTemplateFood(${index})" class="delete-btn" title="Supprimer" style="width: 32px; height: 32px; min-width: 32px; display: flex; align-items: center; justify-content: center; padding: 0;">
+                                <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
                             </button>
                         </div>
                     </div>
@@ -9237,10 +9237,7 @@ Solutions possibles :
                     : '';
 
                 return `
-                    <button type="button" onclick="selectFoodForTemplate('${food.name.replace(/'/g, "\\'")}')"
-                            style="width: 100%; text-align: left; padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary); cursor: pointer; transition: all 0.2s;"
-                            onmouseover="this.style.background='var(--bg-secondary)'; this.style.borderColor='var(--accent-main)'"
-                            onmouseout="this.style.background='var(--bg-tertiary)'; this.style.borderColor='rgba(255,255,255,0.1)'">
+                    <button type="button" onclick="selectFoodForTemplate('${food.name.replace(/'/g, "\\'")}')" class="food-selection-item">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div style="font-weight: 500;">
                                 ${food.name}${verifiedBadge}
