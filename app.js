@@ -9090,6 +9090,25 @@ Solutions possibles :
             return foodSelectionFuse;
         }
 
+        // Throttle lucide icon creation with requestAnimationFrame
+        let lucideRafPending = false;
+        function createIconsOptimized(container) {
+            if (lucideRafPending || typeof lucide === 'undefined') return;
+
+            lucideRafPending = true;
+            requestAnimationFrame(() => {
+                if (container) {
+                    // Create icons only in specific container
+                    const icons = container.querySelectorAll('[data-lucide]');
+                    icons.forEach(icon => lucide.createIcons({ icons: [icon] }));
+                } else {
+                    // Fallback: create all icons
+                    lucide.createIcons();
+                }
+                lucideRafPending = false;
+            });
+        }
+
         // Helper functions for template food management (MUST be defined before openSmartTemplateModal)
         window.renderTemplateFoods = function() {
             const container = document.getElementById('smart-template-foods-list');
@@ -9169,7 +9188,8 @@ Solutions possibles :
                 </div>
             `).join('');
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            // Optimize: create icons only in this container
+            createIconsOptimized(container);
         };
 
         // Food selection modal helpers
@@ -9213,7 +9233,8 @@ Solutions possibles :
                 </div>
             `;
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            // Optimize: create icons only in this container
+            createIconsOptimized(container);
         };
 
         window.removeTemplateFoodFromModal = function(index) {
@@ -9322,6 +9343,14 @@ Solutions possibles :
                 role = 'fat';
             }
 
+            // Check if food already exists
+            const existingFood = window.templateFoodsData.find(f => f.foodName === food.name);
+            if (existingFood) {
+                // Don't add duplicate, just update preview
+                renderSelectedFoodsPreview();
+                return;
+            }
+
             // Ajouter l'aliment au template
             window.templateFoodsData.push({
                 foodName: food.name,
@@ -9331,19 +9360,22 @@ Solutions possibles :
                 priority: window.templateFoodsData.length + 1
             });
 
-            // Update preview in modal to show newly added food
-            renderSelectedFoodsPreview();
+            // Batch updates with RAF to avoid blocking
+            requestAnimationFrame(() => {
+                // Update preview in modal to show newly added food
+                renderSelectedFoodsPreview();
 
-            // Re-render la liste des aliments du template (dans le modal principal)
-            renderTemplateFoods();
+                // Re-render la liste des aliments du template (dans le modal principal)
+                renderTemplateFoods();
 
-            // Clear search to allow adding more foods easily
-            const searchInput = document.getElementById('food-selection-search');
-            if (searchInput) {
-                searchInput.value = '';
-                filterFoodSelection(''); // Reset to initial state
-                searchInput.focus(); // Keep focus for adding more foods
-            }
+                // Clear search to allow adding more foods easily
+                const searchInput = document.getElementById('food-selection-search');
+                if (searchInput) {
+                    searchInput.value = '';
+                    filterFoodSelection(''); // Reset to initial state
+                    searchInput.focus(); // Keep focus for adding more foods
+                }
+            });
         };
 
         window.addTemplateFood = function() {
