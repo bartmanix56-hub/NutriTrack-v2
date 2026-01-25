@@ -8207,6 +8207,9 @@
         window.closeFoodSelectionModal = function() {
             const modal = document.getElementById('food-selection-modal');
             if (modal) modal.remove();
+
+            // Refresh the main template modal to show added foods
+            renderTemplateFoods();
         };
 
         window.renderSelectedFoodsPreview = function() {
@@ -8317,11 +8320,17 @@
                 return;
             }
 
-            // Filtrer les aliments
-            const lowerQuery = query.toLowerCase();
-            const filtered = allFoods.filter(food =>
-                food.name.toLowerCase().includes(lowerQuery)
-            );
+            // Utiliser Fuse.js pour la recherche fuzzy (trouve "pâtes" avec "pate")
+            const fuse = new Fuse(allFoods, {
+                keys: ['name'],
+                threshold: 0.3, // 0 = exact match, 1 = match anything
+                distance: 100,
+                minMatchCharLength: 2,
+                includeScore: true
+            });
+
+            const results = fuse.search(query);
+            const filtered = results.map(result => result.item);
 
             // Limiter à 50 résultats max pour éviter la lenteur
             const limited = filtered.slice(0, 50);
@@ -8404,6 +8413,14 @@
                                 <!-- Foods will be rendered here -->
                             </div>
                         </div>
+
+                        <!-- Footer avec bouton Terminé -->
+                        <div class="modal-footer" style="padding: var(--space-md); border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
+                            <button type="button" onclick="closeFoodSelectionModal()" class="btn" style="background: var(--accent-main); color: white; display: flex; align-items: center; gap: var(--space-xs);">
+                                <i data-lucide="check" style="width: 16px; height: 16px;"></i>
+                                Terminé
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -8427,8 +8444,10 @@
                         <p style="font-size: 0.9rem; opacity: 0.7;">Tapez au moins 2 caractères pour afficher les résultats</p>
                     </div>
                 `;
-                if (typeof lucide !== 'undefined') lucide.createIcons();
             }
+
+            // Initialize Lucide icons for the entire modal (including "Terminé" button)
+            if (typeof lucide !== 'undefined') lucide.createIcons();
 
             // Focus sur le champ de recherche
             setTimeout(() => {
