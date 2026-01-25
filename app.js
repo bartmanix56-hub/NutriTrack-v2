@@ -6691,9 +6691,6 @@ Solutions possibles :
 
         // ===== SMART MEAL TEMPLATES (INTELLIGENT GENERATION) =====
 
-        // Template configurations (loaded from Firestore, with fallback to defaults)
-        let smartMealTemplates = {};
-
         // Default templates (fallback if Firestore unavailable)
         const defaultSmartMealTemplates = {
             // LUNCH TEMPLATES
@@ -6795,8 +6792,13 @@ Solutions possibles :
             }
         };
 
-        // Load Smart Templates from Firestore (with offline cache and fallback)
-        async function loadSmartMealTemplates() {
+        // Initialize smartMealTemplates with defaults (will be replaced by Firestore data at login)
+        let smartMealTemplates = defaultSmartMealTemplates;
+        window.smartMealTemplates = smartMealTemplates;
+
+        // OLD FUNCTION - NO LONGER USED (replaced by loadSmartMealTemplatesFromFirestore in index.html)
+        // Kept for reference only
+        async function loadSmartMealTemplates_OLD() {
             try {
                 // Try to load from Firestore
                 if (typeof firebase !== 'undefined' && firebase.firestore) {
@@ -6841,16 +6843,16 @@ Solutions possibles :
             console.log('🔄 Using default smart templates (hardcoded)');
         }
 
-        // Initialize templates on page load
-        if (typeof document !== 'undefined') {
-            document.addEventListener('DOMContentLoaded', () => {
-                loadSmartMealTemplates().catch(err => {
-                    console.error('Failed to load smart templates:', err);
-                    // Use default templates if all else fails
-                    smartMealTemplates = defaultSmartMealTemplates;
-                });
-            });
-        }
+        // OLD - Initialize templates on page load
+        // NO LONGER USED - Templates are now loaded in index.html via loadSmartMealTemplatesFromFirestore() at login
+        // if (typeof document !== 'undefined') {
+        //     document.addEventListener('DOMContentLoaded', () => {
+        //         loadSmartMealTemplates().catch(err => {
+        //             console.error('Failed to load smart templates:', err);
+        //             smartMealTemplates = defaultSmartMealTemplates;
+        //         });
+        //     });
+        // }
 
         // Smart rounding function - returns human-friendly quantities
         function smartRound(value) {
