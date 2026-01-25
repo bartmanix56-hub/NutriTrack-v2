@@ -9249,18 +9249,16 @@ Solutions possibles :
 
             container.innerHTML = sortedFoods.map(food => {
                 const verifiedBadge = food.verified
-                    ? '<span style="color: #10b981; font-size: 0.9rem; margin-left: 4px;" title="Aliment vérifié">✓</span>'
+                    ? ' <span style="color: #10b981; font-size: 0.85rem;" title="Aliment vérifié">✓</span>'
                     : '';
 
                 return `
                     <button type="button" onclick="selectFoodForTemplate('${food.name.replace(/'/g, "\\'")}')" class="food-selection-item">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div style="font-weight: 500;">
-                                ${food.name}${verifiedBadge}
-                            </div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                                P: ${food.protein}g | G: ${food.carbs}g | L: ${food.fat}g | ${food.calories} kcal
-                            </div>
+                        <div style="font-weight: 500; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            ${food.name}${verifiedBadge}
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            P: ${food.protein}g · G: ${food.carbs}g · L: ${food.fat}g · ${food.calories} kcal
                         </div>
                     </button>
                 `;
@@ -9373,7 +9371,7 @@ Solutions possibles :
                             </div>
 
                             <!-- Liste d'aliments -->
-                            <div id="food-selection-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: var(--space-xs);">
+                            <div id="food-selection-list" style="flex: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; gap: var(--space-xs);">
                                 <!-- Foods will be rendered here -->
                             </div>
                         </div>
