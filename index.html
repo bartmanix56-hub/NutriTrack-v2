@@ -8327,7 +8327,9 @@
 
             // Initialize foods list
             window.templateFoodsData = templateData?.foods || [];
-            renderTemplateFoods();
+            if (typeof window.renderTemplateFoods === 'function') {
+                window.renderTemplateFoods();
+            }
 
             if (typeof lucide !== 'undefined') lucide.createIcons();
         };
