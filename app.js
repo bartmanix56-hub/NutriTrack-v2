@@ -9076,8 +9076,13 @@ Solutions possibles :
         // ===== TEMPLATE FOOD MANAGEMENT FUNCTIONS =====
         // Helper functions for template food management (MUST be defined before openSmartTemplateModal)
         window.renderTemplateFoods = function() {
-            const container = document.getElementById('template-foods-list');
-            if (!container) return;
+            const container = document.getElementById('smart-template-foods-list');
+            if (!container) {
+                console.error('Container smart-template-foods-list not found');
+                return;
+            }
+
+            console.log('renderTemplateFoods called, templateFoodsData:', window.templateFoodsData);
 
             if (!window.templateFoodsData || window.templateFoodsData.length === 0) {
                 container.innerHTML = `
