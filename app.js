@@ -6903,8 +6903,8 @@ Solutions possibles :
             };
         }
 
-        // Generate smart meal template with improved logic
-        function generateSmartMeal(templateConfigKey) {
+        // Generate smart meal with specific template (NEW - used when user selects template)
+        function generateSmartMealWithTemplate(mealType, templateConfig) {
             const context = getRemainingMacrosWithContext();
 
             if (!context.remaining.hasTargets) {
@@ -6913,28 +6913,6 @@ Solutions possibles :
                     error: 'Aucun objectif macro défini',
                     message: 'Va dans l\'onglet Calculateur pour définir tes objectifs avant de générer un repas conseillé.'
                 };
-            }
-
-            // Find all templates that match the meal type
-            const mealType = templateConfigKey === 'lunchLowCarb' ? 'lunch' : templateConfigKey;
-            const matchingTemplates = Object.values(smartMealTemplates).filter(t => t.mealType === mealType);
-
-            if (matchingTemplates.length === 0) {
-                return {
-                    success: false,
-                    error: 'Template non disponible',
-                    message: 'Aucun repas conseillé disponible pour ce type de repas.'
-                };
-            }
-
-            // Check if we should use low-carb template
-            let templateConfig;
-            if (templateConfigKey === 'lunch' && context.hasExistingMeals && context.remaining.carbs < 30) {
-                // Try to find a low-carb variant
-                templateConfig = matchingTemplates.find(t => t.variant === 'lowCarb') || matchingTemplates[0];
-            } else {
-                // Use the first matching template (priority: standard variant)
-                templateConfig = matchingTemplates.find(t => !t.variant || t.variant === 'standard' || t.variant === '') || matchingTemplates[0];
             }
 
             if (!templateConfig) {
@@ -7095,8 +7073,105 @@ Solutions possibles :
 
         // Open smart meal modal
         window.openSmartMealModal = function(mealType) {
-            // Generate the meal
-            const result = generateSmartMeal(mealType);
+            const context = getRemainingMacrosWithContext();
+
+            if (!context.remaining.hasTargets) {
+                customAlert('<i data-lucide="alert-circle" class="icon-inline"></i> Aucun objectif macro défini', 'Va dans l\'onglet Calculateur pour définir tes objectifs avant de générer un repas conseillé.');
+                return;
+            }
+
+            // Find all templates that match the meal type
+            const matchingTemplates = Object.values(smartMealTemplates).filter(t => t.mealType === mealType);
+
+            if (matchingTemplates.length === 0) {
+                customAlert('<i data-lucide="alert-circle" class="icon-inline"></i> Template non disponible', 'Aucun repas conseillé disponible pour ce type de repas.');
+                return;
+            }
+
+            // If multiple templates, show selection modal
+            if (matchingTemplates.length > 1) {
+                showTemplateSelectionModal(mealType, matchingTemplates);
+            } else {
+                // Generate and show directly
+                showGeneratedMealModal(mealType, matchingTemplates[0]);
+            }
+        };
+
+        // Show template selection modal
+        function showTemplateSelectionModal(mealType, templates) {
+            const variantIcons = {
+                'vegan': '<i data-lucide="leaf" style="width: 16px; height: 16px;"></i>',
+                'glutenFree': '<i data-lucide="wheat-off" style="width: 16px; height: 16px;"></i>',
+                'vegetarian': '<i data-lucide="salad" style="width: 16px; height: 16px;"></i>',
+                'lowCarb': '<i data-lucide="trending-down" style="width: 16px; height: 16px;"></i>'
+            };
+
+            const templatesHtml = templates.map((template, index) => {
+                const icon = template.variant && variantIcons[template.variant] ? variantIcons[template.variant] : '';
+                return `
+                    <button onclick="selectTemplateAndGenerate('${mealType}', ${index})"
+                            style="width: 100%; padding: var(--space-lg); background: var(--bg-tertiary); border: 2px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s; text-align: left; display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md);"
+                            onmouseover="this.style.borderColor='var(--accent-main)'; this.style.background='var(--bg-secondary)';"
+                            onmouseout="this.style.borderColor='var(--border-color)'; this.style.background='var(--bg-tertiary)';">
+                        <div style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--accent-main); display: flex; align-items: center; justify-content: center; color: white;">
+                            ${icon || '<i data-lucide="utensils" style="width: 20px; height: 20px;"></i>'}
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 1rem; margin-bottom: 4px;">${template.displayName}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">${template.variant || 'Standard'}</div>
+                        </div>
+                        <i data-lucide="chevron-right" style="width: 20px; height: 20px; color: var(--text-secondary);"></i>
+                    </button>
+                `;
+            }).join('');
+
+            const modalHtml = `
+                <div id="templateSelectionModal" class="modal active">
+                    <div class="modal-content" style="max-width: 500px;">
+                        <div class="modal-header">
+                            <h2 class="modal-title">Choisis ton repas conseillé</h2>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: var(--space-xs) 0 0 0;">
+                                ${templates.length} options disponibles
+                            </p>
+                            <button class="modal-close" onclick="closeTemplateSelectionModal()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            ${templatesHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const existing = document.getElementById('templateSelectionModal');
+            if (existing) existing.remove();
+
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            document.body.style.overflow = 'hidden';
+
+            if (window.lucide) lucide.createIcons();
+
+            // Store templates for selection
+            window.currentTemplateChoices = templates;
+        }
+
+        window.closeTemplateSelectionModal = function() {
+            const modal = document.getElementById('templateSelectionModal');
+            if (modal) modal.remove();
+            document.body.style.overflow = '';
+            window.currentTemplateChoices = null;
+        };
+
+        window.selectTemplateAndGenerate = function(mealType, templateIndex) {
+            if (!window.currentTemplateChoices) return;
+            const template = window.currentTemplateChoices[templateIndex];
+            closeTemplateSelectionModal();
+            showGeneratedMealModal(mealType, template);
+        };
+
+        // Show generated meal modal (refactored from openSmartMealModal)
+        function showGeneratedMealModal(mealType, templateConfig) {
+            // Generate the meal with specific template
+            const result = generateSmartMealWithTemplate(mealType, templateConfig);
 
             if (!result.success) {
                 customAlert('<i data-lucide="alert-circle" class="icon-inline"></i> ' + result.error, result.message);
@@ -7123,49 +7198,46 @@ Solutions possibles :
             };
             const variantBadge = result.variant && variantBadges[result.variant] ? variantBadges[result.variant] : '';
 
-            // Create modal HTML with proper structure
+            // Create modal HTML with proper structure (COMPACT VERSION)
             const modalHtml = `
                 <div id="smartMealModal" class="modal active">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2 class="modal-title">${result.templateName}${variantBadge}</h2>
-                            <p style="color: var(--text-secondary); font-style: italic; margin: var(--space-xs) 0 0 0;">
-                                Ce repas est adapté à ton objectif et à ce qu'il te reste aujourd'hui.
-                            </p>
+                    <div class="modal-content" style="max-width: 600px;">
+                        <div class="modal-header" style="padding: var(--space-lg);">
+                            <h2 class="modal-title" style="font-size: 1.25rem;">${result.templateName}${variantBadge}</h2>
                             <button class="modal-close" onclick="closeSmartMealModal()">×</button>
                         </div>
 
-                        <div class="modal-body">
+                        <div class="modal-body" style="padding: var(--space-lg); max-height: 70vh; overflow-y: auto;">
                             ${lowCarbNotice}
 
-                            <div style="margin-bottom: var(--space-xl);">
-                                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md);">
-                                    <div style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); text-align: center;">
-                                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Calories (kcal)</div>
-                                        <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-main);">${Math.round(result.macros.calories)}</div>
-                                    </div>
-                                    <div style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); text-align: center;">
-                                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Protéines (g) *</div>
-                                        <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-protein);">${Math.round(result.macros.protein)}</div>
-                                    </div>
-                                    <div style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); text-align: center;">
-                                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Glucides (g) *</div>
-                                        <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-carbs);">${Math.round(result.macros.carbs)}</div>
-                                    </div>
-                                    <div style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); text-align: center;">
-                                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Lipides (g) *</div>
-                                        <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-fat);">${Math.round(result.macros.fat)}</div>
-                                    </div>
+                            <!-- Macros - Plus compact -->
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-sm); margin-bottom: var(--space-lg);">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 2px;">Cal</div>
+                                    <div style="font-size: 1.1rem; font-weight: 700; color: var(--accent-main);">${Math.round(result.macros.calories)}</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 2px;">Prot</div>
+                                    <div style="font-size: 1.1rem; font-weight: 700; color: var(--accent-protein);">${Math.round(result.macros.protein)}g</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 2px;">Glu</div>
+                                    <div style="font-size: 1.1rem; font-weight: 700; color: var(--accent-carbs);">${Math.round(result.macros.carbs)}g</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 2px;">Lip</div>
+                                    <div style="font-size: 1.1rem; font-weight: 700; color: var(--accent-fat);">${Math.round(result.macros.fat)}g</div>
                                 </div>
                             </div>
 
-                            <div style="background: var(--bg-tertiary); padding: var(--space-lg); border-radius: var(--radius-md); margin-bottom: var(--space-xl);">
-                                <div style="font-size: 0.95rem; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-primary);">
-                                    <i data-lucide="utensils" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
-                                    Composition du repas
+                            <!-- Composition - Plus compact -->
+                            <div style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md);">
+                                <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: var(--space-sm); color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="utensils" style="width: 14px; height: 14px;"></i>
+                                    Composition
                                 </div>
                                 ${result.foods.map(food => `
-                                    <div style="display: flex; justify-content: space-between; padding: var(--space-sm) 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <div style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.85rem;">
                                         <span style="color: var(--text-secondary);">${food.name}</span>
                                         <span style="color: var(--text-primary); font-weight: 600;">${food.quantity}g</span>
                                     </div>
@@ -7173,24 +7245,24 @@ Solutions possibles :
                             </div>
 
                             ${result.recipe ? `
-                                <div style="background: var(--bg-tertiary); padding: var(--space-lg); border-radius: var(--radius-md); margin-bottom: var(--space-xl);">
-                                    <div style="font-size: 0.95rem; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-primary);">
-                                        <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+                                <details style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md);">
+                                    <summary style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                        <i data-lucide="book-open" style="width: 14px; height: 14px;"></i>
                                         Recette
-                                    </div>
-                                    <div style="color: var(--text-secondary); line-height: 1.6; white-space: pre-line;">
+                                    </summary>
+                                    <div style="color: var(--text-secondary); line-height: 1.5; white-space: pre-line; font-size: 0.85rem; margin-top: var(--space-sm);">
                                         ${result.recipe}
                                     </div>
-                                </div>
+                                </details>
                             ` : ''}
 
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
-                                <button class="btn btn-secondary" onclick="closeSmartMealModal()">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
+                                <button class="btn btn-secondary" onclick="closeSmartMealModal()" style="padding: var(--space-sm);">
                                     Annuler
                                 </button>
-                                <button class="btn" onclick="applySmartMeal('${mealType}')" style="background: var(--accent-main); display: flex; align-items: center; justify-content: center; gap: var(--space-xs);">
-                                    <i data-lucide="check" style="width: 18px; height: 18px;"></i>
-                                    Charger le repas
+                                <button class="btn" onclick="applySmartMeal('${mealType}')" style="background: var(--accent-main); display: flex; align-items: center; justify-content: center; gap: 6px; padding: var(--space-sm);">
+                                    <i data-lucide="check" style="width: 16px; height: 16px;"></i>
+                                    Charger
                                 </button>
                             </div>
                         </div>
