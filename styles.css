@@ -1051,15 +1051,31 @@
             border-color: transparent;
         }
 
-        .calendar-day.has-data {
-            background: rgba(16, 185, 129, 0.1);
-            border-color: rgba(16, 185, 129, 0.3);
+        /* Jour vide - Gris neutre */
+        .calendar-day:not(.has-data):not(.goal-partial):not(.goal-perfect) {
+            background: var(--bg-secondary);
+            border-color: rgba(255,255,255,0.1);
         }
 
-        .calendar-day.goal-reached {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+        /* Jour avec données mais macros insuffisantes - Gris avec données */
+        .calendar-day.has-data {
+            background: rgba(100, 116, 139, 0.15);
+            border-color: rgba(100, 116, 139, 0.3);
+        }
+
+        /* Macros partiellement respectées - Jaune/Orange */
+        .calendar-day.goal-partial {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        /* Toutes les macros bien respectées - Vert */
+        .calendar-day.goal-perfect {
+            background: rgba(16, 185, 129, 0.15);
             border-color: var(--accent-main);
         }
+
+        /* Jour actuel - Bordure bleue */
 
         .calendar-day.today {
             border-color: var(--accent-ui);
