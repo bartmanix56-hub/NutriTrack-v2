@@ -2569,62 +2569,50 @@ window.loadAdminSmartTemplates = async function(direction = 'initial') {
     container.innerHTML = '<div style="text-align: center; padding: var(--space-xl);"><i data-lucide="loader" class="spin"></i> Chargement...</div>';
 
     try {
-        // Build query with pagination
-        let templatesQuery = query(
-            collection(db, 'smartTemplates'),
-            orderBy('mealType'),
-            orderBy('displayName'),
-            limit(pagination.pageSize)
-        );
+        // OPTIMIZATION: Load ALL templates once and sort client-side
+        // This avoids Firestore composite index requirement for orderBy on multiple fields
+        // Since we typically have < 100 templates, this is more efficient than complex pagination
 
-        // Handle pagination navigation
-        if (direction === 'next' && pagination.lastVisibleDoc) {
-            templatesQuery = query(
-                collection(db, 'smartTemplates'),
-                orderBy('mealType'),
-                orderBy('displayName'),
-                startAfter(pagination.lastVisibleDoc),
-                limit(pagination.pageSize)
-            );
-        } else if (direction === 'prev' && pagination.firstVisibleDoc) {
-            templatesQuery = query(
-                collection(db, 'smartTemplates'),
-                orderBy('mealType'),
-                orderBy('displayName'),
-                endBefore(pagination.firstVisibleDoc),
-                limitToLast(pagination.pageSize)
-            );
-        } else if (direction === 'initial') {
-            // Reset pagination on initial load
+        if (direction === 'initial') {
+            // Reset pagination and fetch all templates
             pagination.currentPage = 0;
+
+            const templatesSnap = await getDocs(collection(db, 'smartTemplates'));
+            const allTemplates = [];
+            templatesSnap.forEach(doc => {
+                allTemplates.push({ id: doc.id, ...doc.data() });
+            });
+
+            // Sort client-side: by mealType then by displayName
+            allTemplates.sort((a, b) => {
+                const mealOrder = {breakfast: 1, lunch: 2, snack: 3, dinner: 4};
+                if (mealOrder[a.mealType] !== mealOrder[b.mealType]) {
+                    return mealOrder[a.mealType] - mealOrder[b.mealType];
+                }
+                return (a.displayName || '').localeCompare(b.displayName || '');
+            });
+
+            // Store all templates in memory for pagination
+            window.allSmartTemplates = allTemplates;
+            pagination.totalDocs = allTemplates.length;
         }
 
-        const templatesSnap = await getDocs(templatesQuery);
-        const templates = [];
-        templatesSnap.forEach(doc => {
-            templates.push({ id: doc.id, ...doc.data() });
-        });
+        // Paginate client-side
+        const allTemplates = window.allSmartTemplates || [];
+
+        // Calculate pagination
+        if (direction === 'next') {
+            pagination.currentPage++;
+        } else if (direction === 'prev' && pagination.currentPage > 0) {
+            pagination.currentPage--;
+        }
+
+        const startIndex = pagination.currentPage * pagination.pageSize;
+        const endIndex = startIndex + pagination.pageSize;
+        const templates = allTemplates.slice(startIndex, endIndex);
 
         // Update pagination state
-        if (templates.length > 0) {
-            pagination.firstVisibleDoc = templatesSnap.docs[0];
-            pagination.lastVisibleDoc = templatesSnap.docs[templatesSnap.docs.length - 1];
-            pagination.hasMore = templates.length === pagination.pageSize;
-
-            if (direction === 'next') {
-                pagination.currentPage++;
-            } else if (direction === 'prev' && pagination.currentPage > 0) {
-                pagination.currentPage--;
-            }
-        } else {
-            pagination.hasMore = false;
-        }
-
-        // Get total count (only on initial load for performance)
-        if (direction === 'initial') {
-            const countSnap = await getDocs(collection(db, 'smartTemplates'));
-            pagination.totalDocs = countSnap.size;
-        }
+        pagination.hasMore = endIndex < allTemplates.length;
 
         // Render templates or empty state
         if (templates.length === 0) {
