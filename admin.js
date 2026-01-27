@@ -21,7 +21,7 @@ if (isValidProtocol) {
 
 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
 const { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-const { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection, query, getDocs, limit, updateDoc, Timestamp, where } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+const { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection, query, getDocs, limit, updateDoc, Timestamp, where, orderBy, startAfter, endBefore, limitToLast } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
 const { getMessaging, getToken, onMessage } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js');
 
 const firebaseConfig = {
