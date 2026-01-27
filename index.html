@@ -7905,28 +7905,186 @@
         };
 
         // ===== ADMIN SMART TEMPLATES =====
-        window.loadAdminSmartTemplates = async function() {
+        // ===== PAGINATION STATE =====
+        window.smartTemplatesPagination = {
+            currentPage: 0,
+            pageSize: 20,
+            totalDocs: 0,
+            lastVisibleDoc: null,
+            firstVisibleDoc: null,
+            hasMore: false
+        };
+
+        // Helper function to render a single template card (for optimistic updates)
+        window.renderTemplateCard = function(template) {
+            const activeBg = template.active ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+            const activeColor = template.active ? '#10b981' : '#ef4444';
+            const activeLabel = template.active ? 'Actif' : 'Inactif';
+            const mealTypeLabels = {
+                breakfast: '🌅 Petit-déjeuner',
+                lunch: '🍽️ Déjeuner',
+                snack: '🍎 Goûter',
+                dinner: '🌙 Dîner'
+            };
+
+            // Variant badges
+            const variantBadges = {
+                'vegan': '<span style="display: inline-flex; align-items: center; gap: 3px; font-size: 0.75rem; padding: 3px 8px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: var(--radius-md); font-weight: 600;"><i data-lucide="leaf" style="width: 11px; height: 11px;"></i> Vegan</span>',
+                'glutenFree': '<span style="display: inline-flex; align-items: center; gap: 3px; font-size: 0.75rem; padding: 3px 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-radius: var(--radius-md); font-weight: 600;"><i data-lucide="wheat-off" style="width: 11px; height: 11px;"></i> Sans gluten</span>',
+                'vegetarian': '<span style="display: inline-flex; align-items: center; gap: 3px; font-size: 0.75rem; padding: 3px 8px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: var(--radius-md); font-weight: 600;"><i data-lucide="salad" style="width: 11px; height: 11px;"></i> Végétarien</span>'
+            };
+            const variantBadge = template.variant && variantBadges[template.variant] ? variantBadges[template.variant] : '';
+
+            return `
+                <div class="card" id="template-card-${template.id}" style="padding: 0; overflow: hidden;">
+                    <!-- Header accordéon -->
+                    <div onclick="toggleTemplateAccordion('${template.id}')" style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-lg); cursor: pointer; transition: background 0.2s;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-xs);">
+                                <h3 id="template-title-${template.id}" style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin: 0;">
+                                    ${template.displayName || template.id}
+                                </h3>
+                                ${variantBadge}
+                                <span id="template-status-${template.id}" style="font-size: 0.75rem; padding: 3px 10px; background: ${activeBg}; color: ${activeColor}; border-radius: var(--radius-md); font-weight: 600;">
+                                    ${activeLabel}
+                                </span>
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                                ${mealTypeLabels[template.mealType] || template.mealType} • ${Math.round((template.targetPercentOfDay || 0) * 100)}% objectif journalier
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--space-md);">
+                            <div style="position: relative;">
+                                <button onclick="event.stopPropagation(); toggleTemplateMenu('${template.id}')" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.5rem; padding: var(--space-xs); transition: color 0.2s;" title="Options">
+                                    ⋯
+                                </button>
+                                <div id="template-menu-${template.id}" class="meal-menu-dropdown" style="display: none; position: absolute; right: 0; top: 100%; background: var(--bg-secondary); border-radius: var(--radius-md); padding: var(--space-xs); min-width: 160px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1000;">
+                                    <div class="meal-menu-item" onclick="event.stopPropagation(); editSmartTemplate('${template.id}')"><i data-lucide="edit-2" style="width: 16px; height: 16px;"></i> Modifier</div>
+                                    <div class="meal-menu-item" onclick="event.stopPropagation(); editTemplateTitle('${template.id}', '${template.displayName}')"><i data-lucide="type" style="width: 16px; height: 16px;"></i> Modifier le titre</div>
+                                    <div class="meal-menu-item" id="template-toggle-menu-${template.id}" onclick="event.stopPropagation(); toggleSmartTemplateActive('${template.id}', ${!template.active})"><i data-lucide="${template.active ? 'eye-off' : 'eye'}" style="width: 16px; height: 16px;"></i> ${template.active ? 'Désactiver' : 'Activer'}</div>
+                                    <div class="meal-menu-item danger" onclick="event.stopPropagation(); deleteSmartTemplate('${template.id}')"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Supprimer</div>
+                                </div>
+                            </div>
+                            <i data-lucide="chevron-down" id="template-chevron-${template.id}" style="width: 20px; height: 20px; color: var(--text-secondary); transition: transform 0.3s;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Contenu accordéon -->
+                    <div id="template-content-${template.id}" style="display: none; padding: 0 var(--space-lg) var(--space-lg) var(--space-lg);">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-sm); margin-bottom: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">Objectif/Jour</div>
+                                <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-main);">${Math.round((template.targetPercentOfDay || 0) * 100)}%</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">Protéines</div>
+                                <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-protein);">${Math.round((template.macroSplit?.proteins || 0) * 100)}%</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">Glucides</div>
+                                <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-carbs);">${Math.round((template.macroSplit?.carbs || 0) * 100)}%</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">Lipides</div>
+                                <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-fat);">${Math.round((template.macroSplit?.fats || 0) * 100)}%</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: var(--space-md);">
+                            <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: var(--space-xs); color: var(--text-primary);">
+                                <i data-lucide="utensils" style="width: 14px; height: 14px;"></i> Aliments (${(template.foods || []).length})
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+                                ${(template.foods || []).map(food => `
+                                    <span style="background: var(--bg-tertiary); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--text-secondary);">
+                                        ${food.foodName} (${food.min}-${food.max}g)
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        ${template.recipe ? `
+                            <div style="margin-top: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md); border-left: 3px solid var(--accent-carbs);">
+                                <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: var(--space-xs); color: var(--accent-carbs);">
+                                    <i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Recette
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary); white-space: pre-line; max-height: 200px; overflow-y: auto;">
+                                    ${template.recipe}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        };
+
+        window.loadAdminSmartTemplates = async function(direction = 'initial') {
             if (!isAdmin()) return;
 
             const container = document.getElementById('smart-templates-list');
+            const pagination = window.smartTemplatesPagination;
+
             container.innerHTML = '<div style="text-align: center; padding: var(--space-xl);"><i data-lucide="loader" class="spin"></i> Chargement...</div>';
 
             try {
-                const templatesSnap = await getDocs(collection(db, 'smartTemplates'));
+                // Build query with pagination
+                let templatesQuery = query(
+                    collection(db, 'smartTemplates'),
+                    orderBy('mealType'),
+                    orderBy('displayName'),
+                    limit(pagination.pageSize)
+                );
+
+                // Handle pagination navigation
+                if (direction === 'next' && pagination.lastVisibleDoc) {
+                    templatesQuery = query(
+                        collection(db, 'smartTemplates'),
+                        orderBy('mealType'),
+                        orderBy('displayName'),
+                        startAfter(pagination.lastVisibleDoc),
+                        limit(pagination.pageSize)
+                    );
+                } else if (direction === 'prev' && pagination.firstVisibleDoc) {
+                    templatesQuery = query(
+                        collection(db, 'smartTemplates'),
+                        orderBy('mealType'),
+                        orderBy('displayName'),
+                        endBefore(pagination.firstVisibleDoc),
+                        limitToLast(pagination.pageSize)
+                    );
+                } else if (direction === 'initial') {
+                    // Reset pagination on initial load
+                    pagination.currentPage = 0;
+                }
+
+                const templatesSnap = await getDocs(templatesQuery);
                 const templates = [];
                 templatesSnap.forEach(doc => {
                     templates.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Sort by mealType then by displayName
-                templates.sort((a, b) => {
-                    const mealOrder = {breakfast: 1, lunch: 2, snack: 3, dinner: 4};
-                    if (mealOrder[a.mealType] !== mealOrder[b.mealType]) {
-                        return mealOrder[a.mealType] - mealOrder[b.mealType];
-                    }
-                    return (a.displayName || '').localeCompare(b.displayName || '');
-                });
+                // Update pagination state
+                if (templates.length > 0) {
+                    pagination.firstVisibleDoc = templatesSnap.docs[0];
+                    pagination.lastVisibleDoc = templatesSnap.docs[templatesSnap.docs.length - 1];
+                    pagination.hasMore = templates.length === pagination.pageSize;
 
+                    if (direction === 'next') {
+                        pagination.currentPage++;
+                    } else if (direction === 'prev' && pagination.currentPage > 0) {
+                        pagination.currentPage--;
+                    }
+                } else {
+                    pagination.hasMore = false;
+                }
+
+                // Get total count (only on initial load for performance)
+                if (direction === 'initial') {
+                    const countSnap = await getDocs(collection(db, 'smartTemplates'));
+                    pagination.totalDocs = countSnap.size;
+                }
+
+                // Render templates or empty state
                 if (templates.length === 0) {
                     container.innerHTML = `
                         <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
@@ -7936,110 +8094,38 @@
                         </div>
                     `;
                 } else {
-                    container.innerHTML = templates.map((template, index) => {
-                        const activeBg = template.active ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
-                        const activeColor = template.active ? '#10b981' : '#ef4444';
-                        const activeLabel = template.active ? 'Actif' : 'Inactif';
-                        const mealTypeLabels = {
-                            breakfast: '🌅 Petit-déjeuner',
-                            lunch: '🍽️ Déjeuner',
-                            snack: '🍎 Goûter',
-                            dinner: '🌙 Dîner'
-                        };
+                    // Use the helper function for each template
+                    const templatesHTML = templates.map(template => renderTemplateCard(template)).join('');
 
-                        // Variant badges
-                        const variantBadges = {
-                            'vegan': '<span style="display: inline-flex; align-items: center; gap: 3px; font-size: 0.75rem; padding: 3px 8px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: var(--radius-md); font-weight: 600;"><i data-lucide="leaf" style="width: 11px; height: 11px;"></i> Vegan</span>',
-                            'glutenFree': '<span style="display: inline-flex; align-items: center; gap: 3px; font-size: 0.75rem; padding: 3px 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-radius: var(--radius-md); font-weight: 600;"><i data-lucide="wheat-off" style="width: 11px; height: 11px;"></i> Sans gluten</span>',
-                            'vegetarian': '<span style="display: inline-flex; align-items: center; gap: 3px; font-size: 0.75rem; padding: 3px 8px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: var(--radius-md); font-weight: 600;"><i data-lucide="salad" style="width: 11px; height: 11px;"></i> Végétarien</span>'
-                        };
-                        const variantBadge = template.variant && variantBadges[template.variant] ? variantBadges[template.variant] : '';
+                    // Add pagination controls
+                    const startIndex = pagination.currentPage * pagination.pageSize + 1;
+                    const endIndex = Math.min(startIndex + templates.length - 1, pagination.totalDocs);
 
-                        return `
-                            <div class="card" style="padding: 0; overflow: hidden;">
-                                <!-- Header accordéon -->
-                                <div onclick="toggleTemplateAccordion('${template.id}')" style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-lg); cursor: pointer; transition: background 0.2s;">
-                                    <div style="flex: 1;">
-                                        <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-xs);">
-                                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin: 0;">
-                                                ${template.displayName || template.id}
-                                            </h3>
-                                            ${variantBadge}
-                                            <span style="font-size: 0.75rem; padding: 3px 10px; background: ${activeBg}; color: ${activeColor}; border-radius: var(--radius-md); font-weight: 600;">
-                                                ${activeLabel}
-                                            </span>
-                                        </div>
-                                        <div style="color: var(--text-secondary); font-size: 0.9rem;">
-                                            ${mealTypeLabels[template.mealType] || template.mealType} • ${Math.round((template.targetPercentOfDay || 0) * 100)}% objectif journalier
-                                        </div>
-                                    </div>
-                                    <div style="display: flex; align-items: center; gap: var(--space-md);">
-                                        <div style="position: relative;">
-                                            <button onclick="event.stopPropagation(); toggleTemplateMenu('${template.id}')" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.5rem; padding: var(--space-xs); transition: color 0.2s;" title="Options">
-                                                ⋯
-                                            </button>
-                                            <div id="template-menu-${template.id}" class="meal-menu-dropdown" style="display: none; position: absolute; right: 0; top: 100%; background: var(--bg-secondary); border-radius: var(--radius-md); padding: var(--space-xs); min-width: 160px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1000;">
-                                                <div class="meal-menu-item" onclick="event.stopPropagation(); editSmartTemplate('${template.id}')"><i data-lucide="edit-2" style="width: 16px; height: 16px;"></i> Modifier</div>
-                                                <div class="meal-menu-item" onclick="event.stopPropagation(); editTemplateTitle('${template.id}', '${template.displayName}')"><i data-lucide="type" style="width: 16px; height: 16px;"></i> Modifier le titre</div>
-                                                <div class="meal-menu-item" onclick="event.stopPropagation(); toggleSmartTemplateActive('${template.id}', ${!template.active})"><i data-lucide="${template.active ? 'eye-off' : 'eye'}" style="width: 16px; height: 16px;"></i> ${template.active ? 'Désactiver' : 'Activer'}</div>
-                                                <div class="meal-menu-item danger" onclick="event.stopPropagation(); deleteSmartTemplate('${template.id}')"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Supprimer</div>
-                                            </div>
-                                        </div>
-                                        <i data-lucide="chevron-down" id="template-chevron-${template.id}" style="width: 20px; height: 20px; color: var(--text-secondary); transition: transform 0.3s;"></i>
-                                    </div>
-                                </div>
+                    const paginationHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-lg); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                            <button
+                                onclick="loadAdminSmartTemplates('prev')"
+                                ${pagination.currentPage === 0 ? 'disabled' : ''}
+                                style="padding: var(--space-sm) var(--space-md); background: var(--accent-main); color: white; border: none; border-radius: var(--radius-md); cursor: ${pagination.currentPage === 0 ? 'not-allowed' : 'pointer'}; opacity: ${pagination.currentPage === 0 ? '0.5' : '1'}; transition: opacity 0.2s;">
+                                <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i> Précédent
+                            </button>
+                            <span style="color: var(--text-secondary); font-size: 0.9rem;">
+                                <strong>${startIndex}-${endIndex}</strong> sur <strong>${pagination.totalDocs}</strong> templates
+                            </span>
+                            <button
+                                onclick="loadAdminSmartTemplates('next')"
+                                ${!pagination.hasMore ? 'disabled' : ''}
+                                style="padding: var(--space-sm) var(--space-md); background: var(--accent-main); color: white; border: none; border-radius: var(--radius-md); cursor: ${!pagination.hasMore ? 'not-allowed' : 'pointer'}; opacity: ${!pagination.hasMore ? '0.5' : '1'}; transition: opacity 0.2s;">
+                                Suivant <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
+                            </button>
+                        </div>
+                    `;
 
-                                <!-- Contenu accordéon -->
-                                <div id="template-content-${template.id}" style="display: none; padding: 0 var(--space-lg) var(--space-lg) var(--space-lg);">
-                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-sm); margin-bottom: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                                        <div style="text-align: center;">
-                                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Objectif/Jour</div>
-                                            <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-main);">${Math.round((template.targetPercentOfDay || 0) * 100)}%</div>
-                                        </div>
-                                        <div style="text-align: center;">
-                                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Protéines</div>
-                                            <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-protein);">${Math.round((template.macroSplit?.proteins || 0) * 100)}%</div>
-                                        </div>
-                                        <div style="text-align: center;">
-                                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Glucides</div>
-                                            <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-carbs);">${Math.round((template.macroSplit?.carbs || 0) * 100)}%</div>
-                                        </div>
-                                        <div style="text-align: center;">
-                                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Lipides</div>
-                                            <div style="font-size: 1.1rem; font-weight: 600; color: var(--accent-fat);">${Math.round((template.macroSplit?.fats || 0) * 100)}%</div>
-                                        </div>
-                                    </div>
-
-                                    <div style="margin-bottom: var(--space-md);">
-                                        <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: var(--space-xs); color: var(--text-primary);">
-                                            <i data-lucide="utensils" style="width: 14px; height: 14px;"></i> Aliments (${(template.foods || []).length})
-                                        </div>
-                                        <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
-                                            ${(template.foods || []).map(food => `
-                                                <span style="background: var(--bg-tertiary); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--text-secondary);">
-                                                    ${food.foodName} (${food.min}-${food.max}g)
-                                                </span>
-                                            `).join('')}
-                                        </div>
-                                    </div>
-
-                                    ${template.recipe ? `
-                                        <div style="margin-top: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md); border-left: 3px solid var(--accent-carbs);">
-                                            <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: var(--space-xs); color: var(--accent-carbs);">
-                                                <i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Recette
-                                            </div>
-                                            <div style="font-size: 0.85rem; color: var(--text-secondary); white-space: pre-line; max-height: 200px; overflow-y: auto;">
-                                                ${template.recipe}
-                                            </div>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
+                    container.innerHTML = templatesHTML + paginationHTML;
                 }
 
-                if (typeof updateIcons === 'function') updateIcons();
+                // OPTIMIZATION: Pass specific container to updateIcons instead of parsing entire DOM
+                if (typeof updateIcons === 'function') updateIcons(container);
 
             } catch (error) {
                 console.error('Erreur chargement smart templates:', error);
@@ -8097,14 +8183,27 @@
             const newTitle = prompt('Nouveau titre du template:', currentTitle);
             if (!newTitle || newTitle === currentTitle) return;
 
+            // OPTIMISTIC UPDATE: Update DOM immediately
+            const titleElement = document.getElementById(`template-title-${templateId}`);
+            const oldTitle = titleElement ? titleElement.textContent : currentTitle;
+
+            if (titleElement) {
+                titleElement.textContent = newTitle.trim();
+            }
+
             try {
+                // Sync to Firestore in background
                 await updateDoc(doc(db, 'smartTemplates', templateId), { displayName: newTitle.trim() });
                 showToast('<i data-lucide="check-circle" class="icon-inline"></i> Titre mis à jour');
-                loadAdminSmartTemplates();
                 await logAdminAction('update_template_title', { templateId, newTitle });
             } catch (error) {
                 console.error('Erreur modification titre:', error);
                 customAlert('Erreur', 'Impossible de modifier le titre du template');
+
+                // Revert optimistic update on error
+                if (titleElement) {
+                    titleElement.textContent = oldTitle;
+                }
             }
         };
 
@@ -8112,13 +8211,55 @@
         window.toggleSmartTemplateActive = async function(templateId, active) {
             if (!isAdmin()) return;
 
+            // OPTIMISTIC UPDATE: Update DOM immediately for instant feedback
+            const statusBadge = document.getElementById(`template-status-${templateId}`);
+            const toggleMenuItem = document.getElementById(`template-toggle-menu-${templateId}`);
+
+            if (statusBadge) {
+                const activeBg = active ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+                const activeColor = active ? '#10b981' : '#ef4444';
+                const activeLabel = active ? 'Actif' : 'Inactif';
+
+                statusBadge.style.background = activeBg;
+                statusBadge.style.color = activeColor;
+                statusBadge.textContent = activeLabel;
+            }
+
+            if (toggleMenuItem) {
+                const icon = toggleMenuItem.querySelector('[data-lucide]');
+                const text = active ? 'Désactiver' : 'Activer';
+                if (icon) {
+                    icon.setAttribute('data-lucide', active ? 'eye-off' : 'eye');
+                }
+                toggleMenuItem.innerHTML = `<i data-lucide="${active ? 'eye-off' : 'eye'}" style="width: 16px; height: 16px;"></i> ${text}`;
+                toggleMenuItem.onclick = function(e) {
+                    e.stopPropagation();
+                    toggleSmartTemplateActive(templateId, !active);
+                };
+                // Update icon
+                if (typeof updateIcons === 'function') {
+                    updateIcons(toggleMenuItem);
+                }
+            }
+
             try {
+                // Sync to Firestore in background
                 await updateDoc(doc(db, 'smartTemplates', templateId), { active });
                 showToast(`<i data-lucide="check-circle" class="icon-inline"></i> Template ${active ? 'activé' : 'désactivé'}`);
-                loadAdminSmartTemplates();
             } catch (error) {
                 console.error('Erreur toggle active:', error);
                 customAlert('Erreur', 'Impossible de modifier le statut du template');
+
+                // Revert optimistic update on error
+                if (statusBadge) {
+                    const activeBg = !active ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+                    const activeColor = !active ? '#10b981' : '#ef4444';
+                    const activeLabel = !active ? 'Actif' : 'Inactif';
+
+                    statusBadge.style.background = activeBg;
+                    statusBadge.style.color = activeColor;
+                    statusBadge.textContent = activeLabel;
+                }
             }
         };
 
@@ -8134,14 +8275,43 @@
 
             if (!confirmed) return;
 
+            // OPTIMISTIC UPDATE: Remove from DOM immediately with animation
+            const templateCard = document.getElementById(`template-card-${templateId}`);
+            const cardHTML = templateCard ? templateCard.outerHTML : null;
+            const parentElement = templateCard ? templateCard.parentElement : null;
+
+            if (templateCard) {
+                // Fade out animation
+                templateCard.style.transition = 'opacity 0.3s, transform 0.3s';
+                templateCard.style.opacity = '0';
+                templateCard.style.transform = 'scale(0.95)';
+
+                setTimeout(() => {
+                    templateCard.remove();
+                }, 300);
+            }
+
             try {
+                // Sync to Firestore in background
                 await deleteDoc(doc(db, 'smartTemplates', templateId));
                 showToast('<i data-lucide="trash-2" class="icon-inline"></i> Template supprimé');
-                loadAdminSmartTemplates();
                 await logAdminAction('delete_smart_template', { templateId });
+
+                // Update total count
+                if (window.smartTemplatesPagination) {
+                    window.smartTemplatesPagination.totalDocs--;
+                }
             } catch (error) {
                 console.error('Erreur suppression template:', error);
                 customAlert('Erreur', 'Impossible de supprimer le template');
+
+                // Revert optimistic update on error
+                if (cardHTML && parentElement) {
+                    parentElement.insertAdjacentHTML('beforeend', cardHTML);
+                    if (typeof updateIcons === 'function') {
+                        updateIcons(parentElement);
+                    }
+                }
             }
         };
 
@@ -8453,20 +8623,41 @@
                 const isEdit = !!document.querySelector('[name="id"][readonly]');
 
                 if (isEdit) {
-                    // Update existing
+                    // Update existing - OPTIMISTIC UPDATE
+                    const templateCard = document.getElementById(`template-card-${templateData.id}`);
+
+                    // Sync to Firestore
                     await updateDoc(doc(db, 'smartTemplates', templateData.id), templateData);
                     showToast('<i data-lucide="check-circle" class="icon-inline"></i> Template mis à jour');
                     await logAdminAction('update_smart_template', { templateId: templateData.id });
+
+                    // Update the card in DOM without reloading entire list
+                    if (templateCard) {
+                        const container = document.getElementById('smart-templates-list');
+                        const newCardHTML = renderTemplateCard(templateData);
+                        templateCard.outerHTML = newCardHTML;
+
+                        // Update icons only for the new card
+                        if (typeof updateIcons === 'function') {
+                            const updatedCard = document.getElementById(`template-card-${templateData.id}`);
+                            if (updatedCard) {
+                                updateIcons(updatedCard);
+                            }
+                        }
+                    }
                 } else {
                     // Create new
                     templateData.createdAt = new Date();
                     await setDoc(doc(db, 'smartTemplates', templateData.id), templateData);
                     showToast('<i data-lucide="check-circle" class="icon-inline"></i> Template créé');
                     await logAdminAction('create_smart_template', { templateId: templateData.id });
+
+                    // For new templates, reload to show in proper sorted position
+                    // and update pagination
+                    loadAdminSmartTemplates();
                 }
 
                 closeSmartTemplateModal();
-                loadAdminSmartTemplates();
             } catch (error) {
                 console.error('Erreur sauvegarde template:', error);
                 customAlert('Erreur', 'Impossible de sauvegarder le template');
