@@ -5011,7 +5011,7 @@
     }
 }
 
-/* Food selection item for template modal - Optimized hover performance */
+/* Food selection item for template modal - ULTRA-OPTIMIZED hover performance */
 .food-selection-item {
     width: 100%;
     text-align: left;
@@ -5021,12 +5021,40 @@
     border-radius: var(--radius-md);
     color: var(--text-primary);
     cursor: pointer;
-    transition: background 0.1s ease, border-color 0.1s ease;
     display: block;
     overflow: hidden;
+
+    /* PERFORMANCE OPTIMIZATIONS */
+    contain: layout style paint; /* Isolate layout/paint from rest of page */
+    will-change: transform, opacity; /* Hint browser for GPU optimization */
+    transform: translateZ(0); /* Force GPU layer */
+    backface-visibility: hidden; /* Prevent flickering */
+
+    /* Use opacity + transform instead of background change (GPU accelerated) */
+    position: relative;
+    transition: transform 0.08s ease-out, opacity 0.08s ease-out;
+}
+
+.food-selection-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--bg-secondary);
+    opacity: 0;
+    transition: opacity 0.08s ease-out;
+    pointer-events: none;
+    border-radius: var(--radius-md);
 }
 
 .food-selection-item:hover {
-    background: var(--bg-secondary);
+    transform: translateZ(0) scale(1.01); /* GPU accelerated scale */
     border-color: var(--accent-main);
+}
+
+.food-selection-item:hover::before {
+    opacity: 1; /* Fade in background overlay */
+}
+
+.food-selection-item:active {
+    transform: translateZ(0) scale(0.98); /* Click feedback */
 }
