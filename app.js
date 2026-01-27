@@ -9322,13 +9322,14 @@ Solutions possibles :
             // Trier par ordre alphabétique
             const sortedFoods = [...limitedFoods].sort((a, b) => a.name.localeCompare(b.name));
 
+            // OPTIMIZATION: Event delegation instead of inline onclick (1 handler vs 30)
             container.innerHTML = sortedFoods.map(food => {
                 const verifiedBadge = food.verified
                     ? ' <span style="color: #10b981; font-size: 0.85rem;" title="Aliment vérifié">✓</span>'
                     : '';
 
                 return `
-                    <button type="button" onclick="selectFoodForTemplate('${food.name.replace(/'/g, "\\'")}')" class="food-selection-item">
+                    <button type="button" data-food-name="${food.name}" class="food-selection-item">
                         <div style="font-weight: 500; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                             ${food.name}${verifiedBadge}
                         </div>
@@ -9497,8 +9498,21 @@ Solutions possibles :
                 `;
             }
 
-            // Initialize Lucide icons for the entire modal (including "Terminé" button)
-            updateIcons();
+            // OPTIMIZATION: Pass modal container to updateIcons instead of parsing entire DOM
+            const modal = document.getElementById('food-selection-modal');
+            if (typeof updateIcons === 'function') {
+                updateIcons(modal);
+            }
+
+            // OPTIMIZATION: Event delegation for food selection (1 listener vs 30 inline onclick)
+            if (container) {
+                container.addEventListener('click', (e) => {
+                    const button = e.target.closest('.food-selection-item');
+                    if (button && button.dataset.foodName) {
+                        selectFoodForTemplate(button.dataset.foodName);
+                    }
+                });
+            }
 
             // Focus sur le champ de recherche
             setTimeout(() => {
