@@ -2266,7 +2266,7 @@ Solutions possibles :
             modal.className = 'modal active';
             modal.id = 'calendar-modal';
             modal.innerHTML = `
-                <div class="modal-content" style="max-width: 900px;">
+                <div class="modal-content" style="max-width: 650px;">
                     <div class="modal-header">
                         <h2 style="margin: 0; display: flex; align-items: center; gap: var(--space-sm);">
                             <i data-lucide="calendar" style="width: 24px; height: 24px;"></i> Calendrier
@@ -2274,6 +2274,22 @@ Solutions possibles :
                         <button onclick="closeCalendarView()" class="modal-close">✕</button>
                     </div>
                     <div class="modal-body">
+                        <!-- Légende -->
+                        <div style="display: flex; gap: var(--space-lg); margin-bottom: var(--space-lg); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md); flex-wrap: wrap; justify-content: center;">
+                            <div style="display: flex; align-items: center; gap: var(--space-xs);">
+                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: var(--bg-secondary); border: 2px solid rgba(255,255,255,0.1);"></div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Jour vide</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--space-xs);">
+                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(245, 158, 11, 0.15); border: 2px solid rgba(245, 158, 11, 0.4);"></div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Macros partielles</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--space-xs);">
+                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(16, 185, 129, 0.15); border: 2px solid var(--accent-main);"></div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Macros respectées</span>
+                            </div>
+                        </div>
+
                         <div class="calendar-container">
                             <div class="calendar-header">
                                 <button class="btn-ghost" onclick="changeCalendarMonth(-1)"><i data-lucide="chevron-left"></i></button>
@@ -2338,18 +2354,67 @@ Solutions possibles :
                 let indicator = '';
 
                 if (dayMeals) {
-                    classes += ' has-data';
                     const dayTotals = calculateDayTotals(dayMeals);
 
-                    if (targets.calories && dayTotals.calories > 0) {
-                        const calMatch = Math.abs(dayTotals.calories - targets.calories) <= targets.calories * 0.1;
-                        if (calMatch) {
-                            classes += ' goal-reached';
+                    // Vérifier si le jour a des données
+                    if (dayTotals.calories > 0 && targets.calories) {
+                        // Système de couleurs basé sur le respect des macros
+                        // Seuil strict : ±15% pour "bien respecté" (vert)
+                        // Seuil large : ±25% pour "partiellement respecté" (jaune)
+                        const strictTolerance = 0.15; // ±15%
+                        const largeTolerance = 0.25;  // ±25%
+
+                        let macrosRespected = 0;
+                        let macrosPartial = 0;
+
+                        // Vérifier calories
+                        const calDiff = Math.abs(dayTotals.calories - targets.calories) / targets.calories;
+                        if (calDiff <= strictTolerance) macrosRespected++;
+                        else if (calDiff <= largeTolerance) macrosPartial++;
+
+                        // Vérifier protéines
+                        if (targets.protein) {
+                            const protDiff = Math.abs(dayTotals.protein - targets.protein) / targets.protein;
+                            if (protDiff <= strictTolerance) macrosRespected++;
+                            else if (protDiff <= largeTolerance) macrosPartial++;
+                        }
+
+                        // Vérifier glucides
+                        if (targets.carbs) {
+                            const carbsDiff = Math.abs(dayTotals.carbs - targets.carbs) / targets.carbs;
+                            if (carbsDiff <= strictTolerance) macrosRespected++;
+                            else if (carbsDiff <= largeTolerance) macrosPartial++;
+                        }
+
+                        // Vérifier lipides
+                        if (targets.fat) {
+                            const fatDiff = Math.abs(dayTotals.fat - targets.fat) / targets.fat;
+                            if (fatDiff <= strictTolerance) macrosRespected++;
+                            else if (fatDiff <= largeTolerance) macrosPartial++;
+                        }
+
+                        // Déterminer la couleur
+                        // Vert : Toutes les macros dans ±15%
+                        // Jaune : Au moins 2 macros dans ±25% mais pas toutes dans ±15%
+                        // Gris : Moins de 2 macros respectées
+                        const totalMacros = 1 + (targets.protein ? 1 : 0) + (targets.carbs ? 1 : 0) + (targets.fat ? 1 : 0);
+
+                        if (macrosRespected === totalMacros) {
+                            // Toutes les macros bien respectées → VERT
+                            classes += ' goal-perfect';
                             indicator = '✓';
+                        } else if (macrosRespected + macrosPartial >= 2) {
+                            // Au moins 2 macros OK (strict ou large) → JAUNE
+                            classes += ' goal-partial';
+                            indicator = '∼';
                         } else {
+                            // Moins de 2 macros OK → Gris avec données
+                            classes += ' has-data';
                             indicator = '•';
                         }
                     } else {
+                        // Jour avec repas mais pas d'objectifs définis
+                        classes += ' has-data';
                         indicator = '•';
                     }
                 }
