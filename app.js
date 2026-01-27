@@ -1,6 +1,63 @@
 // NutriTrack v2 - Main Application JavaScript
 // Gestion complète de l'application de suivi nutritionnel
 
+        // ===== PERFORMANCE: Fonctions utilitaires =====
+
+        // Debounce : retarde l'exécution jusqu'à ce que l'utilisateur arrête d'interagir
+        function debounce(func, delay) {
+            let timeoutId;
+            return function (...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        // Throttle : limite le nombre d'exécutions par période de temps
+        function throttle(func, limit) {
+            let inThrottle;
+            return function (...args) {
+                if (!inThrottle) {
+                    func.apply(this, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            };
+        }
+
+        // ===== PERFORMANCE: Optimisation Lucide Icons =====
+        // Au lieu d'appeler lucide.createIcons() partout (reparse tout le DOM),
+        // on utilise un système de batching avec RAF pour regrouper les updates
+        let iconsUpdatePending = false;
+        let iconsUpdateContainers = new Set();
+
+        function updateIcons(container = null) {
+            if (typeof lucide === 'undefined') return;
+
+            if (container) {
+                iconsUpdateContainers.add(container);
+            }
+
+            if (!iconsUpdatePending) {
+                iconsUpdatePending = true;
+                requestAnimationFrame(() => {
+                    if (iconsUpdateContainers.size > 0) {
+                        // Créer les icônes uniquement dans les conteneurs spécifiés
+                        iconsUpdateContainers.forEach(cont => {
+                            if (cont && cont.querySelectorAll) {
+                                lucide.createIcons({ icons: lucide.icons, nameAttr: 'data-lucide', attrs: {}, });
+                            }
+                        });
+                        iconsUpdateContainers.clear();
+                    } else {
+                        // Si aucun conteneur spécifique, créer toutes les icônes (fallback)
+                        lucide.createIcons();
+                    }
+                    iconsUpdatePending = false;
+                });
+            }
+        }
+        // ===== FIN OPTIMISATION LUCIDE =====
+
         // Food database
         let foodDatabase = []; // CHARGÉ DEPUIS FIRESTORE (voir index.html loadFoodDatabaseFromFirestore)
 
@@ -205,7 +262,7 @@
             document.documentElement.classList.toggle('drawer-open');
             document.body.classList.toggle('drawer-open');
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
         }
 
         function closeMobileDrawer() {
@@ -375,7 +432,7 @@
                 // Mode maintien : afficher la question de répartition
                 if (paceLabel) {
                     paceLabel.innerHTML = '<i data-lucide="scale" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 4px;"></i>Quelle répartition préfères-tu ?';
-                    if (window.lucide) lucide.createIcons();
+                    updateIcons();
                 }
                 if (paceDeficitBtns) paceDeficitBtns.style.display = 'none';
                 if (paceMaintainBtns) {
@@ -393,7 +450,7 @@
                 // Mode sèche/prise : afficher la question de rythme
                 if (paceLabel) {
                     paceLabel.innerHTML = '<i data-lucide="gauge" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 4px;"></i>Quel rythme souhaites-tu ?';
-                    if (window.lucide) lucide.createIcons();
+                    updateIcons();
                 }
                 if (paceDeficitBtns) paceDeficitBtns.style.display = 'grid';
                 if (paceMaintainBtns) paceMaintainBtns.style.display = 'none';
@@ -721,7 +778,7 @@
             const btn = document.getElementById('calculate-btn');
             if (btn && !silent) {
                 btn.innerHTML = '<i data-lucide="loader" style="width: 18px; height: 18px; animation: spin 1s linear infinite;"></i> Calcul en cours...';
-                if (typeof lucide !== "undefined") lucide.createIcons();
+                updateIcons();
                 btn.disabled = true;
             }
 
@@ -736,7 +793,7 @@
                 showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Date de naissance manquante - Remplis jour, mois et année'); document.getElementById('birth-day')?.focus(); document.getElementById('birth-day')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
                 if (btn) {
                     btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
-                    if (typeof lucide !== "undefined") lucide.createIcons();
+                    updateIcons();
                     btn.disabled = false;
                 }
                 return;
@@ -747,7 +804,7 @@
                 showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Sexe non sélectionné - Choisis Homme ou Femme'); document.getElementById('profile-gender')?.focus(); document.getElementById('profile-gender')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
                 if (btn) {
                     btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
-                    if (typeof lucide !== "undefined") lucide.createIcons();
+                    updateIcons();
                     btn.disabled = false;
                 }
                 return;
@@ -758,7 +815,7 @@
                 showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Taille manquante ou invalide - Entre ta taille en cm'); document.getElementById('height')?.focus(); document.getElementById('height')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
                 if (btn) {
                     btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
-                    if (typeof lucide !== "undefined") lucide.createIcons();
+                    updateIcons();
                     btn.disabled = false;
                 }
                 return;
@@ -769,7 +826,7 @@
                 showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Poids manquant ou invalide - Entre ton poids en kg'); document.getElementById('weight')?.focus(); document.getElementById('weight')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
                 if (btn) {
                     btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
-                    if (typeof lucide !== "undefined") lucide.createIcons();
+                    updateIcons();
                     btn.disabled = false;
                 }
                 return;
@@ -780,7 +837,7 @@
                 showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Niveau d\'activité non sélectionné - Choisis ton niveau');
                 if (btn) {
                     btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
-                    if (typeof lucide !== "undefined") lucide.createIcons();
+                    updateIcons();
                     btn.disabled = false;
                 }
                 return;
@@ -841,19 +898,19 @@
                 // Vérifier que les champs sont remplis
                 if (!deficitInput || deficitInput === '') {
                     showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Déficit calorique (%) requis pour calculer les macros');
-                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
+                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; updateIcons(); }
                     document.getElementById('deficit')?.focus();
                     return;
                 }
                 if (!proteinCoeffInput || proteinCoeffInput === '') {
                     showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Protéines (g/kg) requis pour calculer les macros');
-                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
+                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; updateIcons(); }
                     document.getElementById('proteinCoeff')?.focus();
                     return;
                 }
                 if (!fatCoeffInput || fatCoeffInput === '') {
                     showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Lipides (g/kg) requis pour calculer les macros');
-                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
+                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; updateIcons(); }
                     document.getElementById('fatCoeff')?.focus();
                     return;
                 }
@@ -904,13 +961,13 @@
                 // Vérifier que les champs sont remplis
                 if (!proteinCoeffMaintainInput || proteinCoeffMaintainInput === '') {
                     showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Protéines (g/kg) requis pour calculer les macros');
-                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
+                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; updateIcons(); }
                     document.getElementById('proteinCoeffMaintain')?.focus();
                     return;
                 }
                 if (!fatCoeffMaintainInput || fatCoeffMaintainInput === '') {
                     showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Lipides (g/kg) requis pour calculer les macros');
-                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
+                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; updateIcons(); }
                     document.getElementById('fatCoeffMaintain')?.focus();
                     return;
                 }
@@ -956,19 +1013,19 @@
                 // Vérifier que les champs sont remplis
                 if (!surplusInput || surplusInput === '') {
                     showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Surplus calorique (%) requis pour calculer les macros');
-                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
+                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; updateIcons(); }
                     document.getElementById('surplus')?.focus();
                     return;
                 }
                 if (!proteinCoeffBulkInput || proteinCoeffBulkInput === '') {
                     showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Protéines (g/kg) requis pour calculer les macros');
-                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
+                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; updateIcons(); }
                     document.getElementById('proteinCoeffBulk')?.focus();
                     return;
                 }
                 if (!fatCoeffBulkInput || fatCoeffBulkInput === '') {
                     showProfileAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Lipides (g/kg) requis pour calculer les macros');
-                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; if (typeof lucide !== "undefined") lucide.createIcons(); }
+                    if (btn) { btn.innerHTML = '<i data-lucide="calculator"></i> Calculer mes macros'; btn.disabled = false; updateIcons(); }
                     document.getElementById('fatCoeffBulk')?.focus();
                     return;
                 }
@@ -1140,7 +1197,7 @@ Solutions possibles :
             const resultsContent = document.getElementById('results-content');
             if (emptyState) emptyState.style.display = 'none';
             if (resultsContent) resultsContent.style.display = 'block';
-            if (typeof lucide !== "undefined") lucide.createIcons();
+            updateIcons();
 
             // Sauvegarder dans localStorage (incluant IMC)
             localStorage.setItem('macroTargets', JSON.stringify({
@@ -1153,12 +1210,11 @@ Solutions possibles :
             // FEEDBACK SUCCÈS DU BOUTON (seulement si pas silencieux)
             if (btn && !silent) {
                 btn.innerHTML = '<i data-lucide="check" style="width: 22px; height: 22px;"></i> Calcul effectué <i data-lucide="check-circle" class="icon-inline"></i>';
-                if (typeof lucide !== "undefined") lucide.createIcons();
+                updateIcons();
                 setTimeout(() => {
                     btn.innerHTML = '<i data-lucide="calculator" style="width: 22px; height: 22px;"></i> Calculer mes Macros';
-                    if (typeof lucide !== "undefined") lucide.createIcons();
+                    updateIcons();
                     btn.disabled = false;
-                    lucide.createIcons();
                 }, 2000);
             }
 
@@ -1204,7 +1260,7 @@ Solutions possibles :
             }
 
             // Reinitialize Lucide icons after setting HTML
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
 
             // Focus on alert
             alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1254,7 +1310,7 @@ Solutions possibles :
                     `;
                     plannerSection.style.minHeight = '80vh';
                     plannerSection.appendChild(overlay);
-                    lucide.createIcons();
+                    updateIcons();
                 }
 
                 if (trackingSection && !trackingSection.querySelector('.section-disabled-overlay')) {
@@ -1273,7 +1329,7 @@ Solutions possibles :
                     `;
                     trackingSection.style.minHeight = '80vh';
                     trackingSection.appendChild(overlay);
-                    lucide.createIcons();
+                    updateIcons();
                 }
             } else {
                 // Enlever les restrictions si macros calculées
@@ -1455,7 +1511,7 @@ Solutions possibles :
                         </div>
                     `;
                     modalSearchResults.style.display = 'block';
-                    if (typeof lucide !== "undefined") lucide.createIcons();
+                    updateIcons();
 
                     if (typeof window.searchAlimentsCommuns === 'function') {
                         try {
@@ -1549,7 +1605,7 @@ Solutions possibles :
             modalSearchResults.style.display = 'block';
 
             // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
         }
 
         // Add food to specific meal
@@ -1765,7 +1821,7 @@ Solutions possibles :
                         </div>
                     `;
                     dropdown.innerHTML += loadingIndicator;
-                    if (typeof lucide !== "undefined") lucide.createIcons();
+                    updateIcons();
                 }
 
                 if (typeof window.searchAlimentsCommuns === 'function') {
@@ -1866,7 +1922,7 @@ Solutions possibles :
             dropdown.innerHTML = html;
             positionGlobalDropdown(currentQuickAddInput);
             dropdown.style.display = 'block';
-            if (typeof lucide !== "undefined") lucide.createIcons();
+            updateIcons();
         }
 
         function renderGlobalQuickAddResults(foods) {
@@ -2232,7 +2288,7 @@ Solutions possibles :
             document.body.appendChild(modal);
             document.body.style.overflow = 'hidden';
             renderCalendar(new Date());
-            if (typeof lucide !== "undefined") lucide.createIcons();
+            updateIcons();
         };
 
         window.closeCalendarView = function() {
@@ -2661,7 +2717,7 @@ Solutions possibles :
             const mealsSection = document.getElementById('meals');
             if (mealsSection) {
                 mealsSection.insertBefore(banner, mealsSection.children[2]); // After hero and date nav
-                if (typeof lucide !== "undefined") lucide.createIcons();
+                updateIcons();
             }
         }
 
@@ -2699,13 +2755,13 @@ Solutions possibles :
             currentQuickAddInput = null;
         });
 
-        // Reposition dropdown on scroll
-        document.addEventListener('scroll', () => {
+        // Reposition dropdown on scroll (throttled pour performance)
+        document.addEventListener('scroll', throttle(() => {
             const dropdown = document.getElementById('global-quick-add-results');
             if (dropdown && dropdown.style.display === 'block' && currentQuickAddInput) {
                 positionGlobalDropdown(currentQuickAddInput);
             }
-        }, true);
+        }, 100), true);
 
         // Render specific meal
         // Remove recipe from meal without clearing foods
@@ -2780,7 +2836,7 @@ Solutions possibles :
                         <p style="font-size: 0.85rem; margin-top: var(--space-xs); margin-bottom: 0; opacity: 0.6;">Ajoute des aliments pour commencer ✨</p>
                     </div>
                 `;
-                if (typeof lucide !== "undefined") lucide.createIcons();
+                updateIcons();
                 document.getElementById(`${mealType}-total`).textContent = '0 kcal';
                 return;
             }
@@ -2868,7 +2924,7 @@ Solutions possibles :
             } else if (recipeDiv)  { recipeDiv.style.display = 'none'; }
 
             // Recreate Lucide icons
-            if (typeof lucide !== "undefined") lucide.createIcons();
+            updateIcons();
         }
 
         // Update food quantity in meal
@@ -3195,7 +3251,7 @@ Solutions possibles :
             feedbackEl.style.border = `2px solid ${textColor}40`;
             feedbackEl.style.display = 'block';
             // Réinitialiser les icônes Lucide
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
         }
 
         // === CLÔTURE DE JOURNÉE ===
@@ -3258,12 +3314,12 @@ Solutions possibles :
 
             if (isClosed) {
                 btn.innerHTML = '<i data-lucide="lock-open" style="width: 18px; height: 18px;"></i><span id="close-day-text">Rouvrir cette journée</span>';
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                updateIcons();
                 btn.style.background = '#d4a847';
                 btn.style.color = '#1a1a1a';
                 notice.style.display = 'block';
                 if (badge) badge.style.display = 'inline-block';
-                if (typeof lucide !== "undefined") lucide.createIcons();
+                updateIcons();
 
                 // Désactiver les boutons d'ajout
                 document.querySelectorAll('#meals .add-food-btn, #meals .delete-btn').forEach(btn => {
@@ -3273,7 +3329,7 @@ Solutions possibles :
                 });
             } else {
                 btn.innerHTML = '<i data-lucide="check-circle" style="width: 18px; height: 18px;"></i><span id="close-day-text">Clôturer cette journée</span>';
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                updateIcons();
                 btn.style.background = '#5b8dd9';
                 btn.style.color = 'white';
                 notice.style.display = 'none';
@@ -3488,7 +3544,7 @@ Solutions possibles :
                     toast.id = 'save-toast';
                     toast.className = 'save-toast';
                     toast.innerHTML = '<i data-lucide="save" class="icon-inline"></i> Données enregistrées';
-                    if (typeof lucide !== "undefined") lucide.createIcons();
+                    updateIcons();
                     document.body.appendChild(toast);
                 }
 
@@ -3607,7 +3663,7 @@ Solutions possibles :
             }).join('');
 
             // Reinitialize Lucide icons after dynamic content
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
 
             // Update weekly summary
             updateWeeklySummary();
@@ -3829,7 +3885,7 @@ Solutions possibles :
             `).join('');
 
             // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
         }
 
         // Debounce pour éviter trop d'appels Firestore
@@ -3892,7 +3948,7 @@ Solutions possibles :
             const resultsContent2 = document.getElementById('results-content');
             if (emptyState2) emptyState2.style.display = 'none';
             if (resultsContent2) resultsContent2.style.display = 'block';
-            if (typeof lucide !== "undefined") lucide.createIcons();
+            updateIcons();
         }
 
         // ========================================
@@ -4270,7 +4326,7 @@ Solutions possibles :
                 setTimeout(() =>  { syncWeightToCalculator(); }, 500);
 
                 // Initialize Lucide icons
-                if (typeof lucide !== 'undefined')  { if (typeof lucide !== "undefined") lucide.createIcons(); }
+                if (typeof lucide !== 'undefined')  { updateIcons(); }
             });
         }
 
@@ -4407,7 +4463,7 @@ Solutions possibles :
                     }
 
                     modalBody.insertBefore(message, modalBody.firstChild);
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                    updateIcons();
                 }
 
             }, 100);
@@ -4635,7 +4691,7 @@ Solutions possibles :
                 }
 
                 modalBody.insertBefore(message, modalBody.firstChild);
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                updateIcons();
             }
 
             showToast('✅ Produit trouvé : ' + product.name);
@@ -4660,7 +4716,7 @@ Solutions possibles :
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
 
             // Initialiser le scanner
             startBarcodeScanner();
@@ -4819,7 +4875,7 @@ Solutions possibles :
                         <p style="font-size: 0.85rem; color: var(--text-secondary);">Code: ${decodedText}</p>
                     </div>
                 `;
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                updateIcons();
 
                 // Recherche en cascade : Firestore → Open Food Facts
                 const product = await searchProductByBarcode(decodedText);
@@ -5045,7 +5101,7 @@ Solutions possibles :
                             <p style="margin-top: var(--space-md); font-size: 1rem; opacity: 0.8;">Recherche en cours...</p>
                         </div>
                     `;
-                    if (typeof lucide !== "undefined") lucide.createIcons();
+                    updateIcons();
                 }
             }
 
@@ -5253,7 +5309,7 @@ Solutions possibles :
             window.currentFoodList = foods;
 
             // Reinitialize Lucide icons for delete buttons
-            if (typeof lucide !== 'undefined')  { lucide.createIcons(); }
+            updateIcons();
         }
 
         function toggleFavorite(foodName) {
@@ -5460,7 +5516,7 @@ Solutions possibles :
                     updateDayTotals();
 
                     showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas copiés avec succès');
-                    if (typeof lucide !== "undefined") lucide.createIcons();
+                    updateIcons();
                 }
             });
         }
@@ -5784,7 +5840,7 @@ Solutions possibles :
             }).join('');
 
             // Reinitialize Lucide icons after dynamic content
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
 
             // Update weekly summary
             updateWeeklySummary();
@@ -6238,7 +6294,7 @@ Solutions possibles :
             container.innerHTML = html;
 
             // Initialiser les icônes Lucide pour les boutons générés dynamiquement
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
         }
 
         function toggleTrackingEntry(entryId) {
@@ -6586,7 +6642,7 @@ Solutions possibles :
                 recipeDiv.style.display = 'none';
                 btn.innerHTML = '<i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Voir la recette ▼';
             }
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
         }
 
         function toggleRecipeList(recipeId) {
@@ -7148,7 +7204,7 @@ Solutions possibles :
             document.body.insertAdjacentHTML('beforeend', modalHtml);
             document.body.style.overflow = 'hidden';
 
-            if (window.lucide) lucide.createIcons();
+            updateIcons();
 
             // Store templates for selection
             window.currentTemplateChoices = templates;
@@ -7278,7 +7334,7 @@ Solutions possibles :
             document.body.style.overflow = 'hidden';
 
             // Re-init lucide icons for modal
-            if (window.lucide) lucide.createIcons();
+            updateIcons();
 
             // Store result for applying
             window.currentSmartMealResult = result;
@@ -7392,7 +7448,7 @@ Solutions possibles :
                         <p style="margin: 0;">Ajoute des aliments à ton repas type</p>
                     </div>
                 `;
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                updateIcons();
                 return;
             }
 
@@ -7423,7 +7479,7 @@ Solutions possibles :
             }).join('');
             
             // Reinitialize Lucide icons after dynamic content
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
         }
 
         function updateTemplateFoodQuantity(foodId, newQuantity) {
@@ -7506,7 +7562,7 @@ Solutions possibles :
                 </div>
             `;
             document.body.appendChild(modal);
-            if (typeof lucide !== "undefined") lucide.createIcons();
+            updateIcons();
         }
 
         function executeImportMeal() {
@@ -7537,7 +7593,7 @@ Solutions possibles :
             document.getElementById('new-template-name').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
             showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${foods.length} aliment(s) importé(s)`);
-            if (typeof lucide !== "undefined") lucide.createIcons();
+            updateIcons();
         }
 
         function saveNewMealTemplate() {
@@ -7671,7 +7727,7 @@ Solutions possibles :
             }).join('');
             
             // Reinitialize Lucide icons after dynamic content
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
         }
 
         async function deleteMealTemplateFromPage(templateId) {
@@ -7726,7 +7782,7 @@ Solutions possibles :
             // Ouvrir celui-ci s'il était fermé
             if (!isOpen) {
                 menu.classList.add('show');
-                if (typeof lucide !== "undefined") lucide.createIcons();
+                updateIcons();
             }
         }
 
@@ -7781,7 +7837,7 @@ Solutions possibles :
                 </div>
             `;
             document.body.appendChild(modal);
-            if (typeof lucide !== "undefined") lucide.createIcons();
+            updateIcons();
         }
 
         function executeCopyMeal(sourceMealType) {
@@ -7802,7 +7858,7 @@ Solutions possibles :
 
             document.getElementById('copy-meal-popup').remove();
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas copié');
-            if (typeof lucide !== "undefined") lucide.createIcons();
+            updateIcons();
         }
 
         async function clearMeal(mealType) {
@@ -7973,7 +8029,7 @@ Solutions possibles :
             const menu = document.getElementById('user-menu');
             if (menu) {
                 menu.classList.toggle('active');
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                updateIcons();
             }
         }
 
@@ -7999,12 +8055,12 @@ Solutions possibles :
             if (body.classList.contains('light-theme')) {
                 body.classList.remove('light-theme');
                 icon.setAttribute('data-lucide', 'moon');
-                if (typeof lucide !== "undefined") lucide.createIcons();
+                updateIcons();
                 localStorage.setItem('theme', 'dark');
             } else {
                 body.classList.add('light-theme');
                 icon.setAttribute('data-lucide', 'sun');
-                if (typeof lucide !== "undefined") lucide.createIcons();
+                updateIcons();
                 localStorage.setItem('theme', 'light');
             }
         }
@@ -8199,7 +8255,7 @@ Solutions possibles :
             }
 
             // Initialiser les icônes Lucide
-            if (typeof lucide !== "undefined") lucide.createIcons();
+            updateIcons();
         });
 
         // Fonction qui vérifie si le profil est complet et auto-calcule
@@ -8309,7 +8365,7 @@ Solutions possibles :
                         <p style="font-size: 0.9rem; margin-top: var(--space-sm); margin-bottom: 0; opacity: 0.6;">Commence ton suivi ci-dessus pour visualiser ta progression 📊</p>
                     </div>
                 `;
-                if (typeof lucide !== "undefined") lucide.createIcons();
+                updateIcons();
                 return;
             }
 
@@ -8338,7 +8394,7 @@ Solutions possibles :
             `).join('');
             
             // Reinitialize Lucide icons after dynamic content
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
         }
 
         function deleteAdvancedTracking(date) {
@@ -8606,7 +8662,7 @@ Solutions possibles :
 
                 document.getElementById('custom-popup').classList.add('active');
                 document.body.style.overflow = 'hidden';
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                updateIcons();
             });
         }
 
@@ -8651,7 +8707,7 @@ Solutions possibles :
 
             // Reinit Lucide APRÈS que le DOM soit mis à jour
             setTimeout(() => {
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                updateIcons();
             }, 0);
 
             // Annuler le timeout précédent si existant
@@ -8706,7 +8762,7 @@ Solutions possibles :
                 popup.classList.add('active');
                 document.body.style.overflow = 'hidden';
                 setTimeout(() => {
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                    updateIcons();
                 }, 0);
             });
         }
@@ -8823,7 +8879,7 @@ Solutions possibles :
             }
 
             // Rafraîchir les icônes Lucide
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
         }
 
         // Sauvegarder l'état de l'onboarding
@@ -8846,7 +8902,7 @@ Solutions possibles :
             const confirmBtn = document.getElementById('onboarding-goal-confirm');
             confirmBtn.disabled = true;
             confirmBtn.style.opacity = '0.5';
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
         }
 
         function closeOnboardingGoal() {
@@ -8902,7 +8958,7 @@ Solutions possibles :
             if (existingHeight) document.getElementById('onboarding-height').value = existingHeight;
             if (existingActivity) document.getElementById('onboarding-activity').value = existingActivity;
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
         }
 
         function closeOnboardingProfile() {
@@ -8970,7 +9026,7 @@ Solutions possibles :
             if (onboardingState.meal) return;
             const modal = document.getElementById('onboarding-meal-modal');
             modal.classList.add('active');
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
         }
 
         function closeOnboardingMeal() {
@@ -9099,24 +9155,7 @@ Solutions possibles :
             }, 180); // 180ms debounce as requested (150-200ms range)
         }
 
-        // Throttle lucide icon creation with requestAnimationFrame
-        let lucideRafPending = false;
-        function createIconsOptimized(container) {
-            if (lucideRafPending || typeof lucide === 'undefined') return;
-
-            lucideRafPending = true;
-            requestAnimationFrame(() => {
-                if (container) {
-                    // Create icons only in specific container
-                    const icons = container.querySelectorAll('[data-lucide]');
-                    icons.forEach(icon => lucide.createIcons({ icons: [icon] }));
-                } else {
-                    // Fallback: create all icons
-                    lucide.createIcons();
-                }
-                lucideRafPending = false;
-            });
-        }
+        // Note: Optimisation Lucide déplacée en haut du fichier (fonction updateIcons)
 
         // Helper functions for template food management (MUST be defined before openSmartTemplateModal)
         window.renderTemplateFoods = function() {
@@ -9198,7 +9237,7 @@ Solutions possibles :
             `).join('');
 
             // Optimize: create icons only in this container
-            createIconsOptimized(container);
+            updateIcons(container);
         };
 
         // Food selection modal helpers
@@ -9243,7 +9282,7 @@ Solutions possibles :
             `;
 
             // Optimize: create icons only in this container
-            createIconsOptimized(container);
+            updateIcons(container);
         };
 
         window.removeTemplateFoodFromModal = function(index) {
@@ -9459,7 +9498,7 @@ Solutions possibles :
             }
 
             // Initialize Lucide icons for the entire modal (including "Terminé" button)
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateIcons();
 
             // Focus sur le champ de recherche
             setTimeout(() => {

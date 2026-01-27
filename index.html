@@ -891,7 +891,7 @@
                     document.getElementById('home-tip-text').innerHTML = tip.text;
                     document.getElementById('home-tip-index').textContent = index + 1;
                     document.getElementById('home-tip-total').textContent = tips.length;
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                    if (typeof updateIcons === 'function') updateIcons();
                 };
 
                 window.nextTip = function() {
@@ -5047,9 +5047,7 @@
             hideSplash();
 
             // Initialiser les icônes Lucide
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
+            if (typeof updateIcons === 'function') updateIcons();
         };
 
         window.showLanding = function() {
@@ -5067,9 +5065,7 @@
             hideSplash();
 
             // Initialiser les icônes Lucide
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
+            if (typeof updateIcons === 'function') updateIcons();
         };
 
         function hideSplash() {
@@ -5229,17 +5225,15 @@
             const nextBtn = document.getElementById('tutorial-next');
             if (currentSlideIndex === tutorialSlides.length - 1) {
                 nextBtn.innerHTML = '<i data-lucide="check" style="width: 15px; height: 15px;"></i> Commencer';
-                if (typeof lucide !== "undefined") lucide.createIcons();
+                if (typeof updateIcons === 'function') updateIcons();
                 nextBtn.onclick = closeTutorialFullscreen;
             } else {
                 nextBtn.innerHTML = 'Suivant <i data-lucide="chevron-right" style="width: 15px; height: 15px;"></i>';
-                if (typeof lucide !== "undefined") lucide.createIcons();
+                if (typeof updateIcons === 'function') updateIcons();
                 nextBtn.onclick = nextSlide;
             }
             // Reinitialize Lucide icons
-            setTimeout(() =>  { if (typeof lucide !== 'undefined') {
-                    lucide.createIcons(); }
-            }, 50);
+            setTimeout(() => { if (typeof updateIcons === 'function') updateIcons(); }, 50);
         }
         // Navigation functions
         function nextSlide() {
@@ -5756,8 +5750,31 @@
             try {
                 console.log('🔄 Chargement foodDatabase depuis Firestore...');
 
-                // Charger TOUS les aliments de Firestore (sans limite ou avec limite élevée)
-                const q = query(collection(db, 'aliments_communs'));
+                // OPTIMISATION : Vérifier d'abord le cache localStorage
+                const CACHE_KEY = 'foodDatabase_cache';
+                const CACHE_EXPIRY_KEY = 'foodDatabase_cache_expiry';
+                const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 heures
+
+                const cachedData = localStorage.getItem(CACHE_KEY);
+                const cacheExpiry = localStorage.getItem(CACHE_EXPIRY_KEY);
+
+                // Si cache valide, utiliser le cache
+                if (cachedData && cacheExpiry && Date.now() < parseInt(cacheExpiry)) {
+                    console.log('✅ Utilisation du cache foodDatabase');
+                    const firestoreFoods = JSON.parse(cachedData);
+                    window.foodDatabase.length = 0;
+                    firestoreFoods.forEach(f => window.foodDatabase.push(f));
+                    foodDatabaseLoaded = true;
+                    console.log(`✅ foodDatabase chargé depuis cache: ${window.foodDatabase.length} aliments`);
+                    return;
+                }
+
+                // OPTIMISATION : Charger uniquement les 300 premiers aliments au démarrage
+                // (les plus populaires ou les plus récents)
+                const q = query(
+                    collection(db, 'aliments_communs'),
+                    limit(300)  // Limite à 300 aliments au lieu de TOUS
+                );
                 const querySnapshot = await getDocs(q);
 
                 // Créer un tableau temporaire pour les aliments Firestore
@@ -5781,11 +5798,6 @@
                             verified: data.verified || false
                         };
 
-                        // DEBUG: Log if verified
-                        if (foodItem.verified) {
-                            console.log(`✅ [loadFirestore] Aliment vérifié chargé: ${foodItem.name}`);
-                        }
-
                         firestoreFoods.push(foodItem);
                     }
                 });
@@ -5796,8 +5808,17 @@
                     // car app.js a une référence locale. Il faut vider et remplir le tableau existant.
                     window.foodDatabase.length = 0; // Vider
                     firestoreFoods.forEach(f => window.foodDatabase.push(f)); // Remplir
+
+                    // OPTIMISATION : Mettre en cache les aliments
+                    try {
+                        localStorage.setItem(CACHE_KEY, JSON.stringify(firestoreFoods));
+                        localStorage.setItem(CACHE_EXPIRY_KEY, (Date.now() + CACHE_DURATION).toString());
+                    } catch (e) {
+                        console.warn('⚠️ Impossible de mettre en cache foodDatabase:', e);
+                    }
+
                     foodDatabaseLoaded = true;
-                    console.log(`✅ foodDatabase chargé depuis Firestore: ${window.foodDatabase.length} aliments`);
+                    console.log(`✅ foodDatabase chargé depuis Firestore: ${window.foodDatabase.length} aliments (limité à 300 pour performance)`);
                 } else {
                     console.warn('⚠️ Aucun aliment trouvé dans Firestore, utilisation de la base hardcodée');
                     foodDatabaseLoaded = true;
@@ -6032,7 +6053,7 @@
                 if (drawerUserPhoto) drawerUserPhoto.src = photoURL;
                 if (drawerUserName) drawerUserName.textContent = displayName;
 
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                if (typeof updateIcons === 'function') updateIcons();
             } else {
                 document.body.classList.remove('user-connected');
                 if (notConnected) notConnected.style.display = 'block';
@@ -6480,9 +6501,7 @@
                 }
 
                 // Rafraîchir les icônes Lucide
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
+                if (typeof updateIcons === 'function') updateIcons();
             };
 
             if (document.readyState === 'loading') {
@@ -6529,7 +6548,7 @@
         window.openFeedbackModal = function() {
             document.getElementById('feedback-modal').classList.add('active');
             document.body.style.overflow = 'hidden';
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof updateIcons === 'function') updateIcons();
         };
 
         window.closeFeedbackModal = function() {
@@ -6687,7 +6706,7 @@
                 container.innerHTML = '<div style="text-align: center; color: var(--accent-danger); padding: var(--space-3xl);"><i data-lucide="alert-circle" style="width: 32px; height: 32px;"></i><p>Erreur de chargement</p></div>';
             }
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof updateIcons === 'function') updateIcons();
         };
 
         function updateAdminStats(feedbacks) {
@@ -6764,7 +6783,7 @@
                 paginationContainer.innerHTML = '';
             }
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof updateIcons === 'function') updateIcons();
         }
 
         function escapeHtml(text) {
@@ -6858,7 +6877,7 @@
                     break;
             }
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof updateIcons === 'function') updateIcons();
         };
 
         // ===== ADMIN DASHBOARD =====
@@ -7007,7 +7026,7 @@
                 console.error('Erreur chargement dashboard:', error);
             }
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof updateIcons === 'function') updateIcons();
         };
 
         // ===== ADMIN USERS =====
@@ -7086,7 +7105,7 @@
                 container.innerHTML = '<div style="text-align: center; color: var(--accent-danger); padding: var(--space-3xl);"><p>Erreur de chargement</p></div>';
             }
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof updateIcons === 'function') updateIcons();
         };
 
         function renderAdminUsers(users) {
@@ -7176,7 +7195,7 @@
                 paginationContainer.innerHTML = '';
             }
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof updateIcons === 'function') updateIcons();
         }
 
         window.adminUsersChangePage = function(page) {
@@ -7415,7 +7434,7 @@
                 container.innerHTML = '<div style="text-align: center; color: var(--accent-danger); padding: var(--space-3xl);"><p>Erreur de chargement</p></div>';
             }
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof updateIcons === 'function') updateIcons();
         };
 
         function renderAdminFoods(foods) {
@@ -7485,7 +7504,7 @@
                 paginationContainer.innerHTML = '';
             }
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof updateIcons === 'function') updateIcons();
         }
 
         window.adminFoodsChangePage = function(page) {
@@ -7882,7 +7901,7 @@
                 console.error('Erreur chargement logs:', error);
             }
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof updateIcons === 'function') updateIcons();
         };
 
         // ===== ADMIN SMART TEMPLATES =====
@@ -8020,7 +8039,7 @@
                     }).join('');
                 }
 
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                if (typeof updateIcons === 'function') updateIcons();
 
             } catch (error) {
                 console.error('Erreur chargement smart templates:', error);
@@ -8331,7 +8350,7 @@
                 window.renderTemplateFoods();
             }
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof updateIcons === 'function') updateIcons();
         };
 
         // Auto-generate template ID from displayName and mealType
@@ -8937,7 +8956,7 @@
                 if (enableBtn) enableBtn.style.display = 'flex';
             }
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof updateIcons === 'function') updateIcons();
         }
 
         // Icônes pour chaque repas
@@ -8983,7 +9002,7 @@
                 </div>
             `).join('');
 
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof updateIcons === 'function') updateIcons();
         }
 
         // Mettre à jour l'heure d'un rappel
