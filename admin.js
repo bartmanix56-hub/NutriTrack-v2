@@ -39,6 +39,15 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
+// ===== INITIALISER LES VARIABLES GLOBALES =====
+// CRITIQUE: Initialiser avant que les fonctions de chargement ne les utilisent
+if (!window.foodDatabase) {
+    window.foodDatabase = [];
+}
+if (!window.smartMealTemplates) {
+    window.smartMealTemplates = {};
+}
+
 // ===== FIREBASE CLOUD MESSAGING (FCM) =====
 // IMPORTANT: Remplace cette clé par ta clé VAPID de Firebase Console
 // Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
