@@ -838,6 +838,65 @@ window.firebaseSignIn = async function() {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
 
+        // DÉTECTION DE CHANGEMENT DE COMPTE
+        const lastUserEmail = localStorage.getItem('lastUserEmail');
+        const isAccountSwitch = lastUserEmail && lastUserEmail !== user.email;
+
+        if (isAccountSwitch) {
+            console.log('🔄 Changement de compte détecté:', lastUserEmail, '→', user.email);
+        }
+
+        // Check if cloud data exists AVANT d'effacer quoi que ce soit
+        const cloudData = await loadFromFirestore(user);
+
+        if (isAccountSwitch) {
+            // Si changement de compte ET données cloud existent → OK pour effacer et restaurer
+            if (cloudData && cloudData.lastSync) {
+                console.log('✅ Données cloud trouvées, effacement sécurisé du localStorage');
+                SYNC_KEYS.forEach(key => localStorage.removeItem(key));
+                restoreDataFromCloud(cloudData, true); // silent = true
+                localStorage.setItem('lastUserEmail', user.email);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="user-check" class="icon-inline"></i> Données du compte ' + user.email + ' chargées');
+                }
+                showAppAfterLogin(user);
+                return;
+            } else {
+                // DANGER: Changement de compte mais PAS de données cloud
+                // On garde les données locales de l'ancien compte et on avertit
+                console.warn('⚠️ Changement de compte SANS données cloud - conservation localStorage');
+                if (typeof customConfirm === 'function') {
+                    const confirmed = await customConfirm(
+                        'Compte sans données cloud',
+                        `Le compte ${user.email} n'a pas de données sauvegardées dans le cloud. Si tu continues, tu perdras les données du compte précédent (${lastUserEmail}). Veux-tu vraiment changer de compte ?`,
+                        { confirmText: 'Oui, effacer', cancelText: 'Annuler', isDanger: true }
+                    );
+
+                    if (!confirmed) {
+                        // L'utilisateur annule - déconnexion
+                        await signOut(auth);
+                        if (typeof showToast === 'function') {
+                            showToast('<i data-lucide="info" class="icon-inline"></i> Changement de compte annulé');
+                        }
+                        return;
+                    }
+                }
+
+                // L'utilisateur confirme l'effacement
+                console.log('🧹 Effacement confirmé par l\'utilisateur');
+                SYNC_KEYS.forEach(key => localStorage.removeItem(key));
+                localStorage.setItem('lastUserEmail', user.email);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="user-check" class="icon-inline"></i> Connecté avec ' + user.email + ' (compte vide)');
+                }
+                showAppAfterLogin(user);
+                return;
+            }
+        }
+
+        // PAS de changement de compte - comportement normal
+        localStorage.setItem('lastUserEmail', user.email);
+
         // Utiliser le prénom Google si pas de prénom local
         const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
         if (!userProfile.firstName && user.displayName) {
@@ -847,11 +906,8 @@ window.firebaseSignIn = async function() {
             localStorage.setItem('appUsername', googleFirstName);
         }
 
-        // Check if cloud data exists
-        const cloudData = await loadFromFirestore(user);
-
         if (cloudData && cloudData.lastSync) {
-            // Cloud data exists - ask user what to do
+            // Cloud data exists
             const hasLocalData = SYNC_KEYS.some(key => localStorage.getItem(key));
 
             if (hasLocalData) {
@@ -871,6 +927,7 @@ window.firebaseSignIn = async function() {
                                 showToast('<i data-lucide="cloud-upload" class="icon-inline"></i> Données locales envoyées vers le cloud');
                             }
                         }
+                        showAppAfterLogin(user);
                     });
                 } else {
                     // Fallback without custom confirm
@@ -879,10 +936,12 @@ window.firebaseSignIn = async function() {
                     } else {
                         syncToFirestore(user);
                     }
+                    showAppAfterLogin(user);
                 }
             } else {
                 // No local data, restore from cloud
-                restoreDataFromCloud(cloudData);
+                restoreDataFromCloud(cloudData, true);
+                showAppAfterLogin(user);
             }
         } else {
             // No cloud data, upload local
@@ -890,6 +949,7 @@ window.firebaseSignIn = async function() {
             if (typeof showToast === 'function') {
                 showToast('<i data-lucide="check-circle" class="icon-inline"></i> Connecté ! Tes données sont synchronisées.');
             }
+            showAppAfterLogin(user);
         }
 
     } catch (error) {
@@ -899,6 +959,31 @@ window.firebaseSignIn = async function() {
         }
     }
 };
+
+// Fonction helper pour afficher l'app après login
+function showAppAfterLogin(user) {
+    // Cacher la landing page
+    const landingPage = document.getElementById('landing-page');
+    if (landingPage) {
+        landingPage.style.display = 'none';
+    }
+
+    // Réinitialiser le flag pour permettre l'affichage
+    window.appInitialized = false;
+
+    // Afficher l'app
+    if (typeof window.showApp === 'function') {
+        window.showApp(user);
+    }
+
+    // Charger les données si nécessaire
+    if (typeof window.loadFoodDatabaseFromFirestore === 'function') {
+        window.loadFoodDatabaseFromFirestore();
+    }
+    if (typeof window.loadSmartMealTemplatesFromFirestore === 'function') {
+        window.loadSmartMealTemplatesFromFirestore();
+    }
+}
 
 window.firebaseSignOut = async function() {
     // Modal de confirmation avant déconnexion
