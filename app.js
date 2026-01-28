@@ -2306,21 +2306,6 @@ Solutions possibles :
             renderCalendar(new Date());
             updateIcons();
         };
-                            <div class="calendar-header">
-                                <button class="btn-ghost" onclick="changeCalendarMonth(-1)"><i data-lucide="chevron-left"></i></button>
-                                <h3 id="calendar-month-year" style="margin: 0; font-size: 1.3rem; font-weight: 700;"></h3>
-                                <button class="btn-ghost" onclick="changeCalendarMonth(1)"><i data-lucide="chevron-right"></i></button>
-                            </div>
-                            <div id="calendar-content"></div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            document.body.style.overflow = 'hidden';
-            renderCalendar(new Date());
-            updateIcons();
-        };
 
         window.closeCalendarView = function() {
             const modal = document.getElementById('calendar-modal');
