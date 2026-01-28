@@ -2277,8 +2277,12 @@ Solutions possibles :
                         <!-- Légende -->
                         <div style="display: flex; gap: var(--space-lg); margin-bottom: var(--space-lg); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md); flex-wrap: wrap; justify-content: center;">
                             <div style="display: flex; align-items: center; gap: var(--space-xs);">
-                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: var(--bg-secondary); border: 2px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 0.9rem;">•</div>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Vide ou insuffisant</span>
+                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: var(--bg-secondary); border: 2px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 0.7rem;"></div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Vide</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--space-xs);">
+                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(239, 68, 68, 0.15); border: 2px solid rgba(239, 68, 68, 0.4); display: flex; align-items: center; justify-content: center; color: rgba(239, 68, 68, 0.85); font-size: 0.9rem; font-weight: bold;">✗</div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Insuffisant</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: var(--space-xs);">
                                 <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(245, 158, 11, 0.15); border: 2px solid rgba(245, 158, 11, 0.4); display: flex; align-items: center; justify-content: center; color: rgba(245, 158, 11, 0.8); font-size: 0.9rem;">∼</div>
@@ -2352,6 +2356,7 @@ Solutions possibles :
 
                 let classes = 'calendar-day';
                 let indicator = '';
+                let tooltip = '';
 
                 if (dayMeals) {
                     const dayTotals = calculateDayTotals(dayMeals);
@@ -2366,37 +2371,72 @@ Solutions possibles :
 
                         let macrosRespected = 0;
                         let macrosPartial = 0;
+                        let tooltipLines = [];
 
                         // Vérifier calories
                         const calDiff = Math.abs(dayTotals.calories - targets.calories) / targets.calories;
-                        if (calDiff <= strictTolerance) macrosRespected++;
-                        else if (calDiff <= largeTolerance) macrosPartial++;
+                        const calPercent = ((dayTotals.calories - targets.calories) / targets.calories * 100).toFixed(0);
+                        if (calDiff <= strictTolerance) {
+                            macrosRespected++;
+                            tooltipLines.push(`✓ Calories: ${Math.round(dayTotals.calories)}/${targets.calories} (${calPercent > 0 ? '+' : ''}${calPercent}%)`);
+                        } else if (calDiff <= largeTolerance) {
+                            macrosPartial++;
+                            tooltipLines.push(`∼ Calories: ${Math.round(dayTotals.calories)}/${targets.calories} (${calPercent > 0 ? '+' : ''}${calPercent}%)`);
+                        } else {
+                            tooltipLines.push(`✗ Calories: ${Math.round(dayTotals.calories)}/${targets.calories} (${calPercent > 0 ? '+' : ''}${calPercent}%)`);
+                        }
 
                         // Vérifier protéines
                         if (targets.protein) {
                             const protDiff = Math.abs(dayTotals.protein - targets.protein) / targets.protein;
-                            if (protDiff <= strictTolerance) macrosRespected++;
-                            else if (protDiff <= largeTolerance) macrosPartial++;
+                            const protPercent = ((dayTotals.protein - targets.protein) / targets.protein * 100).toFixed(0);
+                            if (protDiff <= strictTolerance) {
+                                macrosRespected++;
+                                tooltipLines.push(`✓ Protéines: ${Math.round(dayTotals.protein)}/${targets.protein}g (${protPercent > 0 ? '+' : ''}${protPercent}%)`);
+                            } else if (protDiff <= largeTolerance) {
+                                macrosPartial++;
+                                tooltipLines.push(`∼ Protéines: ${Math.round(dayTotals.protein)}/${targets.protein}g (${protPercent > 0 ? '+' : ''}${protPercent}%)`);
+                            } else {
+                                tooltipLines.push(`✗ Protéines: ${Math.round(dayTotals.protein)}/${targets.protein}g (${protPercent > 0 ? '+' : ''}${protPercent}%)`);
+                            }
                         }
 
                         // Vérifier glucides
                         if (targets.carbs) {
                             const carbsDiff = Math.abs(dayTotals.carbs - targets.carbs) / targets.carbs;
-                            if (carbsDiff <= strictTolerance) macrosRespected++;
-                            else if (carbsDiff <= largeTolerance) macrosPartial++;
+                            const carbsPercent = ((dayTotals.carbs - targets.carbs) / targets.carbs * 100).toFixed(0);
+                            if (carbsDiff <= strictTolerance) {
+                                macrosRespected++;
+                                tooltipLines.push(`✓ Glucides: ${Math.round(dayTotals.carbs)}/${targets.carbs}g (${carbsPercent > 0 ? '+' : ''}${carbsPercent}%)`);
+                            } else if (carbsDiff <= largeTolerance) {
+                                macrosPartial++;
+                                tooltipLines.push(`∼ Glucides: ${Math.round(dayTotals.carbs)}/${targets.carbs}g (${carbsPercent > 0 ? '+' : ''}${carbsPercent}%)`);
+                            } else {
+                                tooltipLines.push(`✗ Glucides: ${Math.round(dayTotals.carbs)}/${targets.carbs}g (${carbsPercent > 0 ? '+' : ''}${carbsPercent}%)`);
+                            }
                         }
 
                         // Vérifier lipides
                         if (targets.fat) {
                             const fatDiff = Math.abs(dayTotals.fat - targets.fat) / targets.fat;
-                            if (fatDiff <= strictTolerance) macrosRespected++;
-                            else if (fatDiff <= largeTolerance) macrosPartial++;
+                            const fatPercent = ((dayTotals.fat - targets.fat) / targets.fat * 100).toFixed(0);
+                            if (fatDiff <= strictTolerance) {
+                                macrosRespected++;
+                                tooltipLines.push(`✓ Lipides: ${Math.round(dayTotals.fat)}/${targets.fat}g (${fatPercent > 0 ? '+' : ''}${fatPercent}%)`);
+                            } else if (fatDiff <= largeTolerance) {
+                                macrosPartial++;
+                                tooltipLines.push(`∼ Lipides: ${Math.round(dayTotals.fat)}/${targets.fat}g (${fatPercent > 0 ? '+' : ''}${fatPercent}%)`);
+                            } else {
+                                tooltipLines.push(`✗ Lipides: ${Math.round(dayTotals.fat)}/${targets.fat}g (${fatPercent > 0 ? '+' : ''}${fatPercent}%)`);
+                            }
                         }
+
+                        tooltip = tooltipLines.join('&#10;');
 
                         // Déterminer la couleur
                         // Vert : Toutes les macros dans ±15%
                         // Jaune : Au moins 2 macros dans ±25% mais pas toutes dans ±15%
-                        // Gris : Moins de 2 macros respectées
+                        // Rouge : Moins de 2 macros respectées
                         const totalMacros = 1 + (targets.protein ? 1 : 0) + (targets.carbs ? 1 : 0) + (targets.fat ? 1 : 0);
 
                         if (macrosRespected === totalMacros) {
@@ -2408,21 +2448,22 @@ Solutions possibles :
                             classes += ' goal-partial';
                             indicator = '∼';
                         } else {
-                            // Moins de 2 macros OK → Gris avec données
-                            classes += ' has-data';
-                            indicator = '•';
+                            // Moins de 2 macros OK → ROUGE/ORANGÉ
+                            classes += ' goal-insufficient';
+                            indicator = '✗';
                         }
                     } else {
                         // Jour avec repas mais pas d'objectifs définis
-                        classes += ' has-data';
-                        indicator = '•';
+                        tooltip = 'Objectifs non définis';
+                        classes += ' goal-insufficient';
+                        indicator = '✗';
                     }
                 }
 
                 if (isToday) classes += ' today';
 
                 html += `
-                    <div class="${classes}" onclick="goToDate('${dateKey}')">
+                    <div class="${classes}" onclick="goToDate('${dateKey}')" title="${tooltip}">
                         <div class="calendar-day-number">${day}</div>
                         <div class="calendar-day-indicator">${indicator}</div>
                     </div>
@@ -2450,10 +2491,11 @@ Solutions possibles :
 
         window.goToDate = function(dateKey) {
             closeCalendarView();
-            switchToTab('meals');
             const [y, m, d] = dateKey.split('-').map(Number);
             currentMealDate = new Date(y, m - 1, d);
-            loadDailyMeals();
+            updateMealDateDisplay();
+            loadDailyMealsForCurrentDate();
+            switchToTab('meals');
         };
 
         // ===== EXPORT AS IMAGE =====
