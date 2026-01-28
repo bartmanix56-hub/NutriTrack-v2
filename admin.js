@@ -284,6 +284,12 @@ let foodDatabaseLoaded = false; // Flag pour éviter de charger plusieurs fois
 window.loadFoodDatabaseFromFirestore = async function() {
     console.log('🎯 [DEBUG] loadFoodDatabaseFromFirestore appelée ! foodDatabaseLoaded =', foodDatabaseLoaded);
 
+    // S'assurer que window.foodDatabase est un tableau
+    if (!Array.isArray(window.foodDatabase)) {
+        console.warn('⚠️ window.foodDatabase n\'est pas un tableau, réinitialisation...');
+        window.foodDatabase = [];
+    }
+
     // Si déjà chargé, ne pas recharger
     if (foodDatabaseLoaded) {
         console.log('✅ foodDatabase déjà chargé depuis Firestore');
@@ -386,6 +392,12 @@ window.loadFoodDatabaseFromFirestore = async function() {
 let smartTemplatesLoaded = false;
 
 window.loadSmartMealTemplatesFromFirestore = async function() {
+    // S'assurer que window.smartMealTemplates est un objet
+    if (typeof window.smartMealTemplates !== 'object' || window.smartMealTemplates === null) {
+        console.warn('⚠️ window.smartMealTemplates n\'est pas un objet, réinitialisation...');
+        window.smartMealTemplates = {};
+    }
+
     if (smartTemplatesLoaded) {
         console.log('✅ Smart templates déjà chargés depuis Firestore');
         return;
