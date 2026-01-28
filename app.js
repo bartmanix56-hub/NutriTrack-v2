@@ -2277,20 +2277,35 @@ Solutions possibles :
                         <!-- Légende -->
                         <div style="display: flex; gap: var(--space-lg); margin-bottom: var(--space-lg); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md); flex-wrap: wrap; justify-content: center;">
                             <div style="display: flex; align-items: center; gap: var(--space-xs);">
-                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: var(--bg-secondary); border: 2px solid rgba(255,255,255,0.1);"></div>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Jour vide</span>
+                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: var(--bg-secondary); border: 2px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 0.9rem;">•</div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Vide ou insuffisant</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: var(--space-xs);">
-                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(245, 158, 11, 0.15); border: 2px solid rgba(245, 158, 11, 0.4);"></div>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Macros partielles</span>
+                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(245, 158, 11, 0.15); border: 2px solid rgba(245, 158, 11, 0.4); display: flex; align-items: center; justify-content: center; color: rgba(245, 158, 11, 0.8); font-size: 0.9rem;">∼</div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Presque bon (≥2 macros OK)</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: var(--space-xs);">
-                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(16, 185, 129, 0.15); border: 2px solid var(--accent-main);"></div>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Macros respectées</span>
+                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(16, 185, 129, 0.15); border: 2px solid var(--accent-main); display: flex; align-items: center; justify-content: center; color: var(--accent-main); font-size: 0.9rem;">✓</div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Objectif atteint</span>
                             </div>
                         </div>
 
                         <div class="calendar-container">
+                            <div class="calendar-header">
+                                <button class="btn-ghost" onclick="changeCalendarMonth(-1)"><i data-lucide="chevron-left"></i></button>
+                                <h3 id="calendar-month-year" style="margin: 0; font-size: 1.3rem; font-weight: 700;"></h3>
+                                <button class="btn-ghost" onclick="changeCalendarMonth(1)"><i data-lucide="chevron-right"></i></button>
+                            </div>
+                            <div id="calendar-content"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            renderCalendar(new Date());
+            updateIcons();
+        };
                             <div class="calendar-header">
                                 <button class="btn-ghost" onclick="changeCalendarMonth(-1)"><i data-lucide="chevron-left"></i></button>
                                 <h3 id="calendar-month-year" style="margin: 0; font-size: 1.3rem; font-weight: 700;"></h3>

@@ -1051,16 +1051,10 @@
             border-color: transparent;
         }
 
-        /* Jour vide - Gris neutre */
-        .calendar-day:not(.has-data):not(.goal-partial):not(.goal-perfect) {
+        /* Jour vide ou insuffisant - Gris unifié */
+        .calendar-day:not(.goal-partial):not(.goal-perfect) {
             background: var(--bg-secondary);
             border-color: rgba(255,255,255,0.1);
-        }
-
-        /* Jour avec données mais macros insuffisantes - Gris avec données */
-        .calendar-day.has-data {
-            background: rgba(100, 116, 139, 0.15);
-            border-color: rgba(100, 116, 139, 0.3);
         }
 
         /* Macros partiellement respectées - Jaune/Orange */
@@ -1075,11 +1069,10 @@
             border-color: var(--accent-main);
         }
 
-        /* Jour actuel - Bordure bleue */
-
+        /* Jour actuel - Bordure verte (DA) */
         .calendar-day.today {
-            border-color: var(--accent-ui);
-            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+            border-color: var(--accent-main);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
         }
 
         .calendar-day-number {
