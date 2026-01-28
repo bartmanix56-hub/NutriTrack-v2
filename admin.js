@@ -871,6 +871,8 @@ window.firebaseSignIn = async function() {
                                 showToast('<i data-lucide="cloud-upload" class="icon-inline"></i> Données locales envoyées vers le cloud');
                             }
                         }
+                        // Afficher l'app après la gestion des données
+                        showAppAfterLogin(user);
                     });
                 } else {
                     // Fallback without custom confirm
@@ -879,10 +881,14 @@ window.firebaseSignIn = async function() {
                     } else {
                         syncToFirestore(user);
                     }
+                    // Afficher l'app après la gestion des données
+                    showAppAfterLogin(user);
                 }
             } else {
                 // No local data, restore from cloud
                 restoreDataFromCloud(cloudData);
+                // Afficher l'app après la restauration
+                showAppAfterLogin(user);
             }
         } else {
             // No cloud data, upload local
@@ -890,6 +896,8 @@ window.firebaseSignIn = async function() {
             if (typeof showToast === 'function') {
                 showToast('<i data-lucide="check-circle" class="icon-inline"></i> Connecté ! Tes données sont synchronisées.');
             }
+            // Afficher l'app après la synchronisation
+            showAppAfterLogin(user);
         }
 
     } catch (error) {
@@ -899,6 +907,31 @@ window.firebaseSignIn = async function() {
         }
     }
 };
+
+// Fonction helper pour afficher l'app après login
+function showAppAfterLogin(user) {
+    // Cacher la landing page
+    const landingPage = document.getElementById('landing-page');
+    if (landingPage) {
+        landingPage.style.display = 'none';
+    }
+
+    // Réinitialiser le flag pour permettre l'affichage
+    window.appInitialized = false;
+
+    // Afficher l'app
+    if (typeof window.showApp === 'function') {
+        window.showApp(user);
+    }
+
+    // Charger les données si nécessaire
+    if (typeof window.loadFoodDatabaseFromFirestore === 'function') {
+        window.loadFoodDatabaseFromFirestore();
+    }
+    if (typeof window.loadSmartMealTemplatesFromFirestore === 'function') {
+        window.loadSmartMealTemplatesFromFirestore();
+    }
+}
 
 window.firebaseSignOut = async function() {
     // Modal de confirmation avant déconnexion
