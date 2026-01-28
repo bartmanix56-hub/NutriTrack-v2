@@ -838,6 +838,20 @@ window.firebaseSignIn = async function() {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
 
+        // DÉTECTION DE CHANGEMENT DE COMPTE
+        const lastUserEmail = localStorage.getItem('lastUserEmail');
+        const isAccountSwitch = lastUserEmail && lastUserEmail !== user.email;
+
+        if (isAccountSwitch) {
+            console.log('🔄 Changement de compte détecté:', lastUserEmail, '→', user.email);
+            // Effacer TOUTES les données de l'ancien compte
+            SYNC_KEYS.forEach(key => localStorage.removeItem(key));
+            console.log('🧹 Données de l\'ancien compte effacées');
+        }
+
+        // Sauvegarder l'email du compte actuel
+        localStorage.setItem('lastUserEmail', user.email);
+
         // Utiliser le prénom Google si pas de prénom local
         const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
         if (!userProfile.firstName && user.displayName) {
@@ -851,11 +865,11 @@ window.firebaseSignIn = async function() {
         const cloudData = await loadFromFirestore(user);
 
         if (cloudData && cloudData.lastSync) {
-            // Cloud data exists - ask user what to do
+            // Cloud data exists - TOUJOURS restaurer si changement de compte
             const hasLocalData = SYNC_KEYS.some(key => localStorage.getItem(key));
 
-            if (hasLocalData) {
-                // Both local and cloud data exist
+            if (hasLocalData && !isAccountSwitch) {
+                // Both local and cloud data exist (même compte)
                 if (typeof customConfirm === 'function') {
                     customConfirm(
                         'Données trouvées dans le cloud',
@@ -885,18 +899,29 @@ window.firebaseSignIn = async function() {
                     showAppAfterLogin(user);
                 }
             } else {
-                // No local data, restore from cloud
-                restoreDataFromCloud(cloudData);
+                // No local data OU changement de compte → TOUJOURS restaurer depuis cloud
+                restoreDataFromCloud(cloudData, true); // silent = true
+                if (isAccountSwitch && typeof showToast === 'function') {
+                    showToast('<i data-lucide="user-check" class="icon-inline"></i> Données du compte ' + user.email + ' chargées');
+                }
                 // Afficher l'app après la restauration
                 showAppAfterLogin(user);
             }
         } else {
-            // No cloud data, upload local
-            syncToFirestore(user);
-            if (typeof showToast === 'function') {
-                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Connecté ! Tes données sont synchronisées.');
+            // No cloud data - nouveau compte ou compte vide
+            if (isAccountSwitch) {
+                // Changement vers un compte vide → effacer tout
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="user-check" class="icon-inline"></i> Connecté avec ' + user.email);
+                }
+            } else {
+                // Même compte sans données cloud → sync local vers cloud
+                syncToFirestore(user);
+                if (typeof showToast === 'function') {
+                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Connecté ! Tes données sont synchronisées.');
+                }
             }
-            // Afficher l'app après la synchronisation
+            // Afficher l'app
             showAppAfterLogin(user);
         }
 
