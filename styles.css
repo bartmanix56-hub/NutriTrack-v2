@@ -1051,10 +1051,16 @@
             border-color: transparent;
         }
 
-        /* Jour vide ou insuffisant - Gris unifié */
-        .calendar-day:not(.goal-partial):not(.goal-perfect) {
+        /* Jour vide - Gris */
+        .calendar-day:not(.goal-insufficient):not(.goal-partial):not(.goal-perfect) {
             background: var(--bg-secondary);
             border-color: rgba(255,255,255,0.1);
+        }
+
+        /* Macros insuffisantes - Rouge/Orangé */
+        .calendar-day.goal-insufficient {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.4);
         }
 
         /* Macros partiellement respectées - Jaune/Orange */
