@@ -1,0 +1,80 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user is admin
+    // NOTE: Update this UID if you change the admin user
+    function isAdmin() {
+      return request.auth != null &&
+             request.auth.uid == 'qEuqSbWO73OwTEwL6LhEILS5djD2';
+    }
+
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // ===== SMART TEMPLATES COLLECTION =====
+    // Collection publique en lecture, admin seulement en écriture
+    match /smartTemplates/{templateId} {
+      // Les admins peuvent tout lire (actifs et inactifs)
+      allow read: if isAdmin();
+
+      // Tout le monde peut lire les templates actifs (pour le client)
+      allow read: if resource.data.active == true;
+
+      // Seuls les admins peuvent créer, modifier ou supprimer
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ===== USERS COLLECTION =====
+    match /users/{userId} {
+      // Les utilisateurs peuvent lire et écrire leurs propres données
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+
+      // Les admins peuvent tout lire et modifier
+      allow read, update: if isAdmin();
+
+      // Les admins peuvent désactiver des comptes (soft delete)
+      allow update: if isAdmin() &&
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['disabled', 'disabledAt']);
+    }
+
+    // ===== COMMON FOODS DATABASE =====
+    match /aliments_communs/{alimentId} {
+      // Tout le monde peut lire
+      allow read: if true;
+
+      // Seuls les utilisateurs authentifiés peuvent créer
+      allow create: if isAuthenticated();
+
+      // Seuls les admins peuvent modifier ou supprimer
+      allow update, delete: if isAdmin();
+    }
+
+    // ===== ADMIN LOGS =====
+    match /admin_logs/{logId} {
+      // Seuls les admins peuvent lire et écrire
+      allow read, write: if isAdmin();
+    }
+
+    // ===== FEEDBACKS COLLECTION =====
+    match /feedbacks/{feedbackId} {
+      // Les utilisateurs peuvent créer des feedbacks
+      allow create: if isAuthenticated();
+
+      // Les utilisateurs peuvent lire leurs propres feedbacks
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+
+      // Les admins peuvent tout lire et modifier
+      allow read, update: if isAdmin();
+    }
+
+    // ===== DEFAULT DENY =====
+    // Toute autre collection est interdite par défaut
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
