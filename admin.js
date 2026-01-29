@@ -24,6 +24,9 @@ const { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChange
 const { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection, query, getDocs, limit, updateDoc, Timestamp, where, orderBy, startAfter, endBefore, limitToLast } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
 const { getMessaging, getToken, onMessage } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js');
 
+// Import DataService
+import DataService from './DataService.js';
+
 const firebaseConfig = {
     apiKey: "AIzaSyCL2SvQ2c784ZyA2Pr-Qtv2F1wnnDByGkc",
     authDomain: "nutritraack.firebaseapp.com",
@@ -961,7 +964,7 @@ window.firebaseSignIn = async function() {
 };
 
 // Fonction helper pour afficher l'app après login
-function showAppAfterLogin(user) {
+async function showAppAfterLogin(user) {
     // Cacher la landing page
     const landingPage = document.getElementById('landing-page');
     if (landingPage) {
@@ -970,6 +973,22 @@ function showAppAfterLogin(user) {
 
     // Réinitialiser le flag pour permettre l'affichage
     window.appInitialized = false;
+
+    // MIGRATION localStorage → Firestore (si nécessaire)
+    const migrationResult = await migrateToFirestore(user);
+
+    if (!migrationResult.success) {
+        // Migration échouée → afficher erreur
+        if (typeof showToast === 'function') {
+            showToast(`<i data-lucide="alert-circle" class="icon-inline"></i> Migration impossible: ${migrationResult.error}`, 'error');
+        }
+        // Continuer quand même (données locales préservées)
+    } else if (migrationResult.uploadCount > 0) {
+        // Migration réussie → notifier
+        if (typeof showToast === 'function') {
+            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${migrationResult.uploadCount} éléments migrés`, 'success');
+        }
+    }
 
     // Afficher l'app
     if (typeof window.showApp === 'function') {
@@ -982,6 +1001,216 @@ function showAppAfterLogin(user) {
     }
     if (typeof window.loadSmartMealTemplatesFromFirestore === 'function') {
         window.loadSmartMealTemplatesFromFirestore();
+    }
+}
+
+// ========================================
+// MIGRATION SÉCURISÉE localStorage → Firestore
+// ========================================
+
+/**
+ * Migre les données localStorage vers la nouvelle architecture Firestore
+ *
+ * Principes de sécurité:
+ * - Ne vide localStorage QU'APRÈS confirmation upload Firestore
+ * - Flag migrationDone_v1 = true seulement après succès
+ * - Migration idempotente (pas de doublons si refresh)
+ * - Si échec → garde localStorage + message clair
+ */
+async function migrateToFirestore(user) {
+    const MIGRATION_FLAG = 'migrationDone_v1';
+
+    // Vérifier si migration déjà effectuée
+    if (localStorage.getItem(MIGRATION_FLAG) === 'true') {
+        console.log('✅ Migration déjà effectuée, skip');
+        return { success: true, alreadyDone: true };
+    }
+
+    console.log('🔄 Début migration localStorage → Firestore');
+
+    try {
+        // Liste des clés à migrer (ancien SYNC_KEYS)
+        const LEGACY_KEYS = [
+            'userProfile', 'foodLog', 'customFoods', 'macroTargets',
+            'allDailyMeals', 'trackingData', 'mealTemplates', 'weeklyPlan',
+            'favoriteFoods', 'appUsername', 'closedDays', 'advancedTrackingData',
+            'calcSettings', 'foodAliases', 'calc_goal'
+        ];
+
+        // 1. Lire toutes les données localStorage
+        const localData = {};
+        let hasData = false;
+
+        LEGACY_KEYS.forEach(key => {
+            const value = localStorage.getItem(key);
+            if (value) {
+                localData[key] = value;
+                hasData = true;
+            }
+        });
+
+        // Si pas de données à migrer
+        if (!hasData) {
+            console.log('📭 Aucune donnée à migrer');
+            localStorage.setItem(MIGRATION_FLAG, 'true');
+            return { success: true, noData: true };
+        }
+
+        console.log('📦 Données trouvées:', Object.keys(localData));
+
+        // 2. Initialiser DataService
+        const dataService = new DataService(db, user.uid);
+
+        // 3. Normaliser et uploader les données (avec compteur de succès)
+        let uploadCount = 0;
+        const errors = [];
+
+        // 3a. PROFILE
+        if (localData.userProfile) {
+            try {
+                const profile = JSON.parse(localData.userProfile);
+                await dataService.saveProfile(profile);
+                uploadCount++;
+                console.log('✅ Profile migré');
+            } catch (error) {
+                console.error('❌ Erreur migration profile:', error);
+                errors.push({ key: 'userProfile', error: error.message });
+            }
+        }
+
+        // 3b. SETTINGS (macroTargets, calcSettings, calc_goal)
+        try {
+            const settings = {};
+            if (localData.macroTargets) settings.macroTargets = JSON.parse(localData.macroTargets);
+            if (localData.calcSettings) settings.calcSettings = JSON.parse(localData.calcSettings);
+            if (localData.calc_goal) settings.calc_goal = localData.calc_goal;
+
+            if (Object.keys(settings).length > 0) {
+                await dataService.saveSettings(settings);
+                uploadCount++;
+                console.log('✅ Settings migrés');
+            }
+        } catch (error) {
+            console.error('❌ Erreur migration settings:', error);
+            errors.push({ key: 'settings', error: error.message });
+        }
+
+        // 3c. MEALS (allDailyMeals - structure par date)
+        if (localData.allDailyMeals) {
+            try {
+                const allMeals = JSON.parse(localData.allDailyMeals);
+                const dates = Object.keys(allMeals);
+
+                // Upload chaque jour séparément
+                for (const date of dates) {
+                    await dataService.saveMeal(date, allMeals[date]);
+                    uploadCount++;
+                }
+
+                console.log(`✅ ${dates.length} jours de repas migrés`);
+            } catch (error) {
+                console.error('❌ Erreur migration meals:', error);
+                errors.push({ key: 'allDailyMeals', error: error.message });
+            }
+        }
+
+        // 3d. TRACKING
+        if (localData.trackingData) {
+            try {
+                const tracking = JSON.parse(localData.trackingData);
+
+                // Structure: array [{date, weight, bodyfat, ...}]
+                if (Array.isArray(tracking)) {
+                    for (const entry of tracking) {
+                        if (entry.date) {
+                            await dataService.saveTracking(entry.date, entry);
+                            uploadCount++;
+                        }
+                    }
+                    console.log(`✅ ${tracking.length} entrées de tracking migrées`);
+                }
+            } catch (error) {
+                console.error('❌ Erreur migration tracking:', error);
+                errors.push({ key: 'trackingData', error: error.message });
+            }
+        }
+
+        // 3e. CUSTOM FOODS
+        if (localData.customFoods) {
+            try {
+                const foods = JSON.parse(localData.customFoods);
+
+                if (Array.isArray(foods)) {
+                    for (const food of foods) {
+                        const foodId = food.id || `custom_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                        await dataService.saveCustomFood(foodId, food);
+                        uploadCount++;
+                    }
+                    console.log(`✅ ${foods.length} aliments perso migrés`);
+                }
+            } catch (error) {
+                console.error('❌ Erreur migration customFoods:', error);
+                errors.push({ key: 'customFoods', error: error.message });
+            }
+        }
+
+        // 3f. MEAL TEMPLATES
+        if (localData.mealTemplates) {
+            try {
+                const templates = JSON.parse(localData.mealTemplates);
+
+                if (Array.isArray(templates)) {
+                    for (const template of templates) {
+                        const templateId = template.id || `template_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                        await dataService.saveMealTemplate(templateId, template);
+                        uploadCount++;
+                    }
+                    console.log(`✅ ${templates.length} templates migrés`);
+                }
+            } catch (error) {
+                console.error('❌ Erreur migration templates:', error);
+                errors.push({ key: 'mealTemplates', error: error.message });
+            }
+        }
+
+        // 4. Vérifier qu'au moins quelque chose a été uploadé
+        if (uploadCount === 0 && errors.length > 0) {
+            throw new Error('Aucune donnée n\'a pu être uploadée. Erreurs: ' + errors.map(e => e.key).join(', '));
+        }
+
+        // 5. SEULEMENT MAINTENANT: Purger localStorage + flag
+        console.log(`✅ ${uploadCount} éléments uploadés avec succès`);
+
+        if (errors.length > 0) {
+            console.warn(`⚠️ ${errors.length} erreurs non critiques:`, errors);
+        }
+
+        // Purger les anciennes clés
+        LEGACY_KEYS.forEach(key => {
+            localStorage.removeItem(key);
+        });
+
+        // Marquer migration comme terminée
+        localStorage.setItem(MIGRATION_FLAG, 'true');
+
+        console.log('🎉 Migration terminée avec succès');
+
+        return {
+            success: true,
+            uploadCount,
+            errors: errors.length > 0 ? errors : null
+        };
+
+    } catch (error) {
+        console.error('❌ ERREUR CRITIQUE migration:', error);
+
+        // NE PAS purger localStorage en cas d'erreur
+        // Afficher message clair à l'utilisateur
+
+        return {
+            success: false,
+            error: error.message
+        };
     }
 }
 
@@ -1088,6 +1317,33 @@ onAuthStateChanged(auth, (user) => {
         if (user) {
             // USER CONNECTÉ → Charger données + afficher l'app
             console.log('✅ User connecté:', user.email);
+
+            // MIGRATION localStorage → Firestore (si nécessaire)
+            const migrationResult = await migrateToFirestore(user);
+
+            if (!migrationResult.success) {
+                // Migration échouée → afficher erreur + permettre retry
+                if (typeof customConfirm === 'function') {
+                    const retry = await customConfirm(
+                        'Migration impossible',
+                        `Impossible de migrer tes données vers le cloud.\nErreur: ${migrationResult.error}\n\nTes données locales sont conservées. Veux-tu réessayer ?`,
+                        { confirmText: 'Réessayer', cancelText: 'Plus tard', isDanger: false }
+                    );
+
+                    if (retry) {
+                        // Reload pour réessayer
+                        window.location.reload();
+                        return;
+                    }
+                } else {
+                    alert(`Migration impossible: ${migrationResult.error}\nTes données locales sont conservées.`);
+                }
+            } else if (migrationResult.uploadCount > 0) {
+                // Migration réussie → notifier user
+                if (typeof showToast === 'function') {
+                    showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${migrationResult.uploadCount} éléments migrés vers le cloud`, 'success');
+                }
+            }
 
             // DEBUG: Vérifier si la fonction existe
             console.log('🔍 [DEBUG] typeof window.loadFoodDatabaseFromFirestore:', typeof window.loadFoodDatabaseFromFirestore);
