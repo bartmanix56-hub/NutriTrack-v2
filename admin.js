@@ -25,7 +25,7 @@ const { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp, collectio
 const { getMessaging, getToken, onMessage } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js');
 
 // Import DataService
-import DataService from './DataService.js';
+const { default: DataService } = await import('./DataService.js');
 
 const firebaseConfig = {
     apiKey: "AIzaSyCL2SvQ2c784ZyA2Pr-Qtv2F1wnnDByGkc",
