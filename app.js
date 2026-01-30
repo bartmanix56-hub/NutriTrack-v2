@@ -4512,7 +4512,7 @@ Solutions possibles :
             loadMealTemplates();
             loadAllMeals();
             loadTrackingData();
-            loadCalcSettings();
+            // loadCalcSettings(); // DÉPLACÉ dans requestAnimationFrame
             loadFavoriteFoods();  // Load favorite foods
             // loadProfile(); // MOVED: Now called AFTER dropdown population in requestAnimationFrame
             updateMealDateDisplay();
@@ -4553,7 +4553,7 @@ Solutions possibles :
             });
 
             // Populate birth date dropdowns - use requestAnimationFrame to ensure DOM is ready
-            requestAnimationFrame(() => {
+            requestAnimationFrame(async () => {
                 const daySelect = document.getElementById('birth-day');
                 const yearSelect = document.getElementById('birth-year');
 
@@ -4591,7 +4591,10 @@ Solutions possibles :
 
                 // IMPORTANT: Load profile AFTER dropdowns are populated
                 // Otherwise saved values get overwritten
-                loadProfile();
+                await loadProfile();
+
+                // Load calc settings AFTER profile (champs déficit/protein/fat doivent exister)
+                await loadCalcSettings();
 
                 // Sync weight from tracking on page load
                 setTimeout(() =>  { syncWeightToCalculator(); }, 500);
