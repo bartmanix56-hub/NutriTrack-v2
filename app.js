@@ -931,7 +931,7 @@
         // Variable globale pour suivre le setTimeout de notification de calcul
         let pendingCalculationNotification = null;
 
-        function calculateMacros(silent = false) {
+        async function calculateMacros(silent = false) {
             // LOG pour debug - à retirer plus tard si besoin
             console.log('📊 calculateMacros appelé, silent:', silent, new Error().stack);
             // FEEDBACK VISUEL DU BOUTON (seulement si pas silencieux)
@@ -1028,8 +1028,8 @@
                 return;
             }
 
-            // Sauvegarder le profil
-            saveProfile();
+            // Sauvegarder le profil (ATTENDRE la fin de la sauvegarde)
+            await saveProfile();
 
             // Save initial weight if this is the first calculation (no tracking yet)
             const trackingData = localStorage.getItem('trackingData');
