@@ -103,11 +103,9 @@
          */
         async function loadMealFromFirestore(date) {
             if (!window.dataService) {
-                console.error('❌ DataService non disponible - impossible de charger les repas');
-                if (typeof showToast === 'function') {
-                    showToast('Erreur: connexion Firestore indisponible', 'error');
-                }
-                return {
+                console.warn('⚠️ DataService non disponible, fallback localStorage');
+                const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+                return allMeals[date] || {
                     breakfast: { foods: [], recipe: '' },
                     lunch: { foods: [], recipe: '' },
                     snack: { foods: [], recipe: '' },
@@ -120,10 +118,9 @@
                 return await window.dataService.getMeal(date);
             } catch (error) {
                 console.error('❌ Erreur chargement meal Firestore:', error);
-                if (typeof showToast === 'function') {
-                    showToast('Impossible de charger les repas depuis Firestore', 'error');
-                }
-                return {
+                console.warn('⚠️ Fallback vers localStorage');
+                const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+                return allMeals[date] || {
                     breakfast: { foods: [], recipe: '' },
                     lunch: { foods: [], recipe: '' },
                     snack: { foods: [], recipe: '' },
@@ -140,11 +137,11 @@
          */
         async function saveMealToFirestore(date, mealData) {
             if (!window.dataService) {
-                console.error('❌ DataService non disponible - impossible de sauvegarder les repas');
-                if (typeof showToast === 'function') {
-                    showToast('Erreur: connexion Firestore indisponible', 'error');
-                }
-                throw new Error('DataService non disponible');
+                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
+                const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+                allMeals[date] = mealData;
+                localStorage.setItem('allDailyMeals', JSON.stringify(allMeals));
+                return;
             }
 
             try {
@@ -164,21 +161,18 @@
          */
         async function loadProfileFromFirestore() {
             if (!window.dataService) {
-                console.error('❌ DataService non disponible - impossible de charger le profil');
-                if (typeof showToast === 'function') {
-                    showToast('Erreur: connexion Firestore indisponible', 'error');
-                }
-                return {};
+                console.warn('⚠️ DataService non disponible, fallback localStorage');
+                const saved = localStorage.getItem('userProfile');
+                return saved ? JSON.parse(saved) : {};
             }
 
             try {
                 return await window.dataService.getProfile();
             } catch (error) {
                 console.error('❌ Erreur chargement profile Firestore:', error);
-                if (typeof showToast === 'function') {
-                    showToast('Impossible de charger le profil depuis Firestore', 'error');
-                }
-                return {};
+                console.warn('⚠️ Fallback vers localStorage');
+                const saved = localStorage.getItem('userProfile');
+                return saved ? JSON.parse(saved) : {};
             }
         }
 
@@ -188,11 +182,9 @@
          */
         async function saveProfileToFirestore(profile) {
             if (!window.dataService) {
-                console.error('❌ DataService non disponible - impossible de sauvegarder le profil');
-                if (typeof showToast === 'function') {
-                    showToast('Erreur: connexion Firestore indisponible', 'error');
-                }
-                throw new Error('DataService non disponible');
+                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
+                localStorage.setItem('userProfile', JSON.stringify(profile));
+                return;
             }
 
             try {
@@ -212,21 +204,30 @@
          */
         async function loadSettingsFromFirestore() {
             if (!window.dataService) {
-                console.error('❌ DataService non disponible - impossible de charger les settings');
-                if (typeof showToast === 'function') {
-                    showToast('Erreur: connexion Firestore indisponible', 'error');
-                }
-                return {};
+                console.warn('⚠️ DataService non disponible, fallback localStorage');
+                const macroTargets = localStorage.getItem('macroTargets');
+                const calcSettings = localStorage.getItem('calcSettings');
+                const calc_goal = localStorage.getItem('calc_goal');
+                return {
+                    macroTargets: macroTargets ? JSON.parse(macroTargets) : null,
+                    calcSettings: calcSettings ? JSON.parse(calcSettings) : null,
+                    calc_goal: calc_goal || null
+                };
             }
 
             try {
                 return await window.dataService.getSettings();
             } catch (error) {
                 console.error('❌ Erreur chargement settings Firestore:', error);
-                if (typeof showToast === 'function') {
-                    showToast('Impossible de charger les paramètres depuis Firestore', 'error');
-                }
-                return {};
+                console.warn('⚠️ Fallback vers localStorage');
+                const macroTargets = localStorage.getItem('macroTargets');
+                const calcSettings = localStorage.getItem('calcSettings');
+                const calc_goal = localStorage.getItem('calc_goal');
+                return {
+                    macroTargets: macroTargets ? JSON.parse(macroTargets) : null,
+                    calcSettings: calcSettings ? JSON.parse(calcSettings) : null,
+                    calc_goal: calc_goal || null
+                };
             }
         }
 
@@ -236,11 +237,17 @@
          */
         async function saveSettingsToFirestore(settings) {
             if (!window.dataService) {
-                console.error('❌ DataService non disponible - impossible de sauvegarder les settings');
-                if (typeof showToast === 'function') {
-                    showToast('Erreur: connexion Firestore indisponible', 'error');
-                }
-                throw new Error('DataService non disponible');
+                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
+                if (settings.macroTargets) localStorage.setItem('macroTargets', JSON.stringify(settings.macroTargets));
+                if (settings.calcSettings) localStorage.setItem('calcSettings', JSON.stringify(settings.calcSettings));
+                if (settings.calc_goal) localStorage.setItem('calc_goal', settings.calc_goal);
+                // Sauvegarder aussi les champs individuels calc_*
+                Object.keys(settings).forEach(key => {
+                    if (key.startsWith('calc_') && key !== 'calc_goal') {
+                        localStorage.setItem(key, settings[key]);
+                    }
+                });
+                return;
             }
 
             try {
@@ -621,6 +628,11 @@
 
             // Sauvegarder le goal
             localStorage.setItem('calc_goal', goal);
+            if (!isLoading) {
+                saveSettingsToFirestore({ calc_goal: goal }).catch(err => {
+                    console.error('Erreur sauvegarde goal:', err);
+                });
+            }
 
             // Si en mode guidé, réappliquer le rythme sélectionné
             // SAUF si on est en train de charger (isLoading = true)
@@ -780,6 +792,9 @@
                     }, 10);
 
                     localStorage.setItem('calculatorMode', 'advanced');
+                    saveSettingsToFirestore({ calculatorMode: 'advanced' }).catch(err => {
+                        console.error('Erreur sauvegarde calculatorMode:', err);
+                    });
 
                     // Afficher les options correspondant à l'objectif actuel
                     document.getElementById('cut-options').style.display = 'none';
@@ -818,6 +833,9 @@
                     }
 
                     localStorage.setItem('calculatorMode', 'guided');
+                    saveSettingsToFirestore({ calculatorMode: 'guided' }).catch(err => {
+                        console.error('Erreur sauvegarde calculatorMode:', err);
+                    });
 
                     // Masquer toutes les options en mode guidé
                     document.getElementById('cut-options').style.display = 'none';
@@ -8149,7 +8167,7 @@ Solutions possibles :
             const settings = await loadSettingsFromFirestore();
 
             // Charger les valeurs individuelles (SAUF weight, height, activity qui viennent du profil)
-            ['bodyFat', 'deficit', 'surplus', 'proteinCoeff', 'fatCoeff', 'proteinCoeffBulk', 'fatCoeffBulk'].forEach(s => {
+            ['bodyFat', 'deficit', 'surplus', 'proteinCoeff', 'fatCoeff', 'proteinCoeffMaintain', 'fatCoeffMaintain', 'proteinCoeffBulk', 'fatCoeffBulk'].forEach(s => {
                 const value = settings['calc_' + s];
                 if (value && document.getElementById(s)) {
                     document.getElementById(s).value = value;
@@ -8158,6 +8176,30 @@ Solutions possibles :
 
             const savedGoal = settings.calc_goal;
             if (savedGoal) selectGoal(savedGoal, true); // true = isLoading, ne pas recalculer
+
+            // Restaurer le mode (guidé/avancé) depuis Firestore (avec fallback localStorage)
+            const savedMode = settings.calculatorMode || localStorage.getItem('calculatorMode');
+            if (savedMode === 'advanced') {
+                const guidedMode = document.getElementById('guided-mode');
+                const advancedMode = document.getElementById('advanced-mode');
+                if (guidedMode && advancedMode) {
+                    guidedMode.style.display = 'none';
+                    advancedMode.style.display = 'block';
+
+                    // Afficher les options correspondant à l'objectif actuel
+                    document.getElementById('cut-options').style.display = 'none';
+                    document.getElementById('maintain-options').style.display = 'none';
+                    document.getElementById('bulk-options').style.display = 'none';
+
+                    if (currentGoal === 'cut') {
+                        document.getElementById('cut-options').style.display = 'block';
+                    } else if (currentGoal === 'maintain') {
+                        document.getElementById('maintain-options').style.display = 'block';
+                    } else if (currentGoal === 'bulk') {
+                        document.getElementById('bulk-options').style.display = 'block';
+                    }
+                }
+            }
 
             // Restaurer le rythme depuis Firestore (avec fallback localStorage)
             const savedPace = settings.selectedPace || localStorage.getItem('selectedPace');
@@ -8251,6 +8293,8 @@ Solutions possibles :
                 surplus: document.getElementById('surplus')?.value || '',
                 proteinCoeff: document.getElementById('proteinCoeff')?.value || '',
                 fatCoeff: document.getElementById('fatCoeff')?.value || '',
+                proteinCoeffMaintain: document.getElementById('proteinCoeffMaintain')?.value || '',
+                fatCoeffMaintain: document.getElementById('fatCoeffMaintain')?.value || '',
                 proteinCoeffBulk: document.getElementById('proteinCoeffBulk')?.value || '',
                 fatCoeffBulk: document.getElementById('fatCoeffBulk')?.value || '',
                 goal: currentGoal || 'cut'
