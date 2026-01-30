@@ -8304,6 +8304,8 @@ Solutions possibles :
                 goal: currentGoal || 'cut'
             };
 
+            console.log('💾 saveCalcSettings - Valeurs lues:', values);
+
             // Construire l'objet settings pour Firestore avec préfixe calc_
             const settings = {};
             Object.keys(values).forEach(k => {
@@ -8312,19 +8314,22 @@ Solutions possibles :
                 }
             });
 
+            console.log('💾 saveCalcSettings - Settings à sauvegarder:', settings);
+
             // Sauvegarder vers Firestore (avec fallback localStorage)
             try {
                 await saveSettingsToFirestore(settings);
+                console.log('✅ saveCalcSettings - Sauvegarde Firestore réussie');
             } catch (error) {
-                console.error('Erreur sauvegarde settings calculateur:', error);
+                console.error('❌ Erreur sauvegarde settings calculateur:', error);
             }
         }
 
         const origCalculateMacros = calculateMacros;
-        calculateMacros = function(...args)  {
+        calculateMacros = async function(...args)  {
             console.log('🔄 Wrapper calculateMacros, args:', args);
             origCalculateMacros(...args);
-            saveCalcSettings();
+            await saveCalcSettings();
         };
 
         // ===== USER MENU =====
