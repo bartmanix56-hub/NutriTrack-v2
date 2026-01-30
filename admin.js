@@ -1034,7 +1034,11 @@ async function migrateToFirestore(user) {
             'userProfile', 'foodLog', 'customFoods', 'macroTargets',
             'allDailyMeals', 'trackingData', 'mealTemplates', 'weeklyPlan',
             'favoriteFoods', 'appUsername', 'closedDays', 'advancedTrackingData',
-            'calcSettings', 'foodAliases', 'calc_goal'
+            'calcSettings', 'foodAliases', 'calc_goal',
+            // Clés calculateur
+            'calc_weight', 'calc_activity', 'calc_deficit', 'calc_proteinCoeff', 'calc_fatCoeff',
+            // Autres
+            'initialWeight'
         ];
 
         // 1. Lire toutes les données localStorage
@@ -1078,12 +1082,20 @@ async function migrateToFirestore(user) {
             }
         }
 
-        // 3b. SETTINGS (macroTargets, calcSettings, calc_goal)
+        // 3b. SETTINGS (macroTargets, calcSettings, calc_goal + toutes clés calc_*)
         try {
             const settings = {};
             if (localData.macroTargets) settings.macroTargets = JSON.parse(localData.macroTargets);
             if (localData.calcSettings) settings.calcSettings = JSON.parse(localData.calcSettings);
             if (localData.calc_goal) settings.calc_goal = localData.calc_goal;
+
+            // Clés calculateur individuelles
+            if (localData.calc_weight) settings.calc_weight = parseFloat(localData.calc_weight);
+            if (localData.calc_activity) settings.calc_activity = parseFloat(localData.calc_activity);
+            if (localData.calc_deficit) settings.calc_deficit = parseFloat(localData.calc_deficit);
+            if (localData.calc_proteinCoeff) settings.calc_proteinCoeff = parseFloat(localData.calc_proteinCoeff);
+            if (localData.calc_fatCoeff) settings.calc_fatCoeff = parseFloat(localData.calc_fatCoeff);
+            if (localData.initialWeight) settings.initialWeight = parseFloat(localData.initialWeight);
 
             if (Object.keys(settings).length > 0) {
                 await dataService.saveSettings(settings);
