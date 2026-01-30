@@ -1010,6 +1010,15 @@ async function showAppAfterLogin(user) {
         }
     }
 
+    // INITIALISER DATASERVICE GLOBALEMENT pour app.js
+    // Uniquement si migration effectuée (données en sous-collections)
+    if (localStorage.getItem('migrationDone_v1') === 'true') {
+        window.dataService = new DataService(db, user.uid);
+        console.log('✅ DataService initialisé globalement');
+    } else {
+        console.warn('⚠️ DataService non initialisé: migration v1 non effectuée');
+    }
+
     // Afficher l'app
     if (typeof window.showApp === 'function') {
         window.showApp(user);
@@ -1391,6 +1400,15 @@ onAuthStateChanged(auth, (user) => {
                     setTimeout(() => window.location.reload(), 1500);
                     return; // Arrêter l'exécution ici
                 }
+            }
+
+            // INITIALISER DATASERVICE GLOBALEMENT pour app.js
+            // Uniquement si migration effectuée (données en sous-collections)
+            if (localStorage.getItem('migrationDone_v1') === 'true') {
+                window.dataService = new DataService(db, user.uid);
+                console.log('✅ DataService initialisé globalement');
+            } else {
+                console.warn('⚠️ DataService non initialisé: migration v1 non effectuée');
             }
 
             // DEBUG: Vérifier si la fonction existe
