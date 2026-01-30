@@ -6336,6 +6336,12 @@ Solutions possibles :
         }
 
         function syncWeightToCalculator() {
+            // DÉSACTIVÉ si migration v1 effectuée: le poids vient maintenant de Firestore
+            if (localStorage.getItem('migrationDone_v1') === 'true') {
+                console.log('⚠️ syncWeightToCalculator désactivé: migration v1 effectuée');
+                return;
+            }
+
             const latestWeight = getLatestWeight();
 
             if (latestWeight === null) {
