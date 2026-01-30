@@ -787,6 +787,13 @@ async function loadFromFirestore(user) {
 }
 
 function restoreDataFromCloud(cloudData, silent = false) {
+    // PROTECTION: Si migration v1 terminée, ne JAMAIS restaurer les anciennes données
+    const MIGRATION_FLAG = 'migrationDone_v1';
+    if (localStorage.getItem(MIGRATION_FLAG) === 'true') {
+        console.log('🚫 Restore bloqué: migration v1 effectuée, données en sous-collections Firestore');
+        return;
+    }
+
     const allKeys = [...SYNC_KEYS]; // All synced keys
 
     allKeys.forEach(key => {
@@ -824,6 +831,12 @@ const keysToWatch = [...SYNC_KEYS]; // All keys from SYNC_KEYS are watched
 
 localStorage.setItem = function(key, value) {
     originalSetItem(key, value);
+
+    // PROTECTION: Ne pas sync si migration v1 effectuée (données en sous-collections)
+    const MIGRATION_FLAG = 'migrationDone_v1';
+    if (localStorage.getItem(MIGRATION_FLAG) === 'true') {
+        return; // Skip ancien système de sync
+    }
 
     // If connected and key is in watch list, sync to Firestore with debounce
     if (keysToWatch.includes(key) && auth.currentUser) {
