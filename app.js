@@ -8201,8 +8201,8 @@ Solutions possibles :
             // Charger depuis Firestore (avec fallback localStorage)
             const settings = await loadSettingsFromFirestore();
 
-            // Charger les valeurs individuelles
-            ['weight', 'bodyFat', 'activity', 'deficit', 'surplus', 'proteinCoeff', 'fatCoeff', 'proteinCoeffBulk', 'fatCoeffBulk'].forEach(s => {
+            // Charger les valeurs individuelles (SAUF weight, height, activity qui viennent du profil)
+            ['bodyFat', 'deficit', 'surplus', 'proteinCoeff', 'fatCoeff', 'proteinCoeffBulk', 'fatCoeffBulk'].forEach(s => {
                 const value = settings['calc_' + s];
                 if (value && document.getElementById(s)) {
                     document.getElementById(s).value = value;
@@ -8297,10 +8297,9 @@ Solutions possibles :
         }
 
         async function saveCalcSettings() {
+            // NE PAS sauvegarder weight et activity ici: ils viennent du profil
             const values = {
-                weight: document.getElementById('weight')?.value || '',
                 bodyFat: document.getElementById('bodyFat')?.value || '',
-                activity: document.getElementById('activity')?.value || '',
                 deficit: document.getElementById('deficit')?.value || '',
                 surplus: document.getElementById('surplus')?.value || '',
                 proteinCoeff: document.getElementById('proteinCoeff')?.value || '',
