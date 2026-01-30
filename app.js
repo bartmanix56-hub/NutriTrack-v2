@@ -1587,7 +1587,7 @@ Solutions possibles :
             if (profile.activity && document.getElementById('activity')) document.getElementById('activity').value = profile.activity;
         }
 
-        function calculateMacrosFromProfile() {
+        async function calculateMacrosFromProfile() {
             hideProfileAlert();
 
             const validation = validateProfile();
@@ -1598,8 +1598,8 @@ Solutions possibles :
                 return;
             }
 
-            // Sauvegarder le profil
-            saveProfile();
+            // Sauvegarder le profil (ATTENDRE la fin)
+            await saveProfile();
 
             // Appeler directement calculateMacros() car les champs ont les bons IDs maintenant
             calculateMacros();
