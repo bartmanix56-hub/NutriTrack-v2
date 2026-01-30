@@ -1557,16 +1557,22 @@ Solutions possibles :
             };
         }
 
-        function saveProfile() {
+        async function saveProfile() {
             const profile = getProfileData();
-            localStorage.setItem('userProfile', JSON.stringify(profile));
+
+            // Sauvegarder vers Firestore (avec fallback localStorage)
+            try {
+                await saveProfileToFirestore(profile);
+            } catch (error) {
+                console.error('Erreur sauvegarde profil:', error);
+                // L'erreur a déjà été affichée dans saveProfileToFirestore via toast
+            }
         }
 
-        function loadProfile() {
-            const saved = localStorage.getItem('userProfile');
-            if (!saved) { return; }
-
-            const profile = JSON.parse(saved);
+        async function loadProfile() {
+            // Charger depuis Firestore (avec fallback localStorage)
+            const profile = await loadProfileFromFirestore();
+            if (!profile || Object.keys(profile).length === 0) { return; }
 
             if (profile.birthDay && document.getElementById('birth-day'))  { document.getElementById('birth-day').value = profile.birthDay; }
             if (profile.birthMonth && document.getElementById('birth-month'))  { document.getElementById('birth-month').value = profile.birthMonth; }
@@ -5856,24 +5862,20 @@ Solutions possibles :
             return `${year}-${month}-${day}`;
         }
 
-        function loadAllMeals() {
-            const saved = localStorage.getItem('allDailyMeals');
-            if (saved) { allDailyMeals = JSON.parse(saved); }
-
-            loadDailyMealsForCurrentDate();
+        async function loadAllMeals() {
+            // NOUVELLE APPROCHE: Ne charger que le jour actuel depuis Firestore
+            // allDailyMeals sert de cache en mémoire, on ne charge plus tout au démarrage
+            await loadDailyMealsForCurrentDate();
         }
 
-        function loadDailyMealsForCurrentDate() {
+        async function loadDailyMealsForCurrentDate() {
             const dateKey = getCurrentDateKey();
 
-            if (!allDailyMeals[dateKey]) {
-                allDailyMeals[dateKey] = {
-                    breakfast: { foods: [], recipe: '' },
-                    lunch: { foods: [], recipe: '' },
-                    snack: { foods: [], recipe: '' },
-                    dinner: { foods: [], recipe: '' }
-                };
-            }
+            // Charger depuis Firestore (avec fallback localStorage si DataService pas dispo)
+            const mealData = await loadMealFromFirestore(dateKey);
+
+            // Mettre en cache
+            allDailyMeals[dateKey] = mealData;
 
             // Utiliser dailyMeals de l'ancien code
             dailyMeals = allDailyMeals[dateKey];
@@ -5908,11 +5910,20 @@ Solutions possibles :
             checkIfDayClosed();
         }
 
-        function saveDailyMeals() {
+        async function saveDailyMeals() {
             const dateKey = getCurrentDateKey();
             showSaveToast();
+
+            // Mettre à jour le cache en mémoire
             allDailyMeals[dateKey] = dailyMeals;
-            localStorage.setItem('allDailyMeals', JSON.stringify(allDailyMeals));
+
+            // Sauvegarder vers Firestore (avec fallback localStorage si DataService pas dispo)
+            try {
+                await saveMealToFirestore(dateKey, dailyMeals);
+            } catch (error) {
+                console.error('Erreur sauvegarde repas:', error);
+                // L'erreur a déjà été affichée dans saveMealToFirestore via toast
+            }
             // Mettre à jour le streak en temps réel
             if (typeof updateStreakDisplay === 'function') updateStreakDisplay();
             // Mettre à jour le résumé hebdomadaire si visible
