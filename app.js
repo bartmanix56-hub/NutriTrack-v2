@@ -93,6 +93,157 @@
         let currentGoal = 'cut';
         let currentMealType = null;
 
+        // ===== DATA HELPERS - FIRESTORE FIRST =====
+        // Ces fonctions gèrent le chargement/sauvegarde avec Firestore comme source de vérité
+
+        /**
+         * Charge les repas d'une date depuis Firestore
+         * @param {string} date - Format YYYY-MM-DD
+         * @returns {Promise<Object>} Repas du jour
+         */
+        async function loadMealFromFirestore(date) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, fallback localStorage');
+                const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+                return allMeals[date] || {
+                    breakfast: { foods: [], recipe: '' },
+                    lunch: { foods: [], recipe: '' },
+                    snack: { foods: [], recipe: '' },
+                    dinner: { foods: [], recipe: '' },
+                    water: 0
+                };
+            }
+
+            try {
+                return await window.dataService.getMeal(date);
+            } catch (error) {
+                console.error('Erreur chargement meal Firestore:', error);
+                // Fallback localStorage
+                const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+                return allMeals[date] || {
+                    breakfast: { foods: [], recipe: '' },
+                    lunch: { foods: [], recipe: '' },
+                    snack: { foods: [], recipe: '' },
+                    dinner: { foods: [], recipe: '' },
+                    water: 0
+                };
+            }
+        }
+
+        /**
+         * Sauvegarde les repas d'une date vers Firestore
+         * @param {string} date - Format YYYY-MM-DD
+         * @param {Object} mealData - Données du repas
+         */
+        async function saveMealToFirestore(date, mealData) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
+                const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
+                allMeals[date] = mealData;
+                localStorage.setItem('allDailyMeals', JSON.stringify(allMeals));
+                return;
+            }
+
+            try {
+                await window.dataService.saveMeal(date, mealData);
+            } catch (error) {
+                console.error('Erreur sauvegarde meal Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de sauvegarder. Vérifie ta connexion.', 'error');
+                }
+                throw error; // Propager l'erreur pour permettre rollback UI
+            }
+        }
+
+        /**
+         * Charge le profil utilisateur depuis Firestore
+         * @returns {Promise<Object>} Profil utilisateur
+         */
+        async function loadProfileFromFirestore() {
+            if (!window.dataService) {
+                const saved = localStorage.getItem('userProfile');
+                return saved ? JSON.parse(saved) : {};
+            }
+
+            try {
+                return await window.dataService.getProfile();
+            } catch (error) {
+                console.error('Erreur chargement profile Firestore:', error);
+                const saved = localStorage.getItem('userProfile');
+                return saved ? JSON.parse(saved) : {};
+            }
+        }
+
+        /**
+         * Sauvegarde le profil utilisateur vers Firestore
+         * @param {Object} profile - Profil utilisateur
+         */
+        async function saveProfileToFirestore(profile) {
+            if (!window.dataService) {
+                localStorage.setItem('userProfile', JSON.stringify(profile));
+                return;
+            }
+
+            try {
+                await window.dataService.saveProfile(profile);
+            } catch (error) {
+                console.error('Erreur sauvegarde profile Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de sauvegarder le profil.', 'error');
+                }
+                throw error;
+            }
+        }
+
+        /**
+         * Charge les settings (macroTargets, calcSettings, etc.) depuis Firestore
+         * @returns {Promise<Object>} Settings
+         */
+        async function loadSettingsFromFirestore() {
+            if (!window.dataService) {
+                const macroTargets = localStorage.getItem('macroTargets');
+                const calcSettings = localStorage.getItem('calcSettings');
+                const calc_goal = localStorage.getItem('calc_goal');
+                return {
+                    macroTargets: macroTargets ? JSON.parse(macroTargets) : null,
+                    calcSettings: calcSettings ? JSON.parse(calcSettings) : null,
+                    calc_goal: calc_goal || null
+                };
+            }
+
+            try {
+                return await window.dataService.getSettings();
+            } catch (error) {
+                console.error('Erreur chargement settings Firestore:', error);
+                return {};
+            }
+        }
+
+        /**
+         * Sauvegarde les settings vers Firestore
+         * @param {Object} settings - Settings à sauvegarder
+         */
+        async function saveSettingsToFirestore(settings) {
+            if (!window.dataService) {
+                if (settings.macroTargets) localStorage.setItem('macroTargets', JSON.stringify(settings.macroTargets));
+                if (settings.calcSettings) localStorage.setItem('calcSettings', JSON.stringify(settings.calcSettings));
+                if (settings.calc_goal) localStorage.setItem('calc_goal', settings.calc_goal);
+                return;
+            }
+
+            try {
+                await window.dataService.saveSettings(settings);
+            } catch (error) {
+                console.error('Erreur sauvegarde settings Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de sauvegarder les paramètres.', 'error');
+                }
+                throw error;
+            }
+        }
+
+        // ===== FIN DATA HELPERS =====
+
         // ===== PWA INSTALL PROMPT =====
         let deferredInstallPrompt = null;
 
@@ -1199,10 +1350,14 @@ Solutions possibles :
             if (resultsContent) resultsContent.style.display = 'block';
             updateIcons();
 
-            // Sauvegarder dans localStorage (incluant IMC)
-            localStorage.setItem('macroTargets', JSON.stringify({
+            // Sauvegarder vers Firestore (incluant IMC)
+            const macroTargets = {
                 protein, carbs, fat, calories: totalCal, bmr: Math.round(bmr), tdee: Math.round(tdee), imc: imc.toFixed(1)
-            }));
+            };
+
+            saveSettingsToFirestore({ macroTargets }).catch(err => {
+                console.error('Erreur sauvegarde macroTargets:', err);
+            });
 
             // Mettre à jour les sections disponibles
             updateSectionsAvailability();
@@ -1406,16 +1561,22 @@ Solutions possibles :
             };
         }
 
-        function saveProfile() {
+        async function saveProfile() {
             const profile = getProfileData();
-            localStorage.setItem('userProfile', JSON.stringify(profile));
+
+            // Sauvegarder vers Firestore (avec fallback localStorage)
+            try {
+                await saveProfileToFirestore(profile);
+            } catch (error) {
+                console.error('Erreur sauvegarde profil:', error);
+                // L'erreur a déjà été affichée dans saveProfileToFirestore via toast
+            }
         }
 
-        function loadProfile() {
-            const saved = localStorage.getItem('userProfile');
-            if (!saved) { return; }
-
-            const profile = JSON.parse(saved);
+        async function loadProfile() {
+            // Charger depuis Firestore (avec fallback localStorage)
+            const profile = await loadProfileFromFirestore();
+            if (!profile || Object.keys(profile).length === 0) { return; }
 
             if (profile.birthDay && document.getElementById('birth-day'))  { document.getElementById('birth-day').value = profile.birthDay; }
             if (profile.birthMonth && document.getElementById('birth-month'))  { document.getElementById('birth-month').value = profile.birthMonth; }
@@ -5705,24 +5866,20 @@ Solutions possibles :
             return `${year}-${month}-${day}`;
         }
 
-        function loadAllMeals() {
-            const saved = localStorage.getItem('allDailyMeals');
-            if (saved) { allDailyMeals = JSON.parse(saved); }
-
-            loadDailyMealsForCurrentDate();
+        async function loadAllMeals() {
+            // NOUVELLE APPROCHE: Ne charger que le jour actuel depuis Firestore
+            // allDailyMeals sert de cache en mémoire, on ne charge plus tout au démarrage
+            await loadDailyMealsForCurrentDate();
         }
 
-        function loadDailyMealsForCurrentDate() {
+        async function loadDailyMealsForCurrentDate() {
             const dateKey = getCurrentDateKey();
 
-            if (!allDailyMeals[dateKey]) {
-                allDailyMeals[dateKey] = {
-                    breakfast: { foods: [], recipe: '' },
-                    lunch: { foods: [], recipe: '' },
-                    snack: { foods: [], recipe: '' },
-                    dinner: { foods: [], recipe: '' }
-                };
-            }
+            // Charger depuis Firestore (avec fallback localStorage si DataService pas dispo)
+            const mealData = await loadMealFromFirestore(dateKey);
+
+            // Mettre en cache
+            allDailyMeals[dateKey] = mealData;
 
             // Utiliser dailyMeals de l'ancien code
             dailyMeals = allDailyMeals[dateKey];
@@ -5757,11 +5914,20 @@ Solutions possibles :
             checkIfDayClosed();
         }
 
-        function saveDailyMeals() {
+        async function saveDailyMeals() {
             const dateKey = getCurrentDateKey();
             showSaveToast();
+
+            // Mettre à jour le cache en mémoire
             allDailyMeals[dateKey] = dailyMeals;
-            localStorage.setItem('allDailyMeals', JSON.stringify(allDailyMeals));
+
+            // Sauvegarder vers Firestore (avec fallback localStorage si DataService pas dispo)
+            try {
+                await saveMealToFirestore(dateKey, dailyMeals);
+            } catch (error) {
+                console.error('Erreur sauvegarde repas:', error);
+                // L'erreur a déjà été affichée dans saveMealToFirestore via toast
+            }
             // Mettre à jour le streak en temps réel
             if (typeof updateStreakDisplay === 'function') updateStreakDisplay();
             // Mettre à jour le résumé hebdomadaire si visible
@@ -8013,22 +8179,25 @@ Solutions possibles :
         }
 
         // ===== SAUVEGARDE PARAMÈTRES =====
-        function loadCalcSettings() {
+        async function loadCalcSettings() {
+            // Charger depuis Firestore (avec fallback localStorage)
+            const settings = await loadSettingsFromFirestore();
+
+            // Charger les valeurs individuelles
             ['weight', 'bodyFat', 'activity', 'deficit', 'surplus', 'proteinCoeff', 'fatCoeff', 'proteinCoeffBulk', 'fatCoeffBulk'].forEach(s => {
-                const saved = localStorage.getItem('calc_' + s);
-                if (saved && document.getElementById(s)) {
-                    document.getElementById(s).value = saved;
+                const value = settings['calc_' + s];
+                if (value && document.getElementById(s)) {
+                    document.getElementById(s).value = value;
                 }
             });
 
-            const savedGoal = localStorage.getItem('calc_goal');
+            const savedGoal = settings.calc_goal;
             if (savedGoal) selectGoal(savedGoal, true); // true = isLoading, ne pas recalculer
 
             // Load saved macro targets and display results
-            const savedTargets = localStorage.getItem('macroTargets');
-            if (savedTargets) {
+            const targets = settings.macroTargets;
+            if (targets) {
                 try {
-                    const targets = JSON.parse(savedTargets);
 
                     if (targets.calories) {
                         // BMR and TDEE
@@ -8102,9 +8271,8 @@ Solutions possibles :
             }
         }
 
-        function saveCalcSettings() {
-
-            const settings = {
+        async function saveCalcSettings() {
+            const values = {
                 weight: document.getElementById('weight')?.value || '',
                 bodyFat: document.getElementById('bodyFat')?.value || '',
                 activity: document.getElementById('activity')?.value || '',
@@ -8117,11 +8285,20 @@ Solutions possibles :
                 goal: currentGoal || 'cut'
             };
 
-            Object.keys(settings).forEach(k => {
-                if (settings[k] !== '') {  // Only save if not empty
-                    localStorage.setItem('calc_' + k, settings[k]);
+            // Construire l'objet settings pour Firestore avec préfixe calc_
+            const settings = {};
+            Object.keys(values).forEach(k => {
+                if (values[k] !== '') {
+                    settings['calc_' + k] = values[k];
                 }
             });
+
+            // Sauvegarder vers Firestore (avec fallback localStorage)
+            try {
+                await saveSettingsToFirestore(settings);
+            } catch (error) {
+                console.error('Erreur sauvegarde settings calculateur:', error);
+            }
         }
 
         const origCalculateMacros = calculateMacros;
