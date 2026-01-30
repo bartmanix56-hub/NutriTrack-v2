@@ -4541,7 +4541,7 @@ Solutions possibles :
         function initV2() {
             loadCustomFoods();
             loadMealTemplates();
-            loadAllMeals();
+            // loadAllMeals(); // DÉPLACÉ dans admin.js APRÈS création DataService
             loadTrackingData();
             // loadCalcSettings(); // DÉPLACÉ dans requestAnimationFrame
             loadFavoriteFoods();  // Load favorite foods
