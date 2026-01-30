@@ -1465,6 +1465,13 @@ onAuthStateChanged(auth, (user) => {
                     await window.loadCalcSettings();
                     console.log('✅ Calc settings chargés depuis Firestore');
                 }
+
+                // Charger les repas APRÈS profile et settings
+                if (typeof window.loadAllMeals === 'function') {
+                    console.log('🔄 Chargement repas depuis Firestore...');
+                    await window.loadAllMeals();
+                    console.log('✅ Repas chargés depuis Firestore');
+                }
             }
 
             // Charger les données depuis Firestore (source de vérité)
