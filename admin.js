@@ -1001,6 +1001,13 @@ async function showAppAfterLogin(user) {
         if (typeof showToast === 'function') {
             showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${migrationResult.uploadCount} éléments migrés`, 'success');
         }
+
+        // Si needsReload, recharger pour purger les données en mémoire
+        if (migrationResult.needsReload) {
+            console.log('🔄 Rechargement de la page dans 1s...');
+            setTimeout(() => window.location.reload(), 1000);
+            return; // Arrêter l'exécution ici
+        }
     }
 
     // Afficher l'app
@@ -1211,19 +1218,28 @@ async function migrateToFirestore(user) {
         }
 
         // Purger les anciennes clés
+        console.log('🗑️ Suppression des clés localStorage:', LEGACY_KEYS);
+        let deletedCount = 0;
         LEGACY_KEYS.forEach(key => {
-            localStorage.removeItem(key);
+            if (localStorage.getItem(key)) {
+                console.log(`   🗑️ Suppression: ${key}`);
+                localStorage.removeItem(key);
+                deletedCount++;
+            }
         });
+        console.log(`✅ ${deletedCount} clés supprimées du localStorage`);
 
         // Marquer migration comme terminée
         localStorage.setItem(MIGRATION_FLAG, 'true');
 
         console.log('🎉 Migration terminée avec succès');
+        console.log('🔄 Rechargement nécessaire pour purger les données en mémoire...');
 
         return {
             success: true,
             uploadCount,
-            errors: errors.length > 0 ? errors : null
+            errors: errors.length > 0 ? errors : null,
+            needsReload: true // Signal qu'un reload est nécessaire
         };
 
     } catch (error) {
@@ -1367,6 +1383,13 @@ onAuthStateChanged(auth, (user) => {
                 // Migration réussie → notifier user
                 if (typeof showToast === 'function') {
                     showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${migrationResult.uploadCount} éléments migrés vers le cloud`, 'success');
+                }
+
+                // Si needsReload, recharger pour purger les données en mémoire
+                if (migrationResult.needsReload) {
+                    console.log('🔄 Rechargement de la page dans 1.5s...');
+                    setTimeout(() => window.location.reload(), 1500);
+                    return; // Arrêter l'exécution ici
                 }
             }
 
