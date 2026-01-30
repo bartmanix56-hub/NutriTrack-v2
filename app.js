@@ -631,7 +631,7 @@
         }
 
         // Sélection du rythme en mode guidé
-        window.selectPace = function(pace) {
+        window.selectPace = function(pace, skipCalculate = false) {
             // Mise à jour visuelle des boutons
             document.querySelectorAll('.pace-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -721,16 +721,22 @@
 
             // Sauvegarder le rythme sélectionné (localStorage ET Firestore)
             localStorage.setItem('selectedPace', pace);
-            saveSettingsToFirestore({ selectedPace: pace }).catch(err => {
-                console.error('Erreur sauvegarde selectedPace:', err);
-            });
 
-            // Calculer automatiquement les macros
-            setTimeout(() => {
-                if (typeof calculateMacros === 'function') {
-                    calculateMacros();
-                }
-            }, 100);
+            // Ne sauvegarder dans Firestore que si pas en mode chargement
+            if (!skipCalculate) {
+                saveSettingsToFirestore({ selectedPace: pace }).catch(err => {
+                    console.error('Erreur sauvegarde selectedPace:', err);
+                });
+            }
+
+            // Calculer automatiquement les macros (sauf si skipCalculate = true)
+            if (!skipCalculate) {
+                setTimeout(() => {
+                    if (typeof calculateMacros === 'function') {
+                        calculateMacros();
+                    }
+                }, 100);
+            }
         };
 
         // Toggle entre mode guidé et mode avancé
@@ -8200,17 +8206,11 @@ Solutions possibles :
             const savedGoal = settings.calc_goal;
             if (savedGoal) selectGoal(savedGoal, true); // true = isLoading, ne pas recalculer
 
-            // Restaurer le rythme visuel depuis Firestore (avec fallback localStorage)
+            // Restaurer le rythme depuis Firestore (avec fallback localStorage)
             const savedPace = settings.selectedPace || localStorage.getItem('selectedPace');
-            if (savedPace) {
-                // Mettre à jour uniquement l'affichage visuel, pas les valeurs (déjà chargées)
-                document.querySelectorAll('.pace-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                const selectedBtn = document.querySelector(`[data-pace="${savedPace}"]`);
-                if (selectedBtn) {
-                    selectedBtn.classList.add('active');
-                }
+            if (savedPace && typeof window.selectPace === 'function') {
+                // Appeler selectPace pour remplir les champs SANS déclencher calculateMacros
+                window.selectPace(savedPace, true); // true = skipCalculate
             }
 
             // Load saved macro targets and display results
