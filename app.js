@@ -719,8 +719,11 @@
                 if (fatInput) fatInput.value = settings.fat;
             }
 
-            // Sauvegarder le rythme sélectionné
+            // Sauvegarder le rythme sélectionné (localStorage ET Firestore)
             localStorage.setItem('selectedPace', pace);
+            saveSettingsToFirestore({ selectedPace: pace }).catch(err => {
+                console.error('Erreur sauvegarde selectedPace:', err);
+            });
 
             // Calculer automatiquement les macros
             setTimeout(() => {
@@ -8193,6 +8196,19 @@ Solutions possibles :
 
             const savedGoal = settings.calc_goal;
             if (savedGoal) selectGoal(savedGoal, true); // true = isLoading, ne pas recalculer
+
+            // Restaurer le rythme visuel depuis Firestore (avec fallback localStorage)
+            const savedPace = settings.selectedPace || localStorage.getItem('selectedPace');
+            if (savedPace) {
+                // Mettre à jour uniquement l'affichage visuel, pas les valeurs (déjà chargées)
+                document.querySelectorAll('.pace-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                const selectedBtn = document.querySelector(`[data-pace="${savedPace}"]`);
+                if (selectedBtn) {
+                    selectedBtn.classList.add('active');
+                }
+            }
 
             // Load saved macro targets and display results
             const targets = settings.macroTargets;
