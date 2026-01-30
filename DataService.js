@@ -72,7 +72,7 @@ class DataService {
             await setDoc(docRef, {
                 ...profile,
                 updatedAt: serverTimestamp()
-            });
+            }, { merge: true }); // CRITIQUE: merge pour ne pas écraser les autres champs
         } catch (error) {
             console.error('Error saving profile:', error);
             throw new Error('Impossible de sauvegarder le profil. Vérifiez votre connexion.');
@@ -411,7 +411,7 @@ class DataService {
             await setDoc(docRef, {
                 ...settings,
                 updatedAt: serverTimestamp()
-            });
+            }, { merge: true }); // CRITIQUE: merge pour ne pas écraser les autres champs
         } catch (error) {
             console.error('Error saving settings:', error);
             throw new Error('Impossible de sauvegarder les paramètres. Vérifiez votre connexion.');
