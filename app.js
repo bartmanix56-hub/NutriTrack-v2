@@ -1350,10 +1350,14 @@ Solutions possibles :
             if (resultsContent) resultsContent.style.display = 'block';
             updateIcons();
 
-            // Sauvegarder dans localStorage (incluant IMC)
-            localStorage.setItem('macroTargets', JSON.stringify({
+            // Sauvegarder vers Firestore (incluant IMC)
+            const macroTargets = {
                 protein, carbs, fat, calories: totalCal, bmr: Math.round(bmr), tdee: Math.round(tdee), imc: imc.toFixed(1)
-            }));
+            };
+
+            saveSettingsToFirestore({ macroTargets }).catch(err => {
+                console.error('Erreur sauvegarde macroTargets:', err);
+            });
 
             // Mettre à jour les sections disponibles
             updateSectionsAvailability();
@@ -8175,22 +8179,25 @@ Solutions possibles :
         }
 
         // ===== SAUVEGARDE PARAMÈTRES =====
-        function loadCalcSettings() {
+        async function loadCalcSettings() {
+            // Charger depuis Firestore (avec fallback localStorage)
+            const settings = await loadSettingsFromFirestore();
+
+            // Charger les valeurs individuelles
             ['weight', 'bodyFat', 'activity', 'deficit', 'surplus', 'proteinCoeff', 'fatCoeff', 'proteinCoeffBulk', 'fatCoeffBulk'].forEach(s => {
-                const saved = localStorage.getItem('calc_' + s);
-                if (saved && document.getElementById(s)) {
-                    document.getElementById(s).value = saved;
+                const value = settings['calc_' + s];
+                if (value && document.getElementById(s)) {
+                    document.getElementById(s).value = value;
                 }
             });
 
-            const savedGoal = localStorage.getItem('calc_goal');
+            const savedGoal = settings.calc_goal;
             if (savedGoal) selectGoal(savedGoal, true); // true = isLoading, ne pas recalculer
 
             // Load saved macro targets and display results
-            const savedTargets = localStorage.getItem('macroTargets');
-            if (savedTargets) {
+            const targets = settings.macroTargets;
+            if (targets) {
                 try {
-                    const targets = JSON.parse(savedTargets);
 
                     if (targets.calories) {
                         // BMR and TDEE
@@ -8264,9 +8271,8 @@ Solutions possibles :
             }
         }
 
-        function saveCalcSettings() {
-
-            const settings = {
+        async function saveCalcSettings() {
+            const values = {
                 weight: document.getElementById('weight')?.value || '',
                 bodyFat: document.getElementById('bodyFat')?.value || '',
                 activity: document.getElementById('activity')?.value || '',
@@ -8279,11 +8285,20 @@ Solutions possibles :
                 goal: currentGoal || 'cut'
             };
 
-            Object.keys(settings).forEach(k => {
-                if (settings[k] !== '') {  // Only save if not empty
-                    localStorage.setItem('calc_' + k, settings[k]);
+            // Construire l'objet settings pour Firestore avec préfixe calc_
+            const settings = {};
+            Object.keys(values).forEach(k => {
+                if (values[k] !== '') {
+                    settings['calc_' + k] = values[k];
                 }
             });
+
+            // Sauvegarder vers Firestore (avec fallback localStorage)
+            try {
+                await saveSettingsToFirestore(settings);
+            } catch (error) {
+                console.error('Erreur sauvegarde settings calculateur:', error);
+            }
         }
 
         const origCalculateMacros = calculateMacros;
