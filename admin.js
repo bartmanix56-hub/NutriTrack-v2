@@ -1031,6 +1031,21 @@ async function showAppAfterLogin(user) {
     if (typeof window.loadSmartMealTemplatesFromFirestore === 'function') {
         window.loadSmartMealTemplatesFromFirestore();
     }
+
+    // IMPORTANT: Charger profile et calc settings APRÈS DataService créé
+    if (window.dataService && typeof window.loadProfile === 'function') {
+        console.log('🔄 Chargement profile depuis Firestore...');
+        window.loadProfile().then(() => {
+            console.log('✅ Profile chargé depuis Firestore');
+            // Charger calc settings APRÈS profile
+            if (typeof window.loadCalcSettings === 'function') {
+                console.log('🔄 Chargement calc settings depuis Firestore...');
+                window.loadCalcSettings().then(() => {
+                    console.log('✅ Calc settings chargés depuis Firestore');
+                });
+            }
+        });
+    }
 }
 
 // ========================================
@@ -1436,6 +1451,20 @@ onAuthStateChanged(auth, (user) => {
                 console.log('✅ [DEBUG] loadSmartMealTemplatesFromFirestore terminé');
             } else {
                 console.error('❌ [DEBUG] loadSmartMealTemplatesFromFirestore n\'existe pas !');
+            }
+
+            // IMPORTANT: Charger profile et calc settings APRÈS DataService créé
+            if (window.dataService && typeof window.loadProfile === 'function') {
+                console.log('🔄 Chargement profile depuis Firestore...');
+                await window.loadProfile();
+                console.log('✅ Profile chargé depuis Firestore');
+
+                // Charger calc settings APRÈS profile
+                if (typeof window.loadCalcSettings === 'function') {
+                    console.log('🔄 Chargement calc settings depuis Firestore...');
+                    await window.loadCalcSettings();
+                    console.log('✅ Calc settings chargés depuis Firestore');
+                }
             }
 
             // Charger les données depuis Firestore (source de vérité)
