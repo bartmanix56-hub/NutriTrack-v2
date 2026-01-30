@@ -103,9 +103,11 @@
          */
         async function loadMealFromFirestore(date) {
             if (!window.dataService) {
-                console.warn('⚠️ DataService non disponible, fallback localStorage');
-                const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
-                return allMeals[date] || {
+                console.error('❌ DataService non disponible - impossible de charger les repas');
+                if (typeof showToast === 'function') {
+                    showToast('Erreur: connexion Firestore indisponible', 'error');
+                }
+                return {
                     breakfast: { foods: [], recipe: '' },
                     lunch: { foods: [], recipe: '' },
                     snack: { foods: [], recipe: '' },
@@ -117,10 +119,11 @@
             try {
                 return await window.dataService.getMeal(date);
             } catch (error) {
-                console.error('Erreur chargement meal Firestore:', error);
-                // Fallback localStorage
-                const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
-                return allMeals[date] || {
+                console.error('❌ Erreur chargement meal Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de charger les repas depuis Firestore', 'error');
+                }
+                return {
                     breakfast: { foods: [], recipe: '' },
                     lunch: { foods: [], recipe: '' },
                     snack: { foods: [], recipe: '' },
@@ -137,21 +140,21 @@
          */
         async function saveMealToFirestore(date, mealData) {
             if (!window.dataService) {
-                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
-                const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
-                allMeals[date] = mealData;
-                localStorage.setItem('allDailyMeals', JSON.stringify(allMeals));
-                return;
+                console.error('❌ DataService non disponible - impossible de sauvegarder les repas');
+                if (typeof showToast === 'function') {
+                    showToast('Erreur: connexion Firestore indisponible', 'error');
+                }
+                throw new Error('DataService non disponible');
             }
 
             try {
                 await window.dataService.saveMeal(date, mealData);
             } catch (error) {
-                console.error('Erreur sauvegarde meal Firestore:', error);
+                console.error('❌ Erreur sauvegarde meal Firestore:', error);
                 if (typeof showToast === 'function') {
                     showToast('Impossible de sauvegarder. Vérifie ta connexion.', 'error');
                 }
-                throw error; // Propager l'erreur pour permettre rollback UI
+                throw error;
             }
         }
 
@@ -161,16 +164,21 @@
          */
         async function loadProfileFromFirestore() {
             if (!window.dataService) {
-                const saved = localStorage.getItem('userProfile');
-                return saved ? JSON.parse(saved) : {};
+                console.error('❌ DataService non disponible - impossible de charger le profil');
+                if (typeof showToast === 'function') {
+                    showToast('Erreur: connexion Firestore indisponible', 'error');
+                }
+                return {};
             }
 
             try {
                 return await window.dataService.getProfile();
             } catch (error) {
-                console.error('Erreur chargement profile Firestore:', error);
-                const saved = localStorage.getItem('userProfile');
-                return saved ? JSON.parse(saved) : {};
+                console.error('❌ Erreur chargement profile Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de charger le profil depuis Firestore', 'error');
+                }
+                return {};
             }
         }
 
@@ -180,14 +188,17 @@
          */
         async function saveProfileToFirestore(profile) {
             if (!window.dataService) {
-                localStorage.setItem('userProfile', JSON.stringify(profile));
-                return;
+                console.error('❌ DataService non disponible - impossible de sauvegarder le profil');
+                if (typeof showToast === 'function') {
+                    showToast('Erreur: connexion Firestore indisponible', 'error');
+                }
+                throw new Error('DataService non disponible');
             }
 
             try {
                 await window.dataService.saveProfile(profile);
             } catch (error) {
-                console.error('Erreur sauvegarde profile Firestore:', error);
+                console.error('❌ Erreur sauvegarde profile Firestore:', error);
                 if (typeof showToast === 'function') {
                     showToast('Impossible de sauvegarder le profil.', 'error');
                 }
@@ -201,20 +212,20 @@
          */
         async function loadSettingsFromFirestore() {
             if (!window.dataService) {
-                const macroTargets = localStorage.getItem('macroTargets');
-                const calcSettings = localStorage.getItem('calcSettings');
-                const calc_goal = localStorage.getItem('calc_goal');
-                return {
-                    macroTargets: macroTargets ? JSON.parse(macroTargets) : null,
-                    calcSettings: calcSettings ? JSON.parse(calcSettings) : null,
-                    calc_goal: calc_goal || null
-                };
+                console.error('❌ DataService non disponible - impossible de charger les settings');
+                if (typeof showToast === 'function') {
+                    showToast('Erreur: connexion Firestore indisponible', 'error');
+                }
+                return {};
             }
 
             try {
                 return await window.dataService.getSettings();
             } catch (error) {
-                console.error('Erreur chargement settings Firestore:', error);
+                console.error('❌ Erreur chargement settings Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de charger les paramètres depuis Firestore', 'error');
+                }
                 return {};
             }
         }
@@ -225,16 +236,17 @@
          */
         async function saveSettingsToFirestore(settings) {
             if (!window.dataService) {
-                if (settings.macroTargets) localStorage.setItem('macroTargets', JSON.stringify(settings.macroTargets));
-                if (settings.calcSettings) localStorage.setItem('calcSettings', JSON.stringify(settings.calcSettings));
-                if (settings.calc_goal) localStorage.setItem('calc_goal', settings.calc_goal);
-                return;
+                console.error('❌ DataService non disponible - impossible de sauvegarder les settings');
+                if (typeof showToast === 'function') {
+                    showToast('Erreur: connexion Firestore indisponible', 'error');
+                }
+                throw new Error('DataService non disponible');
             }
 
             try {
                 await window.dataService.saveSettings(settings);
             } catch (error) {
-                console.error('Erreur sauvegarde settings Firestore:', error);
+                console.error('❌ Erreur sauvegarde settings Firestore:', error);
                 if (typeof showToast === 'function') {
                     showToast('Impossible de sauvegarder les paramètres.', 'error');
                 }
@@ -1030,11 +1042,6 @@
 
             // Sauvegarder le profil (ATTENDRE la fin de la sauvegarde)
             await saveProfile();
-
-            // Save initial weight if this is the first calculation (no tracking yet)
-            const trackingData = localStorage.getItem('trackingData');
-            const hasTracking = trackingData && JSON.parse(trackingData).length > 0;
-            if (!hasTracking && !localStorage.getItem('initialWeight'))  { localStorage.setItem('initialWeight', weight); }
 
             // MIFFLIN-ST JEOR FORMULA
             // Homme : BMR = (10 × poids) + (6.25 × taille) - (5 × âge) + 5
@@ -4600,9 +4607,6 @@ Solutions possibles :
                 // await loadProfile();
                 // await loadCalcSettings();
 
-                // Sync weight from tracking on page load
-                setTimeout(() =>  { syncWeightToCalculator(); }, 500);
-
                 // Initialize Lucide icons
                 if (typeof lucide !== 'undefined')  { updateIcons(); }
             });
@@ -6304,12 +6308,9 @@ Solutions possibles :
             setTrackingDateToToday();
 
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Mesure enregistrée !');
-
-            // SYNC: Update calculator weight with latest tracking weight
-            syncWeightToCalculator();
         }
 
-        // ===== WEIGHT SYNC SYSTEM =====
+        // ===== WEIGHT SYNC SYSTEM (legacy, non utilisé après migration Firestore) =====
         function getLatestWeight() {
             const saved = localStorage.getItem('trackingData');
 
@@ -6333,57 +6334,8 @@ Solutions possibles :
             }
         }
 
-        function syncWeightToCalculator() {
-            // DÉSACTIVÉ si migration v1 effectuée: le poids vient maintenant de Firestore
-            if (localStorage.getItem('migrationDone_v1') === 'true') {
-                console.log('⚠️ syncWeightToCalculator désactivé: migration v1 effectuée');
-                return;
-            }
-
-            const latestWeight = getLatestWeight();
-
-            if (latestWeight === null) {
-
-                // If no tracking, restore initial weight (before any tracking was added)
-                const initialWeight = localStorage.getItem('initialWeight');
-                if (initialWeight) {
-                    const weightInput = document.getElementById('weight');
-                    const currentWeight = parseFloat(weightInput.value);
-                    const initial = parseFloat(initialWeight);
-
-                    if (currentWeight !== initial) {
-                        weightInput.value = initial;
-                        saveProfile();
-                        autoRecalculateMacros();
-                        showToast(`⚖️ Poids restauré : ${initial} kg`);
-                    } else {
-                    }
-                } else {
-                }
-                return;
-            }
-
-            const weightInput = document.getElementById('weight');
-            if (!weightInput) {
-                console.error('<i data-lucide="x-circle" class="icon-inline"></i> Weight input not found');
-                return;
-            }
-
-            const currentWeight = parseFloat(weightInput.value);
-
-            // Only update if weight has changed
-            if (currentWeight !== latestWeight) {
-                weightInput.value = latestWeight;
-
-                // Save to profile
-                saveProfile();
-
-                // Auto-recalculate macros if we have all required data
-                autoRecalculateMacros();
-
-                showToast(`⚖️ Poids mis à jour : ${latestWeight} kg`);
-            }
-        }
+        // syncWeightToCalculator SUPPRIMÉ: migration Firestore-first terminée
+        // Le poids vient maintenant UNIQUEMENT de Firestore (profile/current)
 
         function autoRecalculateMacros() {
 
@@ -6618,9 +6570,6 @@ Solutions possibles :
                     // Rafraîchir l'affichage
                     renderTrackingList();
                     showToast('<i data-lucide="check-circle" class="icon-inline"></i> Suivi supprimé');
-
-                    // SYNC: Update calculator weight after deletion
-                    syncWeightToCalculator();
                 } else {
                 }
             }).catch(err => {
