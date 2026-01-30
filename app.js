@@ -4595,12 +4595,10 @@ Solutions possibles :
                     console.error('<i data-lucide="x-circle" class="icon-inline"></i> Year select not found! ID: birth-year');
                 }
 
-                // IMPORTANT: Load profile AFTER dropdowns are populated
-                // Otherwise saved values get overwritten
-                await loadProfile();
-
-                // Load calc settings AFTER profile (champs déficit/protein/fat doivent exister)
-                await loadCalcSettings();
+                // IMPORTANT: Profile et calc settings sont maintenant chargés depuis admin.js
+                // APRÈS que window.dataService soit créé (sinon fallback localStorage)
+                // await loadProfile();
+                // await loadCalcSettings();
 
                 // Sync weight from tracking on page load
                 setTimeout(() =>  { syncWeightToCalculator(); }, 500);
@@ -8516,7 +8514,9 @@ Solutions possibles :
             }
 
             // Charger le profil après avoir rempli les dropdowns
-            loadProfile();
+            // NOTE: Désactivé - loadProfile() est maintenant appelé depuis admin.js
+            // APRÈS que window.dataService soit créé (sinon fallback localStorage)
+            // loadProfile();
 
             // Charger les données du suivi
             const savedTracking = localStorage.getItem('advancedTrackingData');
