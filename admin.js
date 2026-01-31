@@ -1472,6 +1472,27 @@ onAuthStateChanged(auth, (user) => {
                     await window.loadAllMeals();
                     console.log('✅ Repas chargés depuis Firestore');
                 }
+
+                // Charger le tracking APRÈS repas
+                if (typeof window.loadTrackingData === 'function') {
+                    console.log('🔄 Chargement tracking depuis Firestore...');
+                    await window.loadTrackingData();
+                    console.log('✅ Tracking chargé depuis Firestore');
+                }
+
+                // Charger custom foods APRÈS tracking
+                if (typeof window.loadCustomFoods === 'function') {
+                    console.log('🔄 Chargement custom foods depuis Firestore...');
+                    await window.loadCustomFoods();
+                    console.log('✅ Custom foods chargés depuis Firestore');
+                }
+
+                // Charger meal templates APRÈS custom foods
+                if (typeof window.loadMealTemplates === 'function') {
+                    console.log('🔄 Chargement meal templates depuis Firestore...');
+                    await window.loadMealTemplates();
+                    console.log('✅ Meal templates chargés depuis Firestore');
+                }
             }
 
             // Charger les données depuis Firestore (source de vérité)

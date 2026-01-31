@@ -261,6 +261,233 @@
             }
         }
 
+        /**
+         * Charge toutes les données de tracking depuis Firestore
+         * @returns {Promise<Array>} Array of tracking entries
+         */
+        async function loadTrackingFromFirestore() {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, fallback localStorage');
+                const saved = localStorage.getItem('trackingData');
+                return saved ? JSON.parse(saved) : [];
+            }
+
+            try {
+                return await window.dataService.getRecentTracking(365); // 1 an de données
+            } catch (error) {
+                console.error('❌ Erreur chargement tracking Firestore:', error);
+                console.warn('⚠️ Fallback vers localStorage');
+                const saved = localStorage.getItem('trackingData');
+                return saved ? JSON.parse(saved) : [];
+            }
+        }
+
+        /**
+         * Sauvegarde une entrée de tracking vers Firestore
+         * @param {string} date - Format YYYY-MM-DD
+         * @param {Object} trackingData - Tracking data (weight, bodyfat, etc.)
+         */
+        async function saveTrackingToFirestore(date, trackingData) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
+                const saved = localStorage.getItem('trackingData') || '[]';
+                let trackingArray = JSON.parse(saved);
+                // Supprimer ancienne entrée de cette date
+                trackingArray = trackingArray.filter(e => e.date !== date);
+                // Ajouter nouvelle entrée
+                trackingArray.push({date, ...trackingData});
+                // Trier par date décroissante
+                trackingArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+                localStorage.setItem('trackingData', JSON.stringify(trackingArray));
+                return;
+            }
+
+            try {
+                await window.dataService.saveTracking(date, trackingData);
+            } catch (error) {
+                console.error('❌ Erreur sauvegarde tracking Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de sauvegarder le suivi.', 'error');
+                }
+                throw error;
+            }
+        }
+
+        /**
+         * Supprime une entrée de tracking de Firestore
+         * @param {string} date - Format YYYY-MM-DD
+         */
+        async function deleteTrackingFromFirestore(date) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, suppression localStorage uniquement');
+                const saved = localStorage.getItem('trackingData') || '[]';
+                let trackingArray = JSON.parse(saved);
+                trackingArray = trackingArray.filter(e => e.date !== date);
+                localStorage.setItem('trackingData', JSON.stringify(trackingArray));
+                return;
+            }
+
+            try {
+                await window.dataService.deleteTracking(date);
+            } catch (error) {
+                console.error('❌ Erreur suppression tracking Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de supprimer le suivi.', 'error');
+                }
+                throw error;
+            }
+        }
+
+        /**
+         * Charge tous les custom foods depuis Firestore
+         * @returns {Promise<Array>} Array of custom foods
+         */
+        async function loadCustomFoodsFromFirestore() {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, fallback localStorage');
+                const saved = localStorage.getItem('customFoods');
+                return saved ? JSON.parse(saved) : [];
+            }
+
+            try {
+                return await window.dataService.getCustomFoods();
+            } catch (error) {
+                console.error('❌ Erreur chargement custom foods Firestore:', error);
+                console.warn('⚠️ Fallback vers localStorage');
+                const saved = localStorage.getItem('customFoods');
+                return saved ? JSON.parse(saved) : [];
+            }
+        }
+
+        /**
+         * Sauvegarde un custom food vers Firestore
+         * @param {string} foodId - ID du food (nom converti en slug)
+         * @param {Object} foodData - Food data
+         */
+        async function saveCustomFoodToFirestore(foodId, foodData) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
+                const saved = localStorage.getItem('customFoods') || '[]';
+                let customFoodsArray = JSON.parse(saved);
+                // Supprimer ancienne entrée si existe
+                customFoodsArray = customFoodsArray.filter(f => f.name !== foodData.name);
+                // Ajouter nouvelle entrée
+                customFoodsArray.push(foodData);
+                localStorage.setItem('customFoods', JSON.stringify(customFoodsArray));
+                return;
+            }
+
+            try {
+                await window.dataService.saveCustomFood(foodId, foodData);
+            } catch (error) {
+                console.error('❌ Erreur sauvegarde custom food Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de sauvegarder l\'aliment.', 'error');
+                }
+                throw error;
+            }
+        }
+
+        /**
+         * Supprime un custom food de Firestore
+         * @param {string} foodId - ID du food (nom converti en slug)
+         */
+        async function deleteCustomFoodFromFirestore(foodId) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, suppression localStorage uniquement');
+                const saved = localStorage.getItem('customFoods') || '[]';
+                let customFoodsArray = JSON.parse(saved);
+                customFoodsArray = customFoodsArray.filter(f => f.name !== foodId);
+                localStorage.setItem('customFoods', JSON.stringify(customFoodsArray));
+                return;
+            }
+
+            try {
+                await window.dataService.deleteCustomFood(foodId);
+            } catch (error) {
+                console.error('❌ Erreur suppression custom food Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de supprimer l\'aliment.', 'error');
+                }
+                throw error;
+            }
+        }
+
+        /**
+         * Charge tous les meal templates depuis Firestore
+         * @returns {Promise<Array>} Array of meal templates
+         */
+        async function loadMealTemplatesFromFirestore() {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, fallback localStorage');
+                const saved = localStorage.getItem('mealTemplates');
+                return saved ? JSON.parse(saved) : [];
+            }
+
+            try {
+                return await window.dataService.getMealTemplates();
+            } catch (error) {
+                console.error('❌ Erreur chargement meal templates Firestore:', error);
+                console.warn('⚠️ Fallback vers localStorage');
+                const saved = localStorage.getItem('mealTemplates');
+                return saved ? JSON.parse(saved) : [];
+            }
+        }
+
+        /**
+         * Sauvegarde un meal template vers Firestore
+         * @param {string} templateId - ID du template
+         * @param {Object} templateData - Template data
+         */
+        async function saveMealTemplateToFirestore(templateId, templateData) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
+                const saved = localStorage.getItem('mealTemplates') || '[]';
+                let templatesArray = JSON.parse(saved);
+                // Supprimer ancienne entrée si existe
+                templatesArray = templatesArray.filter(t => t.name !== templateData.name);
+                // Ajouter nouvelle entrée
+                templatesArray.push(templateData);
+                localStorage.setItem('mealTemplates', JSON.stringify(templatesArray));
+                return;
+            }
+
+            try {
+                await window.dataService.saveMealTemplate(templateId, templateData);
+            } catch (error) {
+                console.error('❌ Erreur sauvegarde meal template Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de sauvegarder le template.', 'error');
+                }
+                throw error;
+            }
+        }
+
+        /**
+         * Supprime un meal template de Firestore
+         * @param {string} templateId - ID du template
+         */
+        async function deleteMealTemplateFromFirestore(templateId) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, suppression localStorage uniquement');
+                const saved = localStorage.getItem('mealTemplates') || '[]';
+                let templatesArray = JSON.parse(saved);
+                templatesArray = templatesArray.filter(t => t.name !== templateId);
+                localStorage.setItem('mealTemplates', JSON.stringify(templatesArray));
+                return;
+            }
+
+            try {
+                await window.dataService.deleteMealTemplate(templateId);
+            } catch (error) {
+                console.error('❌ Erreur suppression meal template Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de supprimer le template.', 'error');
+                }
+                throw error;
+            }
+        }
+
         // ===== FIN DATA HELPERS =====
 
         // ===== PWA INSTALL PROMPT =====
@@ -4539,10 +4766,10 @@ Solutions possibles :
         }
 
         function initV2() {
-            loadCustomFoods();
-            loadMealTemplates();
+            // loadCustomFoods(); // DÉPLACÉ dans admin.js APRÈS création DataService
+            // loadMealTemplates(); // DÉPLACÉ dans admin.js APRÈS création DataService
             // loadAllMeals(); // DÉPLACÉ dans admin.js APRÈS création DataService
-            loadTrackingData();
+            // loadTrackingData(); // DÉPLACÉ dans admin.js APRÈS création DataService
             // loadCalcSettings(); // DÉPLACÉ dans requestAnimationFrame
             loadFavoriteFoods();  // Load favorite foods
             // loadProfile(); // MOVED: Now called AFTER dropdown population in requestAnimationFrame
@@ -4631,18 +4858,17 @@ Solutions possibles :
         }
 
         // ===== ALIMENTS PERSONNALISÉS =====
-        function loadCustomFoods() {
-            const saved = localStorage.getItem('customFoods');
-            if (saved) {
-                customFoods = JSON.parse(saved);
-                customFoods.forEach(food => {
-                    // Ajouter une catégorie par défaut si elle n'existe pas
-                    if (!food.category) {
-                        food.category = 'feculents';
-                    }
-                    if (!foodDatabase.find(f => f.name === food.name))  { foodDatabase.push(food); }
-                });
-            }
+        async function loadCustomFoods() {
+            // Charger depuis Firestore (avec fallback localStorage)
+            const foods = await loadCustomFoodsFromFirestore();
+            customFoods = foods;
+            customFoods.forEach(food => {
+                // Ajouter une catégorie par défaut si elle n'existe pas
+                if (!food.category) {
+                    food.category = 'feculents';
+                }
+                if (!foodDatabase.find(f => f.name === food.name))  { foodDatabase.push(food); }
+            });
         }
 
         function openAddFoodModal() {
@@ -4837,13 +5063,21 @@ Solutions possibles :
                     return;
                 }
 
-                // Sauvegarder localement
+                // Sauvegarder localement et vers Firestore
                 newFood.custom = true;
                 customFoods.push(newFood);
                 if (!foodDatabase.find(f => f.name === newFood.name)) {
                     foodDatabase.push(newFood);
                 }
-                localStorage.setItem('customFoods', JSON.stringify(customFoods));
+
+                // Sauvegarder vers Firestore (utiliser le nom comme ID)
+                const foodId = newFood.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                try {
+                    await saveCustomFoodToFirestore(foodId, newFood);
+                } catch (error) {
+                    console.error('Erreur sauvegarde custom food:', error);
+                    // L'erreur a déjà été affichée
+                }
 
                 toastMessage = '<i data-lucide="check-circle" class="icon-inline"></i> ' + name + ' ajouté à ta base';
 
@@ -5361,21 +5595,27 @@ Solutions possibles :
 
         function deleteCustomFood(foodName) {
 
-            customConfirm('Supprimer cet aliment ?', `Supprimer "${foodName}" de ta base ?`, true).then((confirmed) => {
+            customConfirm('Supprimer cet aliment ?', `Supprimer "${foodName}" de ta base ?`, true).then(async (confirmed) => {
 
                 if (confirmed) {
 
                     // Filtrer customFoods
                     customFoods = customFoods.filter(f => f.name !== foodName);
-                    
+
                     // IMPORTANT: Aussi supprimer de foodDatabase (car ajouté au chargement)
                     const dbIndex = foodDatabase.findIndex(f => f.name === foodName && f.custom === true);
                     if (dbIndex !== -1) {
                         foodDatabase.splice(dbIndex, 1);
                     }
 
-
-                    localStorage.setItem('customFoods', JSON.stringify(customFoods));
+                    // Supprimer depuis Firestore (utiliser le nom comme ID)
+                    const foodId = foodName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                    try {
+                        await deleteCustomFoodFromFirestore(foodId);
+                    } catch (error) {
+                        console.error('Erreur suppression custom food:', error);
+                        // L'erreur a déjà été affichée
+                    }
 
                     // Rafraîchir la liste (filterFoodDatabase reconstruit allFoods)
                     filterFoodDatabase();
@@ -6172,13 +6412,11 @@ Solutions possibles :
         }
 
         // ===== SUIVI =====
-        function loadTrackingData() {
-            const saved = localStorage.getItem('trackingData');
-            if (saved) {
-                trackingData = JSON.parse(saved);
-                advancedTrackingData = JSON.parse(saved); // Sync with advancedTrackingData
-            } else {
-            }
+        async function loadTrackingData() {
+            // Charger depuis Firestore (avec fallback localStorage)
+            const data = await loadTrackingFromFirestore();
+            trackingData = data;
+            advancedTrackingData = data; // Sync with advancedTrackingData
             renderTrackingList();
         }
 
@@ -6248,7 +6486,7 @@ Solutions possibles :
             return `${yyyy}-${mm}-${dd}`;
         }
 
-        function saveTracking() {
+        async function saveTracking() {
             const date = getTrackingDateFromDropdowns();
             const weight = parseFloat(document.getElementById('tracking-weight').value);
             const bodyfat = parseFloat(document.getElementById('tracking-bodyfat').value);
@@ -6287,9 +6525,8 @@ Solutions possibles :
                 imc = parseFloat((weight / (heightM * heightM)).toFixed(1));
             }
 
-            // Ajouter nouvelle entrée
-            trackingData.push({
-                date,
+            // Préparer nouvelle entrée
+            const newEntry = {
                 weight: weight || null,
                 bodyfat: bodyfat || null,
                 muscle: muscle || null,
@@ -6300,14 +6537,18 @@ Solutions possibles :
                 visceral: visceral || null,
                 imc: imc,
                 notes: notes || ''
-            });
+            };
 
+            // Sauvegarder vers Firestore (avec fallback localStorage)
+            try {
+                await saveTrackingToFirestore(date, newEntry);
+            } catch (error) {
+                console.error('Erreur sauvegarde tracking:', error);
+                // L'erreur a déjà été affichée
+            }
 
-            // Trier par date décroissante
-            trackingData.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            // Sauvegarder
-            localStorage.setItem('trackingData', JSON.stringify(trackingData));
+            // Recharger depuis Firestore pour mettre à jour l'array local
+            trackingData = await loadTrackingFromFirestore();
             advancedTrackingData = [...trackingData]; // Sync with advancedTrackingData
 
             // Rafraîchir affichage
@@ -6572,18 +6813,19 @@ Solutions possibles :
         }
 
         function deleteTracking(date) {
-            customConfirm('Supprimer ce suivi ?', 'Cette mesure sera définitivement supprimée.', true).then((confirmed) => {
+            customConfirm('Supprimer ce suivi ?', 'Cette mesure sera définitivement supprimée.', true).then(async (confirmed) => {
                 if (confirmed) {
-                    // Recharger depuis localStorage
-                    const saved = localStorage.getItem('trackingData');
-                    let data = saved ? JSON.parse(saved) : [];
+                    // Supprimer depuis Firestore (avec fallback localStorage)
+                    try {
+                        await deleteTrackingFromFirestore(date);
+                    } catch (error) {
+                        console.error('Erreur suppression tracking:', error);
+                        // L'erreur a déjà été affichée
+                    }
 
-                    // Filtrer
-                    data = data.filter(e => e.date !== date);
-
-                    // Sauvegarder
-                    localStorage.setItem('trackingData', JSON.stringify(data));
-                    trackingData = data;
+                    // Recharger depuis Firestore pour mettre à jour l'array local
+                    trackingData = await loadTrackingFromFirestore();
+                    advancedTrackingData = [...trackingData];
 
                     // Rafraîchir l'affichage
                     renderTrackingList();
@@ -6596,10 +6838,8 @@ Solutions possibles :
         }
 
         function editTracking(date) {
-            // Charger l'entrée depuis localStorage
-            const saved = localStorage.getItem('trackingData');
-            const data = saved ? JSON.parse(saved) : [];
-            const entry = data.find(e => e.date === date);
+            // Charger l'entrée depuis l'array local (déjà chargé depuis Firestore)
+            const entry = trackingData.find(e => e.date === date);
 
 
             if (!entry) {
@@ -6801,9 +7041,10 @@ Solutions possibles :
         // ===== REPAS TYPES =====
         let mealTemplates = [];
 
-        function loadMealTemplates() {
-            const saved = localStorage.getItem('mealTemplates');
-            if (saved) { mealTemplates = JSON.parse(saved); }
+        async function loadMealTemplates() {
+            // Charger depuis Firestore (avec fallback localStorage)
+            const templates = await loadMealTemplatesFromFirestore();
+            mealTemplates = templates;
         }
 
         function saveMealAsTemplate(mealType) {
@@ -6817,7 +7058,7 @@ Solutions possibles :
                 return;
             }
 
-            customPrompt('Nom du repas type', '(ex: "Déjeuner de travail", "Petit-déj protéiné")', '').then((templateName) => {
+            customPrompt('Nom du repas type', '(ex: "Déjeuner de travail", "Petit-déj protéiné")', '').then(async (templateName) => {
                 if (!templateName || !templateName.trim()) return;
 
                 const template = {
@@ -6829,7 +7070,15 @@ Solutions possibles :
                 };
 
                 mealTemplates.push(template);
-                localStorage.setItem('mealTemplates', JSON.stringify(mealTemplates));
+
+                // Sauvegarder vers Firestore (utiliser le nom comme ID)
+                const templateId = template.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                try {
+                    await saveMealTemplateToFirestore(templateId, template);
+                } catch (error) {
+                    console.error('Erreur sauvegarde meal template:', error);
+                    // L'erreur a déjà été affichée
+                }
 
                 showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type "' + templateName + '" sauvegardé !');
             });
@@ -6983,7 +7232,15 @@ Solutions possibles :
             if (!confirmed) return;
 
             mealTemplates = mealTemplates.filter(t => t.id !== templateId);
-            localStorage.setItem('mealTemplates', JSON.stringify(mealTemplates));
+
+            // Supprimer depuis Firestore (utiliser le nom comme ID)
+            const templateIdSlug = template.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+            try {
+                await deleteMealTemplateFromFirestore(templateIdSlug);
+            } catch (error) {
+                console.error('Erreur suppression meal template:', error);
+                // L'erreur a déjà été affichée
+            }
 
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type supprimé');
 
