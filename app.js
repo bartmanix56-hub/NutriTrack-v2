@@ -4080,7 +4080,6 @@ Solutions possibles :
         // === CLÔTURE DE JOURNÉE ===
         function closeDayConfirm() {
             const dateKey = getDateKey(currentMealDate);
-            const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
 
             if (closedDays[dateKey]) {
                 // Journée déjà clôturée, on permet de rouvrir
@@ -4095,14 +4094,19 @@ Solutions possibles :
                 closeDay(dateKey); });
         }
 
-        function closeDay(dateKey) {
+        async function closeDay(dateKey) {
             // Sauvegarder l'état de verrouillage
-            const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
             closedDays[dateKey] = {
                 closedAt: new Date().toISOString(),
                 meals: JSON.parse(JSON.stringify(dailyMeals)) // Deep copy
             };
-            localStorage.setItem('closedDays', JSON.stringify(closedDays));
+
+            // Sauvegarder vers Firestore
+            try {
+                await saveClosedDaysToFirestore(closedDays);
+            } catch (error) {
+                console.error('Erreur sauvegarde closedDays:', error);
+            }
 
             // Forcer la sync au planning
             syncMealsToPlanning();
@@ -4116,10 +4120,15 @@ Solutions possibles :
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Journée enregistrée dans ton planning !');
         }
 
-        function reopenDay(dateKey) {
-            const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
+        async function reopenDay(dateKey) {
             delete closedDays[dateKey];
-            localStorage.setItem('closedDays', JSON.stringify(closedDays));
+
+            // Sauvegarder vers Firestore
+            try {
+                await saveClosedDaysToFirestore(closedDays);
+            } catch (error) {
+                console.error('Erreur sauvegarde closedDays:', error);
+            }
 
             updateCloseDayUI(false);
 
@@ -4169,7 +4178,6 @@ Solutions possibles :
 
         function checkIfDayClosed() {
             const dateKey = getDateKey(currentMealDate);
-            const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
             const isClosed = !!closedDays[dateKey];
             updateCloseDayUI(isClosed);
             return isClosed;
@@ -4178,7 +4186,7 @@ Solutions possibles :
         // ===== NOUVELLES FONCTIONNALITÉS =====
 
         // 1. SYNCHRONISATION REPAS → PLANNING
-        function syncMealsToPlanning() {
+        async function syncMealsToPlanning() {
             const dateKey = getCurrentDateKey();
 
             // Générer les résumés de repas
@@ -4198,7 +4206,12 @@ Solutions possibles :
             weeklyPlan[dateKey].snack = snackSummary;
             weeklyPlan[dateKey].dinner = dinnerSummary;
 
-            localStorage.setItem('weeklyPlan', JSON.stringify(weeklyPlan));
+            // Sauvegarder vers Firestore
+            try {
+                await saveWeeklyPlanToFirestore(weeklyPlan);
+            } catch (error) {
+                console.error('Erreur sauvegarde weeklyPlan:', error);
+            }
 
             // Rafraîchir l'affichage du planning si on est dessus
             const planningTab = document.querySelector('.sidebar-btn[data-tab="planning"]');
@@ -4409,8 +4422,7 @@ Solutions possibles :
 
         function getDayPlanFromMeals(dateKey) {
             // Get actual meal data from allDailyMeals instead of weeklyPlan cache
-            const savedMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
-            const dayMeals = savedMeals[dateKey];
+            const dayMeals = allDailyMeals[dateKey];
 
             if (!dayMeals) {
                 return {
@@ -4492,17 +4504,15 @@ Solutions possibles :
             updateWeeklySummary();
         }
 
-        function updateWeeklySummary() {
+        async function updateWeeklySummary() {
             const weekStart = new Date(currentWeekStart);
-            const savedMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
-            const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
-            const macroTargets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const macroTargets = await loadMacroTargetsFromFirestore();
 
             console.log('=== UPDATE WEEKLY SUMMARY ===');
             console.log('currentWeekStart:', currentWeekStart);
             console.log('weekStart:', weekStart);
-            console.log('savedMeals:', savedMeals);
-            console.log('Object.keys(savedMeals):', Object.keys(savedMeals));
+            console.log('allDailyMeals:', allDailyMeals);
+            console.log('Object.keys(allDailyMeals):', Object.keys(allDailyMeals));
 
             let totalCalories = 0;
             let daysWithData = 0;
@@ -4516,7 +4526,7 @@ Solutions possibles :
                 date.setDate(date.getDate() + i);
                 const dateKey = getDateKey(date);
 
-                console.log(`Day ${i}: date=${date.toISOString()}, dateKey=${dateKey}, hasMeals=${!!savedMeals[dateKey]}, isClosed=${!!closedDays[dateKey]}`);
+                console.log(`Day ${i}: date=${date.toISOString()}, dateKey=${dateKey}, hasMeals=${!!allDailyMeals[dateKey]}, isClosed=${!!closedDays[dateKey]}`);
 
                 // Compter les jours clôturés
                 if (closedDays[dateKey]) {
@@ -4524,7 +4534,7 @@ Solutions possibles :
                 }
 
                 // Récupérer les repas du jour
-                const dayMeals = savedMeals[dateKey];
+                const dayMeals = allDailyMeals[dateKey];
                 if (dayMeals) {
                     // Calculer les calories du jour
                     const getMealMacros = (mealData) => {
@@ -6700,12 +6710,18 @@ Solutions possibles :
             renderWeeklyPlan();
         }
 
-        function savePlanMeal(dateKey, mealType, text) {
+        async function savePlanMeal(dateKey, mealType, text) {
             if (!weeklyPlan[dateKey]) {
                 weeklyPlan[dateKey] = {};
             }
             weeklyPlan[dateKey][mealType] = text.trim() || 'Non planifié';
-            localStorage.setItem('weeklyPlan', JSON.stringify(weeklyPlan));
+
+            // Sauvegarder vers Firestore
+            try {
+                await saveWeeklyPlanToFirestore(weeklyPlan);
+            } catch (error) {
+                console.error('Erreur sauvegarde weeklyPlan:', error);
+            }
         }
 
         // ===== SUIVI =====
