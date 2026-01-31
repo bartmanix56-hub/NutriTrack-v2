@@ -263,6 +263,20 @@ class DataService {
         }
     }
 
+    /**
+     * Supprime une entrée de tracking
+     * @param {string} date - Format YYYY-MM-DD
+     */
+    async deleteTracking(date) {
+        try {
+            const docRef = doc(this.db, `users/${this.uid}/tracking/${date}`);
+            await deleteDoc(docRef);
+        } catch (error) {
+            console.error('Error deleting tracking:', error);
+            throw new Error('Impossible de supprimer le suivi. Vérifiez votre connexion.');
+        }
+    }
+
     // ========================================
     // CUSTOM FOODS (aliments personnalisés)
     // ========================================
