@@ -6508,24 +6508,22 @@ Solutions possibles :
             }
 
             if (!weight || weight <= 0) {
-                customAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Date manquante', 'Veuillez sélectionner une date.').then(() => {});
+                customAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Poids manquant', 'Veuillez entrer un poids valide.').then(() => {});
                 return;
             }
 
-            // Charger depuis localStorage
-            const saved = localStorage.getItem('trackingData');
-            trackingData = saved ? JSON.parse(saved) : [];
-
-
-            // Supprimer ancienne entrée de cette date
-            trackingData = trackingData.filter(e => e.date !== date);
-
             // Calculer l'IMC automatiquement si poids et taille disponibles
             let imc = null;
-            const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
-            if (weight && profile.height) {
-                const heightM = profile.height / 100;
-                imc = parseFloat((weight / (heightM * heightM)).toFixed(1));
+            if (window.dataService) {
+                try {
+                    const profile = await window.dataService.getProfile();
+                    if (weight && profile && profile.height) {
+                        const heightM = profile.height / 100;
+                        imc = parseFloat((weight / (heightM * heightM)).toFixed(1));
+                    }
+                } catch (error) {
+                    console.error('Erreur chargement profil pour IMC:', error);
+                }
             }
 
             // Préparer nouvelle entrée
@@ -6590,30 +6588,40 @@ Solutions possibles :
 
         async function syncWeightToProfile() {
             const latestWeight = getLatestWeight();
-            if (!latestWeight) return;
+            if (!latestWeight) {
+                console.log('⚠️ Pas de poids à synchroniser');
+                return;
+            }
 
             // Charger le profil depuis Firestore
-            if (!window.dataService) return;
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible pour sync poids');
+                return;
+            }
 
             try {
                 const profile = await window.dataService.getProfile();
-                if (!profile) return;
+                if (!profile) {
+                    console.warn('⚠️ Profil non trouvé pour sync poids');
+                    return;
+                }
+
+                console.log(`🔍 Poids actuel profil: ${profile.weight}kg, dernier tracking: ${latestWeight}kg`);
 
                 // Mettre à jour seulement si le poids a changé
                 if (profile.weight !== latestWeight) {
                     profile.weight = latestWeight;
                     await saveProfileToFirestore(profile);
 
-                    // Mettre à jour l'input du calculateur si présent
-                    const weightInput = document.getElementById('weight');
-                    if (weightInput) {
-                        weightInput.value = latestWeight;
-                    }
+                    // Recharger le profil dans l'UI pour rafraîchir tous les champs
+                    await loadProfile();
 
                     console.log(`✅ Poids synchronisé vers profil: ${latestWeight}kg`);
+                } else {
+                    console.log('ℹ️ Poids déjà à jour, pas de sync nécessaire');
                 }
             } catch (error) {
-                console.error('Erreur sync poids vers profil:', error);
+                console.error('❌ Erreur sync poids vers profil:', error);
             }
         }
 
