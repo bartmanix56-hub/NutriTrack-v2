@@ -459,6 +459,154 @@ class DataService {
     }
 
     // ========================================
+    // USER DATA (favorites, aliases, planning, etc.)
+    // ========================================
+
+    /**
+     * Récupère les aliments favoris
+     * @returns {Promise<Array>} Array of favorite food names
+     */
+    async getFavoriteFoods() {
+        try {
+            const docRef = doc(this.db, `users/${this.uid}/userData/favorites`);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                return docSnap.data().foods || [];
+            }
+            return [];
+        } catch (error) {
+            console.error('Error loading favorite foods:', error);
+            throw new Error('Impossible de charger les favoris. Vérifiez votre connexion.');
+        }
+    }
+
+    /**
+     * Sauvegarde les aliments favoris
+     * @param {Array} foods - Array of favorite food names
+     */
+    async saveFavoriteFoods(foods) {
+        try {
+            const docRef = doc(this.db, `users/${this.uid}/userData/favorites`);
+            await setDoc(docRef, {
+                foods: foods,
+                updatedAt: serverTimestamp()
+            });
+        } catch (error) {
+            console.error('Error saving favorite foods:', error);
+            throw new Error('Impossible de sauvegarder les favoris. Vérifiez votre connexion.');
+        }
+    }
+
+    /**
+     * Récupère le planning hebdomadaire
+     * @returns {Promise<Array>} Weekly plan data
+     */
+    async getWeeklyPlan() {
+        try {
+            const docRef = doc(this.db, `users/${this.uid}/userData/weeklyPlan`);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                return docSnap.data().plan || [];
+            }
+            return [];
+        } catch (error) {
+            console.error('Error loading weekly plan:', error);
+            throw new Error('Impossible de charger le planning. Vérifiez votre connexion.');
+        }
+    }
+
+    /**
+     * Sauvegarde le planning hebdomadaire
+     * @param {Array} plan - Weekly plan data
+     */
+    async saveWeeklyPlan(plan) {
+        try {
+            const docRef = doc(this.db, `users/${this.uid}/userData/weeklyPlan`);
+            await setDoc(docRef, {
+                plan: plan,
+                updatedAt: serverTimestamp()
+            });
+        } catch (error) {
+            console.error('Error saving weekly plan:', error);
+            throw new Error('Impossible de sauvegarder le planning. Vérifiez votre connexion.');
+        }
+    }
+
+    /**
+     * Récupère les jours fermés
+     * @returns {Promise<Object>} Object with date keys and boolean values
+     */
+    async getClosedDays() {
+        try {
+            const docRef = doc(this.db, `users/${this.uid}/userData/closedDays`);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                return docSnap.data().days || {};
+            }
+            return {};
+        } catch (error) {
+            console.error('Error loading closed days:', error);
+            throw new Error('Impossible de charger les jours fermés. Vérifiez votre connexion.');
+        }
+    }
+
+    /**
+     * Sauvegarde les jours fermés
+     * @param {Object} days - Object with date keys and boolean values
+     */
+    async saveClosedDays(days) {
+        try {
+            const docRef = doc(this.db, `users/${this.uid}/userData/closedDays`);
+            await setDoc(docRef, {
+                days: days,
+                updatedAt: serverTimestamp()
+            });
+        } catch (error) {
+            console.error('Error saving closed days:', error);
+            throw new Error('Impossible de sauvegarder les jours fermés. Vérifiez votre connexion.');
+        }
+    }
+
+    /**
+     * Récupère les alias de produits (barcode -> nom personnalisé)
+     * @returns {Promise<Object>} Object with barcode keys and alias values
+     */
+    async getFoodAliases() {
+        try {
+            const docRef = doc(this.db, `users/${this.uid}/userData/foodAliases`);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                return docSnap.data().aliases || {};
+            }
+            return {};
+        } catch (error) {
+            console.error('Error loading food aliases:', error);
+            throw new Error('Impossible de charger les alias. Vérifiez votre connexion.');
+        }
+    }
+
+    /**
+     * Sauvegarde les alias de produits
+     * @param {Object} aliases - Object with barcode keys and alias values
+     */
+    async saveFoodAliases(aliases) {
+        try {
+            const docRef = doc(this.db, `users/${this.uid}/userData/foodAliases`);
+            await setDoc(docRef, {
+                aliases: aliases,
+                updatedAt: serverTimestamp()
+            });
+        } catch (error) {
+            console.error('Error saving food aliases:', error);
+            throw new Error('Impossible de sauvegarder les alias. Vérifiez votre connexion.');
+        }
+    }
+
+    // ========================================
     // CLEANUP
     // ========================================
 
