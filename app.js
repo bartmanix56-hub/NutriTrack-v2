@@ -5063,14 +5063,8 @@ Solutions possibles :
                     return;
                 }
 
-                // Sauvegarder localement et vers Firestore
+                // Sauvegarder vers Firestore
                 newFood.custom = true;
-                customFoods.push(newFood);
-                if (!foodDatabase.find(f => f.name === newFood.name)) {
-                    foodDatabase.push(newFood);
-                }
-
-                // Sauvegarder vers Firestore (utiliser le nom comme ID)
                 const foodId = newFood.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
                 try {
                     await saveCustomFoodToFirestore(foodId, newFood);
@@ -5078,6 +5072,15 @@ Solutions possibles :
                     console.error('Erreur sauvegarde custom food:', error);
                     // L'erreur a déjà été affichée
                 }
+
+                // Recharger depuis Firestore pour s'assurer de la cohérence
+                customFoods = await loadCustomFoodsFromFirestore();
+                // Reconstruire foodDatabase avec les custom foods
+                customFoods.forEach(food => {
+                    if (!foodDatabase.find(f => f.name === food.name)) {
+                        foodDatabase.push(food);
+                    }
+                });
 
                 toastMessage = '<i data-lucide="check-circle" class="icon-inline"></i> ' + name + ' ajouté à ta base';
 
@@ -5599,15 +5602,6 @@ Solutions possibles :
 
                 if (confirmed) {
 
-                    // Filtrer customFoods
-                    customFoods = customFoods.filter(f => f.name !== foodName);
-
-                    // IMPORTANT: Aussi supprimer de foodDatabase (car ajouté au chargement)
-                    const dbIndex = foodDatabase.findIndex(f => f.name === foodName && f.custom === true);
-                    if (dbIndex !== -1) {
-                        foodDatabase.splice(dbIndex, 1);
-                    }
-
                     // Supprimer depuis Firestore (utiliser le nom comme ID)
                     const foodId = foodName.toLowerCase().replace(/[^a-z0-9]/g, '-');
                     try {
@@ -5615,6 +5609,15 @@ Solutions possibles :
                     } catch (error) {
                         console.error('Erreur suppression custom food:', error);
                         // L'erreur a déjà été affichée
+                    }
+
+                    // Recharger depuis Firestore pour s'assurer de la cohérence
+                    customFoods = await loadCustomFoodsFromFirestore();
+
+                    // Aussi supprimer de foodDatabase (car ajouté au chargement)
+                    const dbIndex = foodDatabase.findIndex(f => f.name === foodName && f.custom === true);
+                    if (dbIndex !== -1) {
+                        foodDatabase.splice(dbIndex, 1);
                     }
 
                     // Rafraîchir la liste (filterFoodDatabase reconstruit allFoods)
@@ -7068,8 +7071,6 @@ Solutions possibles :
                     createdAt: new Date().toISOString()
                 };
 
-                mealTemplates.push(template);
-
                 // Sauvegarder vers Firestore (utiliser le nom comme ID)
                 const templateId = template.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
                 try {
@@ -7078,6 +7079,9 @@ Solutions possibles :
                     console.error('Erreur sauvegarde meal template:', error);
                     // L'erreur a déjà été affichée
                 }
+
+                // Recharger depuis Firestore pour s'assurer de la cohérence
+                mealTemplates = await loadMealTemplatesFromFirestore();
 
                 showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type "' + templateName + '" sauvegardé !');
             });
@@ -7230,8 +7234,6 @@ Solutions possibles :
             const confirmed = await customConfirm('Supprimer "' + template.name + '" ?', 'Ce modèle sera définitivement supprimé.', true);
             if (!confirmed) return;
 
-            mealTemplates = mealTemplates.filter(t => t.id !== templateId);
-
             // Supprimer depuis Firestore (utiliser le nom comme ID)
             const templateIdSlug = template.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
             try {
@@ -7240,6 +7242,9 @@ Solutions possibles :
                 console.error('Erreur suppression meal template:', error);
                 // L'erreur a déjà été affichée
             }
+
+            // Recharger depuis Firestore pour s'assurer de la cohérence
+            mealTemplates = await loadMealTemplatesFromFirestore();
 
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type supprimé');
 
@@ -8254,8 +8259,17 @@ Solutions possibles :
 
             if (!confirmed) return;
 
-            mealTemplates = mealTemplates.filter(t => t.id !== templateId);
-            localStorage.setItem('mealTemplates', JSON.stringify(mealTemplates));
+            // Supprimer depuis Firestore (utiliser le nom comme ID)
+            const templateIdSlug = template.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+            try {
+                await deleteMealTemplateFromFirestore(templateIdSlug);
+            } catch (error) {
+                console.error('Erreur suppression meal template:', error);
+                // L'erreur a déjà été affichée
+            }
+
+            // Recharger depuis Firestore pour s'assurer de la cohérence
+            mealTemplates = await loadMealTemplatesFromFirestore();
 
             renderMealTemplatesList();
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type supprimé');
