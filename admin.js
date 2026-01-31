@@ -1493,6 +1493,34 @@ onAuthStateChanged(auth, (user) => {
                     await window.loadMealTemplates();
                     console.log('✅ Meal templates chargés depuis Firestore');
                 }
+
+                // Charger favorite foods
+                if (typeof window.loadFavoriteFoods === 'function') {
+                    console.log('🔄 Chargement favorite foods depuis Firestore...');
+                    await window.loadFavoriteFoods();
+                    console.log('✅ Favorite foods chargés depuis Firestore');
+                }
+
+                // Charger weekly plan
+                if (typeof window.loadWeeklyPlan === 'function') {
+                    console.log('🔄 Chargement weekly plan depuis Firestore...');
+                    await window.loadWeeklyPlan();
+                    console.log('✅ Weekly plan chargé depuis Firestore');
+                }
+
+                // Charger closed days
+                if (typeof window.loadClosedDays === 'function') {
+                    console.log('🔄 Chargement closed days depuis Firestore...');
+                    await window.loadClosedDays();
+                    console.log('✅ Closed days chargés depuis Firestore');
+                }
+
+                // Charger food aliases
+                if (typeof window.loadFoodAliases === 'function') {
+                    console.log('🔄 Chargement food aliases depuis Firestore...');
+                    await window.loadFoodAliases();
+                    console.log('✅ Food aliases chargés depuis Firestore');
+                }
             }
 
             // Charger les données depuis Firestore (source de vérité)
