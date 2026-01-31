@@ -6702,9 +6702,8 @@ Solutions possibles :
         function renderTrackingList() {
             const container = document.getElementById('tracking-list');
 
-            // Charger les données depuis localStorage
-            const saved = localStorage.getItem('trackingData');
-            const data = saved ? JSON.parse(saved) : [];
+            // Utiliser les données depuis la variable globale (chargée depuis Firestore)
+            const data = trackingData || [];
 
             // Premium: Mettre à jour les tendances
             updateTrackingTrends();
