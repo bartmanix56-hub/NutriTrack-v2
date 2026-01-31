@@ -74,6 +74,8 @@
         };
 
         let weeklyPlan = {};
+        let closedDays = {};
+        let foodAliases = {};
 
         // Charger currentWeekStart depuis localStorage ou utiliser la semaine actuelle
         let currentWeekStart = (() => {
@@ -483,6 +485,298 @@
                 console.error('❌ Erreur suppression meal template Firestore:', error);
                 if (typeof showToast === 'function') {
                     showToast('Impossible de supprimer le template.', 'error');
+                }
+                throw error;
+            }
+        }
+
+        // ========================================
+        // MACRO TARGETS (objectifs macros)
+        // ========================================
+
+        /**
+         * Charge les objectifs macros depuis Firestore
+         * @returns {Promise<Object>} Macro targets
+         */
+        async function loadMacroTargetsFromFirestore() {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, fallback localStorage');
+                const saved = localStorage.getItem('macroTargets');
+                return saved ? JSON.parse(saved) : {};
+            }
+
+            try {
+                const settings = await window.dataService.getSettings();
+                return settings?.macroTargets || {};
+            } catch (error) {
+                console.error('❌ Erreur chargement macroTargets Firestore:', error);
+                console.warn('⚠️ Fallback vers localStorage');
+                const saved = localStorage.getItem('macroTargets');
+                return saved ? JSON.parse(saved) : {};
+            }
+        }
+
+        /**
+         * Sauvegarde les objectifs macros vers Firestore
+         * @param {Object} macroTargets - {protein, carbs, fat, calories}
+         */
+        async function saveMacroTargetsToFirestore(macroTargets) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
+                localStorage.setItem('macroTargets', JSON.stringify(macroTargets));
+                return;
+            }
+
+            try {
+                await window.dataService.saveSettings({ macroTargets });
+            } catch (error) {
+                console.error('❌ Erreur sauvegarde macroTargets Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de sauvegarder les objectifs.', 'error');
+                }
+                throw error;
+            }
+        }
+
+        // ========================================
+        // CALCULATOR SETTINGS (calc_goal, selectedPace)
+        // ========================================
+
+        /**
+         * Charge les paramètres calculateur depuis Firestore
+         * @returns {Promise<Object>} {calc_goal, selectedPace}
+         */
+        async function loadCalculatorSettingsFromFirestore() {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, fallback localStorage');
+                return {
+                    calc_goal: localStorage.getItem('calc_goal') || 'cut',
+                    selectedPace: localStorage.getItem('selectedPace') || '0.5'
+                };
+            }
+
+            try {
+                const settings = await window.dataService.getSettings();
+                return {
+                    calc_goal: settings?.calc_goal || 'cut',
+                    selectedPace: settings?.selectedPace || '0.5'
+                };
+            } catch (error) {
+                console.error('❌ Erreur chargement calc settings Firestore:', error);
+                console.warn('⚠️ Fallback vers localStorage');
+                return {
+                    calc_goal: localStorage.getItem('calc_goal') || 'cut',
+                    selectedPace: localStorage.getItem('selectedPace') || '0.5'
+                };
+            }
+        }
+
+        /**
+         * Sauvegarde les paramètres calculateur vers Firestore
+         * @param {Object} settings - {calc_goal?, selectedPace?}
+         */
+        async function saveCalculatorSettingsToFirestore(settings) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
+                if (settings.calc_goal) localStorage.setItem('calc_goal', settings.calc_goal);
+                if (settings.selectedPace) localStorage.setItem('selectedPace', settings.selectedPace);
+                return;
+            }
+
+            try {
+                await window.dataService.saveSettings(settings);
+            } catch (error) {
+                console.error('❌ Erreur sauvegarde calc settings Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de sauvegarder les paramètres.', 'error');
+                }
+                throw error;
+            }
+        }
+
+        // ========================================
+        // FAVORITE FOODS
+        // ========================================
+
+        /**
+         * Charge les aliments favoris depuis Firestore
+         * @returns {Promise<Array>} Array of favorite food names
+         */
+        async function loadFavoriteFoodsFromFirestore() {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, fallback localStorage');
+                const saved = localStorage.getItem('favoriteFoods');
+                return saved ? JSON.parse(saved) : [];
+            }
+
+            try {
+                return await window.dataService.getFavoriteFoods();
+            } catch (error) {
+                console.error('❌ Erreur chargement favoriteFoods Firestore:', error);
+                console.warn('⚠️ Fallback vers localStorage');
+                const saved = localStorage.getItem('favoriteFoods');
+                return saved ? JSON.parse(saved) : [];
+            }
+        }
+
+        /**
+         * Sauvegarde les aliments favoris vers Firestore
+         * @param {Array} foods - Array of favorite food names
+         */
+        async function saveFavoriteFoodsToFirestore(foods) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
+                localStorage.setItem('favoriteFoods', JSON.stringify(foods));
+                return;
+            }
+
+            try {
+                await window.dataService.saveFavoriteFoods(foods);
+            } catch (error) {
+                console.error('❌ Erreur sauvegarde favoriteFoods Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de sauvegarder les favoris.', 'error');
+                }
+                throw error;
+            }
+        }
+
+        // ========================================
+        // WEEKLY PLAN
+        // ========================================
+
+        /**
+         * Charge le planning hebdomadaire depuis Firestore
+         * @returns {Promise<Array>} Weekly plan data
+         */
+        async function loadWeeklyPlanFromFirestore() {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, fallback localStorage');
+                const saved = localStorage.getItem('weeklyPlan');
+                return saved ? JSON.parse(saved) : [];
+            }
+
+            try {
+                return await window.dataService.getWeeklyPlan();
+            } catch (error) {
+                console.error('❌ Erreur chargement weeklyPlan Firestore:', error);
+                console.warn('⚠️ Fallback vers localStorage');
+                const saved = localStorage.getItem('weeklyPlan');
+                return saved ? JSON.parse(saved) : [];
+            }
+        }
+
+        /**
+         * Sauvegarde le planning hebdomadaire vers Firestore
+         * @param {Array} plan - Weekly plan data
+         */
+        async function saveWeeklyPlanToFirestore(plan) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
+                localStorage.setItem('weeklyPlan', JSON.stringify(plan));
+                return;
+            }
+
+            try {
+                await window.dataService.saveWeeklyPlan(plan);
+            } catch (error) {
+                console.error('❌ Erreur sauvegarde weeklyPlan Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de sauvegarder le planning.', 'error');
+                }
+                throw error;
+            }
+        }
+
+        // ========================================
+        // CLOSED DAYS
+        // ========================================
+
+        /**
+         * Charge les jours fermés depuis Firestore
+         * @returns {Promise<Object>} Object with date keys and boolean values
+         */
+        async function loadClosedDaysFromFirestore() {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, fallback localStorage');
+                const saved = localStorage.getItem('closedDays');
+                return saved ? JSON.parse(saved) : {};
+            }
+
+            try {
+                return await window.dataService.getClosedDays();
+            } catch (error) {
+                console.error('❌ Erreur chargement closedDays Firestore:', error);
+                console.warn('⚠️ Fallback vers localStorage');
+                const saved = localStorage.getItem('closedDays');
+                return saved ? JSON.parse(saved) : {};
+            }
+        }
+
+        /**
+         * Sauvegarde les jours fermés vers Firestore
+         * @param {Object} days - Object with date keys and boolean values
+         */
+        async function saveClosedDaysToFirestore(days) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
+                localStorage.setItem('closedDays', JSON.stringify(days));
+                return;
+            }
+
+            try {
+                await window.dataService.saveClosedDays(days);
+            } catch (error) {
+                console.error('❌ Erreur sauvegarde closedDays Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de sauvegarder les jours fermés.', 'error');
+                }
+                throw error;
+            }
+        }
+
+        // ========================================
+        // FOOD ALIASES
+        // ========================================
+
+        /**
+         * Charge les alias de produits depuis Firestore
+         * @returns {Promise<Object>} Object with barcode keys and alias values
+         */
+        async function loadFoodAliasesFromFirestore() {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, fallback localStorage');
+                const saved = localStorage.getItem('foodAliases');
+                return saved ? JSON.parse(saved) : {};
+            }
+
+            try {
+                return await window.dataService.getFoodAliases();
+            } catch (error) {
+                console.error('❌ Erreur chargement foodAliases Firestore:', error);
+                console.warn('⚠️ Fallback vers localStorage');
+                const saved = localStorage.getItem('foodAliases');
+                return saved ? JSON.parse(saved) : {};
+            }
+        }
+
+        /**
+         * Sauvegarde les alias de produits vers Firestore
+         * @param {Object} aliases - Object with barcode keys and alias values
+         */
+        async function saveFoodAliasesToFirestore(aliases) {
+            if (!window.dataService) {
+                console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
+                localStorage.setItem('foodAliases', JSON.stringify(aliases));
+                return;
+            }
+
+            try {
+                await window.dataService.saveFoodAliases(aliases);
+            } catch (error) {
+                console.error('❌ Erreur sauvegarde foodAliases Firestore:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Impossible de sauvegarder les alias.', 'error');
                 }
                 throw error;
             }
@@ -3786,7 +4080,6 @@ Solutions possibles :
         // === CLÔTURE DE JOURNÉE ===
         function closeDayConfirm() {
             const dateKey = getDateKey(currentMealDate);
-            const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
 
             if (closedDays[dateKey]) {
                 // Journée déjà clôturée, on permet de rouvrir
@@ -3801,14 +4094,19 @@ Solutions possibles :
                 closeDay(dateKey); });
         }
 
-        function closeDay(dateKey) {
+        async function closeDay(dateKey) {
             // Sauvegarder l'état de verrouillage
-            const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
             closedDays[dateKey] = {
                 closedAt: new Date().toISOString(),
                 meals: JSON.parse(JSON.stringify(dailyMeals)) // Deep copy
             };
-            localStorage.setItem('closedDays', JSON.stringify(closedDays));
+
+            // Sauvegarder vers Firestore
+            try {
+                await saveClosedDaysToFirestore(closedDays);
+            } catch (error) {
+                console.error('Erreur sauvegarde closedDays:', error);
+            }
 
             // Forcer la sync au planning
             syncMealsToPlanning();
@@ -3822,10 +4120,15 @@ Solutions possibles :
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Journée enregistrée dans ton planning !');
         }
 
-        function reopenDay(dateKey) {
-            const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
+        async function reopenDay(dateKey) {
             delete closedDays[dateKey];
-            localStorage.setItem('closedDays', JSON.stringify(closedDays));
+
+            // Sauvegarder vers Firestore
+            try {
+                await saveClosedDaysToFirestore(closedDays);
+            } catch (error) {
+                console.error('Erreur sauvegarde closedDays:', error);
+            }
 
             updateCloseDayUI(false);
 
@@ -3875,7 +4178,6 @@ Solutions possibles :
 
         function checkIfDayClosed() {
             const dateKey = getDateKey(currentMealDate);
-            const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
             const isClosed = !!closedDays[dateKey];
             updateCloseDayUI(isClosed);
             return isClosed;
@@ -3884,7 +4186,7 @@ Solutions possibles :
         // ===== NOUVELLES FONCTIONNALITÉS =====
 
         // 1. SYNCHRONISATION REPAS → PLANNING
-        function syncMealsToPlanning() {
+        async function syncMealsToPlanning() {
             const dateKey = getCurrentDateKey();
 
             // Générer les résumés de repas
@@ -3904,7 +4206,12 @@ Solutions possibles :
             weeklyPlan[dateKey].snack = snackSummary;
             weeklyPlan[dateKey].dinner = dinnerSummary;
 
-            localStorage.setItem('weeklyPlan', JSON.stringify(weeklyPlan));
+            // Sauvegarder vers Firestore
+            try {
+                await saveWeeklyPlanToFirestore(weeklyPlan);
+            } catch (error) {
+                console.error('Erreur sauvegarde weeklyPlan:', error);
+            }
 
             // Rafraîchir l'affichage du planning si on est dessus
             const planningTab = document.querySelector('.sidebar-btn[data-tab="planning"]');
@@ -4115,8 +4422,7 @@ Solutions possibles :
 
         function getDayPlanFromMeals(dateKey) {
             // Get actual meal data from allDailyMeals instead of weeklyPlan cache
-            const savedMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
-            const dayMeals = savedMeals[dateKey];
+            const dayMeals = allDailyMeals[dateKey];
 
             if (!dayMeals) {
                 return {
@@ -4198,17 +4504,15 @@ Solutions possibles :
             updateWeeklySummary();
         }
 
-        function updateWeeklySummary() {
+        async function updateWeeklySummary() {
             const weekStart = new Date(currentWeekStart);
-            const savedMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
-            const closedDays = JSON.parse(localStorage.getItem('closedDays') || '{}');
-            const macroTargets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const macroTargets = await loadMacroTargetsFromFirestore();
 
             console.log('=== UPDATE WEEKLY SUMMARY ===');
             console.log('currentWeekStart:', currentWeekStart);
             console.log('weekStart:', weekStart);
-            console.log('savedMeals:', savedMeals);
-            console.log('Object.keys(savedMeals):', Object.keys(savedMeals));
+            console.log('allDailyMeals:', allDailyMeals);
+            console.log('Object.keys(allDailyMeals):', Object.keys(allDailyMeals));
 
             let totalCalories = 0;
             let daysWithData = 0;
@@ -4222,7 +4526,7 @@ Solutions possibles :
                 date.setDate(date.getDate() + i);
                 const dateKey = getDateKey(date);
 
-                console.log(`Day ${i}: date=${date.toISOString()}, dateKey=${dateKey}, hasMeals=${!!savedMeals[dateKey]}, isClosed=${!!closedDays[dateKey]}`);
+                console.log(`Day ${i}: date=${date.toISOString()}, dateKey=${dateKey}, hasMeals=${!!allDailyMeals[dateKey]}, isClosed=${!!closedDays[dateKey]}`);
 
                 // Compter les jours clôturés
                 if (closedDays[dateKey]) {
@@ -4230,7 +4534,7 @@ Solutions possibles :
                 }
 
                 // Récupérer les repas du jour
-                const dayMeals = savedMeals[dateKey];
+                const dayMeals = allDailyMeals[dateKey];
                 if (dayMeals) {
                     // Calculer les calories du jour
                     const getMealMacros = (mealData) => {
@@ -6406,12 +6710,18 @@ Solutions possibles :
             renderWeeklyPlan();
         }
 
-        function savePlanMeal(dateKey, mealType, text) {
+        async function savePlanMeal(dateKey, mealType, text) {
             if (!weeklyPlan[dateKey]) {
                 weeklyPlan[dateKey] = {};
             }
             weeklyPlan[dateKey][mealType] = text.trim() || 'Non planifié';
-            localStorage.setItem('weeklyPlan', JSON.stringify(weeklyPlan));
+
+            // Sauvegarder vers Firestore
+            try {
+                await saveWeeklyPlanToFirestore(weeklyPlan);
+            } catch (error) {
+                console.error('Erreur sauvegarde weeklyPlan:', error);
+            }
         }
 
         // ===== SUIVI =====
@@ -7073,6 +7383,46 @@ Solutions possibles :
             // Charger depuis Firestore (avec fallback localStorage)
             const templates = await loadMealTemplatesFromFirestore();
             mealTemplates = templates;
+        }
+
+        // ===== MACRO TARGETS (OBJECTIFS MACROS) =====
+        async function loadMacroTargets() {
+            // Pas de variable globale, on retourne directement les données
+            return await loadMacroTargetsFromFirestore();
+        }
+
+        // ===== CALCULATOR SETTINGS =====
+        async function loadCalculatorSettings() {
+            // Pas de variable globale, on retourne directement les données
+            return await loadCalculatorSettingsFromFirestore();
+        }
+
+        // ===== FAVORITE FOODS =====
+        async function loadFavoriteFoods() {
+            // Charger depuis Firestore (avec fallback localStorage)
+            const foods = await loadFavoriteFoodsFromFirestore();
+            favoriteFoods = foods;
+        }
+
+        // ===== WEEKLY PLAN =====
+        async function loadWeeklyPlan() {
+            // Charger depuis Firestore (avec fallback localStorage)
+            const plan = await loadWeeklyPlanFromFirestore();
+            weeklyPlan = plan;
+        }
+
+        // ===== CLOSED DAYS =====
+        async function loadClosedDays() {
+            // Charger depuis Firestore (avec fallback localStorage)
+            const days = await loadClosedDaysFromFirestore();
+            closedDays = days;
+        }
+
+        // ===== FOOD ALIASES =====
+        async function loadFoodAliases() {
+            // Charger depuis Firestore (avec fallback localStorage)
+            const aliases = await loadFoodAliasesFromFirestore();
+            foodAliases = aliases;
         }
 
         function saveMealAsTemplate(mealType) {
