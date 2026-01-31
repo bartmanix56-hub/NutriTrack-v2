@@ -6554,6 +6554,9 @@ Solutions possibles :
             trackingData = await loadTrackingFromFirestore();
             advancedTrackingData = [...trackingData]; // Sync with advancedTrackingData
 
+            // Synchroniser le poids vers le profil
+            await syncWeightToProfile();
+
             // Rafraîchir affichage
             renderTrackingList();
 
@@ -6572,32 +6575,47 @@ Solutions possibles :
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Mesure enregistrée !');
         }
 
-        // ===== WEIGHT SYNC SYSTEM (legacy, non utilisé après migration Firestore) =====
+        // ===== WEIGHT SYNC SYSTEM =====
         function getLatestWeight() {
-            const saved = localStorage.getItem('trackingData');
-
-            if (!saved) {
-                return null;
-            }
-
-            const data = JSON.parse(saved);
-
-            if (data.length === 0) {
+            if (!trackingData || trackingData.length === 0) {
                 return null;
             }
 
             // Sort by date descending and find first entry with weight
-            const sorted = data.sort((a, b) => new Date(b.date) - new Date(a.date));
-
+            const sorted = [...trackingData].sort((a, b) => new Date(b.date) - new Date(a.date));
             const latestWithWeight = sorted.find(entry => entry.weight && !isNaN(entry.weight));
 
-            if (latestWithWeight)  { return latestWithWeight.weight; } else {
-                return null;
-            }
+            return latestWithWeight ? latestWithWeight.weight : null;
         }
 
-        // syncWeightToCalculator SUPPRIMÉ: migration Firestore-first terminée
-        // Le poids vient maintenant UNIQUEMENT de Firestore (profile/current)
+        async function syncWeightToProfile() {
+            const latestWeight = getLatestWeight();
+            if (!latestWeight) return;
+
+            // Charger le profil depuis Firestore
+            if (!window.dataService) return;
+
+            try {
+                const profile = await window.dataService.getProfile();
+                if (!profile) return;
+
+                // Mettre à jour seulement si le poids a changé
+                if (profile.weight !== latestWeight) {
+                    profile.weight = latestWeight;
+                    await saveProfileToFirestore(profile);
+
+                    // Mettre à jour l'input du calculateur si présent
+                    const weightInput = document.getElementById('weight');
+                    if (weightInput) {
+                        weightInput.value = latestWeight;
+                    }
+
+                    console.log(`✅ Poids synchronisé vers profil: ${latestWeight}kg`);
+                }
+            } catch (error) {
+                console.error('Erreur sync poids vers profil:', error);
+            }
+        }
 
         function autoRecalculateMacros() {
 
@@ -8113,7 +8131,7 @@ Solutions possibles :
             updateIcons();
         }
 
-        function saveNewMealTemplate() {
+        async function saveNewMealTemplate() {
             const name = document.getElementById('new-template-name').value.trim();
             const recipe = document.getElementById('new-template-recipe').value.trim();
 
@@ -8135,8 +8153,17 @@ Solutions possibles :
                 createdAt: new Date().toISOString()
             };
 
-            mealTemplates.push(template);
-            localStorage.setItem('mealTemplates', JSON.stringify(mealTemplates));
+            // Sauvegarder vers Firestore (utiliser le nom comme ID)
+            const templateId = template.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+            try {
+                await saveMealTemplateToFirestore(templateId, template);
+            } catch (error) {
+                console.error('Erreur sauvegarde meal template:', error);
+                // L'erreur a déjà été affichée
+            }
+
+            // Recharger depuis Firestore pour s'assurer de la cohérence
+            mealTemplates = await loadMealTemplatesFromFirestore();
 
             // Reset form
             document.getElementById('new-template-name').value = '';
@@ -8275,7 +8302,7 @@ Solutions possibles :
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type supprimé');
         }
 
-        function editMealTemplate(templateId) {
+        async function editMealTemplate(templateId) {
             const template = mealTemplates.find(t => t.id === templateId);
             if (!template) return;
 
@@ -8289,9 +8316,17 @@ Solutions possibles :
             renderTemplateFoodsList();
             updateTemplateMacros();
 
-            // Delete old template
-            mealTemplates = mealTemplates.filter(t => t.id !== templateId);
-            localStorage.setItem('mealTemplates', JSON.stringify(mealTemplates));
+            // Delete old template from Firestore
+            const templateIdSlug = template.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+            try {
+                await deleteMealTemplateFromFirestore(templateIdSlug);
+            } catch (error) {
+                console.error('Erreur suppression meal template:', error);
+                // L'erreur a déjà été affichée
+            }
+
+            // Recharger depuis Firestore
+            mealTemplates = await loadMealTemplatesFromFirestore();
             renderMealTemplatesList();
 
             showToast('✏️ Modifie ton repas puis enregistre');
