@@ -1521,6 +1521,13 @@ onAuthStateChanged(auth, (user) => {
                     await window.loadFoodAliases();
                     console.log('✅ Food aliases chargés depuis Firestore');
                 }
+
+                // Charger macro targets
+                if (typeof window.loadMacroTargets === 'function') {
+                    console.log('🔄 Chargement macro targets depuis Firestore...');
+                    await window.loadMacroTargets();
+                    console.log('✅ Macro targets chargés depuis Firestore');
+                }
             }
 
             // Charger les données depuis Firestore (source de vérité)

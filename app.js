@@ -76,6 +76,7 @@
         let weeklyPlan = {};
         let closedDays = {};
         let foodAliases = {};
+        let macroTargets = { protein: 0, carbs: 0, fat: 0, calories: 0 };
 
         // Charger currentWeekStart depuis localStorage ou utiliser la semaine actuelle
         let currentWeekStart = (() => {
@@ -1090,7 +1091,7 @@
             if (fatValue > 1.2) { warningElement.style.display = 'block'; } else  { warningElement.style.display = 'none'; }
         }
 
-        function selectGoal(goal, isLoading = false) {
+        async function selectGoal(goal, isLoading = false) {
             currentGoal = goal;
             document.querySelectorAll('.goal-btn:not(.pace-btn)').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`[data-goal="${goal}"]`)?.classList.add('active');
@@ -1147,12 +1148,13 @@
                 if (paceMaintainBtns) paceMaintainBtns.style.display = 'none';
             }
 
-            // Sauvegarder le goal
-            localStorage.setItem('calc_goal', goal);
+            // Sauvegarder le goal vers Firestore
             if (!isLoading) {
-                saveSettingsToFirestore({ calc_goal: goal }).catch(err => {
+                try {
+                    await saveCalculatorSettingsToFirestore({ calc_goal: goal });
+                } catch (err) {
                     console.error('Erreur sauvegarde goal:', err);
-                });
+                }
             }
 
             // Si en mode guidé, réappliquer le rythme sélectionné
@@ -1176,7 +1178,7 @@
         }
 
         // Sélection du rythme en mode guidé
-        window.selectPace = function(pace, skipCalculate = false) {
+        window.selectPace = async function(pace, skipCalculate = false) {
             // Mise à jour visuelle des boutons
             document.querySelectorAll('.pace-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -1264,14 +1266,13 @@
                 if (fatInput) fatInput.value = settings.fat;
             }
 
-            // Sauvegarder le rythme sélectionné (localStorage ET Firestore)
-            localStorage.setItem('selectedPace', pace);
-
-            // Ne sauvegarder dans Firestore que si pas en mode chargement
+            // Sauvegarder le rythme sélectionné vers Firestore
             if (!skipCalculate) {
-                saveSettingsToFirestore({ selectedPace: pace }).catch(err => {
+                try {
+                    await saveCalculatorSettingsToFirestore({ selectedPace: pace });
+                } catch (err) {
                     console.error('Erreur sauvegarde selectedPace:', err);
-                });
+                }
             }
 
             // Calculer automatiquement les macros (sauf si skipCalculate = true)
@@ -1906,13 +1907,19 @@ Solutions possibles :
             updateIcons();
 
             // Sauvegarder vers Firestore (incluant IMC)
-            const macroTargets = {
+            const newMacroTargets = {
                 protein, carbs, fat, calories: totalCal, bmr: Math.round(bmr), tdee: Math.round(tdee), imc: imc.toFixed(1)
             };
 
-            saveSettingsToFirestore({ macroTargets }).catch(err => {
+            // Mettre à jour la variable globale immédiatement
+            macroTargets = newMacroTargets;
+
+            // Sauvegarder vers Firestore
+            try {
+                await saveMacroTargetsToFirestore(newMacroTargets);
+            } catch (err) {
                 console.error('Erreur sauvegarde macroTargets:', err);
-            });
+            }
 
             // Mettre à jour les sections disponibles
             updateSectionsAvailability();
@@ -1984,8 +1991,7 @@ Solutions possibles :
 
         // Vérifier si les macros sont calculées
         function checkIfMacrosCalculated() {
-            const macroTargets = localStorage.getItem('macroTargets');
-            return macroTargets !== null;
+            return macroTargets && macroTargets.calories > 0;
         }
 
         // Mettre à jour la disponibilité des sections
@@ -2372,10 +2378,7 @@ Solutions possibles :
         let currentQuickAddMealType = null;
         let currentQuickAddInput = null;
 
-        function loadFavoriteFoods() {
-            const saved = localStorage.getItem('favoriteFoods');
-            if (saved) { favoriteFoods = JSON.parse(saved); }
-        }
+        // loadFavoriteFoods déplacé plus bas (charge depuis Firestore via wrapper)
 
         function isFavorite(foodName) { return favoriteFoods.includes(foodName); }
 
@@ -2747,7 +2750,7 @@ Solutions possibles :
         }
 
         function showMacroFeedback(food, quantity) {
-            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const targets = macroTargets;
             if (!targets.calories) return;
 
             const widget = document.getElementById('remaining-widget');
@@ -2838,7 +2841,7 @@ Solutions possibles :
         }
 
         function showMacroFeedbackFromChange(food, oldQuantity, newQuantity) {
-            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const targets = macroTargets;
             if (!targets.calories) return;
 
             const widget = document.getElementById('remaining-widget');
@@ -3053,7 +3056,7 @@ Solutions possibles :
             document.getElementById('calendar-month-year').textContent = `${monthNames[month]} ${year}`;
 
             const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
-            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const targets = macroTargets;
             const today = new Date();
 
             let html = '<div class="calendar-grid">';
@@ -3221,7 +3224,7 @@ Solutions possibles :
             const dateKey = getCurrentDateKey();
             const dayMeals = allDailyMeals[dateKey] || {};
             const totals = calculateDayTotals(dayMeals);
-            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const targets = macroTargets;
 
             const canvas = document.createElement('canvas');
             canvas.width = 1080;
@@ -3802,7 +3805,7 @@ Solutions possibles :
 
         // ===== BADGE JOURNALIER =====
         function updateCalorieBadge() {
-            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{"calories":0}');
+            const targets = macroTargets;
             const caloriesEl = document.getElementById('day-total');
 
             if (!caloriesEl)  { return; }
@@ -3841,7 +3844,7 @@ Solutions possibles :
         }
 
         function updateMacroBadge(macroType, elementId) {
-            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const targets = macroTargets;
             const macroEl = document.getElementById(elementId);
 
             if (!macroEl || !targets[macroType]) return;
@@ -3929,7 +3932,7 @@ Solutions possibles :
             if (!notifGoalsEnabled) return;
 
             // Récupérer les objectifs
-            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const targets = macroTargets;
             if (!targets.calories) return;
 
             // Vérifier si objectif calories atteint (entre 90% et 110%)
@@ -3963,7 +3966,7 @@ Solutions possibles :
 
         // ===== WIDGET "RESTE DU JOUR" =====
         function updateRemainingWidget() {
-            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const targets = macroTargets;
             const widget = document.getElementById('remaining-widget');
 
             if (!targets.calories)  { widget.style.display = 'none';
@@ -4004,7 +4007,7 @@ Solutions possibles :
 
         // Feedback émotionnel journalier
         function updateDailyFeedback(totals) {
-            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const targets = macroTargets;
             const feedbackEl = document.getElementById('daily-feedback');
 
             // Ne pas afficher si pas de cibles ou si aucun aliment ajouté
@@ -4677,7 +4680,7 @@ Solutions possibles :
         // Helper: obtenir le nom à afficher (alias ou nom original)
         function getDisplayName(food) {
             if (food.barcode) {
-                const aliases = JSON.parse(localStorage.getItem('foodAliases') || '{}');
+                const aliases = foodAliases;
                 if (aliases[food.barcode]) {
                     return aliases[food.barcode];
                 }
@@ -4755,9 +4758,8 @@ Solutions possibles :
         loadDailyMeals();
 
         // Load saved macro targets
-        const savedTargets = localStorage.getItem('macroTargets');
-        if (savedTargets) {
-            const targets = JSON.parse(savedTargets);
+        if (macroTargets && macroTargets.calories > 0) {
+            const targets = macroTargets;
             document.getElementById('targetProtein').textContent = targets.protein;
             document.getElementById('targetCarbs').textContent = targets.carbs;
             document.getElementById('targetFat').textContent = targets.fat;
@@ -5242,7 +5244,7 @@ Solutions possibles :
                 if (product.source === 'openfoodfacts') {
                     aliasGroup.style.display = 'block';
                     // Pré-remplir avec alias existant si présent
-                    const aliases = JSON.parse(localStorage.getItem('foodAliases') || '{}');
+                    const aliases = foodAliases;
                     if (aliases[barcode]) {
                         aliasInput.value = aliases[barcode];
                     }
@@ -5404,9 +5406,12 @@ Solutions possibles :
             // Sauvegarder l'alias si fourni (pour produits OFF)
             const aliasInput = document.getElementById('new-food-alias');
             if (aliasInput && aliasInput.value.trim() && barcode) {
-                const aliases = JSON.parse(localStorage.getItem('foodAliases') || '{}');
-                aliases[barcode] = aliasInput.value.trim();
-                localStorage.setItem('foodAliases', JSON.stringify(aliases));
+                foodAliases[barcode] = aliasInput.value.trim();
+                try {
+                    await saveFoodAliasesToFirestore(foodAliases);
+                } catch (error) {
+                    console.error('Erreur sauvegarde foodAliases:', error);
+                }
             }
 
             // Reset
@@ -5483,7 +5488,7 @@ Solutions possibles :
             if (product.source === 'openfoodfacts') {
                 aliasGroup.style.display = 'block';
                 // Pré-remplir avec alias existant si présent
-                const aliases = JSON.parse(localStorage.getItem('foodAliases') || '{}');
+                const aliases = foodAliases;
                 if (aliases[barcode]) {
                     aliasInput.value = aliases[barcode];
                 }
@@ -5756,7 +5761,7 @@ Solutions possibles :
                         const aliasInput = document.getElementById('new-food-alias');
                         if (product.source === 'openfoodfacts') {
                             aliasGroup.style.display = 'block';
-                            const aliases = JSON.parse(localStorage.getItem('foodAliases') || '{}');
+                            const aliases = foodAliases;
                             if (aliases[decodedText]) {
                                 aliasInput.value = aliases[decodedText];
                             }
@@ -6076,10 +6081,10 @@ Solutions possibles :
                 foods = Array.from(foodMap.values());
             }
 
-            // Charger les favoris
-            const favorites = JSON.parse(localStorage.getItem('favoriteFoods') || '[]');
+            // Charger les favoris depuis la variable globale (window.favoriteFoods pour éviter confusion avec variable locale)
+            const favorites = window.favoriteFoods || [];
 
-            // Séparer favoris et non-favoris
+            // Séparer favoris et non-favoris (variable locale, différente de la globale)
             const favoriteFoods = foods.filter(food => favorites.includes(food.name));
             const regularFoods = foods.filter(food => !favorites.includes(food.name));
 
@@ -6159,7 +6164,7 @@ Solutions possibles :
             updateIcons();
         }
 
-        function toggleFavorite(foodName) {
+        async function toggleFavorite(foodName) {
             const index = favoriteFoods.indexOf(foodName);
 
             if (index > -1) {
@@ -6172,7 +6177,12 @@ Solutions possibles :
                 showToast('⭐ Ajouté aux favoris');
             }
 
-            localStorage.setItem('favoriteFoods', JSON.stringify(favoriteFoods));
+            // Sauvegarder vers Firestore
+            try {
+                await saveFavoriteFoodsToFirestore(favoriteFoods);
+            } catch (error) {
+                console.error('Erreur sauvegarde favoriteFoods:', error);
+            }
 
             // Refresh all meals to update stars
             ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType =>  { if (dailyMeals[mealType]) {
@@ -6603,7 +6613,7 @@ Solutions possibles :
             updateProgressBars(); };
 
         function updateProgressBars() {
-            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{"protein":0,"carbs":0,"fat":0,"calories":0}');
+            const targets = macroTargets;
 
             if (targets.protein > 0) {
                 const pVal = parseFloat(document.getElementById('day-protein').textContent);
@@ -7208,26 +7218,30 @@ Solutions possibles :
         }
 
         // ===== EXPORT/IMPORT =====
-        function exportData() {
-            // Charger toutes les données depuis localStorage
-            const customFoods = JSON.parse(localStorage.getItem('customFoods') || '[]');
-            const allDailyMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
-            const weeklyPlan = JSON.parse(localStorage.getItem('weeklyPlan') || '[]');
-            const trackingData = JSON.parse(localStorage.getItem('trackingData') || '[]');
-            const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
-            const favoriteFoods = JSON.parse(localStorage.getItem('favoriteFoods') || '[]');
+        async function exportData() {
+            // Charger toutes les données depuis Firestore (via variables globales)
+            // Note: customFoods, weeklyPlan, trackingData, favoriteFoods sont déjà en mémoire
+            // allDailyMeals et profile aussi
+            const exportCustomFoods = window.customFoods || [];
+            const exportAllDailyMeals = window.allDailyMeals || {};
+            const exportWeeklyPlan = window.weeklyPlan || [];
+            const exportTrackingData = window.trackingData || [];
+            const exportProfile = await loadProfileFromFirestore();
+            const exportFavoriteFoods = window.favoriteFoods || [];
+            const exportCalcSettings = await loadCalculatorSettingsFromFirestore();
+            const exportSettings = await loadCalcSettingsFromFirestore();
 
             const data = {
                 version: '3.0',
                 exportDate: new Date().toISOString(),
-                customFoods,
-                allDailyMeals,
-                weeklyPlan,
-                trackingData,
-                profile,
-                favoriteFoods,
-                macroTargets: JSON.parse(localStorage.getItem('macroTargets') || '{}'),
-                calcSettings: JSON.parse(localStorage.getItem('calcSettings') || '{}'),
+                customFoods: exportCustomFoods,
+                allDailyMeals: exportAllDailyMeals,
+                weeklyPlan: exportWeeklyPlan,
+                trackingData: exportTrackingData,
+                profile: exportProfile,
+                favoriteFoods: exportFavoriteFoods,
+                macroTargets: window.macroTargets,
+                calcSettings: exportSettings,
                 // Données utilisateur complètes
                 username: localStorage.getItem('username') || '',
                 theme: localStorage.getItem('theme') || 'dark',
@@ -7239,7 +7253,8 @@ Solutions possibles :
                 notifications: localStorage.getItem('notifications') || 'false',
                 // Onboarding et goal
                 onboardingState: JSON.parse(localStorage.getItem('onboardingState') || '{}'),
-                calc_goal: localStorage.getItem('calc_goal') || 'cut'
+                calc_goal: exportCalcSettings.calc_goal || 'cut',
+                selectedPace: exportCalcSettings.selectedPace || '0.5'
             };
 
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -7387,8 +7402,9 @@ Solutions possibles :
 
         // ===== MACRO TARGETS (OBJECTIFS MACROS) =====
         async function loadMacroTargets() {
-            // Pas de variable globale, on retourne directement les données
-            return await loadMacroTargetsFromFirestore();
+            // Charger depuis Firestore (avec fallback localStorage)
+            const targets = await loadMacroTargetsFromFirestore();
+            macroTargets = targets;
         }
 
         // ===== CALCULATOR SETTINGS =====
@@ -7821,7 +7837,7 @@ Solutions possibles :
 
         // Get remaining macros for the day and context
         function getRemainingMacrosWithContext() {
-            const targets = JSON.parse(localStorage.getItem('macroTargets') || '{}');
+            const targets = macroTargets;
             const dateKey = getCurrentDateKey();
             const dayMeals = allDailyMeals[dateKey] || {};
             const consumed = calculateDayTotals(dayMeals);
@@ -9240,7 +9256,7 @@ Solutions possibles :
             // Si tous les champs sont remplis, calculer automatiquement
             if (weight && height && birthDay && birthMonth && birthYear && gender && activity) {
                 // Vérifier si on a déjà des résultats pour ne pas recalculer à chaque fois
-                const hasResults = localStorage.getItem('macroTargets');
+                const hasResults = checkIfMacrosCalculated();
                 if (!hasResults) {
                     // Premier calcul automatique silencieux
                     calculateMacros(true);
