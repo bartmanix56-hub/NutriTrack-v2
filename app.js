@@ -2871,11 +2871,14 @@ Solutions possibles :
             Object.keys(dailyMeals).forEach(mealType => {
                 const foods = dailyMeals[mealType].foods || [];
                 foods.forEach(f => {
-                    const m = f.quantity / 100;
-                    totals.protein += f.protein * m;
-                    totals.carbs += f.carbs * m;
-                    totals.fat += f.fat * m;
-                    totals.calories += f.calories * m;
+                    // Normaliser l'aliment pour s'assurer qu'il a toutes les propriétés nutritionnelles
+                    const normalizedFood = normalizeFoodData(f);
+
+                    const m = normalizedFood.quantity / 100;
+                    totals.protein += normalizedFood.protein * m;
+                    totals.carbs += normalizedFood.carbs * m;
+                    totals.fat += normalizedFood.fat * m;
+                    totals.calories += normalizedFood.calories * m;
                 });
             });
 
@@ -2971,11 +2974,14 @@ Solutions possibles :
             Object.keys(dailyMeals).forEach(mealType => {
                 const foods = dailyMeals[mealType].foods || [];
                 foods.forEach(f => {
-                    const m = f.quantity / 100;
-                    totals.protein += f.protein * m;
-                    totals.carbs += f.carbs * m;
-                    totals.fat += f.fat * m;
-                    totals.calories += f.calories * m;
+                    // Normaliser l'aliment pour s'assurer qu'il a toutes les propriétés nutritionnelles
+                    const normalizedFood = normalizeFoodData(f);
+
+                    const m = normalizedFood.quantity / 100;
+                    totals.protein += normalizedFood.protein * m;
+                    totals.carbs += normalizedFood.carbs * m;
+                    totals.fat += normalizedFood.fat * m;
+                    totals.calories += normalizedFood.calories * m;
                 });
             });
 
@@ -3299,11 +3305,14 @@ Solutions possibles :
             ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
                 const foods = dayMeals[mealType]?.foods || [];
                 foods.forEach(f => {
-                    const m = f.quantity / 100;
-                    totals.calories += f.calories * m;
-                    totals.protein += f.protein * m;
-                    totals.carbs += f.carbs * m;
-                    totals.fat += f.fat * m;
+                    // Normaliser l'aliment pour s'assurer qu'il a toutes les propriétés nutritionnelles
+                    const normalizedFood = normalizeFoodData(f);
+
+                    const m = normalizedFood.quantity / 100;
+                    totals.calories += normalizedFood.calories * m;
+                    totals.protein += normalizedFood.protein * m;
+                    totals.carbs += normalizedFood.carbs * m;
+                    totals.fat += normalizedFood.fat * m;
                 });
             });
             return totals;
@@ -3738,6 +3747,45 @@ Solutions possibles :
             }, 1000);
         }
 
+        /**
+         * Normalise les données d'un aliment en s'assurant que toutes les propriétés nutritionnelles existent
+         * Si des propriétés manquent, tente de les récupérer depuis foodDatabase
+         */
+        function normalizeFoodData(food) {
+            // Si l'aliment a déjà toutes les propriétés nutritionnelles, le retourner tel quel
+            if (food.protein !== undefined && food.carbs !== undefined &&
+                food.fat !== undefined && food.calories !== undefined) {
+                return food;
+            }
+
+            // Chercher l'aliment dans foodDatabase
+            const dbFood = foodDatabase.find(f => f.name === food.name);
+
+            if (dbFood) {
+                // Fusionner les données de la DB avec l'aliment existant
+                return {
+                    ...food,
+                    protein: food.protein !== undefined ? food.protein : (dbFood.protein || 0),
+                    carbs: food.carbs !== undefined ? food.carbs : (dbFood.carbs || 0),
+                    fat: food.fat !== undefined ? food.fat : (dbFood.fat || 0),
+                    fiber: food.fiber !== undefined ? food.fiber : (dbFood.fiber || 0),
+                    calories: food.calories !== undefined ? food.calories : (dbFood.calories || 0),
+                    verified: food.verified !== undefined ? food.verified : (dbFood.verified || false)
+                };
+            }
+
+            // Si l'aliment n'est pas trouvé dans la DB, retourner avec des valeurs par défaut (0)
+            console.warn(`⚠️ Aliment "${food.name}" sans données nutritionnelles et non trouvé dans foodDatabase`);
+            return {
+                ...food,
+                protein: food.protein || 0,
+                carbs: food.carbs || 0,
+                fat: food.fat || 0,
+                fiber: food.fiber || 0,
+                calories: food.calories || 0
+            };
+        }
+
         function renderMeal(mealType) {
             const container = document.getElementById(`${mealType}-foods`);
             const meal = dailyMeals[mealType];
@@ -3774,49 +3822,52 @@ Solutions possibles :
             let mealFat = 0;
 
             container.innerHTML = foods.map(food => {
-                const multiplier = food.quantity / 100;
-                const calories = Math.round(food.calories * multiplier);
+                // Normaliser l'aliment pour s'assurer qu'il a toutes les propriétés nutritionnelles
+                const normalizedFood = normalizeFoodData(food);
+
+                const multiplier = normalizedFood.quantity / 100;
+                const calories = Math.round(normalizedFood.calories * multiplier);
                 mealTotal += calories;
-                mealProtein += food.protein * multiplier;
-                mealCarbs += food.carbs * multiplier;
-                mealFat += food.fat * multiplier;
+                mealProtein += normalizedFood.protein * multiplier;
+                mealCarbs += normalizedFood.carbs * multiplier;
+                mealFat += normalizedFood.fat * multiplier;
 
                 // DEBUG: Log verified status
-                console.log(`[renderMeal] ${food.name}: verified = ${food.verified}`);
+                console.log(`[renderMeal] ${normalizedFood.name}: verified = ${normalizedFood.verified}`);
 
-                const verifiedBadge = food.verified ? ' <span style="color: #10b981; font-size: 1rem; cursor: help; margin-left: 4px;" title="Aliment vérifié par un administrateur">✓</span>' : '';
+                const verifiedBadge = normalizedFood.verified ? ' <span style="color: #10b981; font-size: 1rem; cursor: help; margin-left: 4px;" title="Aliment vérifié par un administrateur">✓</span>' : '';
 
                 return `
                     <div class="food-item">
-                        <button class="delete-btn" onclick="removeFoodFromMeal('${mealType}', ${food.id})" style="width: 32px; height: 32px; min-width: 32px; display: flex; align-items: center; justify-content: center; padding: 0;"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>
-                        <button onclick="event.stopPropagation(); toggleFavorite('${food.name.replace(/'/g, "\\'")}')"
-                                style="width: 32px; height: 32px; min-width: 32px; background: none; border: none; cursor: pointer; font-size: 1.1rem; transition: var(--transition-fast); ${isFavorite(food.name) ? '' : 'filter: grayscale(1) brightness(2);'}"
-                                title="${isFavorite(food.name) ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
-                            ${isFavorite(food.name) ? '⭐' : '⭐'}
+                        <button class="delete-btn" onclick="removeFoodFromMeal('${mealType}', ${normalizedFood.id})" style="width: 32px; height: 32px; min-width: 32px; display: flex; align-items: center; justify-content: center; padding: 0;"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>
+                        <button onclick="event.stopPropagation(); toggleFavorite('${normalizedFood.name.replace(/'/g, "\\'")}')"
+                                style="width: 32px; height: 32px; min-width: 32px; background: none; border: none; cursor: pointer; font-size: 1.1rem; transition: var(--transition-fast); ${isFavorite(normalizedFood.name) ? '' : 'filter: grayscale(1) brightness(2);'}"
+                                title="${isFavorite(normalizedFood.name) ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
+                            ${isFavorite(normalizedFood.name) ? '⭐' : '⭐'}
                         </button>
-                        <div class="food-name">${getDisplayName(food)}${verifiedBadge}</div>
+                        <div class="food-name">${getDisplayName(normalizedFood)}${verifiedBadge}</div>
                         <div class="food-quantity">
-                            <input type="number" value="${food.quantity}" min="1"
-                                   onchange="updateMealQuantity('${mealType}', ${food.id}, this.value)">
+                            <input type="number" value="${normalizedFood.quantity}" min="1"
+                                   onchange="updateMealQuantity('${mealType}', ${normalizedFood.id}, this.value)">
                             <span style="color: var(--text-secondary);">g</span>
                         </div>
                         <div class="food-macros">
                             <span>
                                 <div class="label">Prot</div>
                                 <div class="value" style="color: var(--accent-protein)">
-                                    ${(food.protein * multiplier).toFixed(1)}g
+                                    ${(normalizedFood.protein * multiplier).toFixed(1)}g
                                 </div>
                             </span>
                             <span>
                                 <div class="label">Glu</div>
                                 <div class="value" style="color: var(--accent-carbs)">
-                                    ${(food.carbs * multiplier).toFixed(1)}g
+                                    ${(normalizedFood.carbs * multiplier).toFixed(1)}g
                                 </div>
                             </span>
                             <span>
                                 <div class="label">Lip</div>
                                 <div class="value" style="color: var(--accent-fat)">
-                                    ${(food.fat * multiplier).toFixed(1)}g
+                                    ${(normalizedFood.fat * multiplier).toFixed(1)}g
                                 </div>
                             </span>
                             <span>
@@ -3987,12 +4038,15 @@ Solutions possibles :
             ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
                 const foods = dailyMeals[mealType]?.foods || [];
                 foods.forEach(food => {
-                    const multiplier = food.quantity / 100;
-                    totals.protein += food.protein * multiplier;
-                    totals.carbs += food.carbs * multiplier;
-                    totals.fat += food.fat * multiplier;
-                    totals.fiber += (food.fiber || 0) * multiplier;
-                    totals.calories += food.calories * multiplier;
+                    // Normaliser l'aliment pour s'assurer qu'il a toutes les propriétés nutritionnelles
+                    const normalizedFood = normalizeFoodData(food);
+
+                    const multiplier = normalizedFood.quantity / 100;
+                    totals.protein += normalizedFood.protein * multiplier;
+                    totals.carbs += normalizedFood.carbs * multiplier;
+                    totals.fat += normalizedFood.fat * multiplier;
+                    totals.fiber += (normalizedFood.fiber || 0) * multiplier;
+                    totals.calories += normalizedFood.calories * multiplier;
                 });
             });
 
@@ -6182,8 +6236,8 @@ Solutions possibles :
                 foods = Array.from(foodMap.values());
             }
 
-            // Charger les favoris depuis la variable globale (window.favoriteFoods pour éviter confusion avec variable locale)
-            const favorites = window.favoriteFoods || [];
+            // Charger les favoris depuis la variable globale
+            const favorites = favoriteFoods || [];
 
             // Séparer favoris et non-favoris (variable locale, différente de la globale)
             const favoriteFoods = foods.filter(food => favorites.includes(food.name));
