@@ -1015,6 +1015,11 @@ async function showAppAfterLogin(user) {
     if (localStorage.getItem('migrationDone_v1') === 'true') {
         window.dataService = new DataService(db, user.uid);
         console.log('✅ DataService initialisé globalement');
+
+        // Synchroniser les données en attente (modifiées pendant que dataService était indisponible)
+        if (typeof window.syncPendingData === 'function') {
+            window.syncPendingData();
+        }
     } else {
         console.warn('⚠️ DataService non initialisé: migration v1 non effectuée');
     }
@@ -1422,6 +1427,11 @@ onAuthStateChanged(auth, (user) => {
             if (localStorage.getItem('migrationDone_v1') === 'true') {
                 window.dataService = new DataService(db, user.uid);
                 console.log('✅ DataService initialisé globalement');
+
+                // Synchroniser les données en attente (modifiées pendant que dataService était indisponible)
+                if (typeof window.syncPendingData === 'function') {
+                    window.syncPendingData();
+                }
             } else {
                 console.warn('⚠️ DataService non initialisé: migration v1 non effectuée');
             }
