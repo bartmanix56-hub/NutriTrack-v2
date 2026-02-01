@@ -84,6 +84,12 @@ service cloud.firestore {
         allow read, write: if isAuthenticated() && request.auth.uid == userId;
         allow read: if isAdmin();
       }
+
+      // UserData (weeklyPlan, favoriteFoods, closedDays, foodAliases)
+      match /userData/{dataId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+        allow read: if isAdmin();
+      }
     }
 
     // ===== COMMON FOODS DATABASE =====

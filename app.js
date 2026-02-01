@@ -1994,6 +1994,107 @@ Solutions possibles :
             return macroTargets && macroTargets.calories > 0;
         }
 
+        // Afficher les macros déjà calculées (appelé au chargement)
+        function displaySavedMacros() {
+            if (!checkIfMacrosCalculated()) {
+                return; // Rien à afficher
+            }
+
+            const { protein, carbs, fat, calories, bmr, tdee, imc } = macroTargets;
+
+            // Vérifier que tous les éléments DOM existent
+            const elements = {
+                bmr: document.getElementById('bmr-display'),
+                tdee: document.getElementById('tdee-display'),
+                imc: document.getElementById('imc-display-blur'),
+                imcCategory: document.getElementById('imc-category-blur'),
+                targetProtein: document.getElementById('targetProtein'),
+                targetCarbs: document.getElementById('targetCarbs'),
+                targetFat: document.getElementById('targetFat'),
+                proteinCal: document.getElementById('proteinCal'),
+                carbsCal: document.getElementById('carbsCal'),
+                fatCal: document.getElementById('fatCal'),
+                totalCal: document.getElementById('totalCal'),
+                proteinBar: document.getElementById('proteinBar'),
+                carbsBar: document.getElementById('carbsBar'),
+                fatBar: document.getElementById('fatBar'),
+                results: document.getElementById('results'),
+                emptyState: document.getElementById('results-empty-state'),
+                resultsContent: document.getElementById('results-content')
+            };
+
+            // Afficher BMR et TDEE
+            if (elements.bmr && bmr) elements.bmr.textContent = Math.round(bmr).toLocaleString('fr-FR') + ' kcal';
+            if (elements.tdee && tdee) elements.tdee.textContent = Math.round(tdee).toLocaleString('fr-FR') + ' kcal';
+
+            // Afficher IMC
+            if (elements.imc && imc) {
+                const imcValue = parseFloat(imc);
+                elements.imc.textContent = imcValue.toFixed(1);
+
+                let imcCategory, imcColor;
+                if (imcValue < 18.5) {
+                    imcCategory = 'Maigreur';
+                    imcColor = 'var(--accent-carbs)';
+                } else if (imcValue < 25) {
+                    imcCategory = 'Corpulence normale';
+                    imcColor = 'var(--accent-main)';
+                } else if (imcValue < 30) {
+                    imcCategory = 'Surpoids';
+                    imcColor = 'var(--accent-fat)';
+                } else {
+                    imcCategory = 'Obésité';
+                    imcColor = 'var(--accent-danger)';
+                }
+
+                elements.imc.style.color = imcColor;
+                if (elements.imcCategory) {
+                    elements.imcCategory.textContent = imcCategory;
+                    elements.imcCategory.style.color = imcColor;
+                }
+            }
+
+            // Afficher les macros
+            if (elements.targetProtein) elements.targetProtein.textContent = protein;
+            if (elements.targetCarbs) elements.targetCarbs.textContent = carbs;
+            if (elements.targetFat) elements.targetFat.textContent = fat;
+
+            const proteinCal = protein * 4;
+            const carbsCal = carbs * 4;
+            const fatCal = fat * 9;
+
+            if (elements.proteinCal) elements.proteinCal.textContent = proteinCal;
+            if (elements.carbsCal) elements.carbsCal.textContent = carbsCal;
+            if (elements.fatCal) elements.fatCal.textContent = fatCal;
+            if (elements.totalCal) elements.totalCal.textContent = calories;
+
+            // Animer les barres de progression
+            const totalCal = calories;
+            const pPct = Math.round((proteinCal / totalCal) * 100);
+            const cPct = Math.round((carbsCal / totalCal) * 100);
+            const fPct = Math.round((fatCal / totalCal) * 100);
+
+            if (elements.proteinBar) {
+                elements.proteinBar.style.width = `${pPct}%`;
+                elements.proteinBar.setAttribute('data-percent', `${pPct}%`);
+            }
+            if (elements.carbsBar) {
+                elements.carbsBar.style.width = `${cPct}%`;
+                elements.carbsBar.textContent = `${cPct}%`;
+            }
+            if (elements.fatBar) {
+                elements.fatBar.style.width = `${fPct}%`;
+                elements.fatBar.textContent = `${fPct}%`;
+            }
+
+            // Afficher la section des résultats
+            if (elements.results) elements.results.style.display = 'block';
+            if (elements.emptyState) elements.emptyState.style.display = 'none';
+            if (elements.resultsContent) elements.resultsContent.style.display = 'block';
+
+            updateIcons();
+        }
+
         // Mettre à jour la disponibilité des sections
         function updateSectionsAvailability() {
             const isReady = checkIfMacrosCalculated();
@@ -7405,6 +7506,9 @@ Solutions possibles :
             // Charger depuis Firestore (avec fallback localStorage)
             const targets = await loadMacroTargetsFromFirestore();
             macroTargets = targets;
+
+            // Afficher automatiquement les macros si déjà calculées
+            displaySavedMacros();
         }
 
         // ===== CALCULATOR SETTINGS =====
