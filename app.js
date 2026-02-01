@@ -7778,6 +7778,9 @@ Solutions possibles :
 
             // Afficher automatiquement les macros si déjà calculées
             displaySavedMacros();
+
+            // IMPORTANT: Mettre à jour la disponibilité des sections après chargement des macros
+            updateSectionsAvailability();
         }
 
         // ===== CALCULATOR SETTINGS =====
