@@ -5447,7 +5447,7 @@ Solutions possibles :
             // loadAllMeals(); // DÉPLACÉ dans admin.js APRÈS création DataService
             // loadTrackingData(); // DÉPLACÉ dans admin.js APRÈS création DataService
             // loadCalcSettings(); // DÉPLACÉ dans requestAnimationFrame
-            loadFavoriteFoods();  // Load favorite foods
+            // loadFavoriteFoods(); // DÉPLACÉ dans admin.js APRÈS création DataService
             // loadProfile(); // MOVED: Now called AFTER dropdown population in requestAnimationFrame
             updateMealDateDisplay();
 
