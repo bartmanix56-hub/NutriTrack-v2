@@ -96,6 +96,207 @@
         let currentGoal = 'cut';
         let currentMealType = null;
 
+        // ===== PENDING SYNC SYSTEM =====
+        // Gère les données modifiées en localStorage quand Firestore n'était pas disponible
+        // Ces données seront synchronisées automatiquement quand dataService redevient disponible
+
+        const PENDING_SYNC_KEY = 'pendingSync';
+
+        /**
+         * Marque des données comme en attente de synchronisation
+         * @param {string} type - Type de données (meal, profile, settings, tracking, customFood, mealTemplate, favorites, weeklyPlan, closedDays, foodAliases, macroTargets)
+         * @param {string} key - Clé unique (ex: date pour meals, foodId pour customFoods)
+         * @param {any} value - Valeur à synchroniser
+         */
+        function markPendingSync(type, key, value) {
+            const pending = JSON.parse(localStorage.getItem(PENDING_SYNC_KEY) || '{}');
+            if (!pending[type]) pending[type] = {};
+            pending[type][key] = { value, timestamp: Date.now() };
+            localStorage.setItem(PENDING_SYNC_KEY, JSON.stringify(pending));
+            console.log(`📝 Données en attente de sync: ${type}/${key}`);
+        }
+
+        /**
+         * Synchronise toutes les données en attente vers Firestore
+         * Appelé automatiquement quand dataService devient disponible
+         */
+        async function syncPendingData() {
+            if (!window.dataService) {
+                console.warn('⚠️ syncPendingData: DataService non disponible');
+                return;
+            }
+
+            const pending = JSON.parse(localStorage.getItem(PENDING_SYNC_KEY) || '{}');
+            if (Object.keys(pending).length === 0) {
+                console.log('✅ Aucune donnée en attente de synchronisation');
+                return;
+            }
+
+            console.log('🔄 Synchronisation des données en attente vers Firestore...');
+            let syncedCount = 0;
+            let errorCount = 0;
+
+            try {
+                // Sync meals
+                if (pending.meal) {
+                    for (const [date, data] of Object.entries(pending.meal)) {
+                        try {
+                            await window.dataService.saveMeal(date, data.value);
+                            syncedCount++;
+                        } catch (e) {
+                            console.error(`❌ Erreur sync meal ${date}:`, e);
+                            errorCount++;
+                        }
+                    }
+                }
+
+                // Sync profile
+                if (pending.profile && pending.profile.current) {
+                    try {
+                        await window.dataService.saveProfile(pending.profile.current.value);
+                        syncedCount++;
+                    } catch (e) {
+                        console.error('❌ Erreur sync profile:', e);
+                        errorCount++;
+                    }
+                }
+
+                // Sync settings
+                if (pending.settings && pending.settings.current) {
+                    try {
+                        await window.dataService.saveSettings(pending.settings.current.value);
+                        syncedCount++;
+                    } catch (e) {
+                        console.error('❌ Erreur sync settings:', e);
+                        errorCount++;
+                    }
+                }
+
+                // Sync tracking
+                if (pending.tracking) {
+                    for (const [date, data] of Object.entries(pending.tracking)) {
+                        try {
+                            await window.dataService.saveTracking(date, data.value);
+                            syncedCount++;
+                        } catch (e) {
+                            console.error(`❌ Erreur sync tracking ${date}:`, e);
+                            errorCount++;
+                        }
+                    }
+                }
+
+                // Sync custom foods
+                if (pending.customFood) {
+                    for (const [foodId, data] of Object.entries(pending.customFood)) {
+                        try {
+                            if (data.value === null) {
+                                await window.dataService.deleteCustomFood(foodId);
+                            } else {
+                                await window.dataService.saveCustomFood(foodId, data.value);
+                            }
+                            syncedCount++;
+                        } catch (e) {
+                            console.error(`❌ Erreur sync customFood ${foodId}:`, e);
+                            errorCount++;
+                        }
+                    }
+                }
+
+                // Sync meal templates
+                if (pending.mealTemplate) {
+                    for (const [templateId, data] of Object.entries(pending.mealTemplate)) {
+                        try {
+                            if (data.value === null) {
+                                await window.dataService.deleteMealTemplate(templateId);
+                            } else {
+                                await window.dataService.saveMealTemplate(templateId, data.value);
+                            }
+                            syncedCount++;
+                        } catch (e) {
+                            console.error(`❌ Erreur sync mealTemplate ${templateId}:`, e);
+                            errorCount++;
+                        }
+                    }
+                }
+
+                // Sync favorites
+                if (pending.favorites && pending.favorites.current) {
+                    try {
+                        await window.dataService.saveFavoriteFoods(pending.favorites.current.value);
+                        syncedCount++;
+                    } catch (e) {
+                        console.error('❌ Erreur sync favorites:', e);
+                        errorCount++;
+                    }
+                }
+
+                // Sync weeklyPlan
+                if (pending.weeklyPlan && pending.weeklyPlan.current) {
+                    try {
+                        await window.dataService.saveWeeklyPlan(pending.weeklyPlan.current.value);
+                        syncedCount++;
+                    } catch (e) {
+                        console.error('❌ Erreur sync weeklyPlan:', e);
+                        errorCount++;
+                    }
+                }
+
+                // Sync closedDays
+                if (pending.closedDays && pending.closedDays.current) {
+                    try {
+                        await window.dataService.saveClosedDays(pending.closedDays.current.value);
+                        syncedCount++;
+                    } catch (e) {
+                        console.error('❌ Erreur sync closedDays:', e);
+                        errorCount++;
+                    }
+                }
+
+                // Sync foodAliases
+                if (pending.foodAliases && pending.foodAliases.current) {
+                    try {
+                        await window.dataService.saveFoodAliases(pending.foodAliases.current.value);
+                        syncedCount++;
+                    } catch (e) {
+                        console.error('❌ Erreur sync foodAliases:', e);
+                        errorCount++;
+                    }
+                }
+
+                // Sync macroTargets
+                if (pending.macroTargets && pending.macroTargets.current) {
+                    try {
+                        await window.dataService.saveSettings({ macroTargets: pending.macroTargets.current.value });
+                        syncedCount++;
+                    } catch (e) {
+                        console.error('❌ Erreur sync macroTargets:', e);
+                        errorCount++;
+                    }
+                }
+
+                // Nettoyer les données synchronisées
+                if (errorCount === 0) {
+                    localStorage.removeItem(PENDING_SYNC_KEY);
+                    console.log(`✅ Synchronisation terminée: ${syncedCount} éléments synchronisés`);
+                    if (typeof showToast === 'function' && syncedCount > 0) {
+                        showToast(`${syncedCount} modification(s) synchronisée(s)`, 'success');
+                    }
+                } else {
+                    // Garder uniquement les données en erreur
+                    console.warn(`⚠️ Synchronisation partielle: ${syncedCount} réussis, ${errorCount} erreurs`);
+                    if (typeof showToast === 'function') {
+                        showToast(`Synchronisation partielle: ${errorCount} erreur(s)`, 'warning');
+                    }
+                }
+
+            } catch (error) {
+                console.error('❌ Erreur globale syncPendingData:', error);
+            }
+        }
+
+        // Exposer globalement pour que admin.js puisse l'appeler
+        window.syncPendingData = syncPendingData;
+
         // ===== DATA HELPERS - FIRESTORE FIRST =====
         // Ces fonctions gèrent le chargement/sauvegarde avec Firestore comme source de vérité
 
@@ -144,6 +345,7 @@
                 const allMeals = JSON.parse(localStorage.getItem('allDailyMeals') || '{}');
                 allMeals[date] = mealData;
                 localStorage.setItem('allDailyMeals', JSON.stringify(allMeals));
+                markPendingSync('meal', date, mealData);
                 return;
             }
 
@@ -187,6 +389,7 @@
             if (!window.dataService) {
                 console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
                 localStorage.setItem('userProfile', JSON.stringify(profile));
+                markPendingSync('profile', 'current', profile);
                 return;
             }
 
@@ -250,6 +453,7 @@
                         localStorage.setItem(key, settings[key]);
                     }
                 });
+                markPendingSync('settings', 'current', settings);
                 return;
             }
 
@@ -302,6 +506,7 @@
                 // Trier par date décroissante
                 trackingArray.sort((a, b) => new Date(b.date) - new Date(a.date));
                 localStorage.setItem('trackingData', JSON.stringify(trackingArray));
+                markPendingSync('tracking', date, trackingData);
                 return;
             }
 
@@ -377,6 +582,7 @@
                 // Ajouter nouvelle entrée
                 customFoodsArray.push(foodData);
                 localStorage.setItem('customFoods', JSON.stringify(customFoodsArray));
+                markPendingSync('customFood', foodId, foodData);
                 return;
             }
 
@@ -402,6 +608,7 @@
                 let customFoodsArray = JSON.parse(saved);
                 customFoodsArray = customFoodsArray.filter(f => f.name !== foodId);
                 localStorage.setItem('customFoods', JSON.stringify(customFoodsArray));
+                markPendingSync('customFood', foodId, null); // null = suppression
                 return;
             }
 
@@ -452,6 +659,7 @@
                 // Ajouter nouvelle entrée
                 templatesArray.push(templateData);
                 localStorage.setItem('mealTemplates', JSON.stringify(templatesArray));
+                markPendingSync('mealTemplate', templateId, templateData);
                 return;
             }
 
@@ -477,6 +685,7 @@
                 let templatesArray = JSON.parse(saved);
                 templatesArray = templatesArray.filter(t => t.name !== templateId);
                 localStorage.setItem('mealTemplates', JSON.stringify(templatesArray));
+                markPendingSync('mealTemplate', templateId, null); // null = suppression
                 return;
             }
 
@@ -525,6 +734,7 @@
             if (!window.dataService) {
                 console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
                 localStorage.setItem('macroTargets', JSON.stringify(macroTargets));
+                markPendingSync('macroTargets', 'current', macroTargets);
                 return;
             }
 
@@ -581,6 +791,7 @@
                 console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
                 if (settings.calc_goal) localStorage.setItem('calc_goal', settings.calc_goal);
                 if (settings.selectedPace) localStorage.setItem('selectedPace', settings.selectedPace);
+                markPendingSync('settings', 'current', settings);
                 return;
             }
 
@@ -628,6 +839,7 @@
             if (!window.dataService) {
                 console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
                 localStorage.setItem('favoriteFoods', JSON.stringify(foods));
+                markPendingSync('favorites', 'current', foods);
                 return;
             }
 
@@ -675,6 +887,7 @@
             if (!window.dataService) {
                 console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
                 localStorage.setItem('weeklyPlan', JSON.stringify(plan));
+                markPendingSync('weeklyPlan', 'current', plan);
                 return;
             }
 
@@ -722,6 +935,7 @@
             if (!window.dataService) {
                 console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
                 localStorage.setItem('closedDays', JSON.stringify(days));
+                markPendingSync('closedDays', 'current', days);
                 return;
             }
 
@@ -769,6 +983,7 @@
             if (!window.dataService) {
                 console.warn('⚠️ DataService non disponible, sauvegarde localStorage uniquement');
                 localStorage.setItem('foodAliases', JSON.stringify(aliases));
+                markPendingSync('foodAliases', 'current', aliases);
                 return;
             }
 
