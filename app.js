@@ -6239,24 +6239,24 @@ Solutions possibles :
             // Charger les favoris depuis la variable globale
             const favorites = favoriteFoods || [];
 
-            // Séparer favoris et non-favoris (variable locale, différente de la globale)
-            const favoriteFoods = foods.filter(food => favorites.includes(food.name));
+            // Séparer favoris et non-favoris
+            const favoriteFoodsList = foods.filter(food => favorites.includes(food.name));
             const regularFoods = foods.filter(food => !favorites.includes(food.name));
 
             // Trier alphabétiquement
-            favoriteFoods.sort((a, b) => a.name.localeCompare(b.name));
+            favoriteFoodsList.sort((a, b) => a.name.localeCompare(b.name));
             regularFoods.sort((a, b) => a.name.localeCompare(b.name));
 
             let html = '';
 
             // Section Favoris (si il y en a)
-            if (favoriteFoods.length > 0) {
+            if (favoriteFoodsList.length > 0) {
                 html += `
                     <div style="background: linear-gradient(135deg, rgba(255, 230, 109, 0.1) 0%, rgba(255, 230, 109, 0.05) 100%); padding: var(--space-lg); border-radius: var(--radius-md); margin-bottom: var(--space-2xl); border: 1px solid rgba(255, 230, 109, 0.2);">
                         <h3 style="font-size: 1rem; font-weight: 600; color: var(--accent-fat); margin-bottom: var(--space-lg); display: flex; align-items: center; gap: var(--space-sm);">
-                            ⭐ Favoris (${favoriteFoods.length})
+                            ⭐ Favoris (${favoriteFoodsList.length})
                         </h3>
-                        ${favoriteFoods.map((food, index) => {
+                        ${favoriteFoodsList.map((food, index) => {
                             const globalIndex = foods.indexOf(food);
                             return `
                                 <div class="food-item" data-food-index="${globalIndex}" style="background: rgba(0, 0, 0, 0.2);">
