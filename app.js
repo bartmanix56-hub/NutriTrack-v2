@@ -5574,45 +5574,148 @@ Solutions possibles :
                 ctx.fillText(activityLabel, 60 + cardW + gap + 24, y + 78);
 
                 // === OBJECTIF & MODE ===
-                y += cardH + gap + 20;
+                y += cardH + gap + 30;
 
-                // Goal badge
                 const goalColors = { 'cut': '#f87171', 'maintain': '#10b981', 'bulk': '#38bdf8' };
                 const goalColor = goalColors[currentGoal] || '#10b981';
+                const goalIcons = { 'cut': '🔥', 'maintain': '⚖️', 'bulk': '💪' };
+                const goalIcon = goalIcons[currentGoal] || '⚖️';
 
-                drawCard(60, y, W - 120, 120, 16);
+                // Goal badge - large centered pill
+                ctx.font = 'bold 32px "DM Sans", sans-serif';
+                const goalText = `${goalIcon}  ${goalLabel.toUpperCase()}`;
+                const goalTextWidth = ctx.measureText(goalText).width;
+                const pillW = goalTextWidth + 60;
+                const pillH = 60;
+                const pillX = (W - pillW) / 2;
 
-                // Goal label
-                ctx.fillStyle = goalColor;
-                ctx.font = 'bold 30px "DM Sans", sans-serif';
-                ctx.textAlign = 'left';
-                ctx.fillText(goalLabel.toUpperCase(), 84, y + 45);
-
-                // Goal dot
-                ctx.beginPath();
-                ctx.arc(76, y + 38, 4, 0, Math.PI * 2);
+                // Pill background with goal color tint
+                ctx.fillStyle = goalColor + '18'; // 10% opacity
+                roundRect(pillX, y, pillW, pillH, pillH / 2);
                 ctx.fill();
-
-                // Mode label
-                ctx.fillStyle = '#b8b8b8';
-                ctx.font = '24px "DM Sans", sans-serif';
-                ctx.fillText(modeLabel, 84, y + 82);
-
-                // Mode details (right side)
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '24px "DM Sans", sans-serif';
-                ctx.textAlign = 'right';
-                ctx.fillText(modeDetails, W - 84, y + 82);
-
-                // Vertical separator
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-                ctx.beginPath();
-                ctx.moveTo(84, y + 55);
-                ctx.lineTo(W - 84, y + 55);
+                ctx.strokeStyle = goalColor + '40'; // 25% opacity border
+                ctx.lineWidth = 1.5;
+                roundRect(pillX, y, pillW, pillH, pillH / 2);
                 ctx.stroke();
 
+                // Pill text
+                ctx.fillStyle = goalColor;
+                ctx.font = 'bold 32px "DM Sans", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(goalText, W / 2, y + 42);
+
+                y += pillH + 24;
+
+                // Mode details as separate tags
+                if (isGuidedMode) {
+                    // Guided mode: two pills side by side - [Mode Guidé] [Rythme]
+                    const tag1 = modeLabel;
+                    const tag2 = modeDetails;
+
+                    ctx.font = '24px "DM Sans", sans-serif';
+                    const tag1W = ctx.measureText(tag1).width + 40;
+                    const tag2W = ctx.measureText(tag2).width + 40;
+                    const tagsGap = 16;
+                    const totalTagsW = tag1W + tagsGap + tag2W;
+                    const tagsStartX = (W - totalTagsW) / 2;
+                    const tagH = 44;
+
+                    // Tag 1: Mode
+                    ctx.fillStyle = '#2a2a2a';
+                    roundRect(tagsStartX, y, tag1W, tagH, tagH / 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#b8b8b8';
+                    ctx.font = '24px "DM Sans", sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(tag1, tagsStartX + tag1W / 2, y + 30);
+
+                    // Tag 2: Pace
+                    ctx.fillStyle = goalColor + '18';
+                    roundRect(tagsStartX + tag1W + tagsGap, y, tag2W, tagH, tagH / 2);
+                    ctx.fill();
+                    ctx.fillStyle = goalColor;
+                    ctx.font = 'bold 24px "DM Sans", sans-serif';
+                    ctx.fillText(tag2, tagsStartX + tag1W + tagsGap + tag2W / 2, y + 30);
+
+                    y += tagH;
+                } else {
+                    // Advanced mode: mode label + detail tags
+                    ctx.font = '24px "DM Sans", sans-serif';
+                    const modeLabelW = ctx.measureText(modeLabel).width + 40;
+                    const modeLabelH = 44;
+                    const modeLabelX = (W - modeLabelW) / 2;
+
+                    ctx.fillStyle = '#2a2a2a';
+                    roundRect(modeLabelX, y, modeLabelW, modeLabelH, modeLabelH / 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#b8b8b8';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(modeLabel, W / 2, y + 30);
+
+                    y += modeLabelH + 16;
+
+                    // Parameter tags in a row
+                    let advTags = [];
+                    if (currentGoal === 'cut') {
+                        const deficit = document.getElementById('deficit')?.value || '0';
+                        const prot = document.getElementById('proteinCoeff')?.value || '0';
+                        const lip = document.getElementById('fatCoeff')?.value || '0';
+                        advTags = [
+                            { label: 'Déficit', value: `${deficit}%`, color: '#f87171' },
+                            { label: 'Protéines', value: `${prot} g/kg`, color: '#f87171' },
+                            { label: 'Lipides', value: `${lip} g/kg`, color: '#fbbf24' }
+                        ];
+                    } else if (currentGoal === 'bulk') {
+                        const surplus = document.getElementById('surplus')?.value || '0';
+                        const prot = document.getElementById('proteinCoeffBulk')?.value || '0';
+                        const lip = document.getElementById('fatCoeffBulk')?.value || '0';
+                        advTags = [
+                            { label: 'Surplus', value: `${surplus}%`, color: '#38bdf8' },
+                            { label: 'Protéines', value: `${prot} g/kg`, color: '#f87171' },
+                            { label: 'Lipides', value: `${lip} g/kg`, color: '#fbbf24' }
+                        ];
+                    } else {
+                        const prot = document.getElementById('proteinCoeffMaintain')?.value || '0';
+                        const lip = document.getElementById('fatCoeffMaintain')?.value || '0';
+                        advTags = [
+                            { label: 'Protéines', value: `${prot} g/kg`, color: '#f87171' },
+                            { label: 'Lipides', value: `${lip} g/kg`, color: '#fbbf24' }
+                        ];
+                    }
+
+                    const tagGap = 16;
+                    const tagH = 70;
+                    const tagW = (W - 120 - tagGap * (advTags.length - 1)) / advTags.length;
+
+                    advTags.forEach((tag, i) => {
+                        const tx = 60 + i * (tagW + tagGap);
+
+                        // Tag card
+                        ctx.fillStyle = tag.color + '10';
+                        roundRect(tx, y, tagW, tagH, 14);
+                        ctx.fill();
+                        ctx.strokeStyle = tag.color + '30';
+                        ctx.lineWidth = 1;
+                        roundRect(tx, y, tagW, tagH, 14);
+                        ctx.stroke();
+
+                        // Label
+                        ctx.fillStyle = '#b8b8b8';
+                        ctx.font = '18px "DM Sans", sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(tag.label, tx + tagW / 2, y + 28);
+
+                        // Value
+                        ctx.fillStyle = tag.color;
+                        ctx.font = 'bold 26px "DM Sans", sans-serif';
+                        ctx.fillText(tag.value, tx + tagW / 2, y + 58);
+                    });
+
+                    y += tagH;
+                }
+
                 // === CALORIES CIRCLE ===
-                y += 175;
+                y += 50;
                 const centerX = W / 2;
                 const centerY = y + 170;
                 const radius = 150;
