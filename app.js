@@ -5354,79 +5354,457 @@ Solutions possibles :
             });
         }
 
-        // Fonction pour charger html2canvas dynamiquement
-        function loadHtml2Canvas() {
-            return new Promise((resolve, reject) => {
-                if (typeof html2canvas !== 'undefined') {
-                    resolve();
-                    return;
-                }
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-                script.onload = resolve;
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-        }
+        // ===== EXPORT MACROS AS DESIGNED IMAGE =====
 
         async function confirmExport() {
             // Fermer modal
             document.getElementById('export-warning-modal').style.display = 'none';
             document.body.style.overflow = '';
 
-            const resultsCard = document.getElementById('results');
+            showToast('<i data-lucide="loader" class="icon-inline spinning"></i> Génération de l\'image...');
 
             try {
-                // Charger html2canvas si nécessaire
-                showToast('<i data-lucide="loader" class="icon-inline"></i> Préparation de l\'export...');
-                await loadHtml2Canvas();
-
-                // Masquer l'IMC avant export (toujours masqué pour protéger la vie privée)
-                const imcOverlay = document.getElementById('imc-overlay-btn');
-                let wasImcVisible = false;
-
-                if (imcOverlay && imcOverlay.style.opacity === '0') {
-                    // IMC était visible, on le masque pour l'export
-                    wasImcVisible = true;
-                    imcOverlay.style.opacity = '1';
-                    imcOverlay.style.background = 'rgba(0, 0, 0, 0.7)';
-                    imcOverlay.style.backdropFilter = 'blur(10px)';
-                    imcOverlay.style.webkitBackdropFilter = 'blur(10px)';
+                // === COLLECTER LES DONNÉES ===
+                const targets = macroTargets;
+                if (!targets || !targets.calories) {
+                    alert('Calcule d\'abord tes macros avant d\'exporter !');
+                    return;
                 }
 
-                // Capturer la card résultats
-                const canvas = await html2canvas(resultsCard, {
-                    backgroundColor: '#151515',
-                    scale: 2, // Haute qualité
-                    logging: false,
-                    windowWidth: 1200,
+                // Profil
+                const weight = parseFloat(document.getElementById('weight')?.value || 0);
+                const height = parseFloat(document.getElementById('height')?.value || 0);
+                const activitySelect = document.getElementById('activity');
+                const activityValue = parseFloat(activitySelect?.value || 1.2);
+                const activityLabels = { '1.2': 'Sédentaire', '1.375': 'Légèrement actif', '1.55': 'Modérément actif', '1.725': 'Très actif' };
+                const activityLabel = activityLabels[String(activityValue)] || 'Sédentaire';
+
+                // Age
+                const birthDay = document.getElementById('birth-day')?.value;
+                const birthMonth = document.getElementById('birth-month')?.value;
+                const birthYear = document.getElementById('birth-year')?.value;
+                let age = 0;
+                if (birthDay && birthMonth && birthYear) {
+                    const today = new Date();
+                    const birth = new Date(parseInt(birthYear), parseInt(birthMonth), parseInt(birthDay));
+                    age = today.getFullYear() - birth.getFullYear();
+                    const monthDiff = today.getMonth() - birth.getMonth();
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) age--;
+                }
+
+                // Objectif
+                const goalLabels = { 'cut': 'Sèche', 'maintain': 'Maintien', 'bulk': 'Prise de masse' };
+                const goalLabel = goalLabels[currentGoal] || 'Sèche';
+
+                // Mode (guidé / avancé)
+                const guidedMode = document.getElementById('guided-mode');
+                const isGuidedMode = guidedMode && guidedMode.style.display !== 'none';
+
+                let modeLabel = '';
+                let modeDetails = '';
+
+                if (isGuidedMode) {
+                    modeLabel = 'Mode Guidé';
+                    const selectedPaceBtn = document.querySelector('.pace-btn.active');
+                    if (selectedPaceBtn) {
+                        const pace = selectedPaceBtn.getAttribute('data-pace');
+                        const paceLabels = {
+                            'gentle': 'Doux', 'normal': 'Normal', 'fast': 'Rapide',
+                            'high-carb': 'Riche en glucides', 'balanced': 'Équilibré', 'high-fat': 'Riche en lipides'
+                        };
+                        modeDetails = paceLabels[pace] || pace;
+                    }
+                } else {
+                    modeLabel = 'Mode Avancé';
+                    if (currentGoal === 'cut') {
+                        const deficit = document.getElementById('deficit')?.value || '0';
+                        const prot = document.getElementById('proteinCoeff')?.value || '0';
+                        const lip = document.getElementById('fatCoeff')?.value || '0';
+                        modeDetails = `Déficit ${deficit}% · Prot ${prot} g/kg · Lip ${lip} g/kg`;
+                    } else if (currentGoal === 'bulk') {
+                        const surplus = document.getElementById('surplus')?.value || '0';
+                        const prot = document.getElementById('proteinCoeffBulk')?.value || '0';
+                        const lip = document.getElementById('fatCoeffBulk')?.value || '0';
+                        modeDetails = `Surplus ${surplus}% · Prot ${prot} g/kg · Lip ${lip} g/kg`;
+                    } else {
+                        const prot = document.getElementById('proteinCoeffMaintain')?.value || '0';
+                        const lip = document.getElementById('fatCoeffMaintain')?.value || '0';
+                        modeDetails = `Prot ${prot} g/kg · Lip ${lip} g/kg`;
+                    }
+                }
+
+                // Macros et pourcentages
+                const { protein, carbs, fat, calories, bmr, tdee, imc } = targets;
+                const proteinCal = protein * 4;
+                const carbsCal = carbs * 4;
+                const fatCal = fat * 9;
+                const totalCal = proteinCal + carbsCal + fatCal;
+                const pPct = totalCal > 0 ? Math.round((proteinCal / totalCal) * 100) : 0;
+                const cPct = totalCal > 0 ? Math.round((carbsCal / totalCal) * 100) : 0;
+                const fPct = totalCal > 0 ? Math.round((fatCal / totalCal) * 100) : 0;
+
+                // IMC catégorie
+                const imcVal = parseFloat(imc);
+                let imcCategory = '';
+                let imcColor = '#10b981';
+                if (imcVal < 18.5) { imcCategory = 'Maigreur'; imcColor = '#38bdf8'; }
+                else if (imcVal < 25) { imcCategory = 'Normal'; imcColor = '#10b981'; }
+                else if (imcVal < 30) { imcCategory = 'Surpoids'; imcColor = '#fbbf24'; }
+                else { imcCategory = 'Obésité'; imcColor = '#ef4444'; }
+
+                // === CANVAS ===
+                const W = 1080;
+                const H = 1920;
+                const canvas = document.createElement('canvas');
+                canvas.width = W;
+                canvas.height = H;
+                const ctx = canvas.getContext('2d');
+
+                // Helpers
+                function roundRect(x, y, w, h, r) {
+                    ctx.beginPath();
+                    ctx.roundRect(x, y, w, h, r);
+                }
+                function drawCard(x, y, w, h, radius = 20) {
+                    ctx.fillStyle = '#1e1e1e';
+                    roundRect(x, y, w, h, radius);
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+                    ctx.lineWidth = 1;
+                    roundRect(x, y, w, h, radius);
+                    ctx.stroke();
+                }
+
+                // === BACKGROUND ===
+                const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+                bgGrad.addColorStop(0, '#121212');
+                bgGrad.addColorStop(0.5, '#0f1a16');
+                bgGrad.addColorStop(1, '#121212');
+                ctx.fillStyle = bgGrad;
+                ctx.fillRect(0, 0, W, H);
+
+                // Subtle accent glow top
+                const glowGrad = ctx.createRadialGradient(W / 2, 0, 0, W / 2, 0, 600);
+                glowGrad.addColorStop(0, 'rgba(16, 185, 129, 0.08)');
+                glowGrad.addColorStop(1, 'rgba(16, 185, 129, 0)');
+                ctx.fillStyle = glowGrad;
+                ctx.fillRect(0, 0, W, 600);
+
+                // === HEADER ===
+                const logo = new Image();
+                logo.src = 'logo.svg';
+                await new Promise(resolve => {
+                    logo.onload = () => {
+                        ctx.drawImage(logo, 60, 55, 80, 80);
+                        resolve();
+                    };
+                    logo.onerror = () => resolve();
                 });
 
-                // Restaurer l'état IMC si nécessaire
-                if (wasImcVisible && imcOverlay) {
-                    imcOverlay.style.opacity = '0';
-                    imcOverlay.style.background = 'transparent';
-                    imcOverlay.style.backdropFilter = 'none';
-                    imcOverlay.style.webkitBackdropFilter = 'none';
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 44px "DM Sans", sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('NutriTrack', 155, 110);
+
+                // Date
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '26px "DM Sans", sans-serif';
+                ctx.textAlign = 'right';
+                const dateStr = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+                ctx.fillText(dateStr, W - 60, 105);
+
+                // Separator
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(60, 160);
+                ctx.lineTo(W - 60, 160);
+                ctx.stroke();
+
+                // === PROFIL SECTION ===
+                let y = 195;
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '600 22px "DM Sans", sans-serif';
+                ctx.textAlign = 'left';
+                ctx.letterSpacing = '2px';
+                ctx.fillText('MON PROFIL', 60, y);
+
+                y += 30;
+                const cardW = (W - 60 * 2 - 20) / 2; // 2 columns with 20px gap
+                const cardH = 100;
+                const gap = 20;
+
+                // Card: Age
+                drawCard(60, y, cardW, cardH);
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '22px "DM Sans", sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('Âge', 60 + 24, y + 38);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 32px "DM Sans", sans-serif';
+                ctx.fillText(`${age} ans`, 60 + 24, y + 78);
+
+                // Card: Taille
+                drawCard(60 + cardW + gap, y, cardW, cardH);
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '22px "DM Sans", sans-serif';
+                ctx.fillText('Taille', 60 + cardW + gap + 24, y + 38);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 32px "DM Sans", sans-serif';
+                ctx.fillText(`${Math.round(height)} cm`, 60 + cardW + gap + 24, y + 78);
+
+                y += cardH + gap;
+
+                // Card: Poids
+                drawCard(60, y, cardW, cardH);
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '22px "DM Sans", sans-serif';
+                ctx.fillText('Poids', 60 + 24, y + 38);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 32px "DM Sans", sans-serif';
+                ctx.fillText(`${weight} kg`, 60 + 24, y + 78);
+
+                // Card: Activité
+                drawCard(60 + cardW + gap, y, cardW, cardH);
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '22px "DM Sans", sans-serif';
+                ctx.fillText('Activité', 60 + cardW + gap + 24, y + 38);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 28px "DM Sans", sans-serif';
+                ctx.fillText(activityLabel, 60 + cardW + gap + 24, y + 78);
+
+                // === OBJECTIF & MODE ===
+                y += cardH + gap + 20;
+
+                // Goal badge
+                const goalColors = { 'cut': '#f87171', 'maintain': '#10b981', 'bulk': '#38bdf8' };
+                const goalColor = goalColors[currentGoal] || '#10b981';
+
+                drawCard(60, y, W - 120, 120, 16);
+
+                // Goal label
+                ctx.fillStyle = goalColor;
+                ctx.font = 'bold 30px "DM Sans", sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(goalLabel.toUpperCase(), 84, y + 45);
+
+                // Goal dot
+                ctx.beginPath();
+                ctx.arc(76, y + 38, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Mode label
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '24px "DM Sans", sans-serif';
+                ctx.fillText(modeLabel, 84, y + 82);
+
+                // Mode details (right side)
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '24px "DM Sans", sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(modeDetails, W - 84, y + 82);
+
+                // Vertical separator
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+                ctx.beginPath();
+                ctx.moveTo(84, y + 55);
+                ctx.lineTo(W - 84, y + 55);
+                ctx.stroke();
+
+                // === CALORIES CIRCLE ===
+                y += 175;
+                const centerX = W / 2;
+                const centerY = y + 170;
+                const radius = 150;
+
+                // Outer ring background
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+                ctx.lineWidth = 20;
+                ctx.stroke();
+
+                // Colored segments (protein, carbs, fat proportional)
+                const total = pPct + cPct + fPct;
+                if (total > 0) {
+                    const startAngle = -Math.PI / 2;
+                    const segGap = 0.04; // Small gap between segments
+
+                    // Protein arc
+                    const protEnd = startAngle + (pPct / total) * Math.PI * 2 - segGap;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, radius, startAngle, protEnd);
+                    ctx.strokeStyle = '#f87171';
+                    ctx.lineWidth = 20;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+
+                    // Carbs arc
+                    const carbStart = protEnd + segGap * 2;
+                    const carbEnd = carbStart + (cPct / total) * Math.PI * 2 - segGap;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, radius, carbStart, carbEnd);
+                    ctx.strokeStyle = '#38bdf8';
+                    ctx.stroke();
+
+                    // Fat arc
+                    const fatStart = carbEnd + segGap * 2;
+                    const fatEnd = fatStart + (fPct / total) * Math.PI * 2 - segGap;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, radius, fatStart, fatEnd);
+                    ctx.strokeStyle = '#fbbf24';
+                    ctx.stroke();
                 }
 
-                // Convertir en image et télécharger
-                canvas.toBlob((blob) => {
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    const now = new Date();
-                    const dateStr = `${now.getDate()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getFullYear()}`;
-                    link.download = `macros-nutrition-${dateStr}.png`;
-                    link.href = url;
-                    link.click();
-                    URL.revokeObjectURL(url);
+                // Calories value in center
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 64px "DM Sans", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(Math.round(calories).toLocaleString('fr-FR'), centerX, centerY - 5);
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '28px "DM Sans", sans-serif';
+                ctx.fillText('kcal / jour', centerX, centerY + 38);
 
-                    showToast('<i data-lucide="check-circle" class="icon-inline"></i> Image téléchargée !');
+                // === MACROS SECTION ===
+                y = centerY + radius + 60;
+
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '600 22px "DM Sans", sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('RÉPARTITION DES MACROS', 60, y);
+
+                y += 25;
+
+                const macros = [
+                    { label: 'Protéines', value: protein, pct: pPct, color: '#f87171' },
+                    { label: 'Glucides', value: carbs, pct: cPct, color: '#38bdf8' },
+                    { label: 'Lipides', value: fat, pct: fPct, color: '#fbbf24' }
+                ];
+
+                const barWidth = W - 120;
+                const barH = 14;
+
+                macros.forEach(macro => {
+                    y += 50;
+
+                    // Label + percentage
+                    ctx.fillStyle = macro.color;
+                    ctx.font = 'bold 28px "DM Sans", sans-serif';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(macro.label, 60, y);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 28px "DM Sans", sans-serif';
+                    ctx.textAlign = 'right';
+                    ctx.fillText(`${Math.round(macro.value)}g`, W - 180, y);
+
+                    ctx.fillStyle = '#b8b8b8';
+                    ctx.font = '28px "DM Sans", sans-serif';
+                    ctx.fillText(`${macro.pct}%`, W - 60, y);
+
+                    // Bar background
+                    y += 18;
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+                    roundRect(60, y, barWidth, barH, 7);
+                    ctx.fill();
+
+                    // Bar fill
+                    const fillWidth = Math.max(barWidth * (macro.pct / 100), barH);
+                    ctx.fillStyle = macro.color;
+                    roundRect(60, y, fillWidth, barH, 7);
+                    ctx.fill();
+
+                    y += barH;
+                });
+
+                // === METRICS SECTION (BMR, TDEE, IMC) ===
+                y += 50;
+
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '600 22px "DM Sans", sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('MÉTABOLISME', 60, y);
+
+                y += 25;
+                const metricW = (W - 120 - 40) / 3; // 3 columns with 20px gaps
+
+                // BMR Card
+                drawCard(60, y, metricW, 110, 16);
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '20px "DM Sans", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('BMR', 60 + metricW / 2, y + 35);
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold 30px "DM Sans", sans-serif';
+                ctx.fillText(`${bmr}`, 60 + metricW / 2, y + 72);
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '18px "DM Sans", sans-serif';
+                ctx.fillText('kcal', 60 + metricW / 2, y + 97);
+
+                // TDEE Card
+                const tdeeX = 60 + metricW + 20;
+                drawCard(tdeeX, y, metricW, 110, 16);
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '20px "DM Sans", sans-serif';
+                ctx.fillText('TDEE', tdeeX + metricW / 2, y + 35);
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold 30px "DM Sans", sans-serif';
+                ctx.fillText(`${tdee}`, tdeeX + metricW / 2, y + 72);
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '18px "DM Sans", sans-serif';
+                ctx.fillText('kcal', tdeeX + metricW / 2, y + 97);
+
+                // IMC Card
+                const imcX = tdeeX + metricW + 20;
+                drawCard(imcX, y, metricW, 110, 16);
+                ctx.fillStyle = '#b8b8b8';
+                ctx.font = '20px "DM Sans", sans-serif';
+                ctx.fillText('IMC', imcX + metricW / 2, y + 35);
+                ctx.fillStyle = imcColor;
+                ctx.font = 'bold 30px "DM Sans", sans-serif';
+                ctx.fillText(`${imc}`, imcX + metricW / 2, y + 72);
+                ctx.fillStyle = imcColor;
+                ctx.font = '18px "DM Sans", sans-serif';
+                ctx.fillText(imcCategory, imcX + metricW / 2, y + 97);
+
+                // === FOOTER ===
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+                ctx.fillRect(0, H - 80, W, 80);
+
+                ctx.fillStyle = '#666666';
+                ctx.font = '22px "DM Sans", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Généré avec NutriTrack · ${dateStr}`, W / 2, H - 35);
+
+                // === EXPORT ===
+                canvas.toBlob(async blob => {
+                    const now = new Date();
+                    const fileDate = `${now.getDate()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getFullYear()}`;
+                    const file = new File([blob], `nutritrack-macros-${fileDate}.png`, { type: 'image/png' });
+
+                    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                    if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: 'Mes macros NutriTrack',
+                                text: `Mes macros du ${dateStr}`
+                            });
+                            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Image partagée !');
+                        } catch (err) {
+                            if (err.name !== 'AbortError') {
+                                downloadImage(blob, `macros-${fileDate}`);
+                            }
+                        }
+                    } else {
+                        downloadImage(blob, `macros-${fileDate}`);
+                    }
                 });
 
             } catch (error) {
                 console.error('Erreur export:', error);
-                alert('Erreur lors de l\'export. Utilise la capture d\'écran de ton appareil.');
+                showToast('Erreur lors de l\'export.', 'error');
             }
         }
 
