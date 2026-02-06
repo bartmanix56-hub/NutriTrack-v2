@@ -752,7 +752,7 @@
             border-radius: var(--radius-lg);
             max-height: 400px;
             overflow-y: auto;
-            z-index: 9999;
+            z-index: 50;
             display: none;
             min-width: 350px;
             max-width: 500px;
@@ -924,7 +924,7 @@
             font-size: 0.9rem;
             font-weight: 600;
             pointer-events: none;
-            z-index: 10000;
+            z-index: 500;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             animation: flyToMacros 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
@@ -1713,7 +1713,7 @@
                 padding: 12px 8px 0 8px !important;
                 padding-bottom: max(24px, env(safe-area-inset-bottom)) !important; /* Safe area iOS home indicator + extra space */
                 gap: 0 !important;
-                z-index: 9999 !important;
+                z-index: 110 !important;
                 background: var(--bg-secondary) !important;
                 box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
                 backdrop-filter: blur(10px);
@@ -2153,7 +2153,7 @@
                 font-size: 1.5rem !important;
                 top: var(--space-md) !important;
                 right: var(--space-md) !important;
-                z-index: 1000 !important;
+                z-index: 10 !important;
             }
 
             .modal-content {
@@ -2951,7 +2951,7 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px 24px 0 0;
             padding: var(--space-xl) var(--space-lg);
-            z-index: 10001; /* Au-dessus de la navbar (9999) */
+            z-index: 220; /* Au-dessus de la navbar */
             box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.4);
             animation: slideUp 0.25s ease-out;
             max-height: 60vh;
@@ -2975,7 +2975,7 @@
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-            z-index: 10000; /* Entre navbar et drawer */
+            z-index: 200; /* Entre navbar et drawer */
         }
 
         .mobile-drawer-overlay.active { display: block; }
@@ -4181,7 +4181,7 @@
             padding: 15px 25px;
             border-radius: var(--radius-md);
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 10000;
+            z-index: 500;
             animation: slideIn 0.3s ease, slideOut 0.3s ease 2.7s;
             opacity: 0;
             pointer-events: all;
@@ -4210,7 +4210,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.7);
-            z-index: 10002;
+            z-index: 400;
             justify-content: center;
             align-items: center;
             animation: fadeIn 0.2s ease;
@@ -4303,7 +4303,7 @@
             padding: 16px 24px;
             border-radius: var(--radius-md);
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 10001;
+            z-index: 500;
             display: none;
             align-items: center;
             gap: 10px;
@@ -4427,7 +4427,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 50;
             padding: var(--space-xl);
         }
 
@@ -4481,7 +4481,7 @@
             -webkit-backdrop-filter: blur(4px);
             transition: opacity 0.3s;
             border: 1px solid var(--accent-ui);
-            z-index: 1000;
+            z-index: 50;
         }
 
         .sidebar-btn.disabled:hover::after  { opacity: 1; }
@@ -4822,4 +4822,244 @@
 
 .food-selection-item:active {
     transform: translateZ(0) scale(0.98); /* Click feedback */
+}
+
+/* ===================================================================
+   MOBILE UX FIXES - Touch targets, transitions, focus states
+   =================================================================== */
+
+/* --- Z-INDEX HIERARCHY (unified system) ---
+   1-99:     Base elements (dropdowns, tooltips)
+   100-199:  Fixed elements (header, navbar)
+   200-299:  Overlays (sidebar backdrop)
+   300-399:  Modals (standard modals)
+   400-499:  Priority modals (confirmations, alerts)
+   500+:     Critical (loading overlays, toasts)
+*/
+:root {
+    --z-dropdown: 50;
+    --z-header: 100;
+    --z-navbar: 110;
+    --z-sidebar-backdrop: 200;
+    --z-sidebar: 210;
+    --z-modal: 300;
+    --z-modal-priority: 400;
+    --z-toast: 500;
+    --z-loading: 600;
+}
+
+/* --- FOCUS STATES FOR BUTTONS (keyboard navigation) --- */
+button:focus-visible,
+.icon-btn:focus-visible,
+.delete-btn:focus-visible,
+.btn:focus-visible,
+[role="button"]:focus-visible {
+    outline: 2px solid var(--accent-main);
+    outline-offset: 2px;
+}
+
+/* Remove default outline only when :focus-visible is supported */
+button:focus:not(:focus-visible),
+.icon-btn:focus:not(:focus-visible),
+.delete-btn:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* --- MOBILE TOUCH TARGETS (min 44px per Apple HIG) --- */
+@media (max-width: 768px) {
+    /* Water +/- buttons */
+    .water-btn,
+    button[onclick*="updateWater"] {
+        min-width: 44px !important;
+        min-height: 44px !important;
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 1.2rem !important;
+    }
+
+    /* Navigation buttons (date nav, chevrons) */
+    .date-nav-btn,
+    button[onclick*="changeMealDate"],
+    button[onclick*="changeDate"] {
+        min-width: 44px !important;
+        min-height: 44px !important;
+    }
+
+    /* Icon buttons minimum size */
+    .icon-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    /* Delete buttons */
+    .delete-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    /* Meal menu buttons */
+    .meal-menu-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    /* Close buttons in modals */
+    .modal-close {
+        min-width: 44px;
+        min-height: 44px;
+        width: 44px;
+        height: 44px;
+    }
+
+    /* Generic small buttons enlargement */
+    button[style*="width: 24px"],
+    button[style*="width: 28px"],
+    button[style*="width: 32px"],
+    button[style*="height: 24px"],
+    button[style*="height: 28px"],
+    button[style*="height: 32px"] {
+        min-width: 44px !important;
+        min-height: 44px !important;
+    }
+}
+
+/* --- MIN-WIDTH OVERFLOW FIXES (prevent horizontal scroll) --- */
+@media (max-width: 480px) {
+    /* Inputs should not force horizontal scroll */
+    input[style*="min-width: 200px"],
+    input[style*="min-width: 250px"],
+    input[style*="min-width: 300px"] {
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Search inputs */
+    #foodDbSearch,
+    #global-quick-add,
+    #food-search,
+    #users-filter-search,
+    [id*="-search"],
+    [id*="-filter"] {
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Cards should not overflow */
+    .card {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+}
+
+/* --- MODAL TRANSITIONS (smooth open/close) --- */
+.modal {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal .modal-content {
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.2s ease;
+}
+
+.modal.active .modal-content {
+    transform: translateY(0) scale(1);
+}
+
+/* --- DROPDOWN/MENU TRANSITIONS --- */
+.meal-menu {
+    opacity: 0;
+    transform: translateY(-10px);
+    visibility: hidden;
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+}
+
+.meal-menu.show {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+/* --- SEARCH RESULTS TRANSITIONS --- */
+#modalSearchResults,
+#global-quick-add-results,
+.search-results {
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+#modalSearchResults[style*="display: block"],
+#modalSearchResults:not([style*="display: none"]),
+#global-quick-add-results.show,
+.search-results.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- TOAST IMPROVEMENTS --- */
+#toast {
+    z-index: var(--z-toast, 500);
+}
+
+/* --- TAB CONTENT EXIT ANIMATION --- */
+.tab-content {
+    animation: none;
+}
+
+.tab-content.active {
+    animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- LOADING STATES --- */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--accent-main);
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Button loading state */
+button.loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+}
+
+button.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 0.8s linear infinite;
 }
