@@ -11042,7 +11042,7 @@ Solutions possibles :
 
             // Ouvrir un modal de sélection d'aliments depuis foodDatabase
             const modalHtml = `
-                <div id="food-selection-modal" class="modal active" style="z-index: 10001;">
+                <div id="food-selection-modal" class="modal active" style="z-index: 350;">
                     <div class="modal-content" style="max-width: 700px; max-height: 80vh; display: flex; flex-direction: column;">
                         <div class="modal-header">
                             <h2 class="modal-title">Sélectionner un aliment</h2>
