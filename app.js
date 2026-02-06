@@ -8339,6 +8339,11 @@ Solutions possibles :
 
             // IMPORTANT: Mettre à jour la disponibilité des sections après chargement des macros
             updateSectionsAvailability();
+
+            // IMPORTANT: Mettre à jour le widget "Il te reste" maintenant que les macros sont chargées
+            if (typeof updateDayTotals === 'function') {
+                updateDayTotals();
+            }
         }
 
         // ===== CALCULATOR SETTINGS =====
