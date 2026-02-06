@@ -11166,14 +11166,15 @@ Solutions possibles :
             }
 
             // Sync wizard fields with original fields if already filled
-            syncWizardFromOriginal();
+            window.syncWizardFromOriginal();
 
             // Update step display
             updateWizardStepDisplay();
         };
 
         // Sync wizard inputs from original calculator inputs
-        function syncWizardFromOriginal() {
+        // Exposed globally so admin.js can call it after profile loads
+        window.syncWizardFromOriginal = function() {
             const mappings = [
                 ['birth-day', 'wizard-birth-day'],
                 ['birth-month', 'wizard-birth-month'],
@@ -11203,7 +11204,35 @@ Solutions possibles :
                     }
                 }
             });
-        }
+
+            // Sync goal from original calculator
+            const activeGoalBtn = document.querySelector('.goal-btn.active');
+            if (activeGoalBtn && activeGoalBtn.dataset.goal) {
+                const goal = activeGoalBtn.dataset.goal;
+                document.querySelectorAll('.wizard-goal-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.goal === goal);
+                });
+                // Toggle pace panels based on goal
+                const paceDeficit = document.getElementById('wizard-pace-deficit');
+                const paceMaintain = document.getElementById('wizard-pace-maintain');
+                if (goal === 'maintain') {
+                    if (paceDeficit) paceDeficit.style.display = 'none';
+                    if (paceMaintain) paceMaintain.style.display = 'grid';
+                } else {
+                    if (paceDeficit) paceDeficit.style.display = 'grid';
+                    if (paceMaintain) paceMaintain.style.display = 'none';
+                }
+            }
+
+            // Sync pace from original calculator
+            const activePaceBtn = document.querySelector('.pace-btn.active');
+            if (activePaceBtn && activePaceBtn.dataset.pace) {
+                const pace = activePaceBtn.dataset.pace;
+                document.querySelectorAll('.wizard-pace-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.pace === pace);
+                });
+            }
+        };
 
         // Sync original inputs from wizard inputs
         function syncOriginalFromWizard() {
