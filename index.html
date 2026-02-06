@@ -900,7 +900,378 @@
 
         <!-- Calculator Tab -->
         <div id="calculator" class="tab-content">
-            <!-- Hero Header -->
+
+            <!-- ========== WIZARD UI ========== -->
+            <div class="calc-wizard">
+                <!-- Hero Header -->
+                <div style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); border-radius: var(--radius-xl); padding: var(--space-3xl); margin-bottom: var(--space-2xl); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); text-align: center;">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 70px; height: 70px; background: var(--accent-ui); border-radius: var(--radius-xl); margin-bottom: var(--space-lg);">
+                        <i data-lucide="calculator" style="width: 36px; height: 36px; color: white;"></i>
+                    </div>
+                    <h1 style="font-size: 2rem; font-weight: 700; margin: 0; color: var(--text-primary);">
+                        Calcule tes Macros
+                    </h1>
+                    <p style="margin: var(--space-sm) 0 0 0; color: var(--text-secondary); font-size: 1rem;">
+                        En 3 étapes simples
+                    </p>
+                </div>
+
+                <!-- Progress Steps -->
+                <div class="wizard-progress">
+                    <div class="wizard-step-indicator active" onclick="wizardGoToStep(1)">
+                        <div class="wizard-step-number">1</div>
+                        <div class="wizard-step-label">Profil</div>
+                    </div>
+                    <div class="wizard-step-connector"></div>
+                    <div class="wizard-step-indicator" onclick="wizardGoToStep(2)">
+                        <div class="wizard-step-number">2</div>
+                        <div class="wizard-step-label">Objectif</div>
+                    </div>
+                    <div class="wizard-step-connector"></div>
+                    <div class="wizard-step-indicator" onclick="wizardGoToStep(3)">
+                        <div class="wizard-step-number">3</div>
+                        <div class="wizard-step-label">Résultats</div>
+                    </div>
+                </div>
+
+                <!-- ===== STEP 1: Profile ===== -->
+                <div class="wizard-panel active" data-step="1">
+                    <div class="wizard-card">
+                        <div class="wizard-card-header">
+                            <div class="wizard-card-icon">
+                                <i data-lucide="user" style="width: 28px; height: 28px;"></i>
+                            </div>
+                            <div>
+                                <h2 class="wizard-card-title">Ton Profil</h2>
+                                <p class="wizard-card-subtitle">Ces informations permettent de calculer ton métabolisme</p>
+                            </div>
+                        </div>
+
+                        <!-- Date de naissance -->
+                        <div class="wizard-form-group">
+                            <label class="wizard-label">
+                                🎂 Date de naissance <span class="required">*</span>
+                            </label>
+                            <div class="wizard-row-3">
+                                <select id="wizard-birth-day" class="wizard-select">
+                                    <option value="">Jour</option>
+                                </select>
+                                <select id="wizard-birth-month" class="wizard-select">
+                                    <option value="">Mois</option>
+                                    <option value="0">Janvier</option>
+                                    <option value="1">Février</option>
+                                    <option value="2">Mars</option>
+                                    <option value="3">Avril</option>
+                                    <option value="4">Mai</option>
+                                    <option value="5">Juin</option>
+                                    <option value="6">Juillet</option>
+                                    <option value="7">Août</option>
+                                    <option value="8">Septembre</option>
+                                    <option value="9">Octobre</option>
+                                    <option value="10">Novembre</option>
+                                    <option value="11">Décembre</option>
+                                </select>
+                                <select id="wizard-birth-year" class="wizard-select">
+                                    <option value="">Année</option>
+                                </select>
+                            </div>
+                            <p class="wizard-hint">Ton âge sera calculé automatiquement</p>
+                        </div>
+
+                        <!-- Sexe -->
+                        <div class="wizard-form-group">
+                            <label class="wizard-label">
+                                👤 Sexe <span class="required">*</span>
+                            </label>
+                            <input type="hidden" id="wizard-gender" value="">
+                            <div class="wizard-selector">
+                                <div class="wizard-selector-btn" data-gender="male" onclick="wizardSelectGender('male')">
+                                    <div class="btn-icon">👨</div>
+                                    <div class="btn-label">Homme</div>
+                                </div>
+                                <div class="wizard-selector-btn" data-gender="female" onclick="wizardSelectGender('female')">
+                                    <div class="btn-icon">👩</div>
+                                    <div class="btn-label">Femme</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Taille & Poids -->
+                        <div class="wizard-form-group">
+                            <div class="wizard-row">
+                                <div>
+                                    <label class="wizard-label">
+                                        📏 Taille (cm) <span class="required">*</span>
+                                    </label>
+                                    <input type="number" id="wizard-height" class="wizard-input" inputmode="decimal" placeholder="175" min="100" max="250" step="0.5">
+                                </div>
+                                <div>
+                                    <label class="wizard-label">
+                                        ⚖️ Poids (kg) <span class="required">*</span>
+                                    </label>
+                                    <input type="number" id="wizard-weight" class="wizard-input" inputmode="decimal" placeholder="75" min="30" max="300" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Niveau d'activité -->
+                        <div class="wizard-form-group">
+                            <label class="wizard-label">
+                                🏃 Niveau d'activité <span class="required">*</span>
+                            </label>
+                            <input type="hidden" id="wizard-activity" value="">
+                            <div class="wizard-activity-list">
+                                <div class="wizard-activity-btn" data-value="1.2" onclick="wizardSelectActivity('1.2')">
+                                    <div class="activity-icon">🪑</div>
+                                    <div class="activity-info">
+                                        <div class="activity-title">Sédentaire</div>
+                                        <div class="activity-desc">Peu ou pas d'exercice</div>
+                                    </div>
+                                </div>
+                                <div class="wizard-activity-btn" data-value="1.375" onclick="wizardSelectActivity('1.375')">
+                                    <div class="activity-icon">🚶</div>
+                                    <div class="activity-info">
+                                        <div class="activity-title">Légèrement actif</div>
+                                        <div class="activity-desc">1-3 jours d'exercice par semaine</div>
+                                    </div>
+                                </div>
+                                <div class="wizard-activity-btn" data-value="1.55" onclick="wizardSelectActivity('1.55')">
+                                    <div class="activity-icon">🏃</div>
+                                    <div class="activity-info">
+                                        <div class="activity-title">Modérément actif</div>
+                                        <div class="activity-desc">3-5 jours d'exercice par semaine</div>
+                                    </div>
+                                </div>
+                                <div class="wizard-activity-btn" data-value="1.725" onclick="wizardSelectActivity('1.725')">
+                                    <div class="activity-icon">💪</div>
+                                    <div class="activity-info">
+                                        <div class="activity-title">Très actif</div>
+                                        <div class="activity-desc">6-7 jours d'exercice par semaine</div>
+                                    </div>
+                                </div>
+                                <div class="wizard-activity-btn" data-value="1.9" onclick="wizardSelectActivity('1.9')">
+                                    <div class="activity-icon">🔥</div>
+                                    <div class="activity-info">
+                                        <div class="activity-title">Extrêmement actif</div>
+                                        <div class="activity-desc">2x par jour + travail physique</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="wizard-nav">
+                            <div></div>
+                            <button class="wizard-btn wizard-btn-next" onclick="wizardGoToStep(2)">
+                                Suivant <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== STEP 2: Objective ===== -->
+                <div class="wizard-panel" data-step="2">
+                    <div class="wizard-card">
+                        <div class="wizard-card-header">
+                            <div class="wizard-card-icon">
+                                <i data-lucide="flag" style="width: 28px; height: 28px;"></i>
+                            </div>
+                            <div>
+                                <h2 class="wizard-card-title">Ton Objectif</h2>
+                                <p class="wizard-card-subtitle">Que souhaites-tu accomplir ?</p>
+                            </div>
+                        </div>
+
+                        <!-- Goal selection -->
+                        <div class="wizard-form-group">
+                            <label class="wizard-label">
+                                🎯 Objectif principal
+                            </label>
+                            <div class="wizard-selector wizard-selector-3">
+                                <div class="wizard-selector-btn wizard-goal-btn active" data-goal="cut" onclick="wizardSelectGoal('cut')">
+                                    <div class="btn-icon"><i data-lucide="flame" style="width: 28px; height: 28px; color: var(--accent-protein);"></i></div>
+                                    <div class="btn-label">Sèche</div>
+                                    <div class="btn-desc">Perdre du gras</div>
+                                </div>
+                                <div class="wizard-selector-btn wizard-goal-btn" data-goal="maintain" onclick="wizardSelectGoal('maintain')">
+                                    <div class="btn-icon"><i data-lucide="equal" style="width: 28px; height: 28px; color: var(--accent-main);"></i></div>
+                                    <div class="btn-label">Maintien</div>
+                                    <div class="btn-desc">Stabiliser</div>
+                                </div>
+                                <div class="wizard-selector-btn wizard-goal-btn" data-goal="bulk" onclick="wizardSelectGoal('bulk')">
+                                    <div class="btn-icon"><i data-lucide="trending-up" style="width: 28px; height: 28px; color: var(--accent-carbs);"></i></div>
+                                    <div class="btn-label">Prise</div>
+                                    <div class="btn-desc">Gagner en muscle</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pace selection -->
+                        <div class="wizard-form-group">
+                            <label class="wizard-label" id="wizard-pace-label">
+                                ⚡ Quel rythme ?
+                            </label>
+
+                            <!-- Pace buttons for cut/bulk -->
+                            <div id="wizard-pace-deficit" class="wizard-selector wizard-selector-3">
+                                <div class="wizard-selector-btn wizard-pace-btn active" data-pace="gentle" onclick="wizardSelectPace('gentle')">
+                                    <div class="btn-icon"><i data-lucide="smile" style="width: 24px; height: 24px;"></i></div>
+                                    <div class="btn-label">Doux</div>
+                                    <div class="btn-desc">Facile à tenir</div>
+                                </div>
+                                <div class="wizard-selector-btn wizard-pace-btn" data-pace="normal" onclick="wizardSelectPace('normal')">
+                                    <div class="btn-icon"><i data-lucide="arrow-right" style="width: 24px; height: 24px;"></i></div>
+                                    <div class="btn-label">Normal</div>
+                                    <div class="btn-desc">Équilibré</div>
+                                </div>
+                                <div class="wizard-selector-btn wizard-pace-btn" data-pace="fast" onclick="wizardSelectPace('fast')">
+                                    <div class="btn-icon"><i data-lucide="zap" style="width: 24px; height: 24px;"></i></div>
+                                    <div class="btn-label">Rapide</div>
+                                    <div class="btn-desc">Plus exigeant</div>
+                                </div>
+                            </div>
+
+                            <!-- Pace buttons for maintain (hidden by default) -->
+                            <div id="wizard-pace-maintain" class="wizard-selector wizard-selector-3" style="display: none;">
+                                <div class="wizard-selector-btn wizard-pace-btn" data-pace="high-carb" onclick="wizardSelectPace('high-carb')">
+                                    <div class="btn-icon"><i data-lucide="wheat" style="width: 24px; height: 24px;"></i></div>
+                                    <div class="btn-label">+ Glucides</div>
+                                    <div class="btn-desc">Énergie rapide</div>
+                                </div>
+                                <div class="wizard-selector-btn wizard-pace-btn active" data-pace="balanced" onclick="wizardSelectPace('balanced')">
+                                    <div class="btn-icon"><i data-lucide="scale" style="width: 24px; height: 24px;"></i></div>
+                                    <div class="btn-label">Équilibré</div>
+                                    <div class="btn-desc">Répartition classique</div>
+                                </div>
+                                <div class="wizard-selector-btn wizard-pace-btn" data-pace="high-fat" onclick="wizardSelectPace('high-fat')">
+                                    <div class="btn-icon"><i data-lucide="droplet" style="width: 24px; height: 24px;"></i></div>
+                                    <div class="btn-label">+ Lipides</div>
+                                    <div class="btn-desc">Satiété durable</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="wizard-nav">
+                            <button class="wizard-btn wizard-btn-prev" onclick="wizardGoToStep(1)">
+                                <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> Retour
+                            </button>
+                            <button class="wizard-btn wizard-btn-next" onclick="wizardGoToStep(3)">
+                                Calculer <i data-lucide="calculator" style="width: 18px; height: 18px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== STEP 3: Results ===== -->
+                <div class="wizard-panel" data-step="3">
+                    <div class="wizard-card">
+                        <div class="wizard-card-header">
+                            <div class="wizard-card-icon">
+                                <i data-lucide="bar-chart-3" style="width: 28px; height: 28px;"></i>
+                            </div>
+                            <div>
+                                <h2 class="wizard-card-title">Tes Résultats</h2>
+                                <p class="wizard-card-subtitle">Voici tes objectifs macros personnalisés</p>
+                            </div>
+                        </div>
+
+                        <!-- BMR, TDEE, IMC -->
+                        <div class="wizard-results-grid">
+                            <div class="wizard-stat-card">
+                                <div class="wizard-stat-label">BMR</div>
+                                <div class="wizard-stat-value"><span id="wizard-bmr">—</span></div>
+                                <div class="wizard-stat-hint">kcal au repos</div>
+                            </div>
+                            <div class="wizard-stat-card">
+                                <div class="wizard-stat-label">TDEE</div>
+                                <div class="wizard-stat-value"><span id="wizard-tdee">—</span></div>
+                                <div class="wizard-stat-hint">kcal dépensées</div>
+                            </div>
+                            <div class="wizard-stat-card">
+                                <div class="wizard-stat-label">IMC</div>
+                                <div class="wizard-stat-value"><span id="wizard-imc">—</span></div>
+                                <div class="wizard-stat-hint">indice corporel</div>
+                            </div>
+                        </div>
+
+                        <!-- Total Calories -->
+                        <div class="wizard-total-cal">
+                            <div class="wizard-total-label">Ton objectif calorique</div>
+                            <div>
+                                <span class="wizard-total-value" id="wizard-total-cal">—</span>
+                                <span class="wizard-total-unit">kcal/jour</span>
+                            </div>
+                        </div>
+
+                        <!-- Macro Rings -->
+                        <div class="wizard-macros-grid">
+                            <div class="wizard-macro-ring">
+                                <svg class="wizard-ring-svg" viewBox="0 0 120 120">
+                                    <circle class="wizard-ring-bg" cx="60" cy="60" r="54"></circle>
+                                    <circle class="wizard-ring-progress protein" id="wizard-ring-protein" cx="60" cy="60" r="54"></circle>
+                                </svg>
+                                <div class="wizard-macro-value protein" id="wizard-protein-value">—</div>
+                                <div class="wizard-macro-label">Protéines</div>
+                                <div class="wizard-macro-kcal" id="wizard-protein-kcal">— kcal</div>
+                            </div>
+                            <div class="wizard-macro-ring">
+                                <svg class="wizard-ring-svg" viewBox="0 0 120 120">
+                                    <circle class="wizard-ring-bg" cx="60" cy="60" r="54"></circle>
+                                    <circle class="wizard-ring-progress carbs" id="wizard-ring-carbs" cx="60" cy="60" r="54"></circle>
+                                </svg>
+                                <div class="wizard-macro-value carbs" id="wizard-carbs-value">—</div>
+                                <div class="wizard-macro-label">Glucides</div>
+                                <div class="wizard-macro-kcal" id="wizard-carbs-kcal">— kcal</div>
+                            </div>
+                            <div class="wizard-macro-ring">
+                                <svg class="wizard-ring-svg" viewBox="0 0 120 120">
+                                    <circle class="wizard-ring-bg" cx="60" cy="60" r="54"></circle>
+                                    <circle class="wizard-ring-progress fat" id="wizard-ring-fat" cx="60" cy="60" r="54"></circle>
+                                </svg>
+                                <div class="wizard-macro-value fat" id="wizard-fat-value">—</div>
+                                <div class="wizard-macro-label">Lipides</div>
+                                <div class="wizard-macro-kcal" id="wizard-fat-kcal">— kcal</div>
+                            </div>
+                        </div>
+
+                        <!-- CTA Buttons -->
+                        <div class="wizard-cta">
+                            <button class="wizard-cta-btn primary" onclick="wizardExportImage()">
+                                <i data-lucide="camera" style="width: 18px; height: 18px;"></i> Télécharger en image
+                            </button>
+                            <button class="wizard-cta-btn secondary" onclick="wizardGoToMeals()">
+                                <i data-lucide="calendar" style="width: 18px; height: 18px;"></i> Aller à Mes Repas
+                            </button>
+                        </div>
+
+                        <!-- Tip -->
+                        <div class="wizard-tip">
+                            <div class="wizard-tip-title">
+                                <i data-lucide="lightbulb" style="width: 18px; height: 18px; color: var(--accent-main);"></i>
+                                Bon à savoir
+                            </div>
+                            <p class="wizard-tip-text">
+                                Ces valeurs sont un point de départ. Suis-les pendant <strong>10-14 jours</strong>, puis ajuste selon ton ressenti : énergie, humeur, résultats sur la balance.
+                            </p>
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="wizard-nav">
+                            <button class="wizard-btn wizard-btn-prev" onclick="wizardGoToStep(2)">
+                                <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> Modifier
+                            </button>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ========== END WIZARD UI ========== -->
+
+            <!-- ========== ORIGINAL CALCULATOR (hidden, used by JS) ========== -->
+            <div id="original-calculator" style="display: none;">
+
+            <!-- Original Hero Header (hidden) -->
             <div style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); border-radius: var(--radius-xl); padding: var(--space-3xl); margin-bottom: var(--space-3xl); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);">
                 <div style="display: flex; align-items: center; gap: var(--space-lg); margin-bottom: var(--space-lg);">
                     <div style="font-size: 3rem; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; background: var(--accent-ui); border-radius: var(--radius-lg);"><i data-lucide="target" style="width: 36px; height: 36px; color: white;"></i></div>
@@ -1341,7 +1712,9 @@
                             </p>
                         </div></div>
                 </div><!-- Fin #results-content -->
-            </div></div>
+            </div>
+            </div><!-- Fin #original-calculator -->
+        </div><!-- Fin #calculator tab-content -->
 
         <!-- Meals Tab -->
         <div id="meals" class="tab-content">

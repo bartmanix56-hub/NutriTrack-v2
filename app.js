@@ -11135,3 +11135,328 @@ Solutions possibles :
             });
             renderTemplateFoods();
         };
+
+        // ===== CALCULATOR WIZARD =====
+        let wizardCurrentStep = 1;
+        const WIZARD_TOTAL_STEPS = 3;
+
+        // Initialize wizard - called on page load
+        window.initCalculatorWizard = function() {
+            // Populate birth day/year selects for wizard
+            const wizardDaySelect = document.getElementById('wizard-birth-day');
+            const wizardYearSelect = document.getElementById('wizard-birth-year');
+
+            if (wizardDaySelect && wizardDaySelect.options.length <= 1) {
+                for (let i = 1; i <= 31; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    wizardDaySelect.appendChild(option);
+                }
+            }
+
+            if (wizardYearSelect && wizardYearSelect.options.length <= 1) {
+                const currentYear = new Date().getFullYear();
+                for (let i = currentYear - 10; i >= currentYear - 100; i--) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    wizardYearSelect.appendChild(option);
+                }
+            }
+
+            // Sync wizard fields with original fields if already filled
+            syncWizardFromOriginal();
+
+            // Update step display
+            updateWizardStepDisplay();
+        };
+
+        // Sync wizard inputs from original calculator inputs
+        function syncWizardFromOriginal() {
+            const mappings = [
+                ['birth-day', 'wizard-birth-day'],
+                ['birth-month', 'wizard-birth-month'],
+                ['birth-year', 'wizard-birth-year'],
+                ['profile-gender', 'wizard-gender'],
+                ['height', 'wizard-height'],
+                ['weight', 'wizard-weight'],
+                ['activity', 'wizard-activity']
+            ];
+
+            mappings.forEach(([origId, wizardId]) => {
+                const origEl = document.getElementById(origId);
+                const wizardEl = document.getElementById(wizardId);
+                if (origEl && wizardEl && origEl.value) {
+                    wizardEl.value = origEl.value;
+                    // Update visual buttons for activity
+                    if (wizardId === 'wizard-activity') {
+                        document.querySelectorAll('.wizard-activity-btn').forEach(btn => {
+                            btn.classList.toggle('active', btn.dataset.value === origEl.value);
+                        });
+                    }
+                    // Update visual buttons for gender
+                    if (wizardId === 'wizard-gender') {
+                        document.querySelectorAll('.wizard-selector-btn[data-gender]').forEach(btn => {
+                            btn.classList.toggle('active', btn.dataset.gender === origEl.value);
+                        });
+                    }
+                }
+            });
+        }
+
+        // Sync original inputs from wizard inputs
+        function syncOriginalFromWizard() {
+            const mappings = [
+                ['wizard-birth-day', 'birth-day'],
+                ['wizard-birth-month', 'birth-month'],
+                ['wizard-birth-year', 'birth-year'],
+                ['wizard-gender', 'profile-gender'],
+                ['wizard-height', 'height'],
+                ['wizard-weight', 'weight'],
+                ['wizard-activity', 'activity']
+            ];
+
+            mappings.forEach(([wizardId, origId]) => {
+                const wizardEl = document.getElementById(wizardId);
+                const origEl = document.getElementById(origId);
+                if (wizardEl && origEl && wizardEl.value) {
+                    origEl.value = wizardEl.value;
+                }
+            });
+        }
+
+        // Navigate to a specific step
+        window.wizardGoToStep = function(step) {
+            if (step < 1 || step > WIZARD_TOTAL_STEPS) return;
+
+            // If going to step 3 (results), validate and calculate
+            if (step === 3) {
+                // Sync wizard inputs to original inputs
+                syncOriginalFromWizard();
+
+                // Validate required fields
+                const birthDay = document.getElementById('wizard-birth-day')?.value;
+                const birthMonth = document.getElementById('wizard-birth-month')?.value;
+                const birthYear = document.getElementById('wizard-birth-year')?.value;
+                const gender = document.getElementById('wizard-gender')?.value;
+                const height = document.getElementById('wizard-height')?.value;
+                const weight = document.getElementById('wizard-weight')?.value;
+                const activity = document.getElementById('wizard-activity')?.value;
+
+                if (!birthDay || !birthMonth || !birthYear) {
+                    showToast('Remplis ta date de naissance', 'error');
+                    return;
+                }
+                if (!gender) {
+                    showToast('Sélectionne ton sexe', 'error');
+                    return;
+                }
+                if (!height || !weight) {
+                    showToast('Remplis ta taille et ton poids', 'error');
+                    return;
+                }
+                if (!activity) {
+                    showToast('Sélectionne ton niveau d\'activité', 'error');
+                    return;
+                }
+
+                // Calculate macros silently
+                calculateMacros(true);
+
+                // Update wizard results display after a short delay
+                setTimeout(() => {
+                    updateWizardResults();
+                }, 100);
+            }
+
+            wizardCurrentStep = step;
+            updateWizardStepDisplay();
+        };
+
+        // Update the visual step display
+        function updateWizardStepDisplay() {
+            // Update step indicators
+            document.querySelectorAll('.wizard-step-indicator').forEach((indicator, index) => {
+                const stepNum = index + 1;
+                indicator.classList.remove('active', 'completed');
+                if (stepNum === wizardCurrentStep) {
+                    indicator.classList.add('active');
+                } else if (stepNum < wizardCurrentStep) {
+                    indicator.classList.add('completed');
+                }
+            });
+
+            // Update connectors
+            document.querySelectorAll('.wizard-step-connector').forEach((connector, index) => {
+                connector.classList.toggle('active', index < wizardCurrentStep - 1);
+            });
+
+            // Update panels
+            document.querySelectorAll('.wizard-panel').forEach((panel, index) => {
+                const stepNum = index + 1;
+                panel.classList.toggle('active', stepNum === wizardCurrentStep);
+            });
+
+            // Update icons
+            if (typeof updateIcons === 'function') updateIcons();
+        }
+
+        // Select gender in wizard
+        window.wizardSelectGender = function(gender) {
+            document.getElementById('wizard-gender').value = gender;
+            document.querySelectorAll('.wizard-selector-btn[data-gender]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.gender === gender);
+            });
+        };
+
+        // Select activity level in wizard
+        window.wizardSelectActivity = function(value) {
+            document.getElementById('wizard-activity').value = value;
+            document.querySelectorAll('.wizard-activity-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.value === value);
+            });
+        };
+
+        // Select goal in wizard (uses existing selectGoal function)
+        window.wizardSelectGoal = function(goal) {
+            // Update wizard visual buttons
+            document.querySelectorAll('.wizard-goal-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.goal === goal);
+            });
+
+            // Toggle pace buttons based on goal
+            const paceDeficit = document.getElementById('wizard-pace-deficit');
+            const paceMaintain = document.getElementById('wizard-pace-maintain');
+            const paceLabel = document.getElementById('wizard-pace-label');
+
+            if (goal === 'maintain') {
+                if (paceDeficit) paceDeficit.style.display = 'none';
+                if (paceMaintain) paceMaintain.style.display = 'grid';
+                if (paceLabel) paceLabel.innerHTML = '⚡ Quelle répartition ?';
+            } else {
+                if (paceDeficit) paceDeficit.style.display = 'grid';
+                if (paceMaintain) paceMaintain.style.display = 'none';
+                if (paceLabel) paceLabel.innerHTML = '⚡ Quel rythme ?';
+            }
+
+            // Call existing selectGoal function
+            if (typeof selectGoal === 'function') {
+                selectGoal(goal);
+            }
+        };
+
+        // Select pace in wizard (uses existing selectPace function)
+        window.wizardSelectPace = function(pace) {
+            // Update wizard visual buttons
+            document.querySelectorAll('.wizard-pace-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.pace === pace);
+            });
+            // Call existing selectPace function
+            if (typeof window.selectPace === 'function') {
+                window.selectPace(pace, true); // skipCalculate = true
+            }
+        };
+
+        // Update wizard results panel with calculated values
+        function updateWizardResults() {
+            // Get values from the original results
+            const bmrDisplay = document.getElementById('bmr-display')?.textContent || '—';
+            const tdeeDisplay = document.getElementById('tdee-display')?.textContent || '—';
+            const imcDisplay = document.getElementById('imc-display-blur')?.textContent || '—';
+
+            const targetProtein = document.getElementById('targetProtein')?.textContent || '—';
+            const targetCarbs = document.getElementById('targetCarbs')?.textContent || '—';
+            const targetFat = document.getElementById('targetFat')?.textContent || '—';
+
+            const proteinCal = document.getElementById('proteinCal')?.textContent || '—';
+            const carbsCal = document.getElementById('carbsCal')?.textContent || '—';
+            const fatCal = document.getElementById('fatCal')?.textContent || '—';
+            const totalCal = document.getElementById('totalCal')?.textContent || '—';
+
+            // Update wizard displays
+            const wizBmr = document.getElementById('wizard-bmr');
+            const wizTdee = document.getElementById('wizard-tdee');
+            const wizImc = document.getElementById('wizard-imc');
+
+            if (wizBmr) wizBmr.textContent = bmrDisplay.replace(' kcal', '');
+            if (wizTdee) wizTdee.textContent = tdeeDisplay.replace(' kcal', '');
+            if (wizImc) wizImc.textContent = imcDisplay;
+
+            // Update macro values
+            const wizProtein = document.getElementById('wizard-protein-value');
+            const wizCarbs = document.getElementById('wizard-carbs-value');
+            const wizFat = document.getElementById('wizard-fat-value');
+
+            if (wizProtein) wizProtein.textContent = targetProtein + 'g';
+            if (wizCarbs) wizCarbs.textContent = targetCarbs + 'g';
+            if (wizFat) wizFat.textContent = targetFat + 'g';
+
+            // Update kcal displays
+            const wizProteinKcal = document.getElementById('wizard-protein-kcal');
+            const wizCarbsKcal = document.getElementById('wizard-carbs-kcal');
+            const wizFatKcal = document.getElementById('wizard-fat-kcal');
+
+            if (wizProteinKcal) wizProteinKcal.textContent = proteinCal + ' kcal';
+            if (wizCarbsKcal) wizCarbsKcal.textContent = carbsCal + ' kcal';
+            if (wizFatKcal) wizFatKcal.textContent = fatCal + ' kcal';
+
+            // Update total
+            const wizTotal = document.getElementById('wizard-total-cal');
+            if (wizTotal) wizTotal.textContent = totalCal;
+
+            // Update SVG rings
+            updateWizardRings(
+                parseInt(targetProtein) || 0,
+                parseInt(targetCarbs) || 0,
+                parseInt(targetFat) || 0
+            );
+        }
+
+        // Animate SVG progress rings
+        function updateWizardRings(protein, carbs, fat) {
+            const maxGrams = Math.max(protein, carbs, fat, 1);
+            const circumference = 2 * Math.PI * 54; // radius = 54
+
+            const rings = [
+                { id: 'wizard-ring-protein', value: protein },
+                { id: 'wizard-ring-carbs', value: carbs },
+                { id: 'wizard-ring-fat', value: fat }
+            ];
+
+            rings.forEach(ring => {
+                const el = document.getElementById(ring.id);
+                if (el) {
+                    const percent = ring.value / maxGrams;
+                    const offset = circumference * (1 - percent);
+                    el.style.strokeDasharray = circumference;
+                    el.style.strokeDashoffset = offset;
+                }
+            });
+        }
+
+        // Go to meals section from wizard
+        window.wizardGoToMeals = function() {
+            const mealsTab = document.querySelector('[data-tab="meals"]');
+            if (mealsTab) {
+                mealsTab.click();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
+        // Export from wizard (uses existing function)
+        window.wizardExportImage = function() {
+            if (typeof exportMacrosAsImage === 'function') {
+                exportMacrosAsImage();
+            }
+        };
+
+        // Initialize wizard on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Small delay to ensure all elements are ready
+            setTimeout(() => {
+                if (document.querySelector('.calc-wizard')) {
+                    initCalculatorWizard();
+                }
+            }, 500);
+        });
