@@ -11230,20 +11230,17 @@ Solutions possibles :
         window.wizardGoToStep = function(step) {
             if (step < 1 || step > WIZARD_TOTAL_STEPS) return;
 
-            // If going to step 3 (results), validate and calculate
-            if (step === 3) {
-                // Sync wizard inputs to original inputs
-                syncOriginalFromWizard();
+            // Get profile fields for validation
+            const birthDay = document.getElementById('wizard-birth-day')?.value;
+            const birthMonth = document.getElementById('wizard-birth-month')?.value;
+            const birthYear = document.getElementById('wizard-birth-year')?.value;
+            const gender = document.getElementById('wizard-gender')?.value;
+            const height = document.getElementById('wizard-height')?.value;
+            const weight = document.getElementById('wizard-weight')?.value;
+            const activity = document.getElementById('wizard-activity')?.value;
 
-                // Validate required fields
-                const birthDay = document.getElementById('wizard-birth-day')?.value;
-                const birthMonth = document.getElementById('wizard-birth-month')?.value;
-                const birthYear = document.getElementById('wizard-birth-year')?.value;
-                const gender = document.getElementById('wizard-gender')?.value;
-                const height = document.getElementById('wizard-height')?.value;
-                const weight = document.getElementById('wizard-weight')?.value;
-                const activity = document.getElementById('wizard-activity')?.value;
-
+            // Validate step 1 before going to step 2 or 3
+            if (step >= 2 && wizardCurrentStep === 1) {
                 if (!birthDay || !birthMonth || !birthYear) {
                     showToast('Remplis ta date de naissance', 'error');
                     return;
@@ -11258,6 +11255,20 @@ Solutions possibles :
                 }
                 if (!activity) {
                     showToast('Sélectionne ton niveau d\'activité', 'error');
+                    return;
+                }
+            }
+
+            // If going to step 3 (results), calculate
+            if (step === 3) {
+                // Sync wizard inputs to original inputs
+                syncOriginalFromWizard();
+
+                // Validate profile fields (in case clicking directly on step 3)
+                if (!birthDay || !birthMonth || !birthYear || !gender || !height || !weight || !activity) {
+                    showToast('Complète d\'abord ton profil', 'error');
+                    wizardCurrentStep = 1;
+                    updateWizardStepDisplay();
                     return;
                 }
 
@@ -11333,12 +11344,14 @@ Solutions possibles :
             if (goal === 'maintain') {
                 if (paceDeficit) paceDeficit.style.display = 'none';
                 if (paceMaintain) paceMaintain.style.display = 'grid';
-                if (paceLabel) paceLabel.innerHTML = '⚡ Quelle répartition ?';
+                if (paceLabel) paceLabel.innerHTML = '<i data-lucide="scale" style="width: 18px; height: 18px;"></i> Quelle répartition ?';
             } else {
                 if (paceDeficit) paceDeficit.style.display = 'grid';
                 if (paceMaintain) paceMaintain.style.display = 'none';
-                if (paceLabel) paceLabel.innerHTML = '⚡ Quel rythme ?';
+                if (paceLabel) paceLabel.innerHTML = '<i data-lucide="gauge" style="width: 18px; height: 18px;"></i> Quel rythme ?';
             }
+            // Update lucide icons
+            if (typeof updateIcons === 'function') updateIcons();
 
             // Call existing selectGoal function
             if (typeof selectGoal === 'function') {
