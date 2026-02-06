@@ -5068,10 +5068,9 @@ button.loading::after {
    CALCULATOR WIZARD STYLES
    =========================================== */
 
-/* Wizard Container */
+/* Wizard Container - full width like other sections */
 .calc-wizard {
-    max-width: 800px;
-    margin: 0 auto;
+    /* No max-width constraint */
 }
 
 /* Progress Indicator */
