@@ -5068,12 +5068,97 @@ button.loading::after {
    CALCULATOR WIZARD STYLES
    =========================================== */
 
-/* Wizard Container - full width like other sections */
+/* Wizard Container */
 .calc-wizard {
-    /* No max-width constraint */
+    /* Full width */
 }
 
-/* Progress Indicator */
+/* ===== DESKTOP: 2 Column Layout ===== */
+@media (min-width: 769px) {
+    /* Hide mobile-only elements */
+    .wizard-mobile-only {
+        display: none !important;
+    }
+
+    /* Main grid: 2 columns */
+    .wizard-main-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-2xl);
+        align-items: start;
+    }
+
+    /* Both panels visible on desktop */
+    .wizard-panel-profile,
+    .wizard-panel-objective {
+        display: block !important;
+    }
+
+    /* Results panel hidden by default, full width when shown */
+    .wizard-panel-results {
+        display: none;
+        grid-column: 1 / -1;
+        margin-top: var(--space-2xl);
+    }
+
+    .wizard-panel-results.active {
+        display: block;
+    }
+
+    /* Desktop calculate button */
+    .wizard-desktop-action {
+        display: flex;
+        justify-content: center;
+        margin-top: var(--space-3xl);
+        margin-bottom: var(--space-xl);
+    }
+
+    .wizard-btn-calculate {
+        padding: var(--space-xl) var(--space-4xl);
+        font-size: 1.1rem;
+        gap: var(--space-md);
+    }
+
+    /* Hide desktop button when results are shown */
+    .calc-wizard.results-shown .wizard-desktop-action {
+        display: none;
+    }
+
+    /* Hide main grid when results shown (optional - or keep visible) */
+    .calc-wizard.results-shown .wizard-main-grid {
+        display: none;
+    }
+}
+
+/* ===== MOBILE: Wizard Step-by-Step ===== */
+@media (max-width: 768px) {
+    /* Show mobile-only elements */
+    .wizard-mobile-only {
+        display: flex;
+    }
+
+    /* Stack panels */
+    .wizard-main-grid {
+        display: block;
+    }
+
+    /* Wizard step behavior */
+    .wizard-panel {
+        display: none;
+        animation: wizardFadeIn 0.4s ease;
+    }
+
+    .wizard-panel.active {
+        display: block;
+    }
+
+    /* Hide desktop button on mobile */
+    .wizard-desktop-action {
+        display: none;
+    }
+}
+
+/* Progress Indicator (mobile) */
 .wizard-progress {
     display: flex;
     align-items: center;
@@ -5154,16 +5239,6 @@ button.loading::after {
 
 .wizard-step-connector.active {
     background: var(--accent-main);
-}
-
-/* Wizard Panels */
-.wizard-panel {
-    display: none;
-    animation: wizardFadeIn 0.4s ease;
-}
-
-.wizard-panel.active {
-    display: block;
 }
 
 @keyframes wizardFadeIn {
