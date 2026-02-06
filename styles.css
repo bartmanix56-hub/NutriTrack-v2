@@ -5073,65 +5073,31 @@ button.loading::after {
     /* Full width */
 }
 
-/* ===== DESKTOP: 2 Column Layout ===== */
+/* ===== DESKTOP: Show original calculator, hide wizard ===== */
 @media (min-width: 769px) {
-    /* Hide mobile-only elements */
-    .wizard-mobile-only {
+    /* Hide wizard on desktop */
+    .calc-wizard {
         display: none !important;
     }
 
-    /* Main grid: 2 columns */
-    .wizard-main-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-2xl);
-        align-items: start;
-    }
-
-    /* Both panels visible on desktop */
-    .wizard-panel-profile,
-    .wizard-panel-objective {
+    /* Show original calculator on desktop */
+    #original-calculator {
         display: block !important;
-    }
-
-    /* Results panel hidden by default, full width when shown */
-    .wizard-panel-results {
-        display: none;
-        grid-column: 1 / -1;
-        margin-top: var(--space-2xl);
-    }
-
-    .wizard-panel-results.active {
-        display: block;
-    }
-
-    /* Desktop calculate button */
-    .wizard-desktop-action {
-        display: flex;
-        justify-content: center;
-        margin-top: var(--space-3xl);
-        margin-bottom: var(--space-xl);
-    }
-
-    .wizard-btn-calculate {
-        padding: var(--space-xl) var(--space-4xl);
-        font-size: 1.1rem;
-        gap: var(--space-md);
-    }
-
-    /* Hide desktop button when results are shown */
-    .calc-wizard.results-shown .wizard-desktop-action {
-        display: none;
-    }
-
-    /* Hide main grid when results shown (optional - or keep visible) */
-    .calc-wizard.results-shown .wizard-main-grid {
-        display: none;
     }
 }
 
 /* ===== MOBILE: Wizard Step-by-Step ===== */
 @media (max-width: 768px) {
+    /* Show wizard on mobile */
+    .calc-wizard {
+        display: block !important;
+    }
+
+    /* Hide original calculator on mobile */
+    #original-calculator {
+        display: none !important;
+    }
+
     /* Show mobile-only elements */
     .wizard-mobile-only {
         display: flex;
