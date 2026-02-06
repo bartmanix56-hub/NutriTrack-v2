@@ -916,8 +916,8 @@
                             </p>
                         </div></div></div>
 
-                <!-- Progress Steps -->
-                <div class="wizard-progress">
+                <!-- Progress Steps (mobile only) -->
+                <div class="wizard-progress wizard-mobile-only">
                     <div class="wizard-step-indicator active" onclick="wizardGoToStep(1)">
                         <div class="wizard-step-number">1</div>
                         <div class="wizard-step-label">Profil</div>
@@ -934,237 +934,248 @@
                     </div>
                 </div>
 
-                <!-- ===== STEP 1: Profile ===== -->
-                <div class="wizard-panel active" data-step="1">
-                    <div class="wizard-card">
-                        <div class="wizard-card-header">
-                            <div class="wizard-card-icon">
-                                <i data-lucide="user" style="width: 28px; height: 28px;"></i>
-                            </div>
-                            <div>
-                                <h2 class="wizard-card-title">Ton Profil</h2>
-                                <p class="wizard-card-subtitle">Ces informations permettent de calculer ton métabolisme</p>
-                            </div>
-                        </div>
-
-                        <!-- Date de naissance -->
-                        <div class="wizard-form-group">
-                            <label class="wizard-label">
-                                <i data-lucide="calendar" style="width: 18px; height: 18px;"></i> Date de naissance <span class="required">*</span>
-                            </label>
-                            <div class="wizard-row-3">
-                                <select id="wizard-birth-day" class="wizard-select">
-                                    <option value="">Jour</option>
-                                </select>
-                                <select id="wizard-birth-month" class="wizard-select">
-                                    <option value="">Mois</option>
-                                    <option value="0">Janvier</option>
-                                    <option value="1">Février</option>
-                                    <option value="2">Mars</option>
-                                    <option value="3">Avril</option>
-                                    <option value="4">Mai</option>
-                                    <option value="5">Juin</option>
-                                    <option value="6">Juillet</option>
-                                    <option value="7">Août</option>
-                                    <option value="8">Septembre</option>
-                                    <option value="9">Octobre</option>
-                                    <option value="10">Novembre</option>
-                                    <option value="11">Décembre</option>
-                                </select>
-                                <select id="wizard-birth-year" class="wizard-select">
-                                    <option value="">Année</option>
-                                </select>
-                            </div>
-                            <p class="wizard-hint">Ton âge sera calculé automatiquement</p>
-                        </div>
-
-                        <!-- Sexe -->
-                        <div class="wizard-form-group">
-                            <label class="wizard-label">
-                                <i data-lucide="user" style="width: 18px; height: 18px;"></i> Sexe <span class="required">*</span>
-                            </label>
-                            <input type="hidden" id="wizard-gender" value="">
-                            <div class="wizard-selector">
-                                <div class="wizard-selector-btn" data-gender="male" onclick="wizardSelectGender('male')">
-                                    <div class="btn-icon"><i data-lucide="user" style="width: 32px; height: 32px;"></i></div>
-                                    <div class="btn-label">Homme</div>
-                                </div>
-                                <div class="wizard-selector-btn" data-gender="female" onclick="wizardSelectGender('female')">
-                                    <div class="btn-icon"><i data-lucide="user" style="width: 32px; height: 32px;"></i></div>
-                                    <div class="btn-label">Femme</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Taille & Poids -->
-                        <div class="wizard-form-group">
-                            <div class="wizard-row">
-                                <div>
-                                    <label class="wizard-label">
-                                        <i data-lucide="ruler" style="width: 18px; height: 18px;"></i> Taille (cm) <span class="required">*</span>
-                                    </label>
-                                    <input type="number" id="wizard-height" class="wizard-input" inputmode="decimal" placeholder="175" min="100" max="250" step="0.5">
+                <!-- ===== MAIN GRID: Profile + Objective ===== -->
+                <div class="wizard-main-grid">
+                    <!-- Column 1: Profile -->
+                    <div class="wizard-panel wizard-panel-profile active" data-step="1">
+                        <div class="wizard-card">
+                            <div class="wizard-card-header">
+                                <div class="wizard-card-icon">
+                                    <i data-lucide="user" style="width: 28px; height: 28px;"></i>
                                 </div>
                                 <div>
-                                    <label class="wizard-label">
-                                        <i data-lucide="scale" style="width: 18px; height: 18px;"></i> Poids (kg) <span class="required">*</span>
-                                    </label>
-                                    <input type="number" id="wizard-weight" class="wizard-input" inputmode="decimal" placeholder="75" min="30" max="300" step="0.1">
+                                    <h2 class="wizard-card-title">Ton Profil</h2>
+                                    <p class="wizard-card-subtitle">Ces informations permettent de calculer ton métabolisme</p>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Niveau d'activité -->
-                        <div class="wizard-form-group">
-                            <label class="wizard-label">
-                                <i data-lucide="activity" style="width: 18px; height: 18px;"></i> Niveau d'activité <span class="required">*</span>
-                            </label>
-                            <input type="hidden" id="wizard-activity" value="">
-                            <div class="wizard-activity-list">
-                                <div class="wizard-activity-btn" data-value="1.2" onclick="wizardSelectActivity('1.2')">
-                                    <div class="activity-icon"><i data-lucide="sofa" style="width: 24px; height: 24px;"></i></div>
-                                    <div class="activity-info">
-                                        <div class="activity-title">Sédentaire</div>
-                                        <div class="activity-desc">Peu ou pas d'exercice</div>
-                                    </div>
+                            <!-- Date de naissance -->
+                            <div class="wizard-form-group">
+                                <label class="wizard-label">
+                                    <i data-lucide="calendar" style="width: 18px; height: 18px;"></i> Date de naissance <span class="required">*</span>
+                                </label>
+                                <div class="wizard-row-3">
+                                    <select id="wizard-birth-day" class="wizard-select">
+                                        <option value="">Jour</option>
+                                    </select>
+                                    <select id="wizard-birth-month" class="wizard-select">
+                                        <option value="">Mois</option>
+                                        <option value="0">Janvier</option>
+                                        <option value="1">Février</option>
+                                        <option value="2">Mars</option>
+                                        <option value="3">Avril</option>
+                                        <option value="4">Mai</option>
+                                        <option value="5">Juin</option>
+                                        <option value="6">Juillet</option>
+                                        <option value="7">Août</option>
+                                        <option value="8">Septembre</option>
+                                        <option value="9">Octobre</option>
+                                        <option value="10">Novembre</option>
+                                        <option value="11">Décembre</option>
+                                    </select>
+                                    <select id="wizard-birth-year" class="wizard-select">
+                                        <option value="">Année</option>
+                                    </select>
                                 </div>
-                                <div class="wizard-activity-btn" data-value="1.375" onclick="wizardSelectActivity('1.375')">
-                                    <div class="activity-icon"><i data-lucide="footprints" style="width: 24px; height: 24px;"></i></div>
-                                    <div class="activity-info">
-                                        <div class="activity-title">Légèrement actif</div>
-                                        <div class="activity-desc">1-3 jours d'exercice par semaine</div>
+                                <p class="wizard-hint">Ton âge sera calculé automatiquement</p>
+                            </div>
+
+                            <!-- Sexe -->
+                            <div class="wizard-form-group">
+                                <label class="wizard-label">
+                                    <i data-lucide="users" style="width: 18px; height: 18px;"></i> Sexe <span class="required">*</span>
+                                </label>
+                                <input type="hidden" id="wizard-gender" value="">
+                                <div class="wizard-selector">
+                                    <div class="wizard-selector-btn" data-gender="male" onclick="wizardSelectGender('male')">
+                                        <div class="btn-icon"><i data-lucide="user" style="width: 28px; height: 28px;"></i></div>
+                                        <div class="btn-label">Homme</div>
                                     </div>
-                                </div>
-                                <div class="wizard-activity-btn" data-value="1.55" onclick="wizardSelectActivity('1.55')">
-                                    <div class="activity-icon"><i data-lucide="bike" style="width: 24px; height: 24px;"></i></div>
-                                    <div class="activity-info">
-                                        <div class="activity-title">Modérément actif</div>
-                                        <div class="activity-desc">3-5 jours d'exercice par semaine</div>
-                                    </div>
-                                </div>
-                                <div class="wizard-activity-btn" data-value="1.725" onclick="wizardSelectActivity('1.725')">
-                                    <div class="activity-icon"><i data-lucide="dumbbell" style="width: 24px; height: 24px;"></i></div>
-                                    <div class="activity-info">
-                                        <div class="activity-title">Très actif</div>
-                                        <div class="activity-desc">6-7 jours d'exercice par semaine</div>
-                                    </div>
-                                </div>
-                                <div class="wizard-activity-btn" data-value="1.9" onclick="wizardSelectActivity('1.9')">
-                                    <div class="activity-icon"><i data-lucide="flame" style="width: 24px; height: 24px;"></i></div>
-                                    <div class="activity-info">
-                                        <div class="activity-title">Extrêmement actif</div>
-                                        <div class="activity-desc">2x par jour + travail physique</div>
+                                    <div class="wizard-selector-btn" data-gender="female" onclick="wizardSelectGender('female')">
+                                        <div class="btn-icon"><i data-lucide="user" style="width: 28px; height: 28px;"></i></div>
+                                        <div class="btn-label">Femme</div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Navigation -->
-                        <div class="wizard-nav">
-                            <div></div>
-                            <button class="wizard-btn wizard-btn-next" onclick="wizardGoToStep(2)">
-                                Suivant <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
-                            </button>
+                            <!-- Taille & Poids -->
+                            <div class="wizard-form-group">
+                                <div class="wizard-row">
+                                    <div>
+                                        <label class="wizard-label">
+                                            <i data-lucide="ruler" style="width: 18px; height: 18px;"></i> Taille (cm) <span class="required">*</span>
+                                        </label>
+                                        <input type="number" id="wizard-height" class="wizard-input" inputmode="decimal" placeholder="175" min="100" max="250" step="0.5">
+                                    </div>
+                                    <div>
+                                        <label class="wizard-label">
+                                            <i data-lucide="scale" style="width: 18px; height: 18px;"></i> Poids (kg) <span class="required">*</span>
+                                        </label>
+                                        <input type="number" id="wizard-weight" class="wizard-input" inputmode="decimal" placeholder="75" min="30" max="300" step="0.1">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Niveau d'activité -->
+                            <div class="wizard-form-group">
+                                <label class="wizard-label">
+                                    <i data-lucide="activity" style="width: 18px; height: 18px;"></i> Niveau d'activité <span class="required">*</span>
+                                </label>
+                                <input type="hidden" id="wizard-activity" value="">
+                                <div class="wizard-activity-list">
+                                    <div class="wizard-activity-btn" data-value="1.2" onclick="wizardSelectActivity('1.2')">
+                                        <div class="activity-icon"><i data-lucide="sofa" style="width: 24px; height: 24px;"></i></div>
+                                        <div class="activity-info">
+                                            <div class="activity-title">Sédentaire</div>
+                                            <div class="activity-desc">Peu ou pas d'exercice</div>
+                                        </div>
+                                    </div>
+                                    <div class="wizard-activity-btn" data-value="1.375" onclick="wizardSelectActivity('1.375')">
+                                        <div class="activity-icon"><i data-lucide="footprints" style="width: 24px; height: 24px;"></i></div>
+                                        <div class="activity-info">
+                                            <div class="activity-title">Légèrement actif</div>
+                                            <div class="activity-desc">1-3 jours/semaine</div>
+                                        </div>
+                                    </div>
+                                    <div class="wizard-activity-btn" data-value="1.55" onclick="wizardSelectActivity('1.55')">
+                                        <div class="activity-icon"><i data-lucide="bike" style="width: 24px; height: 24px;"></i></div>
+                                        <div class="activity-info">
+                                            <div class="activity-title">Modérément actif</div>
+                                            <div class="activity-desc">3-5 jours/semaine</div>
+                                        </div>
+                                    </div>
+                                    <div class="wizard-activity-btn" data-value="1.725" onclick="wizardSelectActivity('1.725')">
+                                        <div class="activity-icon"><i data-lucide="dumbbell" style="width: 24px; height: 24px;"></i></div>
+                                        <div class="activity-info">
+                                            <div class="activity-title">Très actif</div>
+                                            <div class="activity-desc">6-7 jours/semaine</div>
+                                        </div>
+                                    </div>
+                                    <div class="wizard-activity-btn" data-value="1.9" onclick="wizardSelectActivity('1.9')">
+                                        <div class="activity-icon"><i data-lucide="flame" style="width: 24px; height: 24px;"></i></div>
+                                        <div class="activity-info">
+                                            <div class="activity-title">Extrêmement actif</div>
+                                            <div class="activity-desc">2x/jour + travail physique</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mobile Navigation -->
+                            <div class="wizard-nav wizard-mobile-only">
+                                <div></div>
+                                <button class="wizard-btn wizard-btn-next" onclick="wizardGoToStep(2)">
+                                    Suivant <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Objective -->
+                    <div class="wizard-panel wizard-panel-objective" data-step="2">
+                        <div class="wizard-card">
+                            <div class="wizard-card-header">
+                                <div class="wizard-card-icon">
+                                    <i data-lucide="flag" style="width: 28px; height: 28px;"></i>
+                                </div>
+                                <div>
+                                    <h2 class="wizard-card-title">Ton Objectif</h2>
+                                    <p class="wizard-card-subtitle">Que souhaites-tu accomplir ?</p>
+                                </div>
+                            </div>
+
+                            <!-- Goal selection -->
+                            <div class="wizard-form-group">
+                                <label class="wizard-label">
+                                    <i data-lucide="target" style="width: 18px; height: 18px;"></i> Objectif principal
+                                </label>
+                                <div class="wizard-selector wizard-selector-3">
+                                    <div class="wizard-selector-btn wizard-goal-btn active" data-goal="cut" onclick="wizardSelectGoal('cut')">
+                                        <div class="btn-icon"><i data-lucide="flame" style="width: 28px; height: 28px; color: var(--accent-protein);"></i></div>
+                                        <div class="btn-label">Sèche</div>
+                                        <div class="btn-desc">Perdre du gras</div>
+                                    </div>
+                                    <div class="wizard-selector-btn wizard-goal-btn" data-goal="maintain" onclick="wizardSelectGoal('maintain')">
+                                        <div class="btn-icon"><i data-lucide="equal" style="width: 28px; height: 28px; color: var(--accent-main);"></i></div>
+                                        <div class="btn-label">Maintien</div>
+                                        <div class="btn-desc">Stabiliser</div>
+                                    </div>
+                                    <div class="wizard-selector-btn wizard-goal-btn" data-goal="bulk" onclick="wizardSelectGoal('bulk')">
+                                        <div class="btn-icon"><i data-lucide="trending-up" style="width: 28px; height: 28px; color: var(--accent-carbs);"></i></div>
+                                        <div class="btn-label">Prise</div>
+                                        <div class="btn-desc">Gagner en muscle</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pace selection -->
+                            <div class="wizard-form-group">
+                                <label class="wizard-label" id="wizard-pace-label">
+                                    <i data-lucide="gauge" style="width: 18px; height: 18px;"></i> Quel rythme ?
+                                </label>
+
+                                <!-- Pace buttons for cut/bulk -->
+                                <div id="wizard-pace-deficit" class="wizard-selector wizard-selector-3">
+                                    <div class="wizard-selector-btn wizard-pace-btn active" data-pace="gentle" onclick="wizardSelectPace('gentle')">
+                                        <div class="btn-icon"><i data-lucide="smile" style="width: 24px; height: 24px;"></i></div>
+                                        <div class="btn-label">Doux</div>
+                                        <div class="btn-desc">Facile à tenir</div>
+                                    </div>
+                                    <div class="wizard-selector-btn wizard-pace-btn" data-pace="normal" onclick="wizardSelectPace('normal')">
+                                        <div class="btn-icon"><i data-lucide="minus" style="width: 24px; height: 24px;"></i></div>
+                                        <div class="btn-label">Normal</div>
+                                        <div class="btn-desc">Équilibré</div>
+                                    </div>
+                                    <div class="wizard-selector-btn wizard-pace-btn" data-pace="fast" onclick="wizardSelectPace('fast')">
+                                        <div class="btn-icon"><i data-lucide="zap" style="width: 24px; height: 24px;"></i></div>
+                                        <div class="btn-label">Rapide</div>
+                                        <div class="btn-desc">Plus exigeant</div>
+                                    </div>
+                                </div>
+
+                                <!-- Pace buttons for maintain (hidden by default) -->
+                                <div id="wizard-pace-maintain" class="wizard-selector wizard-selector-3" style="display: none;">
+                                    <div class="wizard-selector-btn wizard-pace-btn" data-pace="high-carb" onclick="wizardSelectPace('high-carb')">
+                                        <div class="btn-icon"><i data-lucide="wheat" style="width: 24px; height: 24px;"></i></div>
+                                        <div class="btn-label">+ Glucides</div>
+                                        <div class="btn-desc">Énergie rapide</div>
+                                    </div>
+                                    <div class="wizard-selector-btn wizard-pace-btn active" data-pace="balanced" onclick="wizardSelectPace('balanced')">
+                                        <div class="btn-icon"><i data-lucide="scale" style="width: 24px; height: 24px;"></i></div>
+                                        <div class="btn-label">Équilibré</div>
+                                        <div class="btn-desc">Répartition classique</div>
+                                    </div>
+                                    <div class="wizard-selector-btn wizard-pace-btn" data-pace="high-fat" onclick="wizardSelectPace('high-fat')">
+                                        <div class="btn-icon"><i data-lucide="droplet" style="width: 24px; height: 24px;"></i></div>
+                                        <div class="btn-label">+ Lipides</div>
+                                        <div class="btn-desc">Satiété durable</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mobile Navigation -->
+                            <div class="wizard-nav wizard-mobile-only">
+                                <button class="wizard-btn wizard-btn-prev" onclick="wizardGoToStep(1)">
+                                    <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> Retour
+                                </button>
+                                <button class="wizard-btn wizard-btn-next" onclick="wizardGoToStep(3)">
+                                    Calculer <i data-lucide="calculator" style="width: 18px; height: 18px;"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ===== STEP 2: Objective ===== -->
-                <div class="wizard-panel" data-step="2">
-                    <div class="wizard-card">
-                        <div class="wizard-card-header">
-                            <div class="wizard-card-icon">
-                                <i data-lucide="flag" style="width: 28px; height: 28px;"></i>
-                            </div>
-                            <div>
-                                <h2 class="wizard-card-title">Ton Objectif</h2>
-                                <p class="wizard-card-subtitle">Que souhaites-tu accomplir ?</p>
-                            </div>
-                        </div>
-
-                        <!-- Goal selection -->
-                        <div class="wizard-form-group">
-                            <label class="wizard-label">
-                                <i data-lucide="target" style="width: 18px; height: 18px;"></i> Objectif principal
-                            </label>
-                            <div class="wizard-selector wizard-selector-3">
-                                <div class="wizard-selector-btn wizard-goal-btn active" data-goal="cut" onclick="wizardSelectGoal('cut')">
-                                    <div class="btn-icon"><i data-lucide="flame" style="width: 28px; height: 28px; color: var(--accent-protein);"></i></div>
-                                    <div class="btn-label">Sèche</div>
-                                    <div class="btn-desc">Perdre du gras</div>
-                                </div>
-                                <div class="wizard-selector-btn wizard-goal-btn" data-goal="maintain" onclick="wizardSelectGoal('maintain')">
-                                    <div class="btn-icon"><i data-lucide="equal" style="width: 28px; height: 28px; color: var(--accent-main);"></i></div>
-                                    <div class="btn-label">Maintien</div>
-                                    <div class="btn-desc">Stabiliser</div>
-                                </div>
-                                <div class="wizard-selector-btn wizard-goal-btn" data-goal="bulk" onclick="wizardSelectGoal('bulk')">
-                                    <div class="btn-icon"><i data-lucide="trending-up" style="width: 28px; height: 28px; color: var(--accent-carbs);"></i></div>
-                                    <div class="btn-label">Prise</div>
-                                    <div class="btn-desc">Gagner en muscle</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pace selection -->
-                        <div class="wizard-form-group">
-                            <label class="wizard-label" id="wizard-pace-label">
-                                <i data-lucide="gauge" style="width: 18px; height: 18px;"></i> Quel rythme ?
-                            </label>
-
-                            <!-- Pace buttons for cut/bulk -->
-                            <div id="wizard-pace-deficit" class="wizard-selector wizard-selector-3">
-                                <div class="wizard-selector-btn wizard-pace-btn active" data-pace="gentle" onclick="wizardSelectPace('gentle')">
-                                    <div class="btn-icon"><i data-lucide="smile" style="width: 24px; height: 24px;"></i></div>
-                                    <div class="btn-label">Doux</div>
-                                    <div class="btn-desc">Facile à tenir</div>
-                                </div>
-                                <div class="wizard-selector-btn wizard-pace-btn" data-pace="normal" onclick="wizardSelectPace('normal')">
-                                    <div class="btn-icon"><i data-lucide="arrow-right" style="width: 24px; height: 24px;"></i></div>
-                                    <div class="btn-label">Normal</div>
-                                    <div class="btn-desc">Équilibré</div>
-                                </div>
-                                <div class="wizard-selector-btn wizard-pace-btn" data-pace="fast" onclick="wizardSelectPace('fast')">
-                                    <div class="btn-icon"><i data-lucide="zap" style="width: 24px; height: 24px;"></i></div>
-                                    <div class="btn-label">Rapide</div>
-                                    <div class="btn-desc">Plus exigeant</div>
-                                </div>
-                            </div>
-
-                            <!-- Pace buttons for maintain (hidden by default) -->
-                            <div id="wizard-pace-maintain" class="wizard-selector wizard-selector-3" style="display: none;">
-                                <div class="wizard-selector-btn wizard-pace-btn" data-pace="high-carb" onclick="wizardSelectPace('high-carb')">
-                                    <div class="btn-icon"><i data-lucide="wheat" style="width: 24px; height: 24px;"></i></div>
-                                    <div class="btn-label">+ Glucides</div>
-                                    <div class="btn-desc">Énergie rapide</div>
-                                </div>
-                                <div class="wizard-selector-btn wizard-pace-btn active" data-pace="balanced" onclick="wizardSelectPace('balanced')">
-                                    <div class="btn-icon"><i data-lucide="scale" style="width: 24px; height: 24px;"></i></div>
-                                    <div class="btn-label">Équilibré</div>
-                                    <div class="btn-desc">Répartition classique</div>
-                                </div>
-                                <div class="wizard-selector-btn wizard-pace-btn" data-pace="high-fat" onclick="wizardSelectPace('high-fat')">
-                                    <div class="btn-icon"><i data-lucide="droplet" style="width: 24px; height: 24px;"></i></div>
-                                    <div class="btn-label">+ Lipides</div>
-                                    <div class="btn-desc">Satiété durable</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Navigation -->
-                        <div class="wizard-nav">
-                            <button class="wizard-btn wizard-btn-prev" onclick="wizardGoToStep(1)">
-                                <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> Retour
-                            </button>
-                            <button class="wizard-btn wizard-btn-next" onclick="wizardGoToStep(3)">
-                                Calculer <i data-lucide="calculator" style="width: 18px; height: 18px;"></i>
-                            </button>
-                        </div>
-                    </div>
+                <!-- Desktop Calculate Button -->
+                <div class="wizard-desktop-action">
+                    <button class="wizard-btn wizard-btn-next wizard-btn-calculate" onclick="wizardGoToStep(3)">
+                        <i data-lucide="calculator" style="width: 22px; height: 22px;"></i>
+                        Calculer mes Macros
+                    </button>
                 </div>
 
                 <!-- ===== STEP 3: Results ===== -->
-                <div class="wizard-panel" data-step="3">
+                <div class="wizard-panel wizard-panel-results" data-step="3">
                     <div class="wizard-card">
                         <div class="wizard-card-header">
                             <div class="wizard-card-icon">
@@ -1241,7 +1252,7 @@
                                 <i data-lucide="camera" style="width: 18px; height: 18px;"></i> Télécharger en image
                             </button>
                             <button class="wizard-cta-btn secondary" onclick="wizardGoToMeals()">
-                                <i data-lucide="calendar" style="width: 18px; height: 18px;"></i> Aller à Mes Repas
+                                <i data-lucide="utensils" style="width: 18px; height: 18px;"></i> Aller à Mes Repas
                             </button>
                         </div>
 
@@ -1257,8 +1268,8 @@
                         </div>
 
                         <!-- Navigation -->
-                        <div class="wizard-nav">
-                            <button class="wizard-btn wizard-btn-prev" onclick="wizardGoToStep(2)">
+                        <div class="wizard-nav wizard-results-nav">
+                            <button class="wizard-btn wizard-btn-prev" onclick="wizardHideResults()">
                                 <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> Modifier
                             </button>
                             <div></div>
