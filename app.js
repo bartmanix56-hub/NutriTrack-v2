@@ -11226,6 +11226,11 @@ Solutions possibles :
             });
         }
 
+        // Check if we're on desktop (>768px)
+        function isDesktop() {
+            return window.innerWidth > 768;
+        }
+
         // Navigate to a specific step
         window.wizardGoToStep = function(step) {
             if (step < 1 || step > WIZARD_TOTAL_STEPS) return;
@@ -11239,8 +11244,8 @@ Solutions possibles :
             const weight = document.getElementById('wizard-weight')?.value;
             const activity = document.getElementById('wizard-activity')?.value;
 
-            // Validate step 1 before going to step 2 or 3
-            if (step >= 2 && wizardCurrentStep === 1) {
+            // On mobile, validate step 1 before going to step 2
+            if (!isDesktop() && step >= 2 && wizardCurrentStep === 1) {
                 if (!birthDay || !birthMonth || !birthYear) {
                     showToast('Remplis ta date de naissance', 'error');
                     return;
@@ -11259,18 +11264,28 @@ Solutions possibles :
                 }
             }
 
-            // If going to step 3 (results), calculate
+            // If going to step 3 (results), validate and calculate
             if (step === 3) {
-                // Sync wizard inputs to original inputs
-                syncOriginalFromWizard();
-
-                // Validate profile fields (in case clicking directly on step 3)
-                if (!birthDay || !birthMonth || !birthYear || !gender || !height || !weight || !activity) {
-                    showToast('Complète d\'abord ton profil', 'error');
-                    wizardCurrentStep = 1;
-                    updateWizardStepDisplay();
+                // Validate all profile fields
+                if (!birthDay || !birthMonth || !birthYear) {
+                    showToast('Remplis ta date de naissance', 'error');
                     return;
                 }
+                if (!gender) {
+                    showToast('Sélectionne ton sexe', 'error');
+                    return;
+                }
+                if (!height || !weight) {
+                    showToast('Remplis ta taille et ton poids', 'error');
+                    return;
+                }
+                if (!activity) {
+                    showToast('Sélectionne ton niveau d\'activité', 'error');
+                    return;
+                }
+
+                // Sync wizard inputs to original inputs
+                syncOriginalFromWizard();
 
                 // Calculate macros silently
                 calculateMacros(true);
@@ -11279,15 +11294,41 @@ Solutions possibles :
                 setTimeout(() => {
                     updateWizardResults();
                 }, 100);
+
+                // Add results-shown class
+                const wizardContainer = document.querySelector('.calc-wizard');
+                if (wizardContainer) {
+                    wizardContainer.classList.add('results-shown');
+                }
             }
 
             wizardCurrentStep = step;
             updateWizardStepDisplay();
         };
 
+        // Hide results and go back to form
+        window.wizardHideResults = function() {
+            const wizardContainer = document.querySelector('.calc-wizard');
+            if (wizardContainer) {
+                wizardContainer.classList.remove('results-shown');
+            }
+
+            // On mobile, go to step 2. On desktop, just hide results
+            if (!isDesktop()) {
+                wizardCurrentStep = 2;
+                updateWizardStepDisplay();
+            } else {
+                // On desktop, just hide the results panel
+                const resultsPanel = document.querySelector('.wizard-panel-results');
+                if (resultsPanel) {
+                    resultsPanel.classList.remove('active');
+                }
+            }
+        };
+
         // Update the visual step display
         function updateWizardStepDisplay() {
-            // Update step indicators
+            // Update step indicators (mobile)
             document.querySelectorAll('.wizard-step-indicator').forEach((indicator, index) => {
                 const stepNum = index + 1;
                 indicator.classList.remove('active', 'completed');
@@ -11298,16 +11339,28 @@ Solutions possibles :
                 }
             });
 
-            // Update connectors
+            // Update connectors (mobile)
             document.querySelectorAll('.wizard-step-connector').forEach((connector, index) => {
                 connector.classList.toggle('active', index < wizardCurrentStep - 1);
             });
 
-            // Update panels
-            document.querySelectorAll('.wizard-panel').forEach((panel, index) => {
-                const stepNum = index + 1;
-                panel.classList.toggle('active', stepNum === wizardCurrentStep);
-            });
+            // Update panels - different behavior for desktop vs mobile
+            if (isDesktop()) {
+                // Desktop: profile and objective always visible, results toggled
+                const resultsPanel = document.querySelector('.wizard-panel-results');
+                if (resultsPanel) {
+                    resultsPanel.classList.toggle('active', wizardCurrentStep === 3);
+                }
+            } else {
+                // Mobile: one panel at a time
+                const profilePanel = document.querySelector('.wizard-panel-profile');
+                const objectivePanel = document.querySelector('.wizard-panel-objective');
+                const resultsPanel = document.querySelector('.wizard-panel-results');
+
+                if (profilePanel) profilePanel.classList.toggle('active', wizardCurrentStep === 1);
+                if (objectivePanel) objectivePanel.classList.toggle('active', wizardCurrentStep === 2);
+                if (resultsPanel) resultsPanel.classList.toggle('active', wizardCurrentStep === 3);
+            }
 
             // Update icons
             if (typeof updateIcons === 'function') updateIcons();
