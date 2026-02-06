@@ -24,6 +24,56 @@
             };
         }
 
+        // ===== SECURITY: Fonctions d'échappement XSS =====
+
+        /**
+         * Échappe les caractères HTML dangereux pour prévenir les XSS
+         * @param {string} str - Chaîne à échapper
+         * @returns {string} Chaîne échappée safe pour innerHTML
+         */
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        /**
+         * Échappe une chaîne pour utilisation dans un attribut onclick avec quotes simples
+         * @param {string} str - Chaîne à échapper
+         * @returns {string} Chaîne safe pour onclick='fn("${escaped}")'
+         */
+        function escapeJsString(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '\\"')
+                .replace(/\n/g, '\\n')
+                .replace(/\r/g, '\\r')
+                .replace(/</g, '\\x3c')
+                .replace(/>/g, '\\x3e');
+        }
+
+        /**
+         * Parse JSON de manière sécurisée avec fallback
+         * @param {string} str - Chaîne JSON à parser
+         * @param {any} fallback - Valeur par défaut si parsing échoue
+         * @returns {any} Objet parsé ou fallback
+         */
+        function safeJsonParse(str, fallback = null) {
+            if (!str || typeof str !== 'string') return fallback;
+            try {
+                return JSON.parse(str);
+            } catch (e) {
+                console.warn('⚠️ JSON parse error:', e.message);
+                return fallback;
+            }
+        }
+
         // ===== PERFORMANCE: Optimisation Lucide Icons =====
         // Au lieu d'appeler lucide.createIcons() partout (reparse tout le DOM),
         // on utilise un système de batching avec RAF pour regrouper les updates
@@ -818,7 +868,7 @@
             if (!window.dataService) {
                 console.warn('⚠️ DataService non disponible, fallback localStorage');
                 const saved = localStorage.getItem('favoriteFoods');
-                return saved ? JSON.parse(saved) : [];
+                return safeJsonParse(saved, []);
             }
 
             try {
@@ -827,7 +877,7 @@
                 console.error('❌ Erreur chargement favoriteFoods Firestore:', error);
                 console.warn('⚠️ Fallback vers localStorage');
                 const saved = localStorage.getItem('favoriteFoods');
-                return saved ? JSON.parse(saved) : [];
+                return safeJsonParse(saved, []);
             }
         }
 
@@ -2483,7 +2533,7 @@ Solutions possibles :
 
             // Toast de confirmation
             const profile = validation.profile;
-            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> Profil sauvegardé${profile.name ? ' pour ' + profile.name : ''}`);
+            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> Profil sauvegardé${profile.name ? ' pour ' + escapeHtml(profile.name) : ''}`);
         }
 
         // Modal management
@@ -2626,7 +2676,7 @@ Solutions possibles :
                 return `
                 <div class="search-result-item" onclick='addFoodToMeal(${JSON.stringify(food).replace(/'/g, "&apos;")})'
                      style="display: flex; align-items: center; gap: var(--space-sm); cursor: pointer;">
-                    <button onclick="event.stopPropagation(); toggleFavorite('${food.name.replace(/'/g, "\\'")}')"
+                    <button onclick="event.stopPropagation(); toggleFavorite('${escapeJsString(food.name)}')"
                             class="star-btn"
                             style="background: none; border: none; font-size: 1.3rem; cursor: pointer; padding: 0; line-height: 1; flex-shrink: 0; color: ${isFav ? 'inherit' : 'var(--text-secondary)'};"
                             title="${isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
@@ -2936,7 +2986,7 @@ Solutions possibles :
                 const displayName = (typeof getDisplayName === 'function') ? getDisplayName(food) : food.name;
                 return `
                 <div class="quick-add-item" onclick="quickAddFood('${currentQuickAddMealType}', ${JSON.stringify(food).replace(/"/g, '&quot;')})" style="display: flex; align-items: center; gap: var(--space-xs);">
-                    <button onclick="event.stopPropagation(); toggleFavorite('${food.name.replace(/'/g, "\\'")}')"
+                    <button onclick="event.stopPropagation(); toggleFavorite('${escapeJsString(food.name)}')"
                             class="star-btn"
                             style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: var(--space-xs); line-height: 1; flex-shrink: 0; color: ${isFav ? 'inherit' : 'var(--text-secondary)'};"
                             title="${isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
@@ -2972,7 +3022,7 @@ Solutions possibles :
                 const isFav = isFavorite(food.name);
                 return `
                 <div class="quick-add-item" onclick="quickAddFood('${currentQuickAddMealType}', ${JSON.stringify(food).replace(/"/g, '&quot;')})" style="display: flex; align-items: center; gap: var(--space-xs);">
-                    <button onclick="event.stopPropagation(); toggleFavorite('${food.name.replace(/'/g, "\\'")}')"
+                    <button onclick="event.stopPropagation(); toggleFavorite('${escapeJsString(food.name)}')"
                             class="star-btn"
                             style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: var(--space-xs); line-height: 1; flex-shrink: 0; color: ${isFav ? 'inherit' : 'var(--text-secondary)'};"
                             title="${isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
@@ -3033,7 +3083,7 @@ Solutions possibles :
                 createFlyingFoodAnimation(food.name, startPos);
             }
 
-            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${food.name} ajouté (100g)`);
+            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> ${escapeHtml(food.name)} ajouté (100g)`);
         }
 
         // ===== FEEDBACK ANIMATIONS =====
@@ -4055,7 +4105,7 @@ Solutions possibles :
                 return `
                     <div class="food-item">
                         <button class="delete-btn" onclick="removeFoodFromMeal('${mealType}', ${normalizedFood.id})" style="width: 32px; height: 32px; min-width: 32px; display: flex; align-items: center; justify-content: center; padding: 0;"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>
-                        <button onclick="event.stopPropagation(); toggleFavorite('${normalizedFood.name.replace(/'/g, "\\'")}')"
+                        <button onclick="event.stopPropagation(); toggleFavorite('${escapeJsString(normalizedFood.name)}')"
                                 style="width: 32px; height: 32px; min-width: 32px; background: none; border: none; cursor: pointer; font-size: 1.1rem; transition: var(--transition-fast); ${isFavorite(normalizedFood.name) ? '' : 'filter: grayscale(1) brightness(2);'}"
                                 title="${isFavorite(normalizedFood.name) ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
                             ${isFavorite(normalizedFood.name) ? '⭐' : '⭐'}
@@ -6757,8 +6807,8 @@ Solutions possibles :
         }
 
         function deleteCustomFood(foodName) {
-
-            customConfirm('Supprimer cet aliment ?', `Supprimer "${foodName}" de ta base ?`, true).then(async (confirmed) => {
+            const safeName = escapeHtml(foodName);
+            customConfirm('Supprimer cet aliment ?', `Supprimer "${safeName}" de ta base ?`, true).then(async (confirmed) => {
 
                 if (confirmed) {
 
@@ -6957,7 +7007,7 @@ Solutions possibles :
                             return `
                                 <div class="food-item" data-food-index="${globalIndex}" style="background: rgba(0, 0, 0, 0.2);">
                                     <div>
-                                        <div class="food-name">${getDisplayName(food)} ${food.verified ? '<span style="color: #10b981; font-size: 1rem; cursor: help; margin-left: 4px;" title="Aliment vérifié par un administrateur">✓</span>' : ''} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''}</div>
+                                        <div class="food-name">${escapeHtml(getDisplayName(food))} ${food.verified ? '<span style="color: #10b981; font-size: 1rem; cursor: help; margin-left: 4px;" title="Aliment vérifié par un administrateur">✓</span>' : ''} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''}</div>
                                         ${food.custom ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Personnalisé</span>' : ''}
                                     </div>
                                     <div class="food-macros">
@@ -6967,11 +7017,11 @@ Solutions possibles :
                                         <span><div class="label">Cal</div><div class="value">${food.calories}</div></span>
                                     </div>
                                     <div style="display: flex; flex-direction: column; gap: var(--space-sm); align-items: flex-end;">
-                                        <span style="color: var(--text-secondary); font-size: 0.9rem;">pour ${food.unit}</span>
+                                        <span style="color: var(--text-secondary); font-size: 0.9rem;">pour ${escapeHtml(food.unit)}</span>
                                         <div style="display: flex; gap: var(--space-sm); align-items: center;">
-                                            <button class="icon-btn" style="background: rgba(255, 230, 109, 0.2); border: 1px solid var(--accent-fat); width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${food.name.replace(/'/g, "\\'")}')"><i data-lucide="star" style="width: 16px; height: 16px; fill: var(--accent-fat); color: var(--accent-fat);"></i></button>
-                                            ${food.custom ? `<button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editFoodByIndex(${globalIndex})"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>` : ''}
-                                            ${food.custom ? `<button class="delete-btn" style="font-size: 1.1rem; width: 36px; height: 36px;" onclick="deleteFoodByIndex(${globalIndex})"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>` : ''}
+                                            <button class="icon-btn" style="background: rgba(255, 230, 109, 0.2); border: 1px solid var(--accent-fat); width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${escapeJsString(food.name)}')"><i data-lucide="star" style="width: 16px; height: 16px; fill: var(--accent-fat); color: var(--accent-fat);"></i></button>
+                                            ${food.custom ? `<button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editCustomFoodByName('${escapeJsString(food.name)}')"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>` : ''}
+                                            ${food.custom ? `<button class="delete-btn" style="font-size: 1.1rem; width: 36px; height: 36px;" onclick="deleteCustomFood('${escapeJsString(food.name)}')"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>` : ''}
                                         </div></div></div>
                             `;
                         }).join('')}
@@ -6986,7 +7036,7 @@ Solutions possibles :
                     return `
                         <div class="food-item" data-food-index="${globalIndex}">
                             <div>
-                                <div class="food-name">${getDisplayName(food)} ${food.verified ? '<span style="color: #10b981; font-size: 1rem; cursor: help; margin-left: 4px;" title="Aliment vérifié par un administrateur">✓</span>' : ''} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''}</div>
+                                <div class="food-name">${escapeHtml(getDisplayName(food))} ${food.verified ? '<span style="color: #10b981; font-size: 1rem; cursor: help; margin-left: 4px;" title="Aliment vérifié par un administrateur">✓</span>' : ''} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''}</div>
                                 ${food.custom ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Personnalisé</span>' : ''}
                             </div>
                             <div class="food-macros">
@@ -6996,11 +7046,11 @@ Solutions possibles :
                                 <span><div class="label">Cal</div><div class="value">${food.calories}</div></span>
                             </div>
                             <div style="display: flex; flex-direction: column; gap: var(--space-sm); align-items: flex-end;">
-                                <span style="color: var(--text-secondary); font-size: 0.9rem;">pour ${food.unit}</span>
+                                <span style="color: var(--text-secondary); font-size: 0.9rem;">pour ${escapeHtml(food.unit)}</span>
                                 <div style="display: flex; gap: var(--space-sm); align-items: center;">
-                                    <button class="icon-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${food.name.replace(/'/g, "\\'")}')"><i data-lucide="star" style="width: 16px; height: 16px;"></i></button>
-                                    ${food.custom ? `<button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editFoodByIndex(${globalIndex})"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>` : ''}
-                                    ${food.custom ? `<button class="delete-btn" style="font-size: 1.1rem; width: 36px; height: 36px;" onclick="deleteFoodByIndex(${globalIndex})"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>` : ''}
+                                    <button class="icon-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${escapeJsString(food.name)}')"><i data-lucide="star" style="width: 16px; height: 16px;"></i></button>
+                                    ${food.custom ? `<button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editCustomFoodByName('${escapeJsString(food.name)}')"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>` : ''}
+                                    ${food.custom ? `<button class="delete-btn" style="font-size: 1.1rem; width: 36px; height: 36px;" onclick="deleteCustomFood('${escapeJsString(food.name)}')"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>` : ''}
                                 </div></div></div>
                     `;
                 }).join('');
@@ -7017,22 +7067,31 @@ Solutions possibles :
 
         async function toggleFavorite(foodName) {
             const index = favoriteFoods.indexOf(foodName);
+            const isRemoving = index > -1;
 
-            if (index > -1) {
-                // Retirer des favoris
-                favoriteFoods.splice(index, 1);
-                showToast('<i data-lucide="x-circle" class="icon-inline"></i> Retiré des favoris');
+            // Créer une copie AVANT de modifier (save-first pattern)
+            const newFavorites = [...favoriteFoods];
+
+            if (isRemoving) {
+                newFavorites.splice(index, 1);
             } else {
-                // Ajouter aux favoris
-                favoriteFoods.push(foodName);
-                showToast('⭐ Ajouté aux favoris');
+                newFavorites.push(foodName);
             }
 
-            // Sauvegarder vers Firestore
+            // Sauvegarder vers Firestore D'ABORD
             try {
-                await saveFavoriteFoodsToFirestore(favoriteFoods);
+                await saveFavoriteFoodsToFirestore(newFavorites);
+                // Succès : mettre à jour la variable globale
+                favoriteFoods = newFavorites;
+                showToast(isRemoving
+                    ? '<i data-lucide="x-circle" class="icon-inline"></i> Retiré des favoris'
+                    : '⭐ Ajouté aux favoris'
+                );
             } catch (error) {
+                // Échec : ne pas modifier la variable globale, avertir l'utilisateur
                 console.error('Erreur sauvegarde favoriteFoods:', error);
+                showToast('<i data-lucide="alert-triangle" class="icon-inline"></i> Erreur de sauvegarde', 'error');
+                return; // Ne pas rafraîchir l'UI car rien n'a changé
             }
 
             // Refresh all meals to update stars
@@ -7054,8 +7113,17 @@ Solutions possibles :
             }
         }
 
+        // DEPRECATED: Utiliser editCustomFoodByName à la place
         function editFoodByIndex(index) {
-            const food = window.currentFoodList[index];
+            const food = window.currentFoodList?.[index];
+            if (food) editCustomFoodByName(food.name);
+        }
+
+        function editCustomFoodByName(foodName) {
+            // Rechercher l'aliment par son nom (identifiant unique)
+            const food = customFoods.find(f => f.name === foodName) ||
+                         foodDatabase.find(f => f.name === foodName && f.custom);
+
             if (!food) {
                 showToast('<i data-lucide="x-circle" class="icon-inline"></i> Aliment introuvable');
                 return;
@@ -7067,9 +7135,12 @@ Solutions possibles :
                 return;
             }
 
+            // Store original name for update
+            window._editingFoodOriginalName = food.name;
+
             // Pre-fill modal
             document.getElementById('new-food-name').value = food.name;
-            document.getElementById('new-food-name').disabled = false; // Permettre la modification du nom
+            document.getElementById('new-food-name').disabled = false;
             document.getElementById('new-food-unit').value = food.unit;
             document.getElementById('new-food-protein').value = food.protein;
             document.getElementById('new-food-carbs').value = food.carbs;
@@ -7079,19 +7150,25 @@ Solutions possibles :
 
             // Change modal title and button
             const modalTitle = document.querySelector('#addFoodModal h2');
-            if (modalTitle) modalTitle.textContent = 'Modifier ' + food.name;
+            if (modalTitle) modalTitle.textContent = 'Modifier ' + escapeHtml(food.name);
 
             const saveBtn = document.querySelector('#addFoodModal .btn[onclick="saveNewFood()"]');
             if (saveBtn) {
                 saveBtn.innerHTML = '<i data-lucide="save" class="icon-inline"></i> Sauvegarder';
-                saveBtn.onclick = () => updateFoodByIndex(index);
+                saveBtn.onclick = () => updateCustomFoodByName(window._editingFoodOriginalName);
             }
 
             openAddFoodModal();
         }
 
+        // DEPRECATED: Utiliser updateCustomFoodByName à la place
         function updateFoodByIndex(index) {
-            const food = window.currentFoodList[index];
+            const food = window.currentFoodList?.[index];
+            if (food) updateCustomFoodByName(food.name);
+        }
+
+        function updateCustomFoodByName(originalName) {
+            const food = customFoods.find(f => f.name === originalName);
             if (!food || !food.custom) return;
 
             // Get values
@@ -7967,7 +8044,7 @@ Solutions possibles :
                                 ${entry.visceral ? `<div class="tracking-compact-grid-item"><span class="label">Graisse viscérale</span><span class="value" style="color: var(--accent-danger);">${entry.visceral}</span></div>` : ''}
                                 ${entry.bodyAge ? `<div class="tracking-compact-grid-item"><span class="label">Âge corporel</span><span class="value" style="color: var(--accent-purple);">${entry.bodyAge} ans</span></div>` : ''}
                             </div>
-                            ${entry.notes ? `<div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid rgba(128,128,128,0.1);"><span class="label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Notes</span><p style="margin: var(--space-xs) 0 0; color: var(--text-primary); font-size: 0.9rem;">${entry.notes}</p></div>` : ''}
+                            ${entry.notes ? `<div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid rgba(128,128,128,0.1);"><span class="label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Notes</span><p style="margin: var(--space-xs) 0 0; color: var(--text-primary); font-size: 0.9rem;">${escapeHtml(entry.notes)}</p></div>` : ''}
                         </div>
                     </div>
                 `;
@@ -8332,7 +8409,7 @@ Solutions possibles :
                 // Recharger depuis Firestore pour s'assurer de la cohérence
                 mealTemplates = await loadMealTemplatesFromFirestore();
 
-                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type "' + templateName + '" sauvegardé !');
+                showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type "' + escapeHtml(templateName) + '" sauvegardé !');
             });
         }
 
@@ -8358,7 +8435,7 @@ Solutions possibles :
                                     <div class="card" style="padding: 15px;">
                                         <div style="display: flex; justify-content: space-between; align-items: start; cursor: pointer;" onclick="applyMealTemplate(${t.id}, '${mealType}')">
                                             <div style="flex: 1;">
-                                                <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 5px;">${t.name}</div>
+                                                <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 5px;">${escapeHtml(t.name)}</div>
                                                 <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 8px;">
                                                     P: ${Math.round(totalP)}g • g: ${Math.round(totalG)}g • L: ${Math.round(totalL)}g • ${Math.round(totalCal)} kcal
                                                 </div></div>
@@ -8370,7 +8447,7 @@ Solutions possibles :
                                                         style="background: none; border: none; color: var(--accent-carbs); font-size: 0.9rem; cursor: pointer; padding: 4px 0; font-weight: 600;">
                                                     <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Voir la recette ▼
                                                 </button>
-                                                <div id="recipe-${t.id}" style="display: none; margin-top: 8px; padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-sm); border-left: 3px solid var(--accent-carbs); font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap;">${t.recipe}</div></div>
+                                                <div id="recipe-${t.id}" style="display: none; margin-top: 8px; padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-sm); border-left: 3px solid var(--accent-carbs); font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(t.recipe)}</div></div>
                                         ` : ''}
                                     </div>
                                 `;
@@ -8473,14 +8550,14 @@ Solutions possibles :
 
             syncMealsToPlanning();
             closeTemplatesModal();
-            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type "' + template.name + '" chargé');
+            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type "' + escapeHtml(template.name) + '" chargé');
         }
 
         async function deleteMealTemplate(templateId) {
             const template = mealTemplates.find(t => t.id === templateId);
             if (!template) return;
 
-            const confirmed = await customConfirm('Supprimer "' + template.name + '" ?', 'Ce modèle sera définitivement supprimé.', true);
+            const confirmed = await customConfirm('Supprimer "' + escapeHtml(template.name) + '" ?', 'Ce modèle sera définitivement supprimé.', true);
             if (!confirmed) return;
 
             // Supprimer depuis Firestore (utiliser le nom comme ID)
@@ -9060,7 +9137,7 @@ Solutions possibles :
                                 </div>
                                 ${result.foods.map(food => `
                                     <div style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.85rem;">
-                                        <span style="color: var(--text-secondary);">${food.name}</span>
+                                        <span style="color: var(--text-secondary);">${escapeHtml(food.name)}</span>
                                         <span style="color: var(--text-primary); font-weight: 600;">${food.quantity}g</span>
                                     </div>
                                 `).join('')}
@@ -9073,7 +9150,7 @@ Solutions possibles :
                                         Recette
                                     </summary>
                                     <div style="color: var(--text-secondary); line-height: 1.5; white-space: pre-line; font-size: 0.85rem; margin-top: var(--space-sm);">
-                                        ${result.recipe}
+                                        ${escapeHtml(result.recipe)}
                                     </div>
                                 </details>
                             ` : ''}
@@ -9227,7 +9304,7 @@ Solutions possibles :
                 return `
                     <div class="food-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-md); background: var(--bg-secondary); border-radius: var(--radius-md); margin-bottom: var(--space-sm); gap: var(--space-md);">
                         <div style="flex: 1;">
-                            <div style="font-weight: 600; margin-bottom: var(--space-xs);">${food.name}</div>
+                            <div style="font-weight: 600; margin-bottom: var(--space-xs);">${escapeHtml(food.name)}</div>
                             <div style="font-size: 0.85rem; color: var(--text-secondary);">
                                 P: ${protein}g • g: ${carbs}g • L: ${fat}g • ${calories} kcal
                             </div></div>
@@ -9443,7 +9520,7 @@ Solutions possibles :
                         <!-- Compact Header: Title + Macros + Buttons -->
                         <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-md);">
                             <div style="flex: 1;">
-                                <h3 style="font-size: 1.2rem; font-weight: 700; margin: 0;">${template.name}</h3>
+                                <h3 style="font-size: 1.2rem; font-weight: 700; margin: 0;">${escapeHtml(template.name)}</h3>
                             </div>
 
                             <!-- Compact Macros (inline) -->
@@ -9477,7 +9554,7 @@ Solutions possibles :
                             ${template.recipe ? `
                                 <div style="padding: var(--space-md); background: var(--bg-tertiary); border-radius: 0 0 var(--radius-md) var(--radius-md); margin-bottom: var(--space-md);">
                                     <div style="font-size: 0.85rem; color: var(--accent-carbs); font-weight: 600; margin-bottom: var(--space-xs);"><i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette</div>
-                                    <div style="color: var(--text-primary); font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap;">${template.recipe}</div></div>
+                                    <div style="color: var(--text-primary); font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(template.recipe)}</div></div>
                             ` : ''}
 
                             <!-- Foods List -->
@@ -9491,7 +9568,7 @@ Solutions possibles :
 
                                     return `
                                         <div style="padding: var(--space-sm); background: var(--bg-tertiary); border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.85rem;">
-                                            <div style="font-weight: 600; margin-bottom: 2px;">${food.name} (${food.quantity}g)</div>
+                                            <div style="font-weight: 600; margin-bottom: 2px;">${escapeHtml(food.name)} (${food.quantity}g)</div>
                                             <div style="color: var(--text-secondary);">
                                                 P: ${protein}g • g: ${carbs}g • L: ${fat}g • ${calories} kcal
                                             </div></div>
@@ -9510,7 +9587,7 @@ Solutions possibles :
             if (!template) return;
 
             const confirmed = await customConfirm(
-                'Supprimer "' + template.name + '" ?',
+                'Supprimer "' + escapeHtml(template.name) + '" ?',
                 'Ce repas type sera définitivement supprimé.',
                 true
             );
@@ -10229,7 +10306,7 @@ Solutions possibles :
                                 ${e.bodyAge ? `<div><strong>Âge:</strong> ${e.bodyAge} ans</div>` : ''}
                                 ${e.visceral ? `<div><strong>Viscérale:</strong> ${e.visceral}</div>` : ''}
                             </div>
-                            ${e.notes ? `<div style="margin-top: 10px; color: var(--text-secondary); font-style: italic;">📝 ${e.notes}</div>` : ''}
+                            ${e.notes ? `<div style="margin-top: 10px; color: var(--text-secondary); font-style: italic;">📝 ${escapeHtml(e.notes)}</div>` : ''}
                         </div>
                         <button class="delete-btn" onclick="deleteAdvancedTracking('${e.date}')"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>
                     </div></div>
@@ -10853,9 +10930,9 @@ Solutions possibles :
                     : '';
 
                 return `
-                    <button type="button" data-food-name="${food.name}" class="food-selection-item">
+                    <button type="button" data-food-name="${escapeHtml(food.name)}" class="food-selection-item">
                         <div style="font-weight: 500; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                            ${food.name}${verifiedBadge}
+                            ${escapeHtml(food.name)}${verifiedBadge}
                         </div>
                         <div style="font-size: 0.8rem; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                             P: ${food.protein}g · G: ${food.carbs}g · L: ${food.fat}g · ${food.calories} kcal
