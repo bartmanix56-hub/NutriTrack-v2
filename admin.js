@@ -1042,11 +1042,20 @@ async function showAppAfterLogin(user) {
         console.log('🔄 Chargement profile depuis Firestore...');
         window.loadProfile().then(() => {
             console.log('✅ Profile chargé depuis Firestore');
+            // Sync wizard fields with loaded profile data
+            if (typeof window.syncWizardFromOriginal === 'function') {
+                window.syncWizardFromOriginal();
+                console.log('✅ Wizard synchronisé avec le profil');
+            }
             // Charger calc settings APRÈS profile
             if (typeof window.loadCalcSettings === 'function') {
                 console.log('🔄 Chargement calc settings depuis Firestore...');
                 window.loadCalcSettings().then(() => {
                     console.log('✅ Calc settings chargés depuis Firestore');
+                    // Re-sync wizard with goal/pace after calc settings loaded
+                    if (typeof window.syncWizardFromOriginal === 'function') {
+                        window.syncWizardFromOriginal();
+                    }
                 });
             }
         });
