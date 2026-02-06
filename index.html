@@ -46,7 +46,6 @@
 
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="calculator-wizard.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
@@ -899,58 +898,65 @@
 
         </div>
 
-<!-- Calculator Tab - WIZARD VERSION -->
+        <!-- Calculator Tab -->
         <div id="calculator" class="tab-content">
 
-            <!-- Wizard Container -->
+            <!-- ========== WIZARD UI ========== -->
             <div class="calc-wizard">
-                <!-- Progress Indicator -->
-                <div class="calc-wizard-progress">
-                    <div class="calc-wizard-step active" data-step="1">
-                        <div class="calc-wizard-step-number">1</div>
-                        <div class="calc-wizard-step-label">Profil</div>
+                <!-- Hero Header -->
+                <div style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); border-radius: var(--radius-xl); padding: var(--space-3xl); margin-bottom: var(--space-2xl); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); text-align: center;">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 70px; height: 70px; background: var(--accent-ui); border-radius: var(--radius-xl); margin-bottom: var(--space-lg);">
+                        <i data-lucide="calculator" style="width: 36px; height: 36px; color: white;"></i>
                     </div>
-                    <div class="calc-wizard-connector"></div>
-                    <div class="calc-wizard-step" data-step="2">
-                        <div class="calc-wizard-step-number">2</div>
-                        <div class="calc-wizard-step-label">Objectif</div>
+                    <h1 style="font-size: 2rem; font-weight: 700; margin: 0; color: var(--text-primary);">
+                        Calcule tes Macros
+                    </h1>
+                    <p style="margin: var(--space-sm) 0 0 0; color: var(--text-secondary); font-size: 1rem;">
+                        En 3 étapes simples
+                    </p>
+                </div>
+
+                <!-- Progress Steps -->
+                <div class="wizard-progress">
+                    <div class="wizard-step-indicator active" onclick="wizardGoToStep(1)">
+                        <div class="wizard-step-number">1</div>
+                        <div class="wizard-step-label">Profil</div>
                     </div>
-                    <div class="calc-wizard-connector"></div>
-                    <div class="calc-wizard-step" data-step="3">
-                        <div class="calc-wizard-step-number">3</div>
-                        <div class="calc-wizard-step-label">Résultats</div>
+                    <div class="wizard-step-connector"></div>
+                    <div class="wizard-step-indicator" onclick="wizardGoToStep(2)">
+                        <div class="wizard-step-number">2</div>
+                        <div class="wizard-step-label">Objectif</div>
+                    </div>
+                    <div class="wizard-step-connector"></div>
+                    <div class="wizard-step-indicator" onclick="wizardGoToStep(3)">
+                        <div class="wizard-step-number">3</div>
+                        <div class="wizard-step-label">Résultats</div>
                     </div>
                 </div>
 
-                <!-- Alert box for warnings -->
-                <div id="profile-alert" class="calc-wizard-alert" style="display: none;">
-                    <div class="calc-wizard-alert-title"><i data-lucide="alert-triangle" class="icon-inline"></i> Attention</div>
-                    <div id="profile-alert-message"></div>
-                </div>
-
-                <!-- Step 1: Profile -->
-                <div class="calc-wizard-panel active" data-panel="1">
-                    <div class="calc-wizard-header">
-                        <div class="calc-wizard-icon"><i data-lucide="user" style="width: 28px; height: 28px; color: white;"></i></div>
-                        <div>
-                            <h2 class="calc-wizard-title">Ton Profil</h2>
-                            <p class="calc-wizard-subtitle">Ces informations permettent de calculer ton métabolisme</p>
+                <!-- ===== STEP 1: Profile ===== -->
+                <div class="wizard-panel active" data-step="1">
+                    <div class="wizard-card">
+                        <div class="wizard-card-header">
+                            <div class="wizard-card-icon">
+                                <i data-lucide="user" style="width: 28px; height: 28px;"></i>
+                            </div>
+                            <div>
+                                <h2 class="wizard-card-title">Ton Profil</h2>
+                                <p class="wizard-card-subtitle">Ces informations permettent de calculer ton métabolisme</p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="calc-wizard-content">
                         <!-- Date de naissance -->
-                        <div class="calc-wizard-field">
-                            <label class="calc-wizard-label">
-                                <span class="calc-wizard-label-icon">🎂</span>
-                                Date de naissance
-                                <span class="calc-wizard-required">*</span>
+                        <div class="wizard-form-group">
+                            <label class="wizard-label">
+                                🎂 Date de naissance <span class="required">*</span>
                             </label>
-                            <div class="calc-wizard-date-grid">
-                                <select id="birth-day" class="calc-wizard-select">
+                            <div class="wizard-row-3">
+                                <select id="wizard-birth-day" class="wizard-select">
                                     <option value="">Jour</option>
                                 </select>
-                                <select id="birth-month" class="calc-wizard-select">
+                                <select id="wizard-birth-month" class="wizard-select">
                                     <option value="">Mois</option>
                                     <option value="0">Janvier</option>
                                     <option value="1">Février</option>
@@ -965,422 +971,750 @@
                                     <option value="10">Novembre</option>
                                     <option value="11">Décembre</option>
                                 </select>
-                                <select id="birth-year" class="calc-wizard-select">
+                                <select id="wizard-birth-year" class="wizard-select">
                                     <option value="">Année</option>
                                 </select>
                             </div>
+                            <p class="wizard-hint">Ton âge sera calculé automatiquement</p>
                         </div>
 
                         <!-- Sexe -->
-                        <div class="calc-wizard-field">
-                            <label class="calc-wizard-label">
-                                <span class="calc-wizard-label-icon">👤</span>
-                                Sexe
-                                <span class="calc-wizard-required">*</span>
+                        <div class="wizard-form-group">
+                            <label class="wizard-label">
+                                👤 Sexe <span class="required">*</span>
                             </label>
-                            <div class="calc-wizard-gender-grid">
-                                <button type="button" class="calc-wizard-gender-btn" data-gender="male" onclick="selectGenderWizard('male')">
-                                    <span style="font-size: 1.5rem;">♂</span>
-                                    <span>Homme</span>
-                                </button>
-                                <button type="button" class="calc-wizard-gender-btn" data-gender="female" onclick="selectGenderWizard('female')">
-                                    <span style="font-size: 1.5rem;">♀</span>
-                                    <span>Femme</span>
-                                </button>
+                            <input type="hidden" id="wizard-gender" value="">
+                            <div class="wizard-selector">
+                                <div class="wizard-selector-btn" data-gender="male" onclick="wizardSelectGender('male')">
+                                    <div class="btn-icon">👨</div>
+                                    <div class="btn-label">Homme</div>
+                                </div>
+                                <div class="wizard-selector-btn" data-gender="female" onclick="wizardSelectGender('female')">
+                                    <div class="btn-icon">👩</div>
+                                    <div class="btn-label">Femme</div>
+                                </div>
                             </div>
-                            <input type="hidden" id="profile-gender" value="">
                         </div>
 
                         <!-- Taille & Poids -->
-                        <div class="calc-wizard-row">
-                            <div class="calc-wizard-field">
-                                <label class="calc-wizard-label">
-                                    <span class="calc-wizard-label-icon">📏</span>
-                                    Taille
-                                    <span class="calc-wizard-required">*</span>
-                                </label>
-                                <div class="calc-wizard-input-unit">
-                                    <input type="number" id="height" inputmode="decimal" pattern="[0-9]*" step="0.5" min="100" max="250" placeholder="175" class="calc-wizard-input">
-                                    <span class="calc-wizard-unit">cm</span>
+                        <div class="wizard-form-group">
+                            <div class="wizard-row">
+                                <div>
+                                    <label class="wizard-label">
+                                        📏 Taille (cm) <span class="required">*</span>
+                                    </label>
+                                    <input type="number" id="wizard-height" class="wizard-input" inputmode="decimal" placeholder="175" min="100" max="250" step="0.5">
                                 </div>
-                            </div>
-                            <div class="calc-wizard-field">
-                                <label class="calc-wizard-label">
-                                    <span class="calc-wizard-label-icon">⚖️</span>
-                                    Poids
-                                    <span class="calc-wizard-required">*</span>
-                                </label>
-                                <div class="calc-wizard-input-unit">
-                                    <input type="number" id="weight" inputmode="decimal" pattern="[0-9]*" step="0.1" min="30" max="300" placeholder="75" class="calc-wizard-input">
-                                    <span class="calc-wizard-unit">kg</span>
+                                <div>
+                                    <label class="wizard-label">
+                                        ⚖️ Poids (kg) <span class="required">*</span>
+                                    </label>
+                                    <input type="number" id="wizard-weight" class="wizard-input" inputmode="decimal" placeholder="75" min="30" max="300" step="0.1">
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Activité -->
-                        <div class="calc-wizard-field">
-                            <label class="calc-wizard-label">
-                                <span class="calc-wizard-label-icon">🏃</span>
-                                Niveau d'activité
-                                <span class="calc-wizard-required">*</span>
+                        <!-- Niveau d'activité -->
+                        <div class="wizard-form-group">
+                            <label class="wizard-label">
+                                🏃 Niveau d'activité <span class="required">*</span>
                             </label>
-                            <div class="calc-wizard-activity-grid">
-                                <button type="button" class="calc-wizard-activity-btn" data-activity="1.2" onclick="selectActivityWizard('1.2')">
-                                    <span class="activity-emoji">🪑</span>
-                                    <span class="activity-name">Sédentaire</span>
-                                    <span class="activity-desc">Peu ou pas d'exercice</span>
-                                </button>
-                                <button type="button" class="calc-wizard-activity-btn" data-activity="1.375" onclick="selectActivityWizard('1.375')">
-                                    <span class="activity-emoji">🚶</span>
-                                    <span class="activity-name">Légèrement actif</span>
-                                    <span class="activity-desc">1-3 jours/semaine</span>
-                                </button>
-                                <button type="button" class="calc-wizard-activity-btn" data-activity="1.55" onclick="selectActivityWizard('1.55')">
-                                    <span class="activity-emoji">🏃</span>
-                                    <span class="activity-name">Modérément actif</span>
-                                    <span class="activity-desc">3-5 jours/semaine</span>
-                                </button>
-                                <button type="button" class="calc-wizard-activity-btn" data-activity="1.725" onclick="selectActivityWizard('1.725')">
-                                    <span class="activity-emoji">💪</span>
-                                    <span class="activity-name">Très actif</span>
-                                    <span class="activity-desc">6-7 jours/semaine</span>
-                                </button>
-                                <button type="button" class="calc-wizard-activity-btn" data-activity="1.9" onclick="selectActivityWizard('1.9')">
-                                    <span class="activity-emoji">🔥</span>
-                                    <span class="activity-name">Extrêmement actif</span>
-                                    <span class="activity-desc">2x/jour + travail physique</span>
-                                </button>
+                            <input type="hidden" id="wizard-activity" value="">
+                            <div class="wizard-activity-list">
+                                <div class="wizard-activity-btn" data-value="1.2" onclick="wizardSelectActivity('1.2')">
+                                    <div class="activity-icon">🪑</div>
+                                    <div class="activity-info">
+                                        <div class="activity-title">Sédentaire</div>
+                                        <div class="activity-desc">Peu ou pas d'exercice</div>
+                                    </div>
+                                </div>
+                                <div class="wizard-activity-btn" data-value="1.375" onclick="wizardSelectActivity('1.375')">
+                                    <div class="activity-icon">🚶</div>
+                                    <div class="activity-info">
+                                        <div class="activity-title">Légèrement actif</div>
+                                        <div class="activity-desc">1-3 jours d'exercice par semaine</div>
+                                    </div>
+                                </div>
+                                <div class="wizard-activity-btn" data-value="1.55" onclick="wizardSelectActivity('1.55')">
+                                    <div class="activity-icon">🏃</div>
+                                    <div class="activity-info">
+                                        <div class="activity-title">Modérément actif</div>
+                                        <div class="activity-desc">3-5 jours d'exercice par semaine</div>
+                                    </div>
+                                </div>
+                                <div class="wizard-activity-btn" data-value="1.725" onclick="wizardSelectActivity('1.725')">
+                                    <div class="activity-icon">💪</div>
+                                    <div class="activity-info">
+                                        <div class="activity-title">Très actif</div>
+                                        <div class="activity-desc">6-7 jours d'exercice par semaine</div>
+                                    </div>
+                                </div>
+                                <div class="wizard-activity-btn" data-value="1.9" onclick="wizardSelectActivity('1.9')">
+                                    <div class="activity-icon">🔥</div>
+                                    <div class="activity-info">
+                                        <div class="activity-title">Extrêmement actif</div>
+                                        <div class="activity-desc">2x par jour + travail physique</div>
+                                    </div>
+                                </div>
                             </div>
-                            <input type="hidden" id="activity" value="">
                         </div>
-                    </div>
 
-                    <!-- Navigation -->
-                    <div class="calc-wizard-nav">
-                        <div></div>
-                        <button type="button" class="calc-wizard-btn-next" onclick="wizardNextStep()">
-                            Suivant
-                            <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
-                        </button>
+                        <!-- Navigation -->
+                        <div class="wizard-nav">
+                            <div></div>
+                            <button class="wizard-btn wizard-btn-next" onclick="wizardGoToStep(2)">
+                                Suivant <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Step 2: Objective -->
-                <div class="calc-wizard-panel" data-panel="2">
-                    <div class="calc-wizard-header">
-                        <div class="calc-wizard-icon" style="background: var(--accent-purple);"><i data-lucide="flag" style="width: 28px; height: 28px; color: white;"></i></div>
-                        <div>
-                            <h2 class="calc-wizard-title">Ton Objectif</h2>
-                            <p class="calc-wizard-subtitle">Définis ce que tu veux accomplir</p>
+                <!-- ===== STEP 2: Objective ===== -->
+                <div class="wizard-panel" data-step="2">
+                    <div class="wizard-card">
+                        <div class="wizard-card-header">
+                            <div class="wizard-card-icon">
+                                <i data-lucide="flag" style="width: 28px; height: 28px;"></i>
+                            </div>
+                            <div>
+                                <h2 class="wizard-card-title">Ton Objectif</h2>
+                                <p class="wizard-card-subtitle">Que souhaites-tu accomplir ?</p>
+                            </div>
+                        </div>
+
+                        <!-- Goal selection -->
+                        <div class="wizard-form-group">
+                            <label class="wizard-label">
+                                🎯 Objectif principal
+                            </label>
+                            <div class="wizard-selector wizard-selector-3">
+                                <div class="wizard-selector-btn wizard-goal-btn active" data-goal="cut" onclick="wizardSelectGoal('cut')">
+                                    <div class="btn-icon"><i data-lucide="flame" style="width: 28px; height: 28px; color: var(--accent-protein);"></i></div>
+                                    <div class="btn-label">Sèche</div>
+                                    <div class="btn-desc">Perdre du gras</div>
+                                </div>
+                                <div class="wizard-selector-btn wizard-goal-btn" data-goal="maintain" onclick="wizardSelectGoal('maintain')">
+                                    <div class="btn-icon"><i data-lucide="equal" style="width: 28px; height: 28px; color: var(--accent-main);"></i></div>
+                                    <div class="btn-label">Maintien</div>
+                                    <div class="btn-desc">Stabiliser</div>
+                                </div>
+                                <div class="wizard-selector-btn wizard-goal-btn" data-goal="bulk" onclick="wizardSelectGoal('bulk')">
+                                    <div class="btn-icon"><i data-lucide="trending-up" style="width: 28px; height: 28px; color: var(--accent-carbs);"></i></div>
+                                    <div class="btn-label">Prise</div>
+                                    <div class="btn-desc">Gagner en muscle</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pace selection -->
+                        <div class="wizard-form-group">
+                            <label class="wizard-label" id="wizard-pace-label">
+                                ⚡ Quel rythme ?
+                            </label>
+
+                            <!-- Pace buttons for cut/bulk -->
+                            <div id="wizard-pace-deficit" class="wizard-selector wizard-selector-3">
+                                <div class="wizard-selector-btn wizard-pace-btn active" data-pace="gentle" onclick="wizardSelectPace('gentle')">
+                                    <div class="btn-icon"><i data-lucide="smile" style="width: 24px; height: 24px;"></i></div>
+                                    <div class="btn-label">Doux</div>
+                                    <div class="btn-desc">Facile à tenir</div>
+                                </div>
+                                <div class="wizard-selector-btn wizard-pace-btn" data-pace="normal" onclick="wizardSelectPace('normal')">
+                                    <div class="btn-icon"><i data-lucide="arrow-right" style="width: 24px; height: 24px;"></i></div>
+                                    <div class="btn-label">Normal</div>
+                                    <div class="btn-desc">Équilibré</div>
+                                </div>
+                                <div class="wizard-selector-btn wizard-pace-btn" data-pace="fast" onclick="wizardSelectPace('fast')">
+                                    <div class="btn-icon"><i data-lucide="zap" style="width: 24px; height: 24px;"></i></div>
+                                    <div class="btn-label">Rapide</div>
+                                    <div class="btn-desc">Plus exigeant</div>
+                                </div>
+                            </div>
+
+                            <!-- Pace buttons for maintain (hidden by default) -->
+                            <div id="wizard-pace-maintain" class="wizard-selector wizard-selector-3" style="display: none;">
+                                <div class="wizard-selector-btn wizard-pace-btn" data-pace="high-carb" onclick="wizardSelectPace('high-carb')">
+                                    <div class="btn-icon"><i data-lucide="wheat" style="width: 24px; height: 24px;"></i></div>
+                                    <div class="btn-label">+ Glucides</div>
+                                    <div class="btn-desc">Énergie rapide</div>
+                                </div>
+                                <div class="wizard-selector-btn wizard-pace-btn active" data-pace="balanced" onclick="wizardSelectPace('balanced')">
+                                    <div class="btn-icon"><i data-lucide="scale" style="width: 24px; height: 24px;"></i></div>
+                                    <div class="btn-label">Équilibré</div>
+                                    <div class="btn-desc">Répartition classique</div>
+                                </div>
+                                <div class="wizard-selector-btn wizard-pace-btn" data-pace="high-fat" onclick="wizardSelectPace('high-fat')">
+                                    <div class="btn-icon"><i data-lucide="droplet" style="width: 24px; height: 24px;"></i></div>
+                                    <div class="btn-label">+ Lipides</div>
+                                    <div class="btn-desc">Satiété durable</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="wizard-nav">
+                            <button class="wizard-btn wizard-btn-prev" onclick="wizardGoToStep(1)">
+                                <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> Retour
+                            </button>
+                            <button class="wizard-btn wizard-btn-next" onclick="wizardGoToStep(3)">
+                                Calculer <i data-lucide="calculator" style="width: 18px; height: 18px;"></i>
+                            </button>
                         </div>
                     </div>
+                </div>
 
-                    <div class="calc-wizard-content">
-                        <!-- Goal selector -->
-                        <div class="calc-wizard-field">
-                            <label class="calc-wizard-label">Quel est ton objectif ?</label>
-                            <div class="calc-wizard-goal-grid">
-                                <button type="button" class="calc-wizard-goal-btn active" data-goal="cut" onclick="selectGoal('cut')">
-                                    <div class="goal-icon" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);"><i data-lucide="flame" style="width: 24px; height: 24px; color: white;"></i></div>
-                                    <div class="goal-name">Sèche</div>
-                                    <div class="goal-desc">Perdre du gras</div>
-                                </button>
-                                <button type="button" class="calc-wizard-goal-btn" data-goal="maintain" onclick="selectGoal('maintain')">
-                                    <div class="goal-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);"><i data-lucide="equal" style="width: 24px; height: 24px; color: white;"></i></div>
-                                    <div class="goal-name">Maintien</div>
-                                    <div class="goal-desc">Stabiliser</div>
-                                </button>
-                                <button type="button" class="calc-wizard-goal-btn" data-goal="bulk" onclick="selectGoal('bulk')">
-                                    <div class="goal-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);"><i data-lucide="trending-up" style="width: 24px; height: 24px; color: white;"></i></div>
-                                    <div class="goal-name">Prise</div>
-                                    <div class="goal-desc">Gagner du muscle</div>
-                                </button>
+                <!-- ===== STEP 3: Results ===== -->
+                <div class="wizard-panel" data-step="3">
+                    <div class="wizard-card">
+                        <div class="wizard-card-header">
+                            <div class="wizard-card-icon">
+                                <i data-lucide="bar-chart-3" style="width: 28px; height: 28px;"></i>
+                            </div>
+                            <div>
+                                <h2 class="wizard-card-title">Tes Résultats</h2>
+                                <p class="wizard-card-subtitle">Voici tes objectifs macros personnalisés</p>
                             </div>
                         </div>
 
-                        <!-- Pace selector (MODE GUIDÉ) -->
-                        <div id="guided-mode">
-                            <div class="calc-wizard-field">
-                                <label class="calc-wizard-label" id="pace-label">
-                                    <i data-lucide="gauge" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 4px;"></i>
-                                    Quel rythme souhaites-tu ?
+                        <!-- BMR, TDEE, IMC -->
+                        <div class="wizard-results-grid">
+                            <div class="wizard-stat-card">
+                                <div class="wizard-stat-label">BMR</div>
+                                <div class="wizard-stat-value"><span id="wizard-bmr">—</span></div>
+                                <div class="wizard-stat-hint">kcal au repos</div>
+                            </div>
+                            <div class="wizard-stat-card">
+                                <div class="wizard-stat-label">TDEE</div>
+                                <div class="wizard-stat-value"><span id="wizard-tdee">—</span></div>
+                                <div class="wizard-stat-hint">kcal dépensées</div>
+                            </div>
+                            <div class="wizard-stat-card">
+                                <div class="wizard-stat-label">IMC</div>
+                                <div class="wizard-stat-value"><span id="wizard-imc">—</span></div>
+                                <div class="wizard-stat-hint">indice corporel</div>
+                            </div>
+                        </div>
+
+                        <!-- Total Calories -->
+                        <div class="wizard-total-cal">
+                            <div class="wizard-total-label">Ton objectif calorique</div>
+                            <div>
+                                <span class="wizard-total-value" id="wizard-total-cal">—</span>
+                                <span class="wizard-total-unit">kcal/jour</span>
+                            </div>
+                        </div>
+
+                        <!-- Macro Rings -->
+                        <div class="wizard-macros-grid">
+                            <div class="wizard-macro-ring">
+                                <svg class="wizard-ring-svg" viewBox="0 0 120 120">
+                                    <circle class="wizard-ring-bg" cx="60" cy="60" r="54"></circle>
+                                    <circle class="wizard-ring-progress protein" id="wizard-ring-protein" cx="60" cy="60" r="54"></circle>
+                                </svg>
+                                <div class="wizard-macro-value protein" id="wizard-protein-value">—</div>
+                                <div class="wizard-macro-label">Protéines</div>
+                                <div class="wizard-macro-kcal" id="wizard-protein-kcal">— kcal</div>
+                            </div>
+                            <div class="wizard-macro-ring">
+                                <svg class="wizard-ring-svg" viewBox="0 0 120 120">
+                                    <circle class="wizard-ring-bg" cx="60" cy="60" r="54"></circle>
+                                    <circle class="wizard-ring-progress carbs" id="wizard-ring-carbs" cx="60" cy="60" r="54"></circle>
+                                </svg>
+                                <div class="wizard-macro-value carbs" id="wizard-carbs-value">—</div>
+                                <div class="wizard-macro-label">Glucides</div>
+                                <div class="wizard-macro-kcal" id="wizard-carbs-kcal">— kcal</div>
+                            </div>
+                            <div class="wizard-macro-ring">
+                                <svg class="wizard-ring-svg" viewBox="0 0 120 120">
+                                    <circle class="wizard-ring-bg" cx="60" cy="60" r="54"></circle>
+                                    <circle class="wizard-ring-progress fat" id="wizard-ring-fat" cx="60" cy="60" r="54"></circle>
+                                </svg>
+                                <div class="wizard-macro-value fat" id="wizard-fat-value">—</div>
+                                <div class="wizard-macro-label">Lipides</div>
+                                <div class="wizard-macro-kcal" id="wizard-fat-kcal">— kcal</div>
+                            </div>
+                        </div>
+
+                        <!-- CTA Buttons -->
+                        <div class="wizard-cta">
+                            <button class="wizard-cta-btn primary" onclick="wizardExportImage()">
+                                <i data-lucide="camera" style="width: 18px; height: 18px;"></i> Télécharger en image
+                            </button>
+                            <button class="wizard-cta-btn secondary" onclick="wizardGoToMeals()">
+                                <i data-lucide="calendar" style="width: 18px; height: 18px;"></i> Aller à Mes Repas
+                            </button>
+                        </div>
+
+                        <!-- Tip -->
+                        <div class="wizard-tip">
+                            <div class="wizard-tip-title">
+                                <i data-lucide="lightbulb" style="width: 18px; height: 18px; color: var(--accent-main);"></i>
+                                Bon à savoir
+                            </div>
+                            <p class="wizard-tip-text">
+                                Ces valeurs sont un point de départ. Suis-les pendant <strong>10-14 jours</strong>, puis ajuste selon ton ressenti : énergie, humeur, résultats sur la balance.
+                            </p>
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="wizard-nav">
+                            <button class="wizard-btn wizard-btn-prev" onclick="wizardGoToStep(2)">
+                                <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> Modifier
+                            </button>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ========== END WIZARD UI ========== -->
+
+            <!-- ========== ORIGINAL CALCULATOR (hidden, used by JS) ========== -->
+            <div id="original-calculator" style="display: none;">
+
+            <!-- Original Hero Header (hidden) -->
+            <div style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); border-radius: var(--radius-xl); padding: var(--space-3xl); margin-bottom: var(--space-3xl); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);">
+                <div style="display: flex; align-items: center; gap: var(--space-lg); margin-bottom: var(--space-lg);">
+                    <div style="font-size: 3rem; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; background: var(--accent-ui); border-radius: var(--radius-lg);"><i data-lucide="target" style="width: 36px; height: 36px; color: white;"></i></div>
+                    <div>
+                        <h1 style="font-size: 2rem; font-weight: 700; margin: 0; color: var(--accent-ui);">
+                            Calcule tes Macros
+                        </h1>
+                        <p style="margin: 0; margin-top: var(--space-xs); color: var(--text-secondary); font-size: 1rem;">
+                            Trouve les macros qui te correspondent en quelques clics
+                        </p>
+                    </div></div></div>
+
+            <!-- Alert box for warnings -->
+            <div id="profile-alert" style="display: none; padding: var(--space-xl); background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--accent-danger); border-radius: var(--radius-lg); margin-bottom: var(--space-2xl); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);">
+                <div style="font-weight: 700; color: var(--accent-danger); margin-bottom: var(--space-sm); font-size: 1.1rem;"><i data-lucide="alert-triangle" class="icon-inline"></i> Attention</div>
+                <div id="profile-alert-message" style="color: var(--text-secondary); font-size: 1rem; line-height: 1.6;"></div></div>
+
+            <!-- Main Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: var(--space-2xl); margin-bottom: var(--space-2xl);">
+
+                <!-- CARD 1: Tes Informations -->
+                <div class="card" style="background: var(--bg-secondary); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: var(--shadow-sm);">
+                    <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-2xl); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
+                        <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--accent-ui); border-radius: var(--radius-md);"><i data-lucide="user" style="width: 22px; height: 22px; color: white;"></i></div>
+                        <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--text-primary);">Tes Informations</h2>
+                    </div>
+
+                    <div style="display: grid; gap: var(--space-xl);">
+                        <div class="input-group">
+                            <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                🎂 Date de naissance
+                                <span style="color: var(--accent-danger);">*</span>
+                            </label>
+                            <div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: var(--space-md);">
+                                <select id="birth-day" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s; font-family: inherit;">
+                                    <option value="">Jour</option>
+                                </select>
+                                <select id="birth-month" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s; font-family: inherit;">
+                                    <option value="">Mois</option>
+                                    <option value="0">Janvier</option>
+                                    <option value="1">Février</option>
+                                    <option value="2">Mars</option>
+                                    <option value="3">Avril</option>
+                                    <option value="4">Mai</option>
+                                    <option value="5">Juin</option>
+                                    <option value="6">Juillet</option>
+                                    <option value="7">Août</option>
+                                    <option value="8">Septembre</option>
+                                    <option value="9">Octobre</option>
+                                    <option value="10">Novembre</option>
+                                    <option value="11">Décembre</option>
+                                </select>
+                                <select id="birth-year" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s; font-family: inherit;">
+                                    <option value="">Année</option>
+                                </select>
+                            </div>
+                            <p class="info-text" style="margin-top: var(--space-sm);">Ton âge sera calculé automatiquement à partir de ta date de naissance</p>
+                        </div>
+
+                        <div class="input-group">
+                            <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                👤 Sexe
+                                <span style="color: var(--accent-danger);">*</span>
+                            </label>
+                            <select id="profile-gender" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s; font-family: inherit;">
+                                <option value="">-- Sélectionner --</option>
+                                <option value="male">Homme</option>
+                                <option value="female">Femme</option>
+                            </select>
+                            <p class="info-text" style="margin-top: var(--space-sm);">Utilisé pour estimer ton métabolisme de base</p>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
+                            <div class="input-group">
+                                <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                    📏 Taille (cm)
+                                    <span style="color: var(--accent-danger);">*</span>
                                 </label>
+                                <input type="number" id="height" inputmode="decimal" pattern="[0-9]*" step="0.5" min="100" max="250" placeholder="175" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            </div>
 
+                            <div class="input-group">
+                                <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                    ⚖️ Poids (kg)
+                                    <span style="color: var(--accent-danger);">*</span>
+                                </label>
+                                <input type="number" id="weight" inputmode="decimal" pattern="[0-9]*" step="0.1" min="30" max="300" placeholder="75.5" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            </div></div>
+
+                        <div class="input-group">
+                            <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                🏃 Niveau d'activité
+                                <span style="color: var(--accent-danger);">*</span>
+                            </label>
+                            <select id="activity" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s; font-family: inherit;">
+                                <option value="">-- Sélectionner --</option>
+                                <option value="1.2">🪑 Sédentaire (peu ou pas d'exercice)</option>
+                                <option value="1.375">🚶 Légèrement actif (1-3 jours/semaine)</option>
+                                <option value="1.55">🏃 Modérément actif (3-5 jours/semaine)</option>
+                                <option value="1.725">💪 Très actif (6-7 jours/semaine)</option>
+                                <option value="1.9">🔥 Extrêmement actif (2x/jour + travail physique)</option>
+                            </select>
+                            <p class="info-text" style="margin-top: var(--space-sm);">Inclut sport, marche quotidienne et éventuel travail physique</p>
+                        </div></div></div>
+
+                <!-- CARD 2: Ton Objectif -->
+                <div class="card" style="background: var(--bg-secondary); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: var(--shadow-sm);">
+                    <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-2xl); padding-bottom: var(--space-lg); border-bottom: 2px solid var(--bg-tertiary);">
+                        <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--accent-ui); border-radius: var(--radius-md);"><i data-lucide="flag" style="width: 22px; height: 22px; color: white;"></i></div>
+                        <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--text-primary);">Ton Objectif</h2>
+                    </div>
+
+                    <!-- Goal selector -->
+                    <div class="goal-selector" style="margin-bottom: var(--space-2xl); display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md);">
+                        <div class="goal-btn active" data-goal="cut" onclick="selectGoal('cut')">
+                            <div class="goal-title"><i data-lucide="flame" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Sèche</div>
+                            <div class="goal-desc">Perdre du gras progressivement</div></div>
+                        <div class="goal-btn" data-goal="maintain" onclick="selectGoal('maintain')">
+                            <div class="goal-title"><i data-lucide="equal" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Maintien</div>
+                            <div class="goal-desc">Stabiliser ton poids</div></div>
+                        <div class="goal-btn" data-goal="bulk" onclick="selectGoal('bulk')">
+                            <div class="goal-title"><i data-lucide="trending-up" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Prise</div>
+                            <div class="goal-desc">Gagner en muscle</div></div></div>
+
+                    <!-- MODE GUIDÉ (par défaut) -->
+                    <div id="guided-mode" style="margin-bottom: var(--space-2xl);">
+                        <!-- Sélecteur de Rythme/Répartition -->
+                        <div style="margin-bottom: var(--space-xl);">
+                            <label id="pace-label" style="display: block; font-weight: 600; margin-bottom: var(--space-md); color: var(--text-primary); font-size: 0.95rem;">
+                                <i data-lucide="gauge" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 4px;"></i>
+                                Quel rythme souhaites-tu ?
+                            </label>
+                            <div id="pace-buttons-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md);">
                                 <!-- Boutons Sèche/Prise -->
-                                <div id="pace-btns-deficit" class="calc-wizard-pace-grid">
-                                    <button type="button" class="calc-wizard-pace-btn active" data-pace="gentle" onclick="selectPace('gentle')">
-                                        <span class="pace-icon">😊</span>
-                                        <span class="pace-name">Doux</span>
-                                        <span class="pace-desc">Facile à tenir</span>
-                                    </button>
-                                    <button type="button" class="calc-wizard-pace-btn" data-pace="normal" onclick="selectPace('normal')">
-                                        <span class="pace-icon">➡️</span>
-                                        <span class="pace-name">Normal</span>
-                                        <span class="pace-desc">Équilibré</span>
-                                    </button>
-                                    <button type="button" class="calc-wizard-pace-btn" data-pace="fast" onclick="selectPace('fast')">
-                                        <span class="pace-icon">⚡</span>
-                                        <span class="pace-name">Rapide</span>
-                                        <span class="pace-desc">Plus exigeant</span>
-                                    </button>
+                                <div id="pace-btns-deficit" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); grid-column: 1 / -1;">
+                                    <div class="goal-btn pace-btn active" data-pace="gentle" onclick="selectPace('gentle')">
+                                        <div class="goal-title"><i data-lucide="smile" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Doux</div>
+                                        <div class="goal-desc">Facile à tenir</div>
+                                    </div>
+                                    <div class="goal-btn pace-btn" data-pace="normal" onclick="selectPace('normal')">
+                                        <div class="goal-title"><i data-lucide="arrow-right" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Normal</div>
+                                        <div class="goal-desc">Équilibré</div>
+                                    </div>
+                                    <div class="goal-btn pace-btn" data-pace="fast" onclick="selectPace('fast')">
+                                        <div class="goal-title"><i data-lucide="zap" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Rapide</div>
+                                        <div class="goal-desc">Plus exigeant</div>
+                                    </div>
                                 </div>
 
-                                <!-- Boutons Maintien -->
-                                <div id="pace-btns-maintain" class="calc-wizard-pace-grid" style="display: none;">
-                                    <button type="button" class="calc-wizard-pace-btn" data-pace="high-carb" onclick="selectPace('high-carb')">
-                                        <span class="pace-icon">🌾</span>
-                                        <span class="pace-name">+ Glucides</span>
-                                        <span class="pace-desc">Énergie rapide</span>
-                                    </button>
-                                    <button type="button" class="calc-wizard-pace-btn active" data-pace="balanced" onclick="selectPace('balanced')">
-                                        <span class="pace-icon">⚖️</span>
-                                        <span class="pace-name">Équilibré</span>
-                                        <span class="pace-desc">Classique</span>
-                                    </button>
-                                    <button type="button" class="calc-wizard-pace-btn" data-pace="high-fat" onclick="selectPace('high-fat')">
-                                        <span class="pace-icon">💧</span>
-                                        <span class="pace-name">+ Lipides</span>
-                                        <span class="pace-desc">Satiété</span>
-                                    </button>
+                                <!-- Boutons Maintien (répartition) -->
+                                <div id="pace-btns-maintain" style="display: none; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); grid-column: 1 / -1;">
+                                    <div class="goal-btn pace-btn" data-pace="high-carb" onclick="selectPace('high-carb')">
+                                        <div class="goal-title"><i data-lucide="wheat" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Plus de glucides</div>
+                                        <div class="goal-desc">Énergie rapide</div>
+                                    </div>
+                                    <div class="goal-btn pace-btn active" data-pace="balanced" onclick="selectPace('balanced')">
+                                        <div class="goal-title"><i data-lucide="scale" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Équilibré</div>
+                                        <div class="goal-desc">Répartition classique</div>
+                                    </div>
+                                    <div class="goal-btn pace-btn" data-pace="high-fat" onclick="selectPace('high-fat')">
+                                        <div class="goal-title"><i data-lucide="droplet" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Plus de lipides</div>
+                                        <div class="goal-desc">Satiété durable</div>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Preview mode guidé -->
-                            <div id="guided-preview" class="calc-wizard-preview">
-                                <div class="calc-wizard-preview-title">
-                                    <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
-                                    Mode guidé activé
-                                </div>
-                                <p class="calc-wizard-preview-text">Les paramètres sont optimisés automatiquement pour ton objectif.</p>
+                        <!-- Preview des paramètres automatiques -->
+                        <div id="guided-preview" style="margin-top: var(--space-lg); padding: var(--space-md); background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.05);">
+                            <div style="display: flex; align-items: center; gap: var(--space-xs); margin-bottom: var(--space-sm); color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">
+                                <i data-lucide="lock" style="width: 14px; height: 14px;"></i>
+                                Paramètres automatiques
                             </div>
+                            <div style="display: grid; gap: var(--space-xs); font-size: 0.8rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-xs) 0;">
+                                    <span style="color: var(--text-secondary);">Déficit/Surplus</span>
+                                    <span style="color: var(--text-primary); font-weight: 500;">Calculé automatiquement</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-xs) 0;">
+                                    <span style="color: var(--text-secondary);">Protéines</span>
+                                    <span style="color: var(--text-primary); font-weight: 500;">Optimisées pour ton objectif</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-xs) 0;">
+                                    <span style="color: var(--text-secondary);">Lipides</span>
+                                    <span style="color: var(--text-primary); font-weight: 500;">Ajustés selon ton poids</span>
+                                </div>
+                            </div>
+                        </div>
 
-                            <!-- Toggle mode avancé -->
-                            <button type="button" class="calc-wizard-toggle-advanced" onclick="toggleAdvancedMode()">
+                        <!-- Toggle vers mode avancé -->
+                        <div style="text-align: center; padding-top: var(--space-md);">
+                            <button onclick="toggleAdvancedMode()" style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); transition: all 0.3s;">
                                 <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
                                 Afficher les paramètres avancés
                             </button>
                         </div>
+                    </div>
 
-                        <!-- MODE AVANCÉ -->
-                        <div id="advanced-mode" style="display: none;">
-                            <!-- Cut options -->
-                            <div id="cut-options" class="calc-wizard-advanced-options">
-                                <div class="calc-wizard-field">
-                                    <label class="calc-wizard-label"><i data-lucide="trending-down" class="icon-inline"></i> Déficit calorique (%)</label>
-                                    <input type="number" id="deficit" placeholder="18" min="10" max="30" step="1" class="calc-wizard-input">
-                                    <p class="calc-wizard-hint">Recommandé : 15-25%</p>
+                    <!-- MODE AVANCÉ (caché par défaut) -->
+                    <div id="advanced-mode" style="display: none; margin-bottom: var(--space-2xl);">
+
+                    <!-- Cut options -->
+                    <div id="cut-options" style="display: grid; gap: var(--space-xl);">
+                        <div class="input-group">
+                            <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                <i data-lucide="trending-down" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Déficit calorique (%)
+                            </label>
+                            <input type="number" id="deficit" placeholder="ex: 18" min="10" max="30" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 15-25% • Minimum : 10%</p>
+                        </div>
+
+                        <div class="input-group">
+                            <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                <i data-lucide="beef" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Protéines (g/kg)
+                            </label>
+                            <input type="number" id="proteinCoeff" placeholder="ex: 2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 1.8-2.2 g/kg • Minimum : 1.5 g/kg</p>
+                        </div>
+
+                        <div class="input-group">
+                            <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                <i data-lucide="droplet" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Lipides (g/kg)
+                            </label>
+                            <input type="number" id="fatCoeff" placeholder="ex: 0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'cut')" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                            <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 0.8-1.0 g/kg • Minimum : 0.6 g/kg</p>
+                            <div id="fat-warning-cut" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(255, 230, 109, 0.1); border-left: 3px solid var(--accent-fat); border-radius: var(--radius-sm);">
+                                <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" class="icon-inline"></i> Attention</div>
+                                <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">Valeur élevée : peut réduire les glucides et impacter la performance.</div></div></div>
+
+                        <!-- Info box lipides - Accordéon -->
+                        <div class="info-accordion" onclick="this.classList.toggle('open')">
+                            <div class="info-accordion-header">
+                                <div class="info-accordion-title">
+                                    <span>ℹ️</span>
+                                    <span>À propos des lipides</span>
                                 </div>
-                                <div class="calc-wizard-row">
-                                    <div class="calc-wizard-field">
-                                        <label class="calc-wizard-label"><i data-lucide="beef" class="icon-inline"></i> Protéines (g/kg)</label>
-                                        <input type="number" id="proteinCoeff" placeholder="2.0" step="0.1" min="1.5" max="2.2" class="calc-wizard-input">
-                                        <p class="calc-wizard-hint">Recommandé : 1.8-2.2</p>
-                                    </div>
-                                    <div class="calc-wizard-field">
-                                        <label class="calc-wizard-label"><i data-lucide="droplet" class="icon-inline"></i> Lipides (g/kg)</label>
-                                        <input type="number" id="fatCoeff" placeholder="0.9" step="0.1" min="0.6" max="1.5" class="calc-wizard-input" oninput="checkFatWarning(this.value, 'cut')">
-                                        <p class="calc-wizard-hint">Recommandé : 0.8-1.0</p>
-                                        <div id="fat-warning-cut" class="calc-wizard-warning" style="display: none;">
-                                            <i data-lucide="alert-triangle" class="icon-inline"></i> Valeur élevée
-                                        </div>
-                                    </div>
-                                </div>
+                                <i data-lucide="chevron-down" class="info-accordion-chevron" style="width: 18px; height: 18px;"></i>
+                            </div>
+                            <div class="info-accordion-content">
+                                <p>Les lipides sont essentiels à la santé hormonale, mais consomment beaucoup de calories. Des valeurs trop élevées peuvent réduire les glucides disponibles et impacter la performance. À l'inverse, une consommation trop faible peut entraîner fatigue et baisse hormonale.</p>
+                                <p style="margin-top: var(--space-md);"><strong style="color: var(--text-primary);"><i data-lucide="lightbulb" class="icon-inline"></i> Recommandations</strong><br>
+                                Les valeurs proposées (0.8-1.0 g/kg) sont adaptées à la majorité des personnes actives et peuvent être ajustées selon ta réponse individuelle.</p>
+                            </div>
+                        </div></div>
+
+                    <!-- Maintain options -->
+                    <div id="maintain-options" style="display: none;">
+                        <div style="padding: var(--space-xl); background: rgba(16, 185, 129, 0.08); border-radius: var(--radius-lg); border: 1px solid rgba(16, 185, 129, 0.2); margin-bottom: var(--space-xl);">
+                            <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md);">
+                                <i data-lucide="equal" style="width: 24px; height: 24px; color: var(--accent-main);"></i>
+                                <div style="font-weight: 600; color: var(--text-primary);">Mode Maintien</div>
+                            </div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                                Tes calories correspondent à ce que ton corps dépense réellement. Ni déficit ni surplus : tu gardes ton poids stable.
+                            </div>
+                        </div>
+
+                        <div style="display: grid; gap: var(--space-xl);">
+                            <div class="input-group">
+                                <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                    <i data-lucide="beef" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Protéines (g/kg)
+                                </label>
+                                <input type="number" id="proteinCoeffMaintain" placeholder="ex: 1.8" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 1.6-2.0 g/kg pour le maintien</p>
                             </div>
 
-                            <!-- Maintain options -->
-                            <div id="maintain-options" class="calc-wizard-advanced-options" style="display: none;">
-                                <div class="calc-wizard-info-box">
-                                    <i data-lucide="equal" style="width: 20px; height: 20px; color: var(--accent-main);"></i>
-                                    <span>Mode Maintien : calories = dépense réelle</span>
-                                </div>
-                                <div class="calc-wizard-row">
-                                    <div class="calc-wizard-field">
-                                        <label class="calc-wizard-label"><i data-lucide="beef" class="icon-inline"></i> Protéines (g/kg)</label>
-                                        <input type="number" id="proteinCoeffMaintain" placeholder="1.8" step="0.1" min="1.5" max="2.2" class="calc-wizard-input">
-                                        <p class="calc-wizard-hint">Recommandé : 1.6-2.0</p>
-                                    </div>
-                                    <div class="calc-wizard-field">
-                                        <label class="calc-wizard-label"><i data-lucide="droplet" class="icon-inline"></i> Lipides (g/kg)</label>
-                                        <input type="number" id="fatCoeffMaintain" placeholder="1.0" step="0.1" min="0.6" max="1.5" class="calc-wizard-input" oninput="checkFatWarning(this.value, 'maintain')">
-                                        <p class="calc-wizard-hint">Recommandé : 0.8-1.2</p>
-                                        <div id="fat-warning-maintain" class="calc-wizard-warning" style="display: none;">
-                                            <i data-lucide="alert-triangle" class="icon-inline"></i> Valeur élevée
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="input-group">
+                                <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                    <i data-lucide="droplet" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Lipides (g/kg)
+                                </label>
+                                <input type="number" id="fatCoeffMaintain" placeholder="ex: 1.0" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'maintain')" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 0.8-1.2 g/kg pour le maintien</p>
+                                <div id="fat-warning-maintain" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(255, 230, 109, 0.1); border-left: 3px solid var(--accent-fat); border-radius: var(--radius-sm);">
+                                    <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" class="icon-inline"></i> Attention</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">Valeur élevée : peut réduire les glucides disponibles.</div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bulk options -->
+                    <div id="bulk-options" style="display: none;">
+                        <div style="display: grid; gap: var(--space-xl);">
+                            <div class="input-group">
+                                <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                    <i data-lucide="trending-up" style="width: 18px; height: 18px; color: var(--accent-main);"></i> Surplus calorique (%)
+                                </label>
+                                <input type="number" id="surplus" placeholder="ex: 8" min="5" max="15" step="1" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 5-10% • Minimum : 5%</p>
                             </div>
 
-                            <!-- Bulk options -->
-                            <div id="bulk-options" class="calc-wizard-advanced-options" style="display: none;">
-                                <div class="calc-wizard-field">
-                                    <label class="calc-wizard-label"><i data-lucide="trending-up" class="icon-inline"></i> Surplus calorique (%)</label>
-                                    <input type="number" id="surplus" placeholder="8" min="5" max="15" step="1" class="calc-wizard-input">
-                                    <p class="calc-wizard-hint">Recommandé : 5-10%</p>
-                                </div>
-                                <div class="calc-wizard-row">
-                                    <div class="calc-wizard-field">
-                                        <label class="calc-wizard-label"><i data-lucide="beef" class="icon-inline"></i> Protéines (g/kg)</label>
-                                        <input type="number" id="proteinCoeffBulk" placeholder="2.0" step="0.1" min="1.5" max="2.2" class="calc-wizard-input">
-                                        <p class="calc-wizard-hint">Recommandé : 1.8-2.2</p>
-                                    </div>
-                                    <div class="calc-wizard-field">
-                                        <label class="calc-wizard-label"><i data-lucide="droplet" class="icon-inline"></i> Lipides (g/kg)</label>
-                                        <input type="number" id="fatCoeffBulk" placeholder="0.9" step="0.1" min="0.6" max="1.5" class="calc-wizard-input" oninput="checkFatWarning(this.value, 'bulk')">
-                                        <p class="calc-wizard-hint">Recommandé : 0.8-1.0</p>
-                                        <div id="fat-warning-bulk" class="calc-wizard-warning" style="display: none;">
-                                            <i data-lucide="alert-triangle" class="icon-inline"></i> Valeur élevée
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="input-group">
+                                <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                    <i data-lucide="beef" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Protéines (g/kg)
+                                </label>
+                                <input type="number" id="proteinCoeffBulk" placeholder="ex: 2.0" step="0.1" min="1.5" max="2.2" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 1.8-2.2 g/kg • Minimum : 1.5 g/kg</p>
                             </div>
 
-                            <!-- Toggle retour mode guidé -->
-                            <button type="button" class="calc-wizard-toggle-advanced" onclick="toggleAdvancedMode()">
+                            <div class="input-group">
+                                <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
+                                    <i data-lucide="droplet" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Lipides (g/kg)
+                                </label>
+                                <input type="number" id="fatCoeffBulk" placeholder="ex: 0.9" step="0.1" min="0.6" max="1.5" oninput="checkFatWarning(this.value, 'bulk')" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
+                                <p class="info-text" style="margin-top: var(--space-sm);">Recommandé : 0.8-1.0 g/kg • Minimum : 0.6 g/kg</p>
+                                <div id="fat-warning-bulk" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(255, 230, 109, 0.1); border-left: 3px solid var(--accent-fat); border-radius: var(--radius-sm);">
+                                    <div style="font-weight: 600; color: var(--accent-fat); font-size: 0.9rem; margin-bottom: var(--space-xs);"><i data-lucide="alert-triangle" class="icon-inline"></i> Attention</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">Valeur élevée : peut réduire les glucides et impacter la performance.</div></div></div>
+
+                            <!-- Info box lipides - Accordéon -->
+                            <div class="info-accordion" onclick="this.classList.toggle('open')">
+                                <div class="info-accordion-header">
+                                    <div class="info-accordion-title">
+                                        <span>ℹ️</span>
+                                        <span>À propos des lipides</span>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="info-accordion-chevron" style="width: 18px; height: 18px;"></i>
+                                </div>
+                                <div class="info-accordion-content">
+                                    <p>Les lipides sont essentiels à la santé hormonale, mais consomment beaucoup de calories. Des valeurs trop élevées peuvent réduire les glucides disponibles et impacter la performance. À l'inverse, une consommation trop faible peut entraîner fatigue et baisse hormonale.</p>
+                                    <p style="margin-top: var(--space-md);"><strong style="color: var(--text-primary);"><i data-lucide="lightbulb" class="icon-inline"></i> Recommandations</strong><br>
+                                    Les valeurs proposées (0.8-1.0 g/kg) sont adaptées à la majorité des personnes actives et peuvent être ajustées selon ta réponse individuelle.</p>
+                                </div>
+                            </div></div></div>
+
+                        <!-- Toggle retour mode guidé -->
+                        <div style="text-align: center; padding-top: var(--space-md); margin-top: var(--space-xl); border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                            <button onclick="toggleAdvancedMode()" style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); transition: all 0.3s;">
                                 <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i>
                                 Retour au mode guidé
                             </button>
                         </div>
                     </div>
+                    <!-- Fin MODE AVANCÉ -->
+                </div></div>
 
-                    <!-- Navigation -->
-                    <div class="calc-wizard-nav">
-                        <button type="button" class="calc-wizard-btn-prev" onclick="wizardPrevStep()">
-                            <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i>
-                            Précédent
-                        </button>
-                        <button type="button" class="calc-wizard-btn-next" onclick="wizardNextStep()">
-                            Suivant
-                            <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
-                        </button>
-                    </div>
+            <!-- Warning box for macro validation -->
+            <div id="macro-warning" style="display: none; margin-bottom: var(--space-2xl); padding: var(--space-xl); background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--accent-danger); border-radius: var(--radius-lg); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);">
+            </div>
+
+            <!-- CALCULATE BUTTON -->
+            <div style="display: flex; justify-content: center; margin-bottom: var(--space-3xl); margin-top: var(--space-lg);">
+                <button id="calculate-btn" class="btn" onclick="calculateMacros()" style="background: var(--accent-ui); color: white; padding: var(--space-lg) var(--space-2xl); font-size: 1.1rem; font-weight: 700; border: none; box-shadow: var(--shadow-md); transition: all 0.3s; display: flex; align-items: center; gap: var(--space-sm);">
+                    <i data-lucide="calculator" style="width: 22px; height: 22px;"></i>
+                    Calculer mes Macros
+                </button>
+            </div>
+
+            <div class="card" id="results" style="display: none;">
+                <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="bar-chart-3" style="width: 28px; height: 28px; color: var(--accent-ui);"></i>Tes Résultats</h2>
+
+                <!-- Message état vide -->
+                <div id="results-empty-state" style="text-align: center; padding: var(--space-2xl); color: var(--text-secondary); font-size: 0.95rem;">
+                    <i data-lucide="calculator" style="width: 48px; height: 48px; opacity: 0.3; margin-bottom: var(--space-md);"></i>
+                    <p>Renseigne ton profil puis clique <strong style="color: var(--accent-main);">"Calculer mes Macros"</strong></p>
                 </div>
 
-                <!-- Step 3: Results -->
-                <div class="calc-wizard-panel" data-panel="3">
-                    <div class="calc-wizard-header">
-                        <div class="calc-wizard-icon" style="background: var(--accent-carbs);"><i data-lucide="bar-chart-3" style="width: 28px; height: 28px; color: white;"></i></div>
+                <!-- Contenu des résultats (caché par défaut jusqu'au calcul) -->
+                <div id="results-content" style="display: none;">
+                    <!-- BMR, TDEE et IMC -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-lg); margin-bottom: var(--space-3xl); padding: var(--space-xl); background: var(--bg-tertiary); border-radius: var(--radius-md); border-left: 3px solid var(--accent-main);">
                         <div>
-                            <h2 class="calc-wizard-title">Tes Résultats</h2>
-                            <p class="calc-wizard-subtitle">Tes macros personnalisées</p>
-                        </div>
-                    </div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-xs);">Métabolisme de base (BMR)</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);" id="bmr-display">— kcal</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--space-xs);">Ce que tu brûles au repos</div></div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-xs);">Dépense journalière (TDEE)</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-main);" id="tdee-display">— kcal</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--space-xs);">Ce que tu dépenses vraiment</div></div>
+                        <div style="position: relative;">
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--space-xs);">IMC (Indice de Masse Corporelle)</div>
 
-                    <!-- Warning box for macro validation -->
-                    <div id="macro-warning" class="calc-wizard-alert" style="display: none; margin-bottom: var(--space-xl);"></div>
+                            <!-- IMC toujours visible -->
+                            <div style="position: relative; min-height: 60px;">
+                                <div style="font-size: 1.5rem; font-weight: 700;" id="imc-display-blur">—</div>
+                                <div style="font-size: 0.9rem; margin-top: var(--space-xs);" id="imc-category-blur">—</div>
+                            </div></div></div>
 
-                    <div class="calc-wizard-content">
-                        <!-- État initial: bouton calculer -->
-                        <div id="results-empty-state" class="calc-wizard-empty-state">
-                            <div class="empty-state-icon">
-                                <i data-lucide="calculator" style="width: 48px; height: 48px;"></i>
-                            </div>
-                            <p>Clique sur le bouton pour calculer tes macros personnalisées</p>
-                            <button id="calculate-btn" type="button" class="calc-wizard-btn-calculate" onclick="calculateMacros()">
-                                <i data-lucide="sparkles" style="width: 22px; height: 22px;"></i>
-                                Calculer mes Macros
+                    <h3 style="margin-bottom: var(--space-xl); font-size: 1.2rem;">Tes Objectifs Macros :</h3>
+
+                    <div class="grid-3">
+                        <div class="macro-display">
+                            <div class="macro-label">Protéines</div>
+                            <div class="macro-value protein" id="targetProtein">—</div>
+                            <div class="macro-unit">grammes</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill protein" id="proteinBar" style="width: 0%"></div></div></div>
+
+                        <div class="macro-display">
+                            <div class="macro-label">Glucides</div>
+                            <div class="macro-value carbs" id="targetCarbs">—</div>
+                            <div class="macro-unit">grammes</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill carbs" id="carbsBar" style="width: 0%"></div></div></div>
+
+                        <div class="macro-display">
+                            <div class="macro-label">Lipides</div>
+                            <div class="macro-value fat" id="targetFat">—</div>
+                            <div class="macro-unit">grammes</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill fat" id="fatBar" style="width: 0%"></div></div></div></div>
+
+                    <div class="summary-grid">
+                        <div class="summary-card protein-card">
+                            <div class="summary-label">Protéines</div>
+                            <div class="summary-value" id="proteinCal">—</div>
+                            <div class="summary-label">kcal</div></div>
+                        <div class="summary-card carbs-card">
+                            <div class="summary-label">Glucides</div>
+                            <div class="summary-value" id="carbsCal">—</div>
+                            <div class="summary-label">kcal</div></div>
+                        <div class="summary-card fat-card">
+                            <div class="summary-label">Lipides</div>
+                            <div class="summary-value" id="fatCal">—</div>
+                            <div class="summary-label">kcal</div></div>
+                        <div class="summary-card total-card">
+                            <div class="summary-label">Total</div>
+                            <div class="summary-value" id="totalCal">—</div>
+                            <div class="summary-label">kcal / jour</div></div></div>
+
+                    <!-- CTA après calcul -->
+                    <div style="margin-top: var(--space-3xl); padding: var(--space-2xl); background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%); border: 2px solid var(--accent-main); border-radius: var(--radius-lg);">
+                        <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-xl); display: flex; align-items: center; gap: var(--space-md);">
+                            <i data-lucide="rocket" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>Et maintenant ?
+                        </h3>
+
+                        <div style="display: flex; gap: var(--space-lg); margin-bottom: var(--space-xl); flex-wrap: wrap;">
+                            <button class="btn" onclick="exportMacrosAsImage()" style="flex: 1; min-width: 200px; display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
+                                <i data-lucide="camera" style="width: 18px; height: 18px;"></i> Télécharger en image
+                            </button>
+                            <button class="btn" onclick="document.querySelector('[data-tab=&quot;meals&quot;]').click(); window.scrollTo({top: 0, behavior: 'smooth'});" style="flex: 1; min-width: 200px; background: var(--accent-purple); display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
+                                <i data-lucide="calendar" style="width: 18px; height: 18px;"></i> Aller à Mes Repas
                             </button>
                         </div>
 
-                        <!-- Résultats (cachés jusqu'au calcul) -->
-                        <div id="results-content" style="display: none;">
-                            <!-- BMR, TDEE, IMC -->
-                            <div class="calc-wizard-stats">
-                                <div class="calc-wizard-stat">
-                                    <div class="stat-label">Métabolisme de base</div>
-                                    <div class="stat-value" id="bmr-display">— kcal</div>
-                                    <div class="stat-desc">Ce que tu brûles au repos</div>
-                                </div>
-                                <div class="calc-wizard-stat highlight">
-                                    <div class="stat-label">Dépense journalière</div>
-                                    <div class="stat-value" id="tdee-display">— kcal</div>
-                                    <div class="stat-desc">Ce que tu dépenses vraiment</div>
-                                </div>
-                                <div class="calc-wizard-stat">
-                                    <div class="stat-label">IMC</div>
-                                    <div class="stat-value" id="imc-display-blur">—</div>
-                                    <div class="stat-desc" id="imc-category-blur">—</div>
-                                </div>
-                            </div>
-
-                            <!-- Macros principales -->
-                            <h3 class="calc-wizard-section-title">Tes Objectifs Macros</h3>
-                            <div class="calc-wizard-macros">
-                                <div class="calc-wizard-macro protein">
-                                    <div class="macro-ring">
-                                        <svg viewBox="0 0 100 100">
-                                            <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="8"/>
-                                            <circle id="proteinBar" cx="50" cy="50" r="45" fill="none" stroke="var(--accent-protein)" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 283" transform="rotate(-90 50 50)"/>
-                                        </svg>
-                                        <div class="macro-ring-value" id="targetProtein">—</div>
-                                    </div>
-                                    <div class="macro-label">Protéines</div>
-                                    <div class="macro-kcal" id="proteinCal">— kcal</div>
-                                </div>
-                                <div class="calc-wizard-macro carbs">
-                                    <div class="macro-ring">
-                                        <svg viewBox="0 0 100 100">
-                                            <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="8"/>
-                                            <circle id="carbsBar" cx="50" cy="50" r="45" fill="none" stroke="var(--accent-carbs)" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 283" transform="rotate(-90 50 50)"/>
-                                        </svg>
-                                        <div class="macro-ring-value" id="targetCarbs">—</div>
-                                    </div>
-                                    <div class="macro-label">Glucides</div>
-                                    <div class="macro-kcal" id="carbsCal">— kcal</div>
-                                </div>
-                                <div class="calc-wizard-macro fat">
-                                    <div class="macro-ring">
-                                        <svg viewBox="0 0 100 100">
-                                            <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="8"/>
-                                            <circle id="fatBar" cx="50" cy="50" r="45" fill="none" stroke="var(--accent-fat)" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 283" transform="rotate(-90 50 50)"/>
-                                        </svg>
-                                        <div class="macro-ring-value" id="targetFat">—</div>
-                                    </div>
-                                    <div class="macro-label">Lipides</div>
-                                    <div class="macro-kcal" id="fatCal">— kcal</div>
-                                </div>
-                            </div>
-
-                            <!-- Total calories -->
-                            <div class="calc-wizard-total">
-                                <div class="total-label">Total journalier</div>
-                                <div class="total-value" id="totalCal">— kcal</div>
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="calc-wizard-actions">
-                                <button type="button" class="calc-wizard-action-btn" onclick="exportMacrosAsImage()">
-                                    <i data-lucide="camera" style="width: 20px; height: 20px;"></i>
-                                    Télécharger en image
-                                </button>
-                                <button type="button" class="calc-wizard-action-btn primary" onclick="document.querySelector('[data-tab=&quot;meals&quot;]').click(); window.scrollTo({top: 0, behavior: 'smooth'});">
-                                    <i data-lucide="utensils" style="width: 20px; height: 20px;"></i>
-                                    Aller à Mes Repas
-                                </button>
-                            </div>
-
-                            <!-- Conseil -->
-                            <div class="calc-wizard-tip">
-                                <i data-lucide="lightbulb" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
-                                <p><strong>Conseil :</strong> Suis ces valeurs pendant 10-14 jours, puis ajuste selon ton ressenti.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Navigation -->
-                    <div class="calc-wizard-nav">
-                        <button type="button" class="calc-wizard-btn-prev" onclick="wizardPrevStep()">
-                            <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i>
-                            Modifier
-                        </button>
-                        <div></div>
-                    </div>
-                </div>
+                        <div style="padding: var(--space-lg); background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-md); border-left: 3px solid var(--accent-main);">
+                            <p style="margin: 0; color: var(--text-primary); font-size: 0.95rem; line-height: 1.7;">
+                                <div style="display: flex; align-items: start; gap: var(--space-xs);"><i data-lucide="alert-circle" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 3px;"></i><div><strong>Bon à savoir :</strong> Ces valeurs sont un point de départ. Suis-les pendant <strong>10-14 jours</strong>, puis ajuste selon ton ressenti : énergie, humeur, résultats sur la balance. Ton corps te donnera les meilleurs indices.</div></div>
+                            </p>
+                        </div></div>
+                </div><!-- Fin #results-content -->
             </div>
-
-            <!-- Ancien results div pour compatibilité (caché) -->
-            <div class="card" id="results" style="display: none;"></div>
-
-        </div>
+            </div><!-- Fin #original-calculator -->
+        </div><!-- Fin #calculator tab-content -->
 
         <!-- Meals Tab -->
         <div id="meals" class="tab-content">
@@ -4068,7 +4402,6 @@
     <!-- html2canvas loaded dynamically when needed -->
 
     <script src="app.js"></script>
-    <script src="calculator-wizard.js"></script>
 
     <!-- Pop-up custom -->
     <div class="custom-popup-overlay" id="custom-popup">
