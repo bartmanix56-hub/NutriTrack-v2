@@ -5567,6 +5567,16 @@ button.loading::after {
     stroke: var(--accent-fat);
 }
 
+.wizard-ring-percent {
+    fill: var(--text-primary);
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    transform: rotate(90deg);
+    transform-origin: 60px 60px;
+}
+
 .wizard-macro-value {
     font-size: 1.8rem;
     font-weight: 700;
