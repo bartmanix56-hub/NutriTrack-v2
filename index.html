@@ -1316,7 +1316,7 @@
                     <div style="display: grid; gap: var(--space-xl);">
                         <div class="input-group">
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                🎂 Date de naissance
+                                <i data-lucide="calendar" style="width: 16px; height: 16px;"></i> Date de naissance
                                 <span style="color: var(--accent-danger);">*</span>
                             </label>
                             <div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: var(--space-md);">
@@ -1342,12 +1342,11 @@
                                     <option value="">Année</option>
                                 </select>
                             </div>
-                            <p class="info-text" style="margin-top: var(--space-sm);">Ton âge sera calculé automatiquement à partir de ta date de naissance</p>
                         </div>
 
                         <div class="input-group">
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                👤 Sexe
+                                <i data-lucide="user" style="width: 16px; height: 16px;"></i> Sexe
                                 <span style="color: var(--accent-danger);">*</span>
                             </label>
                             <select id="profile-gender" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s; font-family: inherit;">
@@ -1355,13 +1354,12 @@
                                 <option value="male">Homme</option>
                                 <option value="female">Femme</option>
                             </select>
-                            <p class="info-text" style="margin-top: var(--space-sm);">Utilisé pour estimer ton métabolisme de base</p>
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
                             <div class="input-group">
                                 <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                    📏 Taille (cm)
+                                    <i data-lucide="ruler" style="width: 16px; height: 16px;"></i> Taille (cm)
                                     <span style="color: var(--accent-danger);">*</span>
                                 </label>
                                 <input type="number" id="height" inputmode="decimal" pattern="[0-9]*" step="0.5" min="100" max="250" placeholder="175" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
@@ -1369,7 +1367,7 @@
 
                             <div class="input-group">
                                 <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                    ⚖️ Poids (kg)
+                                    <i data-lucide="scale" style="width: 16px; height: 16px;"></i> Poids (kg)
                                     <span style="color: var(--accent-danger);">*</span>
                                 </label>
                                 <input type="number" id="weight" inputmode="decimal" pattern="[0-9]*" step="0.1" min="30" max="300" placeholder="75.5" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s;">
@@ -1377,18 +1375,17 @@
 
                         <div class="input-group">
                             <label style="display: flex; align-items: center; gap: var(--space-xs); font-weight: 600; margin-bottom: var(--space-sm);">
-                                🏃 Niveau d'activité
+                                <i data-lucide="activity" style="width: 16px; height: 16px;"></i> Niveau d'activité
                                 <span style="color: var(--accent-danger);">*</span>
                             </label>
                             <select id="activity" style="width: 100%; padding: 14px; font-size: 1rem; background: var(--bg-tertiary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); color: var(--text-primary); transition: all 0.3s; font-family: inherit;">
                                 <option value="">-- Sélectionner --</option>
-                                <option value="1.2">🪑 Sédentaire (peu ou pas d'exercice)</option>
-                                <option value="1.375">🚶 Légèrement actif (1-3 jours/semaine)</option>
-                                <option value="1.55">🏃 Modérément actif (3-5 jours/semaine)</option>
-                                <option value="1.725">💪 Très actif (6-7 jours/semaine)</option>
-                                <option value="1.9">🔥 Extrêmement actif (2x/jour + travail physique)</option>
+                                <option value="1.2">Sédentaire (peu ou pas d'exercice)</option>
+                                <option value="1.375">Légèrement actif (1-3 jours/semaine)</option>
+                                <option value="1.55">Modérément actif (3-5 jours/semaine)</option>
+                                <option value="1.725">Très actif (6-7 jours/semaine)</option>
+                                <option value="1.9">Extrêmement actif (2x/jour)</option>
                             </select>
-                            <p class="info-text" style="margin-top: var(--space-sm);">Inclut sport, marche quotidienne et éventuel travail physique</p>
                         </div></div></div>
 
                 <!-- CARD 2: Ton Objectif -->
@@ -1449,28 +1446,6 @@
                                         <div class="goal-title"><i data-lucide="droplet" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Plus de lipides</div>
                                         <div class="goal-desc">Satiété durable</div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Preview des paramètres automatiques -->
-                        <div id="guided-preview" style="margin-top: var(--space-lg); padding: var(--space-md); background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.05);">
-                            <div style="display: flex; align-items: center; gap: var(--space-xs); margin-bottom: var(--space-sm); color: var(--text-secondary); font-size: 0.85rem; font-weight: 600;">
-                                <i data-lucide="lock" style="width: 14px; height: 14px;"></i>
-                                Paramètres automatiques
-                            </div>
-                            <div style="display: grid; gap: var(--space-xs); font-size: 0.8rem;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-xs) 0;">
-                                    <span style="color: var(--text-secondary);">Déficit/Surplus</span>
-                                    <span style="color: var(--text-primary); font-weight: 500;">Calculé automatiquement</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-xs) 0;">
-                                    <span style="color: var(--text-secondary);">Protéines</span>
-                                    <span style="color: var(--text-primary); font-weight: 500;">Optimisées pour ton objectif</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-xs) 0;">
-                                    <span style="color: var(--text-secondary);">Lipides</span>
-                                    <span style="color: var(--text-primary); font-weight: 500;">Ajustés selon ton poids</span>
                                 </div>
                             </div>
                         </div>
