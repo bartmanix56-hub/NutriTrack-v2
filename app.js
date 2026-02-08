@@ -1381,7 +1381,7 @@
             if (fatValue > 1.2) { warningElement.style.display = 'block'; } else  { warningElement.style.display = 'none'; }
         }
 
-        async function selectGoal(goal, isLoading = false) {
+        window.selectGoal = async function(goal, isLoading = false) {
             currentGoal = goal;
             document.querySelectorAll('.goal-btn:not(.pace-btn)').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`[data-goal="${goal}"]`)?.classList.add('active');
@@ -1465,7 +1465,7 @@
                 // En mode avancé, juste revalider (sauf au chargement)
                 validateMacroInputs();
             }
-        }
+        };
 
         // Sélection du rythme en mode guidé
         window.selectPace = async function(pace, skipCalculate = false) {
