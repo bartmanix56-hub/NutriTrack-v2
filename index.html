@@ -1675,7 +1675,6 @@
                             </svg>
                             <div class="desktop-macro-value protein" id="targetProtein">—</div>
                             <div class="desktop-macro-label">Protéines</div>
-                            <div class="desktop-macro-kcal" id="proteinCal">— kcal</div>
                         </div>
                         <div class="desktop-macro-ring">
                             <svg class="desktop-ring-svg" viewBox="0 0 120 120">
@@ -1685,7 +1684,6 @@
                             </svg>
                             <div class="desktop-macro-value carbs" id="targetCarbs">—</div>
                             <div class="desktop-macro-label">Glucides</div>
-                            <div class="desktop-macro-kcal" id="carbsCal">— kcal</div>
                         </div>
                         <div class="desktop-macro-ring">
                             <svg class="desktop-ring-svg" viewBox="0 0 120 120">
@@ -1695,8 +1693,11 @@
                             </svg>
                             <div class="desktop-macro-value fat" id="targetFat">—</div>
                             <div class="desktop-macro-label">Lipides</div>
-                            <div class="desktop-macro-kcal" id="fatCal">— kcal</div>
                         </div>
+                        <!-- Hidden elements for JS compatibility -->
+                        <span id="proteinCal" style="display:none"></span>
+                        <span id="carbsCal" style="display:none"></span>
+                        <span id="fatCal" style="display:none"></span>
                         <div class="desktop-macro-total">
                             <div class="desktop-total-label">Objectif calorique</div>
                             <div class="desktop-total-value" id="totalCal">—</div>
