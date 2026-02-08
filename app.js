@@ -9901,6 +9901,30 @@ Solutions possibles :
                         // Show results section
                         const resultsEl = document.getElementById('results');
                         if (resultsEl)  { resultsEl.style.display = 'block'; }
+
+                        // On mobile: show wizard results page if macros exist
+                        if (window.innerWidth <= 768) {
+                            setTimeout(() => {
+                                if (typeof window.updateWizardResults === 'function') {
+                                    window.updateWizardResults();
+                                }
+                                // Show results panel directly
+                                const wizardContainer = document.querySelector('.calc-wizard');
+                                if (wizardContainer) {
+                                    wizardContainer.classList.add('results-shown');
+                                }
+                                // Update step indicators
+                                document.querySelectorAll('.wizard-panel').forEach(p => p.classList.remove('active'));
+                                const resultsPanel = document.querySelector('.wizard-panel-results');
+                                if (resultsPanel) resultsPanel.classList.add('active');
+                                // Update progress indicators
+                                document.querySelectorAll('.wizard-step-indicator').forEach((ind, i) => {
+                                    ind.classList.toggle('active', i === 2);
+                                    ind.classList.toggle('completed', i < 2);
+                                });
+                                document.querySelectorAll('.wizard-step-connector').forEach(c => c.classList.add('active'));
+                            }, 100);
+                        }
                     }
                 } catch(e) {
                     console.error('<i data-lucide="x-circle" class="icon-inline"></i> Error loading saved targets:', e);
@@ -11464,7 +11488,8 @@ Solutions possibles :
         };
 
         // Update wizard results panel with calculated values
-        function updateWizardResults() {
+        // Exposed globally so it can be called after loadCalcSettings
+        window.updateWizardResults = function() {
             // Get values from the original results
             const bmrDisplay = document.getElementById('bmr-display')?.textContent || '—';
             const tdeeDisplay = document.getElementById('tdee-display')?.textContent || '—';
@@ -11510,32 +11535,44 @@ Solutions possibles :
             const wizTotal = document.getElementById('wizard-total-cal');
             if (wizTotal) wizTotal.textContent = totalCal;
 
-            // Update SVG rings
+            // Update SVG rings with calorie percentages
+            const pCal = parseInt(proteinCal) || 0;
+            const cCal = parseInt(carbsCal) || 0;
+            const fCal = parseInt(fatCal) || 0;
+            const tCal = pCal + cCal + fCal;
+
             updateWizardRings(
                 parseInt(targetProtein) || 0,
                 parseInt(targetCarbs) || 0,
-                parseInt(targetFat) || 0
+                parseInt(targetFat) || 0,
+                tCal > 0 ? Math.round((pCal / tCal) * 100) : 0,
+                tCal > 0 ? Math.round((cCal / tCal) * 100) : 0,
+                tCal > 0 ? Math.round((fCal / tCal) * 100) : 0
             );
-        }
+        };
 
-        // Animate SVG progress rings
-        function updateWizardRings(protein, carbs, fat) {
+        // Animate SVG progress rings with percentages
+        function updateWizardRings(protein, carbs, fat, proteinPct, carbsPct, fatPct) {
             const maxGrams = Math.max(protein, carbs, fat, 1);
             const circumference = 2 * Math.PI * 54; // radius = 54
 
             const rings = [
-                { id: 'wizard-ring-protein', value: protein },
-                { id: 'wizard-ring-carbs', value: carbs },
-                { id: 'wizard-ring-fat', value: fat }
+                { id: 'wizard-ring-protein', percentId: 'wizard-protein-percent', value: protein, pct: proteinPct },
+                { id: 'wizard-ring-carbs', percentId: 'wizard-carbs-percent', value: carbs, pct: carbsPct },
+                { id: 'wizard-ring-fat', percentId: 'wizard-fat-percent', value: fat, pct: fatPct }
             ];
 
             rings.forEach(ring => {
                 const el = document.getElementById(ring.id);
+                const pctEl = document.getElementById(ring.percentId);
                 if (el) {
                     const percent = ring.value / maxGrams;
                     const offset = circumference * (1 - percent);
                     el.style.strokeDasharray = circumference;
                     el.style.strokeDashoffset = offset;
+                }
+                if (pctEl) {
+                    pctEl.textContent = ring.pct + '%';
                 }
             });
         }
