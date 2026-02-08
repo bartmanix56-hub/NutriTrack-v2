@@ -2500,7 +2500,7 @@ Solutions possibles :
             }
         }
 
-        async function loadProfile() {
+        window.loadProfile = async function() {
             // Charger depuis Firestore (avec fallback localStorage)
             const profile = await loadProfileFromFirestore();
             if (!profile || Object.keys(profile).length === 0) { return; }
@@ -2512,7 +2512,12 @@ Solutions possibles :
             if (profile.height && document.getElementById('height')) document.getElementById('height').value = profile.height;
             if (profile.weight && document.getElementById('weight')) document.getElementById('weight').value = profile.weight;
             if (profile.activity && document.getElementById('activity')) document.getElementById('activity').value = profile.activity;
-        }
+
+            // Sync wizard after profile is loaded
+            if (typeof window.syncWizardFromOriginal === 'function') {
+                window.syncWizardFromOriginal();
+            }
+        };
 
         async function calculateMacrosFromProfile() {
             hideProfileAlert();
@@ -9780,7 +9785,7 @@ Solutions possibles :
         }
 
         // ===== SAUVEGARDE PARAMÈTRES =====
-        async function loadCalcSettings() {
+        window.loadCalcSettings = async function() {
             // Charger depuis Firestore (avec fallback localStorage)
             const settings = await loadSettingsFromFirestore();
 
@@ -9901,7 +9906,12 @@ Solutions possibles :
                     console.error('<i data-lucide="x-circle" class="icon-inline"></i> Error loading saved targets:', e);
                 }
             }
-        }
+
+            // Sync wizard with goal/pace after calc settings loaded
+            if (typeof window.syncWizardFromOriginal === 'function') {
+                window.syncWizardFromOriginal();
+            }
+        };
 
         async function saveCalcSettings() {
             // NE PAS sauvegarder weight et activity ici: ils viennent du profil
