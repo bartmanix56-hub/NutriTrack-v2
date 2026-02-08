@@ -1275,6 +1275,31 @@
                 if (typeof updateSettingsStats === 'function') updateSettingsStats();
             } else if (tabName === 'admin') {
                 if (typeof window.showAdminSection === 'function') window.showAdminSection('dashboard');
+            } else if (tabName === 'calculator') {
+                // On mobile: show results page if macros already calculated
+                if (window.innerWidth <= 768) {
+                    const hasResults = document.getElementById('targetProtein')?.textContent &&
+                                       document.getElementById('targetProtein')?.textContent !== '—';
+                    if (hasResults) {
+                        setTimeout(() => {
+                            if (typeof window.updateWizardResults === 'function') {
+                                window.updateWizardResults();
+                            }
+                            const wizardContainer = document.querySelector('.calc-wizard');
+                            if (wizardContainer) {
+                                wizardContainer.classList.add('results-shown');
+                            }
+                            document.querySelectorAll('.wizard-panel').forEach(p => p.classList.remove('active'));
+                            const resultsPanel = document.querySelector('.wizard-panel-results');
+                            if (resultsPanel) resultsPanel.classList.add('active');
+                            document.querySelectorAll('.wizard-step-indicator').forEach((ind, i) => {
+                                ind.classList.toggle('active', i === 2);
+                                ind.classList.toggle('completed', i < 2);
+                            });
+                            document.querySelectorAll('.wizard-step-connector').forEach(c => c.classList.add('active'));
+                        }, 50);
+                    }
+                }
             }
 
             // Scroll vers le haut
