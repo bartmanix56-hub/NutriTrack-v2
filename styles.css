@@ -5697,6 +5697,150 @@ button.loading::after {
     line-height: 1.7;
 }
 
+/* ===========================================
+   DESKTOP CALCULATOR MACRO RINGS
+   =========================================== */
+
+.desktop-macros-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-2xl);
+    margin-bottom: var(--space-3xl);
+    padding: var(--space-2xl);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-xl);
+}
+
+.desktop-macro-ring {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.desktop-ring-svg {
+    width: 140px;
+    height: 140px;
+    transform: rotate(-90deg);
+}
+
+.desktop-ring-bg {
+    fill: none;
+    stroke: var(--bg-tertiary);
+    stroke-width: 8;
+}
+
+.desktop-ring-progress {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s ease;
+}
+
+.desktop-ring-progress.protein {
+    stroke: var(--accent-protein);
+}
+
+.desktop-ring-progress.carbs {
+    stroke: var(--accent-carbs);
+}
+
+.desktop-ring-progress.fat {
+    stroke: var(--accent-fat);
+}
+
+.desktop-ring-percent {
+    fill: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    transform: rotate(90deg);
+    transform-origin: 60px 60px;
+}
+
+.desktop-macro-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-top: var(--space-md);
+}
+
+.desktop-macro-value::after {
+    content: 'g';
+    font-size: 1rem;
+    font-weight: 600;
+    margin-left: 2px;
+    opacity: 0.7;
+}
+
+.desktop-macro-value.protein {
+    color: var(--accent-protein);
+}
+
+.desktop-macro-value.carbs {
+    color: var(--accent-carbs);
+}
+
+.desktop-macro-value.fat {
+    color: var(--accent-fat);
+}
+
+.desktop-macro-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-top: var(--space-xs);
+}
+
+.desktop-macro-kcal {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: var(--space-xs);
+}
+
+.desktop-macro-total {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-xl);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+    border-radius: var(--radius-xl);
+    border: 2px solid var(--accent-main);
+}
+
+.desktop-total-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--space-sm);
+}
+
+.desktop-total-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent-main);
+    line-height: 1;
+}
+
+.desktop-total-unit {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-top: var(--space-sm);
+}
+
+@media (max-width: 900px) {
+    .desktop-macros-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .desktop-macro-total {
+        grid-column: 1 / -1;
+    }
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .wizard-progress {
