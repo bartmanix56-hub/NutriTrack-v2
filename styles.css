@@ -5568,8 +5568,8 @@ button.loading::after {
 }
 
 .wizard-ring-percent {
-    fill: var(--text-primary);
-    font-size: 1.6rem;
+    fill: #ffffff;
+    font-size: 1.5rem;
     font-weight: 700;
     text-anchor: middle;
     dominant-baseline: middle;
