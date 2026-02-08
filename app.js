@@ -2162,9 +2162,9 @@ Solutions possibles :
             const fatCal = fat * 9;
             const totalCal = Math.round(proteinCal + carbsCal + fatCal);
 
-            document.getElementById('proteinCal').textContent = proteinCal;
-            document.getElementById('carbsCal').textContent = carbsCal;
-            document.getElementById('fatCal').textContent = fatCal;
+            document.getElementById('proteinCal').textContent = proteinCal + ' kcal';
+            document.getElementById('carbsCal').textContent = carbsCal + ' kcal';
+            document.getElementById('fatCal').textContent = fatCal + ' kcal';
             document.getElementById('totalCal').textContent = totalCal;
 
             // Message discret si ajusté automatiquement
@@ -2172,20 +2172,13 @@ Solutions possibles :
                 showProfileAlert('<i data-lucide="info" class="icon-inline"></i> Ajusté automatiquement pour préserver ton énergie et garantir un apport en glucides suffisant.', 'info', true);
             }
 
-            // Animer les barres de progression
+            // Animer les cercles de progression (desktop)
             setTimeout(() => {
                 const pPct = Math.round((proteinCal / totalCal) * 100);
                 const cPct = Math.round((carbsCal / totalCal) * 100);
                 const fPct = Math.round((fatCal / totalCal) * 100);
 
-                document.getElementById('proteinBar').style.width = `${pPct}%`;
-                document.getElementById('proteinBar').setAttribute('data-percent', `${pPct}%`);
-
-                document.getElementById('carbsBar').style.width = `${cPct}%`;
-                document.getElementById('carbsBar').textContent = `${cPct}%`;
-
-                document.getElementById('fatBar').style.width = `${fPct}%`;
-                document.getElementById('fatBar').textContent = `${fPct}%`;
+                updateDesktopMacroRings(protein, carbs, fat, pPct, cPct, fPct);
             }, 100);
 
             document.getElementById('results').style.display = 'block';
@@ -5219,13 +5212,23 @@ Solutions possibles :
             const carbsCal = targets.carbs * 4;
             const fatCal = targets.fat * 9;
 
-            document.getElementById('proteinCal').textContent = proteinCal;
-            document.getElementById('carbsCal').textContent = carbsCal;
-            document.getElementById('fatCal').textContent = fatCal;
+            document.getElementById('proteinCal').textContent = proteinCal + ' kcal';
+            document.getElementById('carbsCal').textContent = carbsCal + ' kcal';
+            document.getElementById('fatCal').textContent = fatCal + ' kcal';
 
-            document.getElementById('proteinBar').style.width = `${(proteinCal / targets.calories) * 100}%`;
-            document.getElementById('carbsBar').style.width = `${(carbsCal / targets.calories) * 100}%`;
-            document.getElementById('fatBar').style.width = `${(fatCal / targets.calories) * 100}%`;
+            // Update desktop macro rings
+            const totalCal = targets.calories || (proteinCal + carbsCal + fatCal);
+            const pPct = Math.round((proteinCal / totalCal) * 100);
+            const cPct = Math.round((carbsCal / totalCal) * 100);
+            const fPct = Math.round((fatCal / totalCal) * 100);
+            if (typeof window.updateDesktopMacroRings === 'function') {
+                window.updateDesktopMacroRings(
+                    Math.round(targets.protein),
+                    Math.round(targets.carbs),
+                    Math.round(targets.fat),
+                    pPct, cPct, fPct
+                );
+            }
 
             document.getElementById('results').style.display = 'block';
             // Premium: Cacher l'état vide et afficher le contenu
@@ -9898,28 +9901,24 @@ Solutions possibles :
                         const fatCal = targets.fat * 9;
                         const totalCal = Math.round(proteinCal + carbsCal + fatCal);
 
-                        if (document.getElementById('proteinCal')) document.getElementById('proteinCal').textContent = Math.round(proteinCal);
-                        if (document.getElementById('carbsCal')) document.getElementById('carbsCal').textContent = Math.round(carbsCal);
-                        if (document.getElementById('fatCal')) document.getElementById('fatCal').textContent = Math.round(fatCal);
+                        if (document.getElementById('proteinCal')) document.getElementById('proteinCal').textContent = Math.round(proteinCal) + ' kcal';
+                        if (document.getElementById('carbsCal')) document.getElementById('carbsCal').textContent = Math.round(carbsCal) + ' kcal';
+                        if (document.getElementById('fatCal')) document.getElementById('fatCal').textContent = Math.round(fatCal) + ' kcal';
                         if (document.getElementById('totalCal')) document.getElementById('totalCal').textContent = totalCal;
 
-                        // Progress bars
+                        // Progress rings (desktop)
                         setTimeout(() => {
                             const pPct = Math.round((proteinCal / totalCal) * 100);
                             const cPct = Math.round((carbsCal / totalCal) * 100);
                             const fPct = Math.round((fatCal / totalCal) * 100);
 
-                            if (document.getElementById('proteinBar')) {
-                                document.getElementById('proteinBar').style.width = `${pPct}%`;
-                                document.getElementById('proteinBar').setAttribute('data-percent', `${pPct}%`);
-                            }
-                            if (document.getElementById('carbsBar')) {
-                                document.getElementById('carbsBar').style.width = `${cPct}%`;
-                                document.getElementById('carbsBar').textContent = `${cPct}%`;
-                            }
-                            if (document.getElementById('fatBar')) {
-                                document.getElementById('fatBar').style.width = `${fPct}%`;
-                                document.getElementById('fatBar').textContent = `${fPct}%`;
+                            if (typeof window.updateDesktopMacroRings === 'function') {
+                                window.updateDesktopMacroRings(
+                                    Math.round(targets.protein),
+                                    Math.round(targets.carbs),
+                                    Math.round(targets.fat),
+                                    pPct, cPct, fPct
+                                );
                             }
                         }, 100);
 
@@ -11601,6 +11600,32 @@ Solutions possibles :
                 }
             });
         }
+
+        // Animate desktop SVG progress rings with percentages
+        window.updateDesktopMacroRings = function(protein, carbs, fat, proteinPct, carbsPct, fatPct) {
+            const maxGrams = Math.max(protein, carbs, fat, 1);
+            const circumference = 2 * Math.PI * 54; // radius = 54
+
+            const rings = [
+                { id: 'desktopRingProtein', percentId: 'desktopProteinPercent', value: protein, pct: proteinPct },
+                { id: 'desktopRingCarbs', percentId: 'desktopCarbsPercent', value: carbs, pct: carbsPct },
+                { id: 'desktopRingFat', percentId: 'desktopFatPercent', value: fat, pct: fatPct }
+            ];
+
+            rings.forEach(ring => {
+                const el = document.getElementById(ring.id);
+                const pctEl = document.getElementById(ring.percentId);
+                if (el) {
+                    const percent = ring.value / maxGrams;
+                    const offset = circumference * (1 - percent);
+                    el.style.strokeDasharray = circumference;
+                    el.style.strokeDashoffset = offset;
+                }
+                if (pctEl) {
+                    pctEl.textContent = ring.pct + '%';
+                }
+            });
+        };
 
         // Go to meals section from wizard
         window.wizardGoToMeals = function() {

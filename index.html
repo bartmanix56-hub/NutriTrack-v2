@@ -1665,45 +1665,44 @@
 
                     <h3 style="margin-bottom: var(--space-xl); font-size: 1.2rem;">Tes Objectifs Macros :</h3>
 
-                    <div class="grid-3">
-                        <div class="macro-display">
-                            <div class="macro-label">Protéines</div>
-                            <div class="macro-value protein" id="targetProtein">—</div>
-                            <div class="macro-unit">grammes</div>
-                            <div class="progress-bar">
-                                <div class="progress-fill protein" id="proteinBar" style="width: 0%"></div></div></div>
-
-                        <div class="macro-display">
-                            <div class="macro-label">Glucides</div>
-                            <div class="macro-value carbs" id="targetCarbs">—</div>
-                            <div class="macro-unit">grammes</div>
-                            <div class="progress-bar">
-                                <div class="progress-fill carbs" id="carbsBar" style="width: 0%"></div></div></div>
-
-                        <div class="macro-display">
-                            <div class="macro-label">Lipides</div>
-                            <div class="macro-value fat" id="targetFat">—</div>
-                            <div class="macro-unit">grammes</div>
-                            <div class="progress-bar">
-                                <div class="progress-fill fat" id="fatBar" style="width: 0%"></div></div></div></div>
-
-                    <div class="summary-grid">
-                        <div class="summary-card protein-card">
-                            <div class="summary-label">Protéines</div>
-                            <div class="summary-value" id="proteinCal">—</div>
-                            <div class="summary-label">kcal</div></div>
-                        <div class="summary-card carbs-card">
-                            <div class="summary-label">Glucides</div>
-                            <div class="summary-value" id="carbsCal">—</div>
-                            <div class="summary-label">kcal</div></div>
-                        <div class="summary-card fat-card">
-                            <div class="summary-label">Lipides</div>
-                            <div class="summary-value" id="fatCal">—</div>
-                            <div class="summary-label">kcal</div></div>
-                        <div class="summary-card total-card">
-                            <div class="summary-label">Total</div>
-                            <div class="summary-value" id="totalCal">—</div>
-                            <div class="summary-label">kcal / jour</div></div></div>
+                    <!-- Macro Rings (desktop) -->
+                    <div class="desktop-macros-grid">
+                        <div class="desktop-macro-ring">
+                            <svg class="desktop-ring-svg" viewBox="0 0 120 120">
+                                <circle class="desktop-ring-bg" cx="60" cy="60" r="54"></circle>
+                                <circle class="desktop-ring-progress protein" id="desktopRingProtein" cx="60" cy="60" r="54"></circle>
+                                <text class="desktop-ring-percent" x="60" y="60" id="desktopProteinPercent">—%</text>
+                            </svg>
+                            <div class="desktop-macro-value protein" id="targetProtein">—</div>
+                            <div class="desktop-macro-label">Protéines</div>
+                            <div class="desktop-macro-kcal" id="proteinCal">— kcal</div>
+                        </div>
+                        <div class="desktop-macro-ring">
+                            <svg class="desktop-ring-svg" viewBox="0 0 120 120">
+                                <circle class="desktop-ring-bg" cx="60" cy="60" r="54"></circle>
+                                <circle class="desktop-ring-progress carbs" id="desktopRingCarbs" cx="60" cy="60" r="54"></circle>
+                                <text class="desktop-ring-percent" x="60" y="60" id="desktopCarbsPercent">—%</text>
+                            </svg>
+                            <div class="desktop-macro-value carbs" id="targetCarbs">—</div>
+                            <div class="desktop-macro-label">Glucides</div>
+                            <div class="desktop-macro-kcal" id="carbsCal">— kcal</div>
+                        </div>
+                        <div class="desktop-macro-ring">
+                            <svg class="desktop-ring-svg" viewBox="0 0 120 120">
+                                <circle class="desktop-ring-bg" cx="60" cy="60" r="54"></circle>
+                                <circle class="desktop-ring-progress fat" id="desktopRingFat" cx="60" cy="60" r="54"></circle>
+                                <text class="desktop-ring-percent" x="60" y="60" id="desktopFatPercent">—%</text>
+                            </svg>
+                            <div class="desktop-macro-value fat" id="targetFat">—</div>
+                            <div class="desktop-macro-label">Lipides</div>
+                            <div class="desktop-macro-kcal" id="fatCal">— kcal</div>
+                        </div>
+                        <div class="desktop-macro-total">
+                            <div class="desktop-total-label">Objectif calorique</div>
+                            <div class="desktop-total-value" id="totalCal">—</div>
+                            <div class="desktop-total-unit">kcal / jour</div>
+                        </div>
+                    </div>
 
                     <!-- CTA après calcul -->
                     <div style="margin-top: var(--space-3xl); padding: var(--space-2xl); background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%); border: 2px solid var(--accent-main); border-radius: var(--radius-lg);">
