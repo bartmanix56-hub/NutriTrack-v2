@@ -44,6 +44,10 @@ const provider = new GoogleAuthProvider();
 
 // ===== INITIALISER LES VARIABLES GLOBALES =====
 // CRITIQUE: Initialiser avant que les fonctions de chargement ne les utilisent
+
+// Flag pour éviter la race condition entre firebaseSignIn et onAuthStateChanged
+window.isSigningIn = false;
+
 if (!window.foodDatabase) {
     window.foodDatabase = [];
 }
@@ -849,6 +853,9 @@ localStorage.setItem = function(key, value) {
 
 // ===== AUTH FUNCTIONS (exposed globally) =====
 window.firebaseSignIn = async function() {
+    // Flag pour éviter la race condition avec onAuthStateChanged
+    window.isSigningIn = true;
+
     try {
         // Connexion Google directe
         const result = await signInWithPopup(auth, provider);
@@ -970,6 +977,7 @@ window.firebaseSignIn = async function() {
 
     } catch (error) {
         console.error('Erreur connexion Google:', error);
+        window.isSigningIn = false; // Reset flag on error
         if (typeof showToast === 'function') {
             showToast('<i data-lucide="x-circle" class="icon-inline"></i> Erreur de connexion', 'error');
         }
@@ -978,6 +986,9 @@ window.firebaseSignIn = async function() {
 
 // Fonction helper pour afficher l'app après login
 async function showAppAfterLogin(user) {
+    // Reset signing flag - firebaseSignIn est terminé
+    window.isSigningIn = false;
+
     // Cacher la landing page
     const landingPage = document.getElementById('landing-page');
     if (landingPage) {
@@ -1392,6 +1403,12 @@ onAuthStateChanged(auth, (user) => {
 
         // Mettre à jour la visibilité du bouton admin
         updateAdminVisibility();
+
+        // Si firebaseSignIn est en cours, ne pas interférer - il gère l'affichage de l'app
+        if (window.isSigningIn) {
+            console.log('🔄 Sign-in en cours, onAuthStateChanged laisse firebaseSignIn gérer');
+            return;
+        }
 
         if (user) {
             // USER CONNECTÉ → Charger données + afficher l'app
