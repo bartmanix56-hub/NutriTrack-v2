@@ -1383,8 +1383,9 @@
 
         window.selectGoal = async function(goal, isLoading = false) {
             currentGoal = goal;
+            // Utiliser un sélecteur plus spécifique pour cibler uniquement les goal-btn (pas wizard-goal-btn)
             document.querySelectorAll('.goal-btn:not(.pace-btn)').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-goal="${goal}"]`)?.classList.add('active');
+            document.querySelector(`.goal-btn[data-goal="${goal}"]`)?.classList.add('active');
 
             // Masquer toutes les options
             document.getElementById('cut-options').style.display = 'none';
@@ -1469,12 +1470,13 @@
 
         // Sélection du rythme en mode guidé
         window.selectPace = async function(pace, skipCalculate = false) {
-            // Mise à jour visuelle des boutons
+            // Mise à jour visuelle des boutons (cibler seulement .pace-btn, pas wizard-pace-btn)
             document.querySelectorAll('.pace-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
 
-            const selectedBtn = document.querySelector(`[data-pace="${pace}"]`);
+            // Sélecteur spécifique pour éviter de cibler les boutons du wizard
+            const selectedBtn = document.querySelector(`.pace-btn[data-pace="${pace}"]`);
             if (selectedBtn) {
                 selectedBtn.classList.add('active');
             }
