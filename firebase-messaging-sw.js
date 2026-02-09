@@ -8,7 +8,7 @@ importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-comp
 
 // Configuration Firebase (même config que l'app)
 firebase.initializeApp({
-    apiKey: "AIzaSyCL2SvQ2c784ZyA2Pr-Qtv2F1wnnDByGkc",
+    apiKey: "AIzaSyBkxISTONDblC5MoRQYhaz9IusWg4GNIuY",
     authDomain: "nutritraack.firebaseapp.com",
     projectId: "nutritraack",
     storageBucket: "nutritraack.firebasestorage.app",
