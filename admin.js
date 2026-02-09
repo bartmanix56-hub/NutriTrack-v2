@@ -853,13 +853,17 @@ localStorage.setItem = function(key, value) {
 
 // ===== AUTH FUNCTIONS (exposed globally) =====
 window.firebaseSignIn = async function() {
+    console.log('🔐 firebaseSignIn démarré');
+
     // Flag pour éviter la race condition avec onAuthStateChanged
     window.isSigningIn = true;
 
     try {
         // Connexion Google directe
+        console.log('🔐 Ouverture popup Google...');
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
+        console.log('🔐 Connexion réussie:', user.email);
 
         // DÉTECTION DE CHANGEMENT DE COMPTE
         const lastUserEmail = localStorage.getItem('lastUserEmail');
@@ -870,7 +874,9 @@ window.firebaseSignIn = async function() {
         }
 
         // Check if cloud data exists AVANT d'effacer quoi que ce soit
+        console.log('🔐 Chargement des données cloud...');
         const cloudData = await loadFromFirestore(user);
+        console.log('🔐 Données cloud:', cloudData ? 'trouvées' : 'aucune', cloudData?.lastSync ? `(sync: ${new Date(cloudData.lastSync).toLocaleDateString()})` : '');
 
         if (isAccountSwitch) {
             // Si changement de compte ET données cloud existent → OK pour effacer et restaurer
@@ -968,10 +974,12 @@ window.firebaseSignIn = async function() {
             }
         } else {
             // No cloud data, upload local
+            console.log('🔐 Pas de données cloud, sync local vers cloud...');
             syncToFirestore(user);
             if (typeof showToast === 'function') {
                 showToast('<i data-lucide="check-circle" class="icon-inline"></i> Connecté ! Tes données sont synchronisées.');
             }
+            console.log('🔐 Appel de showAppAfterLogin (no cloud data)');
             showAppAfterLogin(user);
         }
 
@@ -986,13 +994,24 @@ window.firebaseSignIn = async function() {
 
 // Fonction helper pour afficher l'app après login
 async function showAppAfterLogin(user) {
+    console.log('🚀 showAppAfterLogin appelé pour:', user.email);
+
     // Reset signing flag - firebaseSignIn est terminé
     window.isSigningIn = false;
 
-    // Cacher la landing page
+    // Cacher la landing page IMMÉDIATEMENT
     const landingPage = document.getElementById('landing-page');
     if (landingPage) {
+        console.log('🔄 Masquage de la landing page...');
         landingPage.style.display = 'none';
+        landingPage.classList.remove('active');
+    }
+
+    // Afficher l'app IMMÉDIATEMENT (avant la migration)
+    const mainApp = document.getElementById('main-app');
+    if (mainApp) {
+        console.log('🔄 Affichage de main-app...');
+        mainApp.style.display = 'block';
     }
 
     // Réinitialiser le flag pour permettre l'affichage
