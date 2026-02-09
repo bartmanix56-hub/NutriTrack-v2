@@ -868,6 +868,7 @@ window.firebaseSignIn = async function() {
         // DÉTECTION DE CHANGEMENT DE COMPTE
         const lastUserEmail = localStorage.getItem('lastUserEmail');
         const isAccountSwitch = lastUserEmail && lastUserEmail !== user.email;
+        console.log('🔐 [DEBUG] lastUserEmail:', lastUserEmail, 'isAccountSwitch:', isAccountSwitch);
 
         if (isAccountSwitch) {
             console.log('🔄 Changement de compte détecté:', lastUserEmail, '→', user.email);
@@ -924,16 +925,26 @@ window.firebaseSignIn = async function() {
         }
 
         // PAS de changement de compte - comportement normal
+        console.log('🔐 [DEBUG] Pas de changement de compte, continuation...');
         localStorage.setItem('lastUserEmail', user.email);
 
         // Utiliser le prénom Google si pas de prénom local
-        const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+        console.log('🔐 [DEBUG] Lecture userProfile...');
+        let userProfile;
+        try {
+            userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+        } catch (e) {
+            console.error('🔐 [ERROR] userProfile JSON invalide:', e);
+            userProfile = {};
+        }
         if (!userProfile.firstName && user.displayName) {
             const googleFirstName = user.displayName.split(' ')[0];
             userProfile.firstName = googleFirstName;
             localStorage.setItem('userProfile', JSON.stringify(userProfile));
             localStorage.setItem('appUsername', googleFirstName);
         }
+
+        console.log('🔐 [DEBUG] cloudData:', !!cloudData, 'lastSync:', cloudData?.lastSync);
 
         if (cloudData && cloudData.lastSync) {
             // Cloud data exists
@@ -944,15 +955,19 @@ window.firebaseSignIn = async function() {
                 // Both local and cloud data exist
                 // AFFICHER L'APP D'ABORD, puis demander confirmation
                 console.log('🔐 Données locales ET cloud - affichage app puis dialogue');
+                console.log('🔐 [DEBUG] Appel showAppAfterLogin MAINTENANT');
                 await showAppAfterLogin(user);
+                console.log('🔐 [DEBUG] showAppAfterLogin TERMINÉ');
 
                 // Maintenant afficher le dialogue (l'app est visible)
                 if (typeof customConfirm === 'function') {
+                    console.log('🔐 [DEBUG] Affichage dialogue customConfirm...');
                     const restore = await customConfirm(
                         'Données trouvées dans le cloud',
                         `Des données existent déjà sur ce compte (sync: ${new Date(cloudData.lastSync).toLocaleDateString('fr-FR')}). Veux-tu les restaurer et remplacer tes données locales ?`,
                         { confirmText: 'Restaurer', cancelText: 'Garder local', isDanger: false }
                     );
+                    console.log('🔐 [DEBUG] Réponse dialogue:', restore);
                     if (restore) {
                         restoreDataFromCloud(cloudData);
                         if (typeof showToast === 'function') {
@@ -965,6 +980,8 @@ window.firebaseSignIn = async function() {
                             showToast('<i data-lucide="cloud-upload" class="icon-inline"></i> Données locales envoyées vers le cloud');
                         }
                     }
+                } else {
+                    console.warn('🔐 [DEBUG] customConfirm non disponible!');
                 }
             } else {
                 // No local data, restore from cloud
@@ -1001,17 +1018,23 @@ async function showAppAfterLogin(user) {
 
     // Cacher la landing page IMMÉDIATEMENT
     const landingPage = document.getElementById('landing-page');
+    console.log('🚀 [DEBUG] landing-page trouvé:', !!landingPage);
     if (landingPage) {
         console.log('🔄 Masquage de la landing page...');
         landingPage.style.display = 'none';
         landingPage.classList.remove('active');
+    } else {
+        console.error('🚀 [ERROR] landing-page NON TROUVÉ!');
     }
 
     // Afficher l'app IMMÉDIATEMENT (avant la migration)
     const mainApp = document.getElementById('main-app');
+    console.log('🚀 [DEBUG] main-app trouvé:', !!mainApp);
     if (mainApp) {
         console.log('🔄 Affichage de main-app...');
         mainApp.style.display = 'block';
+    } else {
+        console.error('🚀 [ERROR] main-app NON TROUVÉ!');
     }
 
     // Réinitialiser le flag pour permettre l'affichage
