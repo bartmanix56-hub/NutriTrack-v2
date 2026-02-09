@@ -938,37 +938,37 @@ window.firebaseSignIn = async function() {
         if (cloudData && cloudData.lastSync) {
             // Cloud data exists
             const hasLocalData = SYNC_KEYS.some(key => localStorage.getItem(key));
+            console.log('🔐 Données cloud trouvées, hasLocalData:', hasLocalData);
 
             if (hasLocalData) {
                 // Both local and cloud data exist
+                // AFFICHER L'APP D'ABORD, puis demander confirmation
+                console.log('🔐 Données locales ET cloud - affichage app puis dialogue');
+                await showAppAfterLogin(user);
+
+                // Maintenant afficher le dialogue (l'app est visible)
                 if (typeof customConfirm === 'function') {
-                    customConfirm(
+                    const restore = await customConfirm(
                         'Données trouvées dans le cloud',
                         `Des données existent déjà sur ce compte (sync: ${new Date(cloudData.lastSync).toLocaleDateString('fr-FR')}). Veux-tu les restaurer et remplacer tes données locales ?`,
                         { confirmText: 'Restaurer', cancelText: 'Garder local', isDanger: false }
-                    ).then((restore) => {
-                        if (restore) {
-                            restoreDataFromCloud(cloudData);
-                        } else {
-                            // Keep local data and sync to cloud
-                            syncToFirestore(user);
-                            if (typeof showToast === 'function') {
-                                showToast('<i data-lucide="cloud-upload" class="icon-inline"></i> Données locales envoyées vers le cloud');
-                            }
-                        }
-                        showAppAfterLogin(user);
-                    });
-                } else {
-                    // Fallback without custom confirm
-                    if (confirm(`Des données existent déjà sur ce compte. Voulez-vous les restaurer ?`)) {
+                    );
+                    if (restore) {
                         restoreDataFromCloud(cloudData);
+                        if (typeof showToast === 'function') {
+                            showToast('<i data-lucide="cloud-download" class="icon-inline"></i> Données cloud restaurées');
+                        }
                     } else {
+                        // Keep local data and sync to cloud
                         syncToFirestore(user);
+                        if (typeof showToast === 'function') {
+                            showToast('<i data-lucide="cloud-upload" class="icon-inline"></i> Données locales envoyées vers le cloud');
+                        }
                     }
-                    showAppAfterLogin(user);
                 }
             } else {
                 // No local data, restore from cloud
+                console.log('🔐 Pas de données locales, restauration depuis cloud');
                 restoreDataFromCloud(cloudData, true);
                 showAppAfterLogin(user);
             }
