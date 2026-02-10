@@ -6301,45 +6301,43 @@ button.loading::after {
 /* MOBILE RESPONSIVE - ONGLET REPAS            */
 /* ============================================ */
 @media (max-width: 768px) {
-    /* Macros bar mobile - pas de sticky */
+    /* Macros bar mobile - ligne compacte */
     .macros-bar {
-        padding: var(--space-sm) var(--space-md);
+        padding: var(--space-sm);
         border-radius: var(--radius-md);
         margin-bottom: var(--space-md);
     }
 
     .macros-bar-header {
-        margin-bottom: var(--space-xs);
-        padding-bottom: 0;
-        border-bottom: none;
-    }
-
-    .macros-bar-title {
-        font-size: 0.65rem;
+        display: none;
     }
 
     .macros-bar-items {
-        gap: var(--space-xs);
+        gap: var(--space-sm);
+        flex-wrap: nowrap;
     }
 
     .macro-item {
-        flex-direction: column;
-        gap: 2px;
-        padding: var(--space-xs);
+        flex-direction: row;
+        gap: 4px;
+        padding: 0;
+        flex: 1;
+        justify-content: center;
     }
 
     .macro-label {
-        font-size: 0.6rem;
+        font-size: 0.65rem;
     }
 
     .macro-value {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
     }
 
     .water-item {
-        border-left: none;
-        padding-left: 0;
+        border-left: 1px solid rgba(255,255,255,0.1);
+        padding-left: var(--space-sm);
         margin-left: 0;
+        flex: 0 0 auto;
     }
 
     .water-icon {
@@ -6348,9 +6346,9 @@ button.loading::after {
     }
 
     .water-btn {
-        width: 22px;
-        height: 22px;
-        font-size: 0.85rem;
+        width: 24px;
+        height: 24px;
+        font-size: 0.9rem;
     }
 
     .water-ml {
