@@ -1707,18 +1707,6 @@
 
         <!-- Meals Tab -->
         <div id="meals" class="tab-content">
-            <!-- Hero Header -->
-            <div style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); border-radius: var(--radius-xl); padding: var(--space-3xl); margin-bottom: var(--space-3xl); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);">
-                <div style="display: flex; align-items: center; gap: var(--space-lg); margin-bottom: var(--space-lg);">
-                    <div style="font-size: 3rem; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; background: var(--accent-ui); border-radius: var(--radius-lg);"><i data-lucide="utensils-crossed" style="width: 36px; height: 36px; color: white;"></i></div>
-                    <div>
-                        <h1 style="font-size: 2rem; font-weight: 700; margin: 0; color: var(--accent-ui);">
-                            Mes Repas
-                        </h1>
-                        <p style="margin: 0; margin-top: var(--space-xs); color: var(--text-secondary); font-size: 1rem;">
-                            Note ce que tu manges et visualise tes macros en temps réel
-                        </p>
-                    </div></div></div>
 
             <!-- Navigation de date -->
             <div class="date-navigation-wrapper">
@@ -1756,260 +1744,193 @@
                 </div>
             </div>
 
-            <!-- Widget "Reste du jour" -->
-            <div id="remaining-widget" style="background: var(--bg-tertiary); border-radius: var(--radius-xl); padding: var(--space-xl); margin-bottom: var(--space-2xl); border: 1px solid rgba(16, 185, 129, 0.2); display: none;">
-                <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-xl); flex-wrap: wrap;">
-                    <div style="display: flex; align-items: center; gap: var(--space-md);">
-                        <div style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: var(--accent-ui); border-radius: var(--radius-md);"><i data-lucide="target" style="width: 24px; height: 24px; color: white;"></i></div>
-                        <div>
-                            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">Il te reste</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Pour atteindre tes objectifs du jour</div></div></div>
-                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-lg); flex: 1; max-width: 650px;">
-                        <!-- Premium: Macros cliquables -->
-                        <div class="remaining-macro-clickable" onclick="scrollToNextEmptyMeal()" style="text-align: center;" title="Cliquer pour ajouter des protéines">
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Protéines</div>
-                            <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-protein);" id="remaining-protein">0g</div></div>
-                        <div class="remaining-macro-clickable" onclick="scrollToNextEmptyMeal()" style="text-align: center;" title="Cliquer pour ajouter des glucides">
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Glucides</div>
-                            <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-carbs);" id="remaining-carbs">0g</div></div>
-                        <div class="remaining-macro-clickable" onclick="scrollToNextEmptyMeal()" style="text-align: center;" title="Cliquer pour ajouter des lipides">
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Lipides</div>
-                            <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-fat);" id="remaining-fat">0g</div></div>
-                        <div class="remaining-macro-clickable" onclick="scrollToNextEmptyMeal()" style="text-align: center;" title="Cliquer pour ajouter des calories">
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">Calories</div>
-                            <div style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);" id="remaining-cal">0 kcal</div></div>
-                        <div style="text-align: center; border-left: 1px solid rgba(255,255,255,0.1); padding-left: var(--space-lg);">
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: var(--space-xs);"><i data-lucide="droplets" style="width: 12px; height: 12px; display: inline; vertical-align: middle;"></i> Eau</div>
-                            <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-xs);">
-                                <button onclick="updateWater(-1)" class="btn-ghost" style="width: 24px; height: 24px; padding: 0; border-radius: 50%; font-size: 1rem;">−</button>
-                                <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-ui);" id="water-count">0</div>
-                                <button onclick="updateWater(1)" class="btn" style="width: 24px; height: 24px; padding: 0; border-radius: 50%; background: var(--accent-ui); font-size: 1rem;">+</button>
-                            </div>
-                            <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px;"><span id="water-ml">0</span>/<span id="water-target">2000</span>ml</div></div></div></div>
+            <!-- Widget Macros Compact -->
+            <div id="remaining-widget" class="macros-bar">
+                <div class="macros-bar-items">
+                    <div class="macro-item" onclick="scrollToNextEmptyMeal()">
+                        <span class="macro-label">P</span>
+                        <span class="macro-value protein" id="remaining-protein">0g</span>
+                    </div>
+                    <div class="macro-item" onclick="scrollToNextEmptyMeal()">
+                        <span class="macro-label">G</span>
+                        <span class="macro-value carbs" id="remaining-carbs">0g</span>
+                    </div>
+                    <div class="macro-item" onclick="scrollToNextEmptyMeal()">
+                        <span class="macro-label">L</span>
+                        <span class="macro-value fat" id="remaining-fat">0g</span>
+                    </div>
+                    <div class="macro-item" onclick="scrollToNextEmptyMeal()">
+                        <span class="macro-label">Cal</span>
+                        <span class="macro-value" id="remaining-cal">0</span>
+                    </div>
+                    <div class="macro-item water-item">
+                        <button onclick="updateWater(-1)" class="water-btn">−</button>
+                        <span class="macro-value water" id="water-count">0</span>
+                        <button onclick="updateWater(1)" class="water-btn water-btn-plus">+</button>
+                        <span class="water-ml"><span id="water-ml">0</span>/<span id="water-target">2000</span>ml</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Grid 2x2 des repas -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); margin-bottom: var(--space-2xl);">
+            <!-- Grid des repas -->
+            <div class="meals-grid">
 
                 <!-- Petit-déjeuner -->
-                <div class="meal-card">
-                    <div class="meal-card-header">
-                        <div style="display: flex; align-items: center; gap: var(--space-sm);">
-                            <i data-lucide="coffee" style="width: 22px; height: 22px; color: var(--accent-fat);"></i>
-                            <span style="font-weight: 700; font-size: 1.1rem;">Petit-déjeuner</span>
+                <div class="meal-card" data-meal="breakfast">
+                    <div class="meal-card-header" onclick="toggleMealAccordion('breakfast')">
+                        <div class="meal-card-title">
+                            <i data-lucide="coffee" class="meal-icon breakfast"></i>
+                            <span class="meal-name">Petit-déjeuner</span>
+                            <span class="meal-kcal" id="breakfast-total">0 kcal</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: var(--space-md);">
-                            <div style="font-weight: 700; color: var(--accent-ui);" id="breakfast-total">0 kcal</div>
-                            <!-- Premium: Menu ⋯ -->
+                        <div class="meal-card-actions">
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
                             <div class="meal-menu-container">
-                                <button class="meal-menu-btn" onclick="toggleMealMenu('breakfast')" title="Options du repas">⋯</button>
+                                <button class="meal-menu-btn" onclick="event.stopPropagation(); toggleMealMenu('breakfast')" title="Options">⋯</button>
                                 <div class="meal-menu-dropdown" id="meal-menu-breakfast">
-                                    <div class="meal-menu-item" onclick="copyMealTo('breakfast')"><i data-lucide="copy" style="width: 16px; height: 16px;"></i> Copier vers...</div>
-                                    <div class="meal-menu-item danger" onclick="clearMeal('breakfast'); closeMealMenus()"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Vider</div>
+                                    <div class="meal-menu-item" onclick="openSmartMealModal('breakfast')"><i data-lucide="sparkles"></i> Repas conseillé</div>
+                                    <div class="meal-menu-item" onclick="openMealTemplatesModal('breakfast')"><i data-lucide="clipboard-list"></i> Charger un template</div>
+                                    <div class="meal-menu-item" onclick="saveMealAsTemplate('breakfast')"><i data-lucide="save"></i> Sauvegarder template</div>
+                                    <div class="meal-menu-item" onclick="toggleMealRecipe('breakfast')"><i data-lucide="book-open"></i> Recette</div>
+                                    <div class="meal-menu-item" onclick="copyMealTo('breakfast')"><i data-lucide="copy"></i> Copier vers...</div>
+                                    <div class="meal-menu-item danger" onclick="clearMeal('breakfast'); closeMealMenus()"><i data-lucide="trash-2"></i> Vider</div>
                                 </div>
                             </div>
-                        </div></div>
-                    <div class="food-list" id="breakfast-foods"></div>
-                    <div id="breakfast-recipe" style="display: none; margin-top: var(--space-sm); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
-                            <div style="font-size: 0.85rem; color: var(--accent-carbs); font-weight: 600;"><i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette / Lien</div>
-                            <button onclick="document.getElementById('breakfast-recipe').style.display='none'" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2rem; padding: 0;" title="Masquer">×</button>
                         </div>
-                        <textarea id="breakfast-recipe-input"
-                                  placeholder="URL d'une recette, instructions, notes..."
-                                  style="width: 100%; min-height: 80px; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.9rem; resize: vertical; font-family: inherit;"
-                                  oninput="autoResizeTextarea(this); saveRecipe('breakfast', this.value)"></textarea>
                     </div>
-
-                    <!-- Quick Add -->
-                    <div style="margin-top: var(--space-sm); position: relative;">
-                        <input type="text"
-                               id="quick-add-breakfast"
-                               placeholder="⚡ Quick Add - Tape le nom de l'aliment..."
-                               autocomplete="off"
-                               oninput="handleQuickAddSearch('breakfast', this.value)"
-                               style="width: 100%; padding: var(--space-md); font-size: 0.95rem; background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary); transition: var(--transition-normal);">
-                        <div id="quick-results-breakfast" class="quick-add-results" style="display: none;"></div></div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
-                        <button class="add-food-btn" onclick="openSmartMealModal('breakfast')" style="border: 2px solid var(--accent-main); color: var(--accent-main); font-weight: 600;">
-                            <i data-lucide="sparkles" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Repas conseillé
-                        </button>
-                        <button class="add-food-btn" onclick="openMealTemplatesModal('breakfast')" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                            Charger un repas type
-                        </button>
-                        <button class="add-food-btn" onclick="saveMealAsTemplate('breakfast')" style="border: 2px solid var(--accent-purple); color: var(--accent-purple);">
-                            Enregistrer comme repas type
-                        </button>
-                        <button class="add-food-btn" onclick="const div = document.getElementById('breakfast-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('breakfast-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                            <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
-                        </button>
-                    </div></div>
+                    <div class="food-list" id="breakfast-foods"></div>
+                    <div class="meal-card-body">
+                        <div id="breakfast-recipe" class="recipe-section">
+                            <div class="recipe-header">
+                                <span><i data-lucide="book-open"></i> Recette</span>
+                                <button onclick="toggleMealRecipe('breakfast')" class="recipe-close">×</button>
+                            </div>
+                            <textarea id="breakfast-recipe-input" class="recipe-input" placeholder="URL, instructions, notes..." oninput="autoResizeTextarea(this); saveRecipe('breakfast', this.value)"></textarea>
+                        </div>
+                        <div class="quick-add-container">
+                            <input type="text" id="quick-add-breakfast" class="quick-add-input" placeholder="Ajouter un aliment..." autocomplete="off" oninput="handleQuickAddSearch('breakfast', this.value)">
+                            <div id="quick-results-breakfast" class="quick-add-results"></div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Déjeuner -->
-                <div class="meal-card">
-                    <div class="meal-card-header">
-                        <div style="display: flex; align-items: center; gap: var(--space-sm);">
-                            <i data-lucide="utensils" style="width: 22px; height: 22px; color: var(--accent-carbs);"></i>
-                            <span style="font-weight: 700; font-size: 1.1rem;">Déjeuner</span>
+                <div class="meal-card" data-meal="lunch">
+                    <div class="meal-card-header" onclick="toggleMealAccordion('lunch')">
+                        <div class="meal-card-title">
+                            <i data-lucide="utensils" class="meal-icon lunch"></i>
+                            <span class="meal-name">Déjeuner</span>
+                            <span class="meal-kcal" id="lunch-total">0 kcal</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: var(--space-md);">
-                            <div style="font-weight: 700; color: var(--accent-ui);" id="lunch-total">0 kcal</div>
-                            <!-- Premium: Menu ⋯ -->
+                        <div class="meal-card-actions">
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
                             <div class="meal-menu-container">
-                                <button class="meal-menu-btn" onclick="toggleMealMenu('lunch')" title="Options du repas">⋯</button>
+                                <button class="meal-menu-btn" onclick="event.stopPropagation(); toggleMealMenu('lunch')" title="Options">⋯</button>
                                 <div class="meal-menu-dropdown" id="meal-menu-lunch">
-                                    <div class="meal-menu-item" onclick="copyMealTo('lunch')"><i data-lucide="copy" style="width: 16px; height: 16px;"></i> Copier vers...</div>
-                                    <div class="meal-menu-item danger" onclick="clearMeal('lunch'); closeMealMenus()"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Vider</div>
+                                    <div class="meal-menu-item" onclick="openSmartMealModal('lunch')"><i data-lucide="sparkles"></i> Repas conseillé</div>
+                                    <div class="meal-menu-item" onclick="openMealTemplatesModal('lunch')"><i data-lucide="clipboard-list"></i> Charger un template</div>
+                                    <div class="meal-menu-item" onclick="saveMealAsTemplate('lunch')"><i data-lucide="save"></i> Sauvegarder template</div>
+                                    <div class="meal-menu-item" onclick="toggleMealRecipe('lunch')"><i data-lucide="book-open"></i> Recette</div>
+                                    <div class="meal-menu-item" onclick="copyMealTo('lunch')"><i data-lucide="copy"></i> Copier vers...</div>
+                                    <div class="meal-menu-item danger" onclick="clearMeal('lunch'); closeMealMenus()"><i data-lucide="trash-2"></i> Vider</div>
                                 </div>
                             </div>
-                        </div></div>
-                    <div class="food-list" id="lunch-foods"></div>
-                    <div id="lunch-recipe" style="display: none; margin-top: var(--space-sm); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
-                            <div style="font-size: 0.85rem; color: var(--accent-carbs); font-weight: 600;"><i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette / Lien</div>
-                            <button onclick="document.getElementById('lunch-recipe').style.display='none'" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2rem; padding: 0;" title="Masquer">×</button>
                         </div>
-                        <textarea id="lunch-recipe-input"
-                                  placeholder="URL d'une recette, instructions, notes..."
-                                  style="width: 100%; min-height: 80px; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.9rem; resize: vertical; font-family: inherit;"
-                                  oninput="autoResizeTextarea(this); saveRecipe('lunch', this.value)"></textarea>
                     </div>
-
-                    <!-- Quick Add -->
-                    <div style="margin-top: var(--space-sm); position: relative;">
-                        <input type="text"
-                               id="quick-add-lunch"
-                               placeholder="⚡ Quick Add - Tape le nom de l'aliment..."
-                               autocomplete="off"
-                               oninput="handleQuickAddSearch('lunch', this.value)"
-                               style="width: 100%; padding: var(--space-md); font-size: 0.95rem; background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary); transition: var(--transition-normal);">
-                        <div id="quick-results-lunch" class="quick-add-results" style="display: none;"></div></div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
-                        <button class="add-food-btn" onclick="openSmartMealModal('lunch')" style="border: 2px solid var(--accent-main); color: var(--accent-main); font-weight: 600;">
-                            <i data-lucide="sparkles" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Repas conseillé
-                        </button>
-                        <button class="add-food-btn" onclick="openMealTemplatesModal('lunch')" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                            Charger un repas type
-                        </button>
-                        <button class="add-food-btn" onclick="saveMealAsTemplate('lunch')" style="border: 2px solid var(--accent-purple); color: var(--accent-purple);">
-                            Enregistrer comme repas type
-                        </button>
-                        <button class="add-food-btn" onclick="const div = document.getElementById('lunch-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('lunch-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                            <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
-                        </button>
-                    </div></div>
+                    <div class="food-list" id="lunch-foods"></div>
+                    <div class="meal-card-body">
+                        <div id="lunch-recipe" class="recipe-section">
+                            <div class="recipe-header">
+                                <span><i data-lucide="book-open"></i> Recette</span>
+                                <button onclick="toggleMealRecipe('lunch')" class="recipe-close">×</button>
+                            </div>
+                            <textarea id="lunch-recipe-input" class="recipe-input" placeholder="URL, instructions, notes..." oninput="autoResizeTextarea(this); saveRecipe('lunch', this.value)"></textarea>
+                        </div>
+                        <div class="quick-add-container">
+                            <input type="text" id="quick-add-lunch" class="quick-add-input" placeholder="Ajouter un aliment..." autocomplete="off" oninput="handleQuickAddSearch('lunch', this.value)">
+                            <div id="quick-results-lunch" class="quick-add-results"></div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Goûter -->
-                <div class="meal-card">
-                    <div class="meal-card-header">
-                        <div style="display: flex; align-items: center; gap: var(--space-sm);">
-                            <i data-lucide="apple" style="width: 24px; height: 24px; color: var(--accent-ui);"></i>
-                            <span style="font-weight: 700; font-size: 1.1rem;">Goûter</span>
+                <div class="meal-card" data-meal="snack">
+                    <div class="meal-card-header" onclick="toggleMealAccordion('snack')">
+                        <div class="meal-card-title">
+                            <i data-lucide="apple" class="meal-icon snack"></i>
+                            <span class="meal-name">Goûter</span>
+                            <span class="meal-kcal" id="snack-total">0 kcal</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: var(--space-md);">
-                            <div style="font-weight: 700; color: var(--accent-ui);" id="snack-total">0 kcal</div>
-                            <!-- Premium: Menu ⋯ -->
+                        <div class="meal-card-actions">
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
                             <div class="meal-menu-container">
-                                <button class="meal-menu-btn" onclick="toggleMealMenu('snack')" title="Options du repas">⋯</button>
+                                <button class="meal-menu-btn" onclick="event.stopPropagation(); toggleMealMenu('snack')" title="Options">⋯</button>
                                 <div class="meal-menu-dropdown" id="meal-menu-snack">
-                                    <div class="meal-menu-item" onclick="copyMealTo('snack')"><i data-lucide="copy" style="width: 16px; height: 16px;"></i> Copier vers...</div>
-                                    <div class="meal-menu-item danger" onclick="clearMeal('snack'); closeMealMenus()"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Vider</div>
+                                    <div class="meal-menu-item" onclick="openSmartMealModal('snack')"><i data-lucide="sparkles"></i> Repas conseillé</div>
+                                    <div class="meal-menu-item" onclick="openMealTemplatesModal('snack')"><i data-lucide="clipboard-list"></i> Charger un template</div>
+                                    <div class="meal-menu-item" onclick="saveMealAsTemplate('snack')"><i data-lucide="save"></i> Sauvegarder template</div>
+                                    <div class="meal-menu-item" onclick="toggleMealRecipe('snack')"><i data-lucide="book-open"></i> Recette</div>
+                                    <div class="meal-menu-item" onclick="copyMealTo('snack')"><i data-lucide="copy"></i> Copier vers...</div>
+                                    <div class="meal-menu-item danger" onclick="clearMeal('snack'); closeMealMenus()"><i data-lucide="trash-2"></i> Vider</div>
                                 </div>
                             </div>
-                        </div></div>
-                    <div class="food-list" id="snack-foods"></div>
-                    <div id="snack-recipe" style="display: none; margin-top: var(--space-sm); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
-                            <div style="font-size: 0.85rem; color: var(--accent-carbs); font-weight: 600;"><i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette / Lien</div>
-                            <button onclick="document.getElementById('snack-recipe').style.display='none'" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2rem; padding: 0;" title="Masquer">×</button>
                         </div>
-                        <textarea id="snack-recipe-input"
-                                  placeholder="URL d'une recette, instructions, notes..."
-                                  style="width: 100%; min-height: 80px; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.9rem; resize: vertical; font-family: inherit;"
-                                  oninput="autoResizeTextarea(this); saveRecipe('snack', this.value)"></textarea>
                     </div>
-
-                    <!-- Quick Add -->
-                    <div style="margin-top: var(--space-sm); position: relative;">
-                        <input type="text"
-                               id="quick-add-snack"
-                               placeholder="⚡ Quick Add - Tape le nom de l'aliment..."
-                               autocomplete="off"
-                               oninput="handleQuickAddSearch('snack', this.value)"
-                               style="width: 100%; padding: var(--space-md); font-size: 0.95rem; background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary); transition: var(--transition-normal);">
-                        <div id="quick-results-snack" class="quick-add-results" style="display: none;"></div></div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
-                        <button class="add-food-btn" onclick="openSmartMealModal('snack')" style="border: 2px solid var(--accent-main); color: var(--accent-main); font-weight: 600;">
-                            <i data-lucide="sparkles" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Repas conseillé
-                        </button>
-                        <button class="add-food-btn" onclick="openMealTemplatesModal('snack')" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                            Charger un repas type
-                        </button>
-                        <button class="add-food-btn" onclick="saveMealAsTemplate('snack')" style="border: 2px solid var(--accent-purple); color: var(--accent-purple);">
-                            Enregistrer comme repas type
-                        </button>
-                        <button class="add-food-btn" onclick="const div = document.getElementById('snack-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('snack-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                            <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
-                        </button>
-                    </div></div>
+                    <div class="food-list" id="snack-foods"></div>
+                    <div class="meal-card-body">
+                        <div id="snack-recipe" class="recipe-section">
+                            <div class="recipe-header">
+                                <span><i data-lucide="book-open"></i> Recette</span>
+                                <button onclick="toggleMealRecipe('snack')" class="recipe-close">×</button>
+                            </div>
+                            <textarea id="snack-recipe-input" class="recipe-input" placeholder="URL, instructions, notes..." oninput="autoResizeTextarea(this); saveRecipe('snack', this.value)"></textarea>
+                        </div>
+                        <div class="quick-add-container">
+                            <input type="text" id="quick-add-snack" class="quick-add-input" placeholder="Ajouter un aliment..." autocomplete="off" oninput="handleQuickAddSearch('snack', this.value)">
+                            <div id="quick-results-snack" class="quick-add-results"></div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Dîner -->
-                <div class="meal-card">
-                    <div class="meal-card-header">
-                        <div style="display: flex; align-items: center; gap: var(--space-sm);">
-                            <i data-lucide="moon" style="width: 22px; height: 22px; color: var(--accent-purple);"></i>
-                            <span style="font-weight: 700; font-size: 1.1rem;">Dîner</span>
+                <div class="meal-card" data-meal="dinner">
+                    <div class="meal-card-header" onclick="toggleMealAccordion('dinner')">
+                        <div class="meal-card-title">
+                            <i data-lucide="moon" class="meal-icon dinner"></i>
+                            <span class="meal-name">Dîner</span>
+                            <span class="meal-kcal" id="dinner-total">0 kcal</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: var(--space-md);">
-                            <div style="font-weight: 700; color: var(--accent-ui);" id="dinner-total">0 kcal</div>
-                            <!-- Premium: Menu ⋯ -->
+                        <div class="meal-card-actions">
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
                             <div class="meal-menu-container">
-                                <button class="meal-menu-btn" onclick="toggleMealMenu('dinner')" title="Options du repas">⋯</button>
+                                <button class="meal-menu-btn" onclick="event.stopPropagation(); toggleMealMenu('dinner')" title="Options">⋯</button>
                                 <div class="meal-menu-dropdown" id="meal-menu-dinner">
-                                    <div class="meal-menu-item" onclick="copyMealTo('dinner')"><i data-lucide="copy" style="width: 16px; height: 16px;"></i> Copier vers...</div>
-                                    <div class="meal-menu-item danger" onclick="clearMeal('dinner'); closeMealMenus()"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Vider</div>
+                                    <div class="meal-menu-item" onclick="openSmartMealModal('dinner')"><i data-lucide="sparkles"></i> Repas conseillé</div>
+                                    <div class="meal-menu-item" onclick="openMealTemplatesModal('dinner')"><i data-lucide="clipboard-list"></i> Charger un template</div>
+                                    <div class="meal-menu-item" onclick="saveMealAsTemplate('dinner')"><i data-lucide="save"></i> Sauvegarder template</div>
+                                    <div class="meal-menu-item" onclick="toggleMealRecipe('dinner')"><i data-lucide="book-open"></i> Recette</div>
+                                    <div class="meal-menu-item" onclick="copyMealTo('dinner')"><i data-lucide="copy"></i> Copier vers...</div>
+                                    <div class="meal-menu-item danger" onclick="clearMeal('dinner'); closeMealMenus()"><i data-lucide="trash-2"></i> Vider</div>
                                 </div>
                             </div>
-                        </div></div>
-                    <div class="food-list" id="dinner-foods"></div>
-                    <div id="dinner-recipe" style="display: none; margin-top: var(--space-sm); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
-                            <div style="font-size: 0.85rem; color: var(--accent-carbs); font-weight: 600;"><i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette / Lien</div>
-                            <button onclick="document.getElementById('dinner-recipe').style.display='none'" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2rem; padding: 0;" title="Masquer">×</button>
                         </div>
-                        <textarea id="dinner-recipe-input"
-                                  placeholder="URL d'une recette, instructions, notes..."
-                                  style="width: 100%; min-height: 80px; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.9rem; resize: vertical; font-family: inherit;"
-                                  oninput="autoResizeTextarea(this); saveRecipe('dinner', this.value)"></textarea>
                     </div>
-
-                    <!-- Quick Add -->
-                    <div style="margin-top: var(--space-sm); position: relative;">
-                        <input type="text"
-                               id="quick-add-dinner"
-                               placeholder="⚡ Quick Add - Tape le nom de l'aliment..."
-                               autocomplete="off"
-                               oninput="handleQuickAddSearch('dinner', this.value)"
-                               style="width: 100%; padding: var(--space-md); font-size: 0.95rem; background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary); transition: var(--transition-normal);">
-                        <div id="quick-results-dinner" class="quick-add-results" style="display: none;"></div></div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); margin-bottom: 0;">
-                        <button class="add-food-btn" onclick="openSmartMealModal('dinner')" style="border: 2px solid var(--accent-main); color: var(--accent-main); font-weight: 600;">
-                            <i data-lucide="sparkles" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Repas conseillé
-                        </button>
-                        <button class="add-food-btn" onclick="openMealTemplatesModal('dinner')" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                            Charger un repas type
-                        </button>
-                        <button class="add-food-btn" onclick="saveMealAsTemplate('dinner')" style="border: 2px solid var(--accent-purple); color: var(--accent-purple);">
-                            Enregistrer comme repas type
-                        </button>
-                        <button class="add-food-btn" onclick="const div = document.getElementById('dinner-recipe'); if(div.style.display === 'none') { div.style.display = 'block'; document.getElementById('dinner-recipe-input').focus(); } else { div.style.display = 'none'; }" style="border: 2px solid var(--accent-carbs); color: var(--accent-carbs);">
-                            <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette
-                        </button>
-                    </div></div></div>
+                    <div class="food-list" id="dinner-foods"></div>
+                    <div class="meal-card-body">
+                        <div id="dinner-recipe" class="recipe-section">
+                            <div class="recipe-header">
+                                <span><i data-lucide="book-open"></i> Recette</span>
+                                <button onclick="toggleMealRecipe('dinner')" class="recipe-close">×</button>
+                            </div>
+                            <textarea id="dinner-recipe-input" class="recipe-input" placeholder="URL, instructions, notes..." oninput="autoResizeTextarea(this); saveRecipe('dinner', this.value)"></textarea>
+                        </div>
+                        <div class="quick-add-container">
+                            <input type="text" id="quick-add-dinner" class="quick-add-input" placeholder="Ajouter un aliment..." autocomplete="off" oninput="handleQuickAddSearch('dinner', this.value)">
+                            <div id="quick-results-dinner" class="quick-add-results"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="card">
 
