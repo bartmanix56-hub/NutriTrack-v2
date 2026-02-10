@@ -5256,6 +5256,11 @@ Solutions possibles :
             updateSectionsAvailability();
             initV2();
 
+            // Init accordion mobile pour onglet Repas
+            if (typeof initMobileAccordion === 'function') {
+                initMobileAccordion();
+            }
+
             // Attach save listeners to all objective inputs
             const inputsToSave = ['deficit', 'surplus', 'proteinCoeff', 'fatCoeff', 'proteinCoeffBulk', 'fatCoeffBulk', 'activity', 'weight', 'bodyFat'];
             inputsToSave.forEach(id => {
@@ -9698,6 +9703,51 @@ Solutions possibles :
         function closeMealMenus() {
             document.querySelectorAll('.meal-menu-dropdown').forEach(m => m.classList.remove('show'));
         }
+
+        // Toggle accordion pour les meal cards (mobile)
+        function toggleMealAccordion(mealType) {
+            // Ne fonctionne que sur mobile
+            if (window.innerWidth > 768) return;
+
+            const card = document.querySelector(`.meal-card[data-meal="${mealType}"]`);
+            if (card) {
+                card.classList.toggle('mobile-collapsed');
+            }
+        }
+
+        // Toggle recette section pour meal cards
+        function toggleMealRecipe(mealType) {
+            closeMealMenus();
+            const recipeDiv = document.getElementById(`${mealType}-recipe`);
+            if (recipeDiv) {
+                recipeDiv.classList.toggle('show');
+                if (recipeDiv.classList.contains('show')) {
+                    const input = document.getElementById(`${mealType}-recipe-input`);
+                    if (input) input.focus();
+                }
+                updateIcons();
+            }
+        }
+
+        // Initialiser l'état des cards sur mobile
+        function initMobileAccordion() {
+            if (window.innerWidth <= 768) {
+                // Garder seulement le premier repas ouvert sur mobile
+                document.querySelectorAll('.meal-card').forEach((card, index) => {
+                    if (index > 0) {
+                        card.classList.add('mobile-collapsed');
+                    }
+                });
+            } else {
+                // Sur desktop, tout est ouvert
+                document.querySelectorAll('.meal-card').forEach(card => {
+                    card.classList.remove('mobile-collapsed');
+                });
+            }
+        }
+
+        // Écouter les changements de taille d'écran
+        window.addEventListener('resize', initMobileAccordion);
 
         // Fermer les menus si on clique ailleurs
         document.addEventListener('click', (e) => {
