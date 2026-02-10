@@ -5923,3 +5923,474 @@ button.loading::after {
         flex-direction: column;
     }
 }
+
+/* ============================================ */
+/* REFONTE UI - ONGLET REPAS                   */
+/* ============================================ */
+
+/* === MACROS BAR COMPACT === */
+.macros-bar {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md) var(--space-lg);
+    margin-bottom: var(--space-xl);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.macros-bar-items {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+}
+
+.macro-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    cursor: pointer;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    transition: background 0.15s ease;
+}
+
+.macro-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.macro-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.macro-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.macro-value.protein { color: var(--accent-protein); }
+.macro-value.carbs { color: var(--accent-carbs); }
+.macro-value.fat { color: var(--accent-fat); }
+.macro-value.water { color: var(--accent-main); }
+
+.water-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    border-left: 1px solid rgba(255,255,255,0.1);
+    padding-left: var(--space-md);
+    margin-left: var(--space-sm);
+}
+
+.water-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+
+.water-btn:hover {
+    background: var(--accent-main);
+    color: white;
+}
+
+.water-btn-plus {
+    background: var(--accent-main);
+    color: white;
+}
+
+.water-ml {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-left: var(--space-xs);
+}
+
+/* === MEALS GRID === */
+.meals-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+/* === MEAL CARD REFONTE === */
+.meal-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.meal-card:hover {
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.meal-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-lg);
+    background: var(--bg-tertiary);
+    cursor: pointer;
+    user-select: none;
+}
+
+.meal-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.meal-icon {
+    width: 22px;
+    height: 22px;
+}
+
+.meal-icon.breakfast { color: var(--accent-fat); }
+.meal-icon.lunch { color: var(--accent-carbs); }
+.meal-icon.snack { color: var(--accent-main); }
+.meal-icon.dinner { color: var(--accent-purple); }
+
+.meal-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.meal-kcal {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--accent-main);
+    margin-left: var(--space-sm);
+    padding: 2px 8px;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: var(--radius-sm);
+}
+
+.meal-card-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.accordion-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+    display: none;
+}
+
+.meal-card.collapsed .accordion-icon {
+    transform: rotate(-90deg);
+}
+
+.meal-menu-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    transition: all 0.15s ease;
+    line-height: 1;
+}
+
+.meal-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.meal-menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    min-width: 200px;
+    z-index: 100;
+    display: none;
+    overflow: hidden;
+}
+
+.meal-menu-dropdown.show {
+    display: block;
+}
+
+.meal-menu-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    cursor: pointer;
+    transition: background 0.15s ease;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.meal-menu-item i {
+    width: 16px;
+    height: 16px;
+    color: var(--accent-main);
+}
+
+.meal-menu-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.meal-menu-item.danger {
+    color: var(--accent-danger);
+}
+
+.meal-menu-item.danger i {
+    color: var(--accent-danger);
+}
+
+/* === MEAL CARD BODY === */
+.meal-card-body {
+    padding: var(--space-md) var(--space-lg);
+}
+
+.meal-card.collapsed .food-list,
+.meal-card.collapsed .meal-card-body {
+    display: none;
+}
+
+/* === RECIPE SECTION === */
+.recipe-section {
+    display: none;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.recipe-section.show {
+    display: block;
+}
+
+.recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+    color: var(--accent-carbs);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.recipe-header i {
+    width: 16px;
+    height: 16px;
+    display: inline;
+    vertical-align: middle;
+    margin-right: var(--space-xs);
+}
+
+.recipe-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.recipe-close:hover {
+    color: var(--text-primary);
+}
+
+.recipe-input {
+    width: 100%;
+    min-height: 60px;
+    padding: var(--space-sm);
+    background: var(--bg-primary);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.recipe-input:focus {
+    outline: none;
+    border-color: var(--accent-main);
+}
+
+/* === QUICK ADD === */
+.quick-add-container {
+    position: relative;
+}
+
+.quick-add-input {
+    width: 100%;
+    padding: var(--space-md);
+    font-size: 0.95rem;
+    background: var(--bg-tertiary);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    transition: all 0.15s ease;
+}
+
+.quick-add-input:focus {
+    outline: none;
+    border-color: var(--accent-main);
+    background: var(--bg-primary);
+}
+
+.quick-add-input::placeholder {
+    color: var(--text-muted);
+}
+
+.quick-add-results {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 100;
+    margin-top: var(--space-xs);
+}
+
+/* ============================================ */
+/* MOBILE RESPONSIVE - ONGLET REPAS            */
+/* ============================================ */
+@media (max-width: 768px) {
+    /* Macros bar mobile */
+    .macros-bar {
+        padding: var(--space-sm) var(--space-md);
+        border-radius: var(--radius-md);
+        margin-bottom: var(--space-md);
+        position: sticky;
+        top: 0;
+    }
+
+    .macros-bar-items {
+        gap: var(--space-sm);
+    }
+
+    .macro-item {
+        flex-direction: column;
+        gap: 2px;
+        padding: var(--space-xs);
+    }
+
+    .macro-label {
+        font-size: 0.65rem;
+    }
+
+    .macro-value {
+        font-size: 0.85rem;
+    }
+
+    .water-item {
+        border-left: none;
+        padding-left: 0;
+        margin-left: 0;
+    }
+
+    .water-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 0.9rem;
+    }
+
+    .water-ml {
+        display: none;
+    }
+
+    /* Meals grid mobile: 1 colonne */
+    .meals-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+    }
+
+    /* Accordion visible sur mobile */
+    .accordion-icon {
+        display: block;
+    }
+
+    /* Cards collapsed par défaut sur mobile */
+    .meal-card.mobile-collapsed .food-list,
+    .meal-card.mobile-collapsed .meal-card-body {
+        display: none;
+    }
+
+    .meal-card.mobile-collapsed .accordion-icon {
+        transform: rotate(-90deg);
+    }
+
+    /* Header plus compact */
+    .meal-card-header {
+        padding: var(--space-sm) var(--space-md);
+    }
+
+    .meal-name {
+        font-size: 0.95rem;
+    }
+
+    .meal-kcal {
+        font-size: 0.8rem;
+        padding: 2px 6px;
+    }
+
+    .meal-card-body {
+        padding: var(--space-sm) var(--space-md);
+    }
+
+    .quick-add-input {
+        padding: var(--space-sm) var(--space-md);
+        font-size: 0.9rem;
+    }
+
+    /* Date navigation compact */
+    .date-navigation-wrapper {
+        margin-bottom: var(--space-md);
+    }
+
+    .date-navigation-title {
+        font-size: 1rem !important;
+    }
+}
+
+/* Extra small mobile */
+@media (max-width: 380px) {
+    .macro-label {
+        font-size: 0.6rem;
+    }
+    
+    .macro-value {
+        font-size: 0.75rem;
+    }
+
+    .meal-name {
+        font-size: 0.85rem;
+    }
+}
