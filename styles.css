@@ -6253,58 +6253,65 @@ button.loading::after {
 /* MOBILE RESPONSIVE - ONGLET REPAS            */
 /* ============================================ */
 @media (max-width: 768px) {
-    /* Macros bar mobile - ligne compacte */
+    /* MACROS BAR - UNE SEULE LIGNE HORIZONTALE COMPACTE */
     .macros-bar {
-        padding: var(--space-sm);
-        border-radius: var(--radius-md);
-        margin-bottom: var(--space-md);
+        padding: 8px 10px !important;
+        margin-bottom: 12px !important;
     }
 
     .macros-bar-header {
-        display: none;
+        display: none !important;
     }
 
     .macros-bar-items {
-        gap: var(--space-sm);
-        flex-wrap: nowrap;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 6px !important;
     }
 
     .macro-item {
-        flex-direction: row;
-        gap: 4px;
-        padding: 0;
-        flex: 1;
-        justify-content: center;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 3px !important;
+        padding: 0 !important;
+        flex: 0 1 auto !important;
+        min-width: 0 !important;
     }
 
     .macro-label {
-        font-size: 0.65rem;
+        font-size: 0.6rem !important;
+        font-weight: 600 !important;
     }
 
     .macro-value {
-        font-size: 0.9rem;
+        font-size: 0.85rem !important;
+        font-weight: 700 !important;
     }
 
     .water-item {
-        border-left: 1px solid rgba(255,255,255,0.1);
-        padding-left: var(--space-sm);
-        margin-left: 0;
-        flex: 0 0 auto;
+        border-left: 1px solid rgba(255,255,255,0.15) !important;
+        padding-left: 6px !important;
+        margin-left: 0 !important;
+        flex: 0 0 auto !important;
     }
 
     .water-icon {
-        width: 14px;
-        height: 14px;
+        width: 12px !important;
+        height: 12px !important;
     }
 
     .water-btn {
-        width: 24px;
-        height: 24px;
-        font-size: 0.9rem;
+        width: 22px !important;
+        height: 22px !important;
+        font-size: 0.85rem !important;
     }
 
     .water-ml {
-        display: none;
+        display: none !important;
     }
 
     /* Meals grid mobile: 1 colonne */
