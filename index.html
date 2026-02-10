@@ -1746,17 +1746,20 @@
 
             <!-- Widget Macros Compact -->
             <div id="remaining-widget" class="macros-bar">
+                <div class="macros-bar-header">
+                    <span class="macros-bar-title">Restant à consommer</span>
+                </div>
                 <div class="macros-bar-items">
                     <div class="macro-item" onclick="scrollToNextEmptyMeal()">
-                        <span class="macro-label">P</span>
+                        <span class="macro-label">Prot</span>
                         <span class="macro-value protein" id="remaining-protein">0g</span>
                     </div>
                     <div class="macro-item" onclick="scrollToNextEmptyMeal()">
-                        <span class="macro-label">G</span>
+                        <span class="macro-label">Gluc</span>
                         <span class="macro-value carbs" id="remaining-carbs">0g</span>
                     </div>
                     <div class="macro-item" onclick="scrollToNextEmptyMeal()">
-                        <span class="macro-label">L</span>
+                        <span class="macro-label">Lip</span>
                         <span class="macro-value fat" id="remaining-fat">0g</span>
                     </div>
                     <div class="macro-item" onclick="scrollToNextEmptyMeal()">
@@ -1764,6 +1767,7 @@
                         <span class="macro-value" id="remaining-cal">0</span>
                     </div>
                     <div class="macro-item water-item">
+                        <i data-lucide="droplet" class="water-icon"></i>
                         <button onclick="updateWater(-1)" class="water-btn">−</button>
                         <span class="macro-value water" id="water-count">0</span>
                         <button onclick="updateWater(1)" class="water-btn water-btn-plus">+</button>
