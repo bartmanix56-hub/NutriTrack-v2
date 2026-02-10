@@ -1164,11 +1164,31 @@ async function migrateToFirestore(user) {
             }
         });
 
-        // Si pas de données à migrer
+        // Si pas de données localStorage, vérifier si données existent dans Firestore (ancien format)
         if (!hasData) {
-            console.log('📭 Aucune donnée à migrer');
-            localStorage.setItem(MIGRATION_FLAG, 'true');
-            return { success: true, noData: true };
+            console.log('📭 Aucune donnée locale, vérification Firestore (ancien format)...');
+
+            // Charger les données depuis le document racine Firestore (ancien format)
+            const cloudData = await loadFromFirestore(user);
+
+            if (cloudData && Object.keys(cloudData).some(key => LEGACY_KEYS.includes(key))) {
+                console.log('☁️ Données trouvées dans Firestore (ancien format), migration vers sous-collections...');
+
+                // Convertir les données cloud en format local pour la migration
+                LEGACY_KEYS.forEach(key => {
+                    if (cloudData[key]) {
+                        // Les données sont déjà des strings JSON dans Firestore
+                        localData[key] = cloudData[key];
+                        hasData = true;
+                    }
+                });
+
+                console.log('📦 Données cloud à migrer:', Object.keys(localData));
+            } else {
+                console.log('📭 Aucune donnée à migrer (ni locale ni cloud)');
+                localStorage.setItem(MIGRATION_FLAG, 'true');
+                return { success: true, noData: true };
+            }
         }
 
         console.log('📦 Données trouvées:', Object.keys(localData));
@@ -1293,6 +1313,66 @@ async function migrateToFirestore(user) {
             } catch (error) {
                 console.error('❌ Erreur migration templates:', error);
                 errors.push({ key: 'mealTemplates', error: error.message });
+            }
+        }
+
+        // 3g. FAVORITE FOODS
+        if (localData.favoriteFoods) {
+            try {
+                const favorites = JSON.parse(localData.favoriteFoods);
+                if (Array.isArray(favorites)) {
+                    await dataService.saveFavoriteFoods(favorites);
+                    uploadCount++;
+                    console.log(`✅ ${favorites.length} favoris migrés`);
+                }
+            } catch (error) {
+                console.error('❌ Erreur migration favoriteFoods:', error);
+                errors.push({ key: 'favoriteFoods', error: error.message });
+            }
+        }
+
+        // 3h. WEEKLY PLAN
+        if (localData.weeklyPlan) {
+            try {
+                const plan = JSON.parse(localData.weeklyPlan);
+                if (Array.isArray(plan)) {
+                    await dataService.saveWeeklyPlan(plan);
+                    uploadCount++;
+                    console.log('✅ Weekly plan migré');
+                }
+            } catch (error) {
+                console.error('❌ Erreur migration weeklyPlan:', error);
+                errors.push({ key: 'weeklyPlan', error: error.message });
+            }
+        }
+
+        // 3i. CLOSED DAYS
+        if (localData.closedDays) {
+            try {
+                const days = JSON.parse(localData.closedDays);
+                if (typeof days === 'object') {
+                    await dataService.saveClosedDays(days);
+                    uploadCount++;
+                    console.log('✅ Closed days migrés');
+                }
+            } catch (error) {
+                console.error('❌ Erreur migration closedDays:', error);
+                errors.push({ key: 'closedDays', error: error.message });
+            }
+        }
+
+        // 3j. FOOD ALIASES
+        if (localData.foodAliases) {
+            try {
+                const aliases = JSON.parse(localData.foodAliases);
+                if (typeof aliases === 'object') {
+                    await dataService.saveFoodAliases(aliases);
+                    uploadCount++;
+                    console.log('✅ Food aliases migrés');
+                }
+            } catch (error) {
+                console.error('❌ Erreur migration foodAliases:', error);
+                errors.push({ key: 'foodAliases', error: error.message });
             }
         }
 
