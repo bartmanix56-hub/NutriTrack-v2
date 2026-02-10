@@ -1941,61 +1941,60 @@
                 <!-- Total de la journée -->
                 <div class="day-totals">
                     <div class="day-totals-title">Total de la Journée</div>
-                    <!-- Barres de progression vers objectifs -->
-                    <div style="margin-bottom: 30px;">
-                        <div style="margin-bottom: 15px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                <span style="color: var(--accent-protein); font-weight: 600;">Protéines</span>
-                                <span id="day-protein-progress">0 / 0g</span>
+                    <!-- Cercles de progression vers objectifs -->
+                    <div class="day-rings-grid">
+                        <div class="day-ring-item">
+                            <svg class="day-ring-svg" viewBox="0 0 100 100">
+                                <circle class="day-ring-bg" cx="50" cy="50" r="42"></circle>
+                                <circle class="day-ring-progress protein" id="day-ring-protein" cx="50" cy="50" r="42"></circle>
+                            </svg>
+                            <div class="day-ring-content">
+                                <div class="day-ring-value protein" id="day-protein">0</div>
+                                <div class="day-ring-label">/ <span id="day-protein-target">0</span>g</div>
                             </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill protein" id="day-protein-bar" style="width: 0%"></div></div></div>
-
-                        <div style="margin-bottom: 15px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                <span style="color: var(--accent-carbs); font-weight: 600;">Glucides</span>
-                                <span id="day-carbs-progress">0 / 0g</span>
+                            <div class="day-ring-name">Protéines</div>
+                        </div>
+                        <div class="day-ring-item">
+                            <svg class="day-ring-svg" viewBox="0 0 100 100">
+                                <circle class="day-ring-bg" cx="50" cy="50" r="42"></circle>
+                                <circle class="day-ring-progress carbs" id="day-ring-carbs" cx="50" cy="50" r="42"></circle>
+                            </svg>
+                            <div class="day-ring-content">
+                                <div class="day-ring-value carbs" id="day-carbs">0</div>
+                                <div class="day-ring-label">/ <span id="day-carbs-target">0</span>g</div>
                             </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill carbs" id="day-carbs-bar" style="width: 0%"></div></div></div>
-
-                        <div style="margin-bottom: 15px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                <span style="color: var(--accent-fat); font-weight: 600;">Lipides</span>
-                                <span id="day-fat-progress">0 / 0g</span>
+                            <div class="day-ring-name">Glucides</div>
+                        </div>
+                        <div class="day-ring-item">
+                            <svg class="day-ring-svg" viewBox="0 0 100 100">
+                                <circle class="day-ring-bg" cx="50" cy="50" r="42"></circle>
+                                <circle class="day-ring-progress fat" id="day-ring-fat" cx="50" cy="50" r="42"></circle>
+                            </svg>
+                            <div class="day-ring-content">
+                                <div class="day-ring-value fat" id="day-fat">0</div>
+                                <div class="day-ring-label">/ <span id="day-fat-target">0</span>g</div>
                             </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill fat" id="day-fat-bar" style="width: 0%"></div></div></div>
-
-                        <div style="margin-bottom: 15px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                <span style="color: var(--text-primary); font-weight: 600;">Calories</span>
-                                <span id="day-cal-progress">0 / 0 kcal</span>
+                            <div class="day-ring-name">Lipides</div>
+                        </div>
+                        <div class="day-ring-item">
+                            <svg class="day-ring-svg" viewBox="0 0 100 100">
+                                <circle class="day-ring-bg" cx="50" cy="50" r="42"></circle>
+                                <circle class="day-ring-progress calories" id="day-ring-cal" cx="50" cy="50" r="42"></circle>
+                            </svg>
+                            <div class="day-ring-content">
+                                <div class="day-ring-value calories" id="day-total">0</div>
+                                <div class="day-ring-label">/ <span id="day-cal-target">0</span></div>
                             </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="day-cal-bar" style="width: 0%; background: rgba(255, 255, 255, 0.9);"></div></div></div></div>
+                            <div class="day-ring-name">Calories</div>
+                        </div>
+                    </div>
 
-                    <div class="summary-grid" style="grid-template-columns: repeat(5, 1fr);">
-                        <div class="summary-card protein-card">
-                            <div class="summary-label">Protéines</div>
-                            <div class="summary-value" id="day-protein">0</div>
-                            <div class="summary-label">g</div></div>
-                        <div class="summary-card carbs-card">
-                            <div class="summary-label">Glucides</div>
-                            <div class="summary-value" id="day-carbs">0</div>
-                            <div class="summary-label">g</div></div>
-                        <div class="summary-card fat-card">
-                            <div class="summary-label">Lipides</div>
-                            <div class="summary-value" id="day-fat">0</div>
-                            <div class="summary-label">g</div></div>
-                        <div class="summary-card" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);">
-                            <div class="summary-label" style="color: var(--text-secondary);">Fibres</div>
-                            <div class="summary-value" id="day-fiber" style="color: var(--text-primary);">0</div>
-                            <div class="summary-label">g</div></div>
-                        <div class="summary-card total-card">
-                            <div class="summary-label">Total</div>
-                            <div class="summary-value" id="day-total">0</div>
-                            <div class="summary-label">kcal</div></div></div>
+                    <!-- Fibres (petit badge) -->
+                    <div class="day-fiber-badge">
+                        <span class="day-fiber-label">Fibres</span>
+                        <span class="day-fiber-value" id="day-fiber">0</span>
+                        <span class="day-fiber-unit">g</span>
+                    </div>
 
                     <!-- Disclaimer macros -->
                     <div style="margin-top: var(--space-lg); padding: var(--space-lg); background: rgba(78, 205, 196, 0.1); border-left: 3px solid var(--accent-carbs); border-radius: var(--radius-sm); font-size: 1rem; color: var(--text-secondary); line-height: 1.6;">
