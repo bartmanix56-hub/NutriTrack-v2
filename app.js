@@ -7586,6 +7586,7 @@ Solutions possibles :
 
         function updateProgressBars() {
             const targets = macroTargets;
+            const circumference = 2 * Math.PI * 42; // r=42 dans le SVG
 
             if (targets.protein > 0) {
                 const pVal = parseFloat(document.getElementById('day-protein').textContent);
@@ -7598,26 +7599,27 @@ Solutions possibles :
                 const fProg = Math.min((fVal / targets.fat) * 100, 100);
                 const calProg = targets.calories > 0 ? Math.min((calVal / targets.calories) * 100, 100) : 0;
 
-                const pBar = document.getElementById('day-protein-bar');
-                const cBar = document.getElementById('day-carbs-bar');
-                const fBar = document.getElementById('day-fat-bar');
-                const calBar = document.getElementById('day-cal-bar');
+                // Mettre à jour les cercles SVG (stroke-dashoffset)
+                const pRing = document.getElementById('day-ring-protein');
+                const cRing = document.getElementById('day-ring-carbs');
+                const fRing = document.getElementById('day-ring-fat');
+                const calRing = document.getElementById('day-ring-cal');
 
-                pBar.style.width = pProg + '%';
-                cBar.style.width = cProg + '%';
-                fBar.style.width = fProg + '%';
-                calBar.style.width = calProg + '%';
+                if (pRing) pRing.style.strokeDashoffset = circumference * (1 - pProg / 100);
+                if (cRing) cRing.style.strokeDashoffset = circumference * (1 - cProg / 100);
+                if (fRing) fRing.style.strokeDashoffset = circumference * (1 - fProg / 100);
+                if (calRing) calRing.style.strokeDashoffset = circumference * (1 - calProg / 100);
 
-                // Set data-percent for mobile display
-                pBar.setAttribute('data-percent', Math.round(pProg) + '%');
-                cBar.setAttribute('data-percent', Math.round(cProg) + '%');
-                fBar.setAttribute('data-percent', Math.round(fProg) + '%');
-                calBar.setAttribute('data-percent', Math.round(calProg) + '%');
+                // Mettre à jour les targets affichés
+                const pTarget = document.getElementById('day-protein-target');
+                const cTarget = document.getElementById('day-carbs-target');
+                const fTarget = document.getElementById('day-fat-target');
+                const calTarget = document.getElementById('day-cal-target');
 
-                document.getElementById('day-protein-progress').textContent = pVal.toFixed(0) + ' / ' + targets.protein + 'g';
-                document.getElementById('day-carbs-progress').textContent = cVal.toFixed(0) + ' / ' + targets.carbs + 'g';
-                document.getElementById('day-fat-progress').textContent = fVal.toFixed(0) + ' / ' + targets.fat + 'g';
-                document.getElementById('day-cal-progress').textContent = calVal.toFixed(0) + ' / ' + (targets.calories || 0) + ' kcal';
+                if (pTarget) pTarget.textContent = targets.protein;
+                if (cTarget) cTarget.textContent = targets.carbs;
+                if (fTarget) fTarget.textContent = targets.fat;
+                if (calTarget) calTarget.textContent = targets.calories || 0;
             }
         }
 
