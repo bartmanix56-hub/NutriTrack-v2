@@ -2504,6 +2504,37 @@
                 font-size: 1.1rem !important;
             }
 
+            /* Day Rings Mobile - 2x2 grid */
+            .day-rings-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: var(--space-md) !important;
+            }
+
+            .day-ring-svg {
+                width: 70px !important;
+                height: 70px !important;
+            }
+
+            .day-ring-value {
+                font-size: 0.95rem !important;
+            }
+
+            .day-ring-label {
+                font-size: 0.55rem !important;
+            }
+
+            .day-ring-name {
+                font-size: 0.7rem !important;
+            }
+
+            .day-ring-content {
+                margin-top: -10px !important;
+            }
+
+            .day-fiber-badge {
+                margin-top: var(--space-sm) !important;
+            }
+
             /* Sync indicator compact */
             #sync-indicator {
                 padding: 4px 8px !important;
@@ -3187,6 +3218,107 @@
             font-weight: 700;
             text-align: center;
             margin-bottom: 20px;
+        }
+
+        /* Day Rings - Cercles de progression */
+        .day-rings-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .day-ring-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .day-ring-svg {
+            width: 90px;
+            height: 90px;
+            transform: rotate(-90deg);
+        }
+
+        .day-ring-bg {
+            fill: none;
+            stroke: var(--bg-tertiary);
+            stroke-width: 6;
+        }
+
+        .day-ring-progress {
+            fill: none;
+            stroke-width: 6;
+            stroke-linecap: round;
+            stroke-dasharray: 264;
+            stroke-dashoffset: 264;
+            transition: stroke-dashoffset 0.8s ease;
+        }
+
+        .day-ring-progress.protein { stroke: var(--accent-protein); }
+        .day-ring-progress.carbs { stroke: var(--accent-carbs); }
+        .day-ring-progress.fat { stroke: var(--accent-fat); }
+        .day-ring-progress.calories { stroke: rgba(255, 255, 255, 0.9); }
+
+        .day-ring-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            margin-top: -12px;
+        }
+
+        .day-ring-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .day-ring-value.protein { color: var(--accent-protein); }
+        .day-ring-value.carbs { color: var(--accent-carbs); }
+        .day-ring-value.fat { color: var(--accent-fat); }
+        .day-ring-value.calories { color: var(--text-primary); }
+
+        .day-ring-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .day-ring-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: var(--space-sm);
+        }
+
+        .day-fiber-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .day-fiber-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .day-fiber-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .day-fiber-unit {
+            font-size: 0.8rem;
+            color: var(--text-muted);
         }
 
         /* Weekly Planner */
