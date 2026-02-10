@@ -5935,9 +5935,20 @@ button.loading::after {
     padding: var(--space-md) var(--space-lg);
     margin-bottom: var(--space-xl);
     border: 1px solid rgba(16, 185, 129, 0.2);
-    position: sticky;
-    top: 0;
-    z-index: 50;
+}
+
+.macros-bar-header {
+    margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.macros-bar-title {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .macros-bar-items {
@@ -5945,6 +5956,13 @@ button.loading::after {
     align-items: center;
     justify-content: space-between;
     gap: var(--space-lg);
+}
+
+.water-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--accent-main);
+    flex-shrink: 0;
 }
 
 .macro-item {
@@ -6283,17 +6301,25 @@ button.loading::after {
 /* MOBILE RESPONSIVE - ONGLET REPAS            */
 /* ============================================ */
 @media (max-width: 768px) {
-    /* Macros bar mobile */
+    /* Macros bar mobile - pas de sticky */
     .macros-bar {
         padding: var(--space-sm) var(--space-md);
         border-radius: var(--radius-md);
         margin-bottom: var(--space-md);
-        position: sticky;
-        top: 0;
+    }
+
+    .macros-bar-header {
+        margin-bottom: var(--space-xs);
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .macros-bar-title {
+        font-size: 0.65rem;
     }
 
     .macros-bar-items {
-        gap: var(--space-sm);
+        gap: var(--space-xs);
     }
 
     .macro-item {
@@ -6303,11 +6329,11 @@ button.loading::after {
     }
 
     .macro-label {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
     }
 
     .macro-value {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 
     .water-item {
@@ -6316,10 +6342,15 @@ button.loading::after {
         margin-left: 0;
     }
 
+    .water-icon {
+        width: 14px;
+        height: 14px;
+    }
+
     .water-btn {
-        width: 24px;
-        height: 24px;
-        font-size: 0.9rem;
+        width: 22px;
+        height: 22px;
+        font-size: 0.85rem;
     }
 
     .water-ml {
