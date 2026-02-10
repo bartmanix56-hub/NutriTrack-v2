@@ -2904,6 +2904,7 @@ Solutions possibles :
                     }
                 }
                 dropdown.style.display = 'none';
+                dropdown.classList.remove('show');
                 return;
             }
 
@@ -3032,6 +3033,7 @@ Solutions possibles :
             dropdown.innerHTML = html;
             positionGlobalDropdown(currentQuickAddInput);
             dropdown.style.display = 'block';
+            dropdown.classList.add('show');
             updateIcons();
         }
 
@@ -3067,6 +3069,7 @@ Solutions possibles :
 
             positionGlobalDropdown(currentQuickAddInput);
             dropdown.style.display = 'block';
+            dropdown.classList.add('show');
         }
 
         // Legacy function for compatibility (no longer used)
@@ -3977,6 +3980,7 @@ Solutions possibles :
             }
 
             dropdown.style.display = 'none';
+            dropdown.classList.remove('show');
             currentQuickAddMealType = null;
             currentQuickAddInput = null;
         });
