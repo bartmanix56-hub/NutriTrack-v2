@@ -3214,18 +3214,18 @@
 
         .day-totals-title {
             font-family: 'DM Sans', sans-serif;
-            font-size: 1.8rem;
+            font-size: 1.3rem;
             font-weight: 700;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         /* Day Rings - Cercles de progression */
         .day-rings-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: var(--space-lg);
-            margin-bottom: var(--space-xl);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
         }
 
         .day-ring-item {
@@ -3233,12 +3233,12 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            padding-bottom: 28px;
+            padding-bottom: 32px;
         }
 
         .day-ring-svg {
-            width: 90px;
-            height: 90px;
+            width: 70px;
+            height: 70px;
             transform: rotate(-90deg);
         }
 
@@ -3268,11 +3268,10 @@
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            margin-top: -12px;
         }
 
         .day-ring-value {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             line-height: 1;
         }
@@ -3283,16 +3282,16 @@
         .day-ring-value.calories { color: var(--text-primary); }
 
         .day-ring-label {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             color: var(--text-muted);
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
         .day-ring-name {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: var(--text-secondary);
-            margin-top: var(--space-sm);
+            margin-top: var(--space-xs);
         }
 
         .day-fiber-badge {
@@ -4226,11 +4225,11 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: var(--space-xs);
-            padding: 4px 10px;
+            gap: 2px;
+            padding: 2px 8px;
             border-radius: var(--radius-full);
             font-weight: 600;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             margin-top: var(--space-sm);
             white-space: nowrap;
             animation: badgePop 0.3s ease;
@@ -4238,7 +4237,7 @@
 
         .day-ring-item .calorie-badge {
             position: absolute;
-            bottom: -24px;
+            bottom: 0;
             left: 50%;
             transform: translateX(-50%);
         }
