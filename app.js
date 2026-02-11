@@ -4277,8 +4277,8 @@ Solutions possibles :
 
             badgeHTML = `<span class="calorie-badge ${badgeClass}">${badgeText}</span>`;
 
-            // Chercher le parent (summary-card)
-            const parentCard = caloriesEl.closest('.summary-card');
+            // Chercher le parent (day-ring-item)
+            const parentCard = caloriesEl.closest('.day-ring-item');
             if (parentCard) {
                 // Supprimer l'ancien badge
                 const oldBadge = parentCard.querySelector('.calorie-badge');
@@ -4286,6 +4286,7 @@ Solutions possibles :
 
                 // Ajouter après la dernière div
                 parentCard.insertAdjacentHTML('beforeend', badgeHTML);
+                lucide.createIcons();
             }
         }
 
@@ -4318,11 +4319,12 @@ Solutions possibles :
             const badgeHTML = `<span class="calorie-badge ${badgeClass}">${badgeText}</span>`;
 
 
-            const parentCard = macroEl.closest('.summary-card');
+            const parentCard = macroEl.closest('.day-ring-item');
             if (parentCard) {
                 const oldBadge = parentCard.querySelector('.calorie-badge');
                 if (oldBadge) oldBadge.remove();
                 parentCard.insertAdjacentHTML('beforeend', badgeHTML);
+                lucide.createIcons();
             }
         }
 
