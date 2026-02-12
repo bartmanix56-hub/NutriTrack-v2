@@ -611,15 +611,19 @@
         #meals .food-item {
             background: var(--bg-tertiary);
             border-radius: var(--radius-md);
-            padding: var(--space-lg);
+            padding: var(--space-md);
             display: flex;
-            flex-wrap: nowrap;
-            gap: var(--space-md);
-            align-items: center;
+            flex-direction: column;
+            gap: var(--space-sm);
             transition: all var(--transition-normal);
             border: 1px solid transparent;
             max-width: 100%;
-            overflow: hidden;
+        }
+
+        #meals .food-item-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
         }
 
         #meals .food-item .food-name {
@@ -628,6 +632,112 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        #meals .food-item-details {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-md);
+        }
+
+        #meals .food-item .food-quantity {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            flex-shrink: 0;
+        }
+
+        #meals .food-item .food-quantity input {
+            width: 60px;
+            padding: var(--space-sm) var(--space-xs);
+            text-align: center;
+            font-size: 0.95rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+        }
+
+        #meals .food-item .food-quantity span {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        #meals .food-item .food-macros {
+            display: flex;
+            gap: var(--space-md);
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        #meals .food-item .food-macros > span {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            min-width: 40px;
+        }
+
+        #meals .food-item .food-macros .label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #meals .food-item .food-macros .value {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        #meals .food-item .macro-protein .value { color: var(--accent-protein); }
+        #meals .food-item .macro-carbs .value { color: var(--accent-carbs); }
+        #meals .food-item .macro-fat .value { color: var(--accent-fat); }
+        #meals .food-item .macro-cal .value { color: var(--text-primary); }
+
+        /* Favorite button styling */
+        #meals .favorite-btn {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            filter: grayscale(1) brightness(1.5);
+            opacity: 0.5;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #meals .favorite-btn.active {
+            filter: none;
+            opacity: 1;
+        }
+
+        #meals .favorite-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Delete button in food item */
+        #meals .food-item .delete-btn {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #meals .food-item .delete-btn i {
+            width: 16px;
+            height: 16px;
         }
 
         /* Fix overflow for meal cards container */
@@ -638,10 +748,6 @@
 
         #meals .meal-card .food-list {
             overflow: hidden;
-        }
-
-        #meals .food-item .food-macros {
-            flex-shrink: 0;
         }
 
         .food-item:hover {
@@ -1900,20 +2006,32 @@
             /* Meals grid becomes vertical on mobile */
             #meals > div:first-of-type { grid-template-columns: 1fr !important; }
 
+            /* Mobile food item styling - already column layout */
             #meals .food-item {
-                flex-wrap: wrap;
-                gap: var(--space-sm);
+                padding: var(--space-sm);
             }
 
             #meals .food-item .food-macros {
-                width: 100%;
-                justify-content: space-around;
-                margin-top: var(--space-sm);
+                gap: var(--space-sm);
+            }
+
+            #meals .food-item .food-macros > span {
+                min-width: 35px;
+            }
+
+            #meals .food-item .food-macros .label {
+                font-size: 0.6rem;
+            }
+
+            #meals .food-item .food-macros .value {
+                font-size: 0.8rem;
+            }
+
+            #meals .food-item .food-quantity input {
+                width: 50px;
             }
 
             .food-list .food-item { grid-template-columns: 1fr; }
-
-            .food-macros { justify-content: space-around; }
 
             h1 { font-size: 1.8rem; }
 
