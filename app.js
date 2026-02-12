@@ -4133,42 +4133,43 @@ Solutions possibles :
 
                 return `
                     <div class="food-item">
-                        <button class="delete-btn" onclick="removeFoodFromMeal('${mealType}', ${normalizedFood.id})" style="width: 32px; height: 32px; min-width: 32px; display: flex; align-items: center; justify-content: center; padding: 0;"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>
-                        <button onclick="event.stopPropagation(); toggleFavorite('${escapeJsString(normalizedFood.name)}')"
-                                style="width: 32px; height: 32px; min-width: 32px; background: none; border: none; cursor: pointer; font-size: 1.1rem; transition: var(--transition-fast); ${isFavorite(normalizedFood.name) ? '' : 'filter: grayscale(1) brightness(2);'}"
-                                title="${isFavorite(normalizedFood.name) ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
-                            ${isFavorite(normalizedFood.name) ? '⭐' : '⭐'}
-                        </button>
-                        <div class="food-name">${getDisplayName(normalizedFood)}${verifiedBadge}</div>
-                        <div class="food-quantity">
-                            <input type="number" value="${normalizedFood.quantity}" min="1"
-                                   onchange="updateMealQuantity('${mealType}', ${normalizedFood.id}, this.value)">
-                            <span style="color: var(--text-secondary);">g</span>
+                        <div class="food-item-header">
+                            <button class="delete-btn" onclick="removeFoodFromMeal('${mealType}', ${normalizedFood.id})">
+                                <i data-lucide="trash-2"></i>
+                            </button>
+                            <button class="favorite-btn ${isFavorite(normalizedFood.name) ? 'active' : ''}"
+                                    onclick="event.stopPropagation(); toggleFavorite('${escapeJsString(normalizedFood.name)}')"
+                                    title="${isFavorite(normalizedFood.name) ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
+                                ⭐
+                            </button>
+                            <div class="food-name">${getDisplayName(normalizedFood)}${verifiedBadge}</div>
                         </div>
-                        <div class="food-macros">
-                            <span>
-                                <div class="label">Prot</div>
-                                <div class="value" style="color: var(--accent-protein)">
-                                    ${(normalizedFood.protein * multiplier).toFixed(1)}g
-                                </div>
-                            </span>
-                            <span>
-                                <div class="label">Glu</div>
-                                <div class="value" style="color: var(--accent-carbs)">
-                                    ${(normalizedFood.carbs * multiplier).toFixed(1)}g
-                                </div>
-                            </span>
-                            <span>
-                                <div class="label">Lip</div>
-                                <div class="value" style="color: var(--accent-fat)">
-                                    ${(normalizedFood.fat * multiplier).toFixed(1)}g
-                                </div>
-                            </span>
-                            <span>
-                                <div class="label">Cal</div>
-                                <div class="value">${calories}</div>
-                            </span>
-                        </div></div>
+                        <div class="food-item-details">
+                            <div class="food-quantity">
+                                <input type="number" value="${normalizedFood.quantity}" min="1"
+                                       onchange="updateMealQuantity('${mealType}', ${normalizedFood.id}, this.value)">
+                                <span>g</span>
+                            </div>
+                            <div class="food-macros">
+                                <span class="macro-protein">
+                                    <span class="label">PROT</span>
+                                    <span class="value">${(normalizedFood.protein * multiplier).toFixed(1)}g</span>
+                                </span>
+                                <span class="macro-carbs">
+                                    <span class="label">GLU</span>
+                                    <span class="value">${(normalizedFood.carbs * multiplier).toFixed(1)}g</span>
+                                </span>
+                                <span class="macro-fat">
+                                    <span class="label">LIP</span>
+                                    <span class="value">${(normalizedFood.fat * multiplier).toFixed(1)}g</span>
+                                </span>
+                                <span class="macro-cal">
+                                    <span class="label">CAL</span>
+                                    <span class="value">${calories}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 `;
             }).join('');
 
