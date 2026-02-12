@@ -1936,97 +1936,116 @@
                 </div>
             </div>
 
-            <div class="card">
+            <!-- Total de la journée - Design moderne compact -->
+            <div class="day-summary-modern">
+                <!-- Header avec titre et statut global -->
+                <div class="day-summary-header">
+                    <div class="day-summary-title">
+                        <i data-lucide="pie-chart" class="day-summary-icon"></i>
+                        <span>Bilan du jour</span>
+                    </div>
+                    <div id="daily-feedback" class="day-summary-status">
+                        <span id="feedback-emoji"></span>
+                        <span id="feedback-message"></span>
+                    </div>
+                </div>
 
-                <!-- Total de la journée -->
-                <div class="day-totals">
-                    <div class="day-totals-title">Total de la Journée</div>
-                    <!-- Cercles de progression vers objectifs -->
-                    <div class="day-rings-grid">
-                        <div class="day-ring-item">
-                            <div class="day-ring-circle">
-                                <svg class="day-ring-svg" viewBox="0 0 100 100">
-                                    <circle class="day-ring-bg" cx="50" cy="50" r="42"></circle>
-                                    <circle class="day-ring-progress protein" id="day-ring-protein" cx="50" cy="50" r="42"></circle>
-                                </svg>
-                                <div class="day-ring-content">
-                                    <div class="day-ring-value protein" id="day-protein">0</div>
-                                    <div class="day-ring-label">/ <span id="day-protein-target">0</span>g</div>
-                                </div>
+                <!-- Grille des macros compacte -->
+                <div class="day-macros-grid">
+                    <!-- Protéines -->
+                    <div class="day-macro-card protein">
+                        <div class="day-macro-ring">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="ring-bg" cx="50" cy="50" r="42"></circle>
+                                <circle class="ring-progress" id="day-ring-protein" cx="50" cy="50" r="42"></circle>
+                            </svg>
+                            <div class="ring-value">
+                                <span id="day-protein">0</span>
+                                <span class="ring-unit">g</span>
                             </div>
-                            <div class="day-ring-name">Protéines</div>
                         </div>
-                        <div class="day-ring-item">
-                            <div class="day-ring-circle">
-                                <svg class="day-ring-svg" viewBox="0 0 100 100">
-                                    <circle class="day-ring-bg" cx="50" cy="50" r="42"></circle>
-                                    <circle class="day-ring-progress carbs" id="day-ring-carbs" cx="50" cy="50" r="42"></circle>
-                                </svg>
-                                <div class="day-ring-content">
-                                    <div class="day-ring-value carbs" id="day-carbs">0</div>
-                                    <div class="day-ring-label">/ <span id="day-carbs-target">0</span>g</div>
-                                </div>
-                            </div>
-                            <div class="day-ring-name">Glucides</div>
-                        </div>
-                        <div class="day-ring-item">
-                            <div class="day-ring-circle">
-                                <svg class="day-ring-svg" viewBox="0 0 100 100">
-                                    <circle class="day-ring-bg" cx="50" cy="50" r="42"></circle>
-                                    <circle class="day-ring-progress fat" id="day-ring-fat" cx="50" cy="50" r="42"></circle>
-                                </svg>
-                                <div class="day-ring-content">
-                                    <div class="day-ring-value fat" id="day-fat">0</div>
-                                    <div class="day-ring-label">/ <span id="day-fat-target">0</span>g</div>
-                                </div>
-                            </div>
-                            <div class="day-ring-name">Lipides</div>
-                        </div>
-                        <div class="day-ring-item">
-                            <div class="day-ring-circle">
-                                <svg class="day-ring-svg" viewBox="0 0 100 100">
-                                    <circle class="day-ring-bg" cx="50" cy="50" r="42"></circle>
-                                    <circle class="day-ring-progress calories" id="day-ring-cal" cx="50" cy="50" r="42"></circle>
-                                </svg>
-                                <div class="day-ring-content">
-                                    <div class="day-ring-value calories" id="day-total">0</div>
-                                    <div class="day-ring-label">/ <span id="day-cal-target">0</span></div>
-                                </div>
-                            </div>
-                            <div class="day-ring-name">Calories</div>
+                        <div class="day-macro-info">
+                            <span class="macro-name">Protéines</span>
+                            <span class="macro-target">/<span id="day-protein-target">0</span>g</span>
                         </div>
                     </div>
 
-                    <!-- Fibres (petit badge) -->
-                    <div class="day-fiber-badge">
-                        <span class="day-fiber-label">Fibres</span>
-                        <span class="day-fiber-value" id="day-fiber">0</span>
-                        <span class="day-fiber-unit">g</span>
+                    <!-- Glucides -->
+                    <div class="day-macro-card carbs">
+                        <div class="day-macro-ring">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="ring-bg" cx="50" cy="50" r="42"></circle>
+                                <circle class="ring-progress" id="day-ring-carbs" cx="50" cy="50" r="42"></circle>
+                            </svg>
+                            <div class="ring-value">
+                                <span id="day-carbs">0</span>
+                                <span class="ring-unit">g</span>
+                            </div>
+                        </div>
+                        <div class="day-macro-info">
+                            <span class="macro-name">Glucides</span>
+                            <span class="macro-target">/<span id="day-carbs-target">0</span>g</span>
+                        </div>
                     </div>
 
-                    <!-- Disclaimer macros -->
-                    <div style="margin-top: var(--space-lg); padding: var(--space-lg); background: rgba(78, 205, 196, 0.1); border-left: 3px solid var(--accent-carbs); border-radius: var(--radius-sm); font-size: 1rem; color: var(--text-secondary); line-height: 1.6;">
-                        <i data-lucide="lightbulb" class="icon-inline"></i> <strong>Bonne nouvelle :</strong> Pas besoin d'être parfait ! Glucides et lipides peuvent varier d'un jour à l'autre. Seules les protéines comptent vraiment chaque jour pour garder ton muscle.
+                    <!-- Lipides -->
+                    <div class="day-macro-card fat">
+                        <div class="day-macro-ring">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="ring-bg" cx="50" cy="50" r="42"></circle>
+                                <circle class="ring-progress" id="day-ring-fat" cx="50" cy="50" r="42"></circle>
+                            </svg>
+                            <div class="ring-value">
+                                <span id="day-fat">0</span>
+                                <span class="ring-unit">g</span>
+                            </div>
+                        </div>
+                        <div class="day-macro-info">
+                            <span class="macro-name">Lipides</span>
+                            <span class="macro-target">/<span id="day-fat-target">0</span>g</span>
+                        </div>
                     </div>
 
-                    <!-- Feedback émotionnel journalier -->
-                    <div id="daily-feedback" style="margin-top: var(--space-2xl); padding: var(--space-2xl); border-radius: var(--radius-lg); text-align: center; font-weight: 600; display: none; animation: fadeIn 0.5s ease;">
-                        <div style="font-size: 3rem; margin-bottom: var(--space-md);" id="feedback-emoji">🎯</div>
-                        <div style="font-size: 1.2rem; line-height: 1.6;" id="feedback-message">Continue comme ça !</div></div>
+                    <!-- Calories -->
+                    <div class="day-macro-card calories">
+                        <div class="day-macro-ring">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="ring-bg" cx="50" cy="50" r="42"></circle>
+                                <circle class="ring-progress" id="day-ring-cal" cx="50" cy="50" r="42"></circle>
+                            </svg>
+                            <div class="ring-value">
+                                <span id="day-total">0</span>
+                            </div>
+                        </div>
+                        <div class="day-macro-info">
+                            <span class="macro-name">Calories</span>
+                            <span class="macro-target">/<span id="day-cal-target">0</span></span>
+                        </div>
+                    </div>
+                </div>
 
-                    <!-- Bouton Clôturer la journée -->
-                    <div style="margin-top: var(--space-2xl); padding: var(--space-xl); background: rgba(16, 185, 129, 0.1); border: 2px solid var(--accent-main); border-radius: var(--radius-md);">
-                        <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md);">
-                            <i data-lucide="lock" style="width: 32px; height: 32px; color: var(--accent-main);"></i>
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600; font-size: 1.1rem; color: var(--text-primary); margin-bottom: var(--space-xs);">Journée terminée ?</div>
-                                <div style="font-size: 0.85rem; color: var(--text-secondary);">Verrouille cette journée et ajoute-la à ton planning</div></div></div>
-                        <button class="btn" id="close-day-btn" onclick="closeDayConfirm()" style="width: 100%;">
-                            <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i><span id="close-day-text">Clôturer cette journée</span>
-                        </button>
-                        <div id="day-closed-notice" style="display: none; margin-top: var(--space-md); padding: var(--space-md); background: rgba(16, 185, 129, 0.2); border-radius: var(--radius-sm); text-align: center; color: var(--accent-main); font-weight: 600;">
-                            <i data-lucide="lock" style="width: 18px; height: 18px;"></i> C'est noté ! Journée ajoutée au planning
-                        </div></div></div></div>
+                <!-- Fibres intégrées -->
+                <div class="day-extras">
+                    <div class="day-fiber-pill">
+                        <i data-lucide="leaf" class="fiber-icon"></i>
+                        <span>Fibres</span>
+                        <strong id="day-fiber">0</strong>
+                        <span>g</span>
+                    </div>
+                </div>
+
+                <!-- Bouton Clôturer compact -->
+                <div class="day-close-section">
+                    <button class="btn day-close-btn" id="close-day-btn" onclick="closeDayConfirm()">
+                        <i data-lucide="lock"></i>
+                        <span id="close-day-text">Clôturer la journée</span>
+                    </button>
+                    <div id="day-closed-notice" class="day-closed-notice">
+                        <i data-lucide="check-circle"></i>
+                        <span>Journée ajoutée au planning</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Weekly Planner Tab -->
