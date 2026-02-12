@@ -4460,74 +4460,50 @@ Solutions possibles :
         function updateDailyFeedback(totals) {
             const targets = macroTargets;
             const feedbackEl = document.getElementById('daily-feedback');
+            const emojiEl = document.getElementById('feedback-emoji');
+            const messageEl = document.getElementById('feedback-message');
+
+            // Reset classes
+            feedbackEl.classList.remove('status-green', 'status-orange', 'status-red');
 
             // Ne pas afficher si pas de cibles ou si aucun aliment ajouté
             if (!targets.calories || totals.calories === 0) {
-                feedbackEl.style.display = 'none';
+                emojiEl.innerHTML = '';
+                messageEl.textContent = '';
                 return;
             }
 
             const calPct = (totals.calories / targets.calories) * 100;
-            const protPct = (totals.protein / targets.protein) * 100;
 
-            const emojiEl = document.getElementById('feedback-emoji');
-            const messageEl = document.getElementById('feedback-message');
+            let emoji, message, statusClass;
 
-            let emoji, message, bgColor, textColor;
-
-            // Logique de feedback neutre basée sur les calories
+            // Logique de feedback compacte basée sur les calories
             if (calPct >= 95 && calPct <= 105) {
-                // Objectif atteint
-                emoji = '<i data-lucide="check" class="icon-inline"></i>';
+                emoji = '<i data-lucide="check"></i>';
                 message = 'Objectif atteint';
-                bgColor = 'rgba(16, 185, 129, 0.15)';
-                textColor = 'var(--accent-main)';
+                statusClass = 'status-green';
                 updateStreakDisplay();
             } else if (calPct >= 85 && calPct <= 115) {
-                // Très proche
-                emoji = '<i data-lucide="check-circle" class="icon-inline"></i>';
-                message = 'Très proche de l\'objectif';
-                bgColor = 'rgba(78, 205, 196, 0.15)';
-                textColor = 'var(--accent-carbs)';
+                emoji = '<i data-lucide="target"></i>';
+                message = 'Proche';
+                statusClass = 'status-green';
             } else if (calPct >= 75 && calPct <= 125) {
-                // Correct
-                emoji = '<i data-lucide="circle-dot" class="icon-inline"></i>';
-                message = 'Bonne journée';
-                bgColor = 'rgba(255, 230, 109, 0.15)';
-                textColor = 'var(--accent-fat)';
-            } else if (calPct > 125 && calPct <= 150) {
-                // Au-dessus
-                emoji = '<i data-lucide="arrow-up" class="icon-inline"></i>';
-                message = 'Un peu au-dessus de l\'objectif';
-                bgColor = 'rgba(255, 193, 7, 0.15)';
-                textColor = '#ffc107';
-            } else if (calPct > 150) {
-                // Bien au-dessus
-                emoji = '<i data-lucide="trending-up" class="icon-inline"></i>';
-                message = 'Journée plus riche que prévu';
-                bgColor = 'rgba(168, 85, 247, 0.15)';
-                textColor = '#a855f7';
-            } else if (calPct < 75 && calPct > 50) {
-                // En-dessous
-                emoji = '<i data-lucide="arrow-down" class="icon-inline"></i>';
-                message = 'En dessous de l\'objectif';
-                bgColor = 'rgba(255, 193, 7, 0.15)';
-                textColor = '#ffc107';
-            } else if (calPct <= 50 && calPct > 0) {
-                // Très en-dessous
-                emoji = '<i data-lucide="alert-circle" class="icon-inline"></i>';
-                message = 'Apport insuffisant';
-                bgColor = 'rgba(248, 113, 113, 0.15)';
-                textColor = 'var(--accent-protein)';
+                emoji = '<i data-lucide="circle-dot"></i>';
+                message = 'En cours';
+                statusClass = 'status-orange';
+            } else if (calPct > 125) {
+                emoji = '<i data-lucide="arrow-up"></i>';
+                message = 'Au-dessus';
+                statusClass = 'status-orange';
+            } else if (calPct < 75 && calPct > 0) {
+                emoji = '<i data-lucide="arrow-down"></i>';
+                message = 'Insuffisant';
+                statusClass = 'status-red';
             }
 
             emojiEl.innerHTML = emoji;
             messageEl.textContent = message;
-            feedbackEl.style.background = bgColor;
-            feedbackEl.style.color = textColor;
-            feedbackEl.style.border = `2px solid ${textColor}40`;
-            feedbackEl.style.display = 'block';
-            // Réinitialiser les icônes Lucide
+            feedbackEl.classList.add(statusClass);
             updateIcons();
         }
 
