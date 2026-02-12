@@ -3208,49 +3208,56 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
             pointer-events: all;
             border-radius: 20px;
-            padding: var(--space-3xl);
+            padding: var(--space-xl) var(--space-lg);
             margin-top: 30px;
         }
 
         .day-totals-title {
             font-family: 'DM Sans', sans-serif;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 700;
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
         }
 
         /* Day Rings - Cercles de progression */
         .day-rings-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: var(--space-md);
-            margin-bottom: var(--space-lg);
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
         }
 
         .day-ring-item {
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 4px;
+        }
+
+        .day-ring-circle {
             position: relative;
-            padding-bottom: 32px;
+            width: 72px;
+            height: 72px;
         }
 
         .day-ring-svg {
-            width: 70px;
-            height: 70px;
+            width: 72px;
+            height: 72px;
             transform: rotate(-90deg);
         }
 
         .day-ring-bg {
             fill: none;
             stroke: var(--bg-tertiary);
-            stroke-width: 6;
+            stroke-width: 5;
         }
 
         .day-ring-progress {
             fill: none;
-            stroke-width: 6;
+            stroke-width: 5;
             stroke-linecap: round;
             stroke-dasharray: 264;
             stroke-dashoffset: 264;
@@ -3268,10 +3275,14 @@
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .day-ring-value {
-            font-size: 0.95rem;
+            font-size: 1.1rem;
             font-weight: 700;
             line-height: 1;
         }
@@ -3282,16 +3293,15 @@
         .day-ring-value.calories { color: var(--text-primary); }
 
         .day-ring-label {
-            font-size: 0.6rem;
+            font-size: 0.65rem;
             color: var(--text-muted);
-            margin-top: 1px;
+            margin-top: 2px;
         }
 
         .day-ring-name {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-secondary);
-            margin-top: var(--space-xs);
         }
 
         .day-fiber-badge {
@@ -3299,10 +3309,13 @@
             align-items: center;
             justify-content: center;
             gap: var(--space-xs);
-            padding: var(--space-sm) var(--space-md);
+            padding: 6px var(--space-md);
             background: rgba(255, 255, 255, 0.05);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-lg);
+            border-radius: var(--radius-full);
+            margin-bottom: var(--space-md);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .day-fiber-label {
@@ -3311,7 +3324,7 @@
         }
 
         .day-fiber-value {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--text-primary);
         }
@@ -4225,39 +4238,42 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 2px;
-            padding: 2px 8px;
+            gap: 4px;
+            padding: 4px 10px;
             border-radius: var(--radius-full);
             font-weight: 600;
-            font-size: 0.6rem;
-            margin-top: var(--space-sm);
+            font-size: 0.7rem;
+            margin-top: 6px;
             white-space: nowrap;
             animation: badgePop 0.3s ease;
         }
 
         .day-ring-item .calorie-badge {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
+            margin-top: 6px;
+        }
+
+        .calorie-badge svg,
+        .calorie-badge i {
+            width: 12px !important;
+            height: 12px !important;
         }
 
         .badge-green {
-            background: rgba(16, 185, 129, 0.15);
+            background: rgba(16, 185, 129, 0.2);
             color: var(--accent-main);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            border: 1px solid rgba(16, 185, 129, 0.4);
         }
 
         .badge-orange {
-            background: rgba(251, 191, 36, 0.15);
+            background: rgba(251, 191, 36, 0.2);
             color: var(--accent-fat);
-            border: 1px solid rgba(251, 191, 36, 0.3);
+            border: 1px solid rgba(251, 191, 36, 0.4);
         }
 
         .badge-red {
-            background: rgba(239, 68, 68, 0.15);
+            background: rgba(239, 68, 68, 0.2);
             color: var(--accent-danger);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(239, 68, 68, 0.4);
         }
 
         @keyframes badgePop {
