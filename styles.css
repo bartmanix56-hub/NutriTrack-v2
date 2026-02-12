@@ -598,7 +598,7 @@
             gap: var(--space-lg);
         }
 
-        /* === FOOD ITEMS UNIFIÉS === */
+        /* === FOOD ITEMS - DESIGN MODERNE === */
         .food-list .food-item {
             display: grid;
             grid-template-columns: 1fr auto auto;
@@ -609,21 +609,60 @@
         }
 
         #meals .food-item {
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
+            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md) var(--space-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            transition: all var(--transition-normal);
+            border: 1px solid rgba(255,255,255,0.04);
+            max-width: 100%;
+            position: relative;
+        }
+
+        #meals .food-item:hover {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border-color: rgba(255,255,255,0.08);
+        }
+
+        /* Zone des actions (delete, favorite) - révélée au hover */
+        #meals .food-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            flex-shrink: 0;
+        }
+
+        #meals .food-item:hover .food-item-actions,
+        #meals .food-item:focus-within .food-item-actions {
+            opacity: 1;
+        }
+
+        /* Sur mobile, toujours afficher les actions */
+        @media (max-width: 768px) {
+            #meals .food-item-actions {
+                opacity: 0.6;
+            }
+        }
+
+        /* Contenu principal (nom + macros) */
+        #meals .food-item-content {
+            flex: 1;
+            min-width: 0;
             display: flex;
             flex-direction: column;
             gap: var(--space-sm);
-            transition: all var(--transition-normal);
-            border: 1px solid transparent;
-            max-width: 100%;
         }
 
-        #meals .food-item-header {
+        /* Ligne principale: nom + calories */
+        #meals .food-item-main {
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
+            justify-content: space-between;
+            gap: var(--space-md);
         }
 
         #meals .food-item .food-name {
@@ -633,111 +672,156 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            color: var(--text-primary);
         }
 
+        /* Badge calories principal */
+        #meals .food-item .calories-badge {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--accent-ui);
+            flex-shrink: 0;
+        }
+
+        /* Ligne secondaire: quantité + macros */
         #meals .food-item-details {
             display: flex;
             align-items: center;
-            justify-content: space-between;
             gap: var(--space-md);
         }
 
+        /* Input quantité stylé */
         #meals .food-item .food-quantity {
             display: flex;
             align-items: center;
-            gap: var(--space-xs);
+            gap: 4px;
             flex-shrink: 0;
         }
 
         #meals .food-item .food-quantity input {
-            width: 60px;
-            padding: var(--space-sm) var(--space-xs);
+            width: 48px;
+            padding: 4px 6px;
             text-align: center;
-            font-size: 0.95rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: var(--radius-sm);
             color: var(--text-primary);
+            transition: all var(--transition-fast);
+        }
+
+        #meals .food-item .food-quantity input:focus {
+            outline: none;
+            border-color: var(--accent-ui);
+            background: rgba(16, 185, 129, 0.1);
         }
 
         #meals .food-item .food-quantity span {
             color: var(--text-secondary);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
+        /* Macros en badges inline */
         #meals .food-item .food-macros {
             display: flex;
-            gap: var(--space-md);
+            gap: var(--space-sm);
             flex: 1;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
 
-        #meals .food-item .food-macros > span {
-            display: flex;
-            flex-direction: column;
+        #meals .food-item .food-macros .macro-badge {
+            display: inline-flex;
             align-items: center;
-            gap: 2px;
-            min-width: 40px;
-        }
-
-        #meals .food-item .food-macros .label {
-            font-size: 0.65rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        #meals .food-item .food-macros .value {
-            font-size: 0.85rem;
+            gap: 3px;
+            padding: 3px 8px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
             font-weight: 600;
+            background: rgba(255,255,255,0.04);
         }
 
-        #meals .food-item .macro-protein .value { color: var(--accent-protein); }
-        #meals .food-item .macro-carbs .value { color: var(--accent-carbs); }
-        #meals .food-item .macro-fat .value { color: var(--accent-fat); }
-        #meals .food-item .macro-cal .value { color: var(--text-primary); }
-
-        /* Favorite button styling */
-        #meals .favorite-btn {
-            width: 32px;
-            height: 32px;
-            min-width: 32px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            filter: grayscale(1) brightness(1.5);
-            opacity: 0.5;
-            transition: all var(--transition-fast);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        #meals .food-item .food-macros .macro-badge.protein {
+            color: var(--accent-protein);
+            background: rgba(248, 113, 113, 0.12);
         }
 
-        #meals .favorite-btn.active {
-            filter: none;
-            opacity: 1;
+        #meals .food-item .food-macros .macro-badge.carbs {
+            color: var(--accent-carbs);
+            background: rgba(56, 189, 248, 0.12);
         }
 
-        #meals .favorite-btn:hover {
-            transform: scale(1.1);
+        #meals .food-item .food-macros .macro-badge.fat {
+            color: var(--accent-fat);
+            background: rgba(251, 191, 36, 0.12);
         }
 
-        /* Delete button in food item */
-        #meals .food-item .delete-btn {
-            width: 32px;
-            height: 32px;
-            min-width: 32px;
+        /* Boutons d'action compacts */
+        #meals .food-item .action-btn {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
             padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            color: var(--text-secondary);
         }
 
-        #meals .food-item .delete-btn i {
-            width: 16px;
-            height: 16px;
+        #meals .food-item .action-btn:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        #meals .food-item .action-btn.delete-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-danger);
+        }
+
+        #meals .food-item .action-btn i {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Bouton favori */
+        #meals .food-item .favorite-btn {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            filter: grayscale(1) brightness(1.2);
+            opacity: 0.4;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        #meals .food-item .favorite-btn.active {
+            filter: none;
+            opacity: 1;
+        }
+
+        #meals .food-item .favorite-btn:hover {
+            transform: scale(1.15);
+            opacity: 0.8;
+        }
+
+        /* Badge vérifié */
+        #meals .food-item .verified-badge {
+            color: var(--accent-ui);
+            font-size: 0.9rem;
+            margin-left: 4px;
         }
 
         /* Fix overflow for meal cards container */
@@ -750,14 +834,15 @@
             overflow: hidden;
         }
 
-        .food-item:hover {
+        /* Hover pour food-items hors meals (database, etc.) */
+        .food-list:not(#meals .food-list) .food-item:hover {
             background: var(--bg-secondary);
             border-color: rgba(255, 255, 255, 0.1);
             transform: translateX(3px);
         }
 
         .food-name  { font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
             cursor: default; }
 
         .food-quantity {
@@ -2006,29 +2091,37 @@
             /* Meals grid becomes vertical on mobile */
             #meals > div:first-of-type { grid-template-columns: 1fr !important; }
 
-            /* Mobile food item styling - already column layout */
+            /* Mobile food item styling - modern compact design */
             #meals .food-item {
-                padding: var(--space-sm);
-            }
-
-            #meals .food-item .food-macros {
+                padding: var(--space-sm) var(--space-md);
                 gap: var(--space-sm);
             }
 
-            #meals .food-item .food-macros > span {
-                min-width: 35px;
+            #meals .food-item-content {
+                gap: 6px;
             }
 
-            #meals .food-item .food-macros .label {
-                font-size: 0.6rem;
+            #meals .food-item .food-name {
+                font-size: 0.9rem;
             }
 
-            #meals .food-item .food-macros .value {
-                font-size: 0.8rem;
+            #meals .food-item .calories-badge {
+                font-size: 0.85rem;
+            }
+
+            #meals .food-item .food-macros {
+                gap: 6px;
+            }
+
+            #meals .food-item .food-macros .macro-badge {
+                padding: 2px 6px;
+                font-size: 0.7rem;
             }
 
             #meals .food-item .food-quantity input {
-                width: 50px;
+                width: 44px;
+                padding: 3px 4px;
+                font-size: 0.8rem;
             }
 
             .food-list .food-item { grid-template-columns: 1fr; }
@@ -2387,8 +2480,8 @@
                 padding: var(--space-sm) !important;
             }
 
-            /* Food items */
-            .food-item {
+            /* Food items (hors meals) */
+            .food-item:not(#meals .food-item) {
                 padding: var(--space-sm) !important;
             }
 
