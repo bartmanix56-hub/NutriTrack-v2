@@ -627,11 +627,9 @@
 
         /* === STRUCTURE FOOD-ITEM DANS MEALS === */
         #meals .food-item {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            grid-template-rows: auto auto;
-            gap: var(--space-sm) var(--space-md);
-            align-items: center;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
             padding: var(--space-md) var(--space-lg);
             background: var(--bg-tertiary);
             border-radius: var(--radius-md);
@@ -649,21 +647,19 @@
             border-color: rgba(16, 185, 129, 0.25);
         }
 
-        /* Contenu principal - occupe toute la largeur sur la première ligne */
+        /* Contenu principal */
         #meals .food-item-content {
-            grid-column: 1 / -1;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: var(--space-md);
+            flex-direction: column;
+            gap: var(--space-sm);
             min-width: 0;
         }
 
-        /* Ligne principale: nom + calories */
+        /* Ligne principale: boutons + nom + calories */
         #meals .food-item-main {
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
+            gap: var(--space-md);
             flex: 1;
             min-width: 0;
         }
@@ -690,13 +686,13 @@
             border-radius: var(--radius-full);
         }
 
-        /* Ligne des détails: quantité + macros + actions */
+        /* Ligne des détails: quantité + macros */
         #meals .food-item-details {
-            grid-column: 1 / -1;
             display: flex;
             align-items: center;
             gap: var(--space-md);
             flex-wrap: wrap;
+            padding-left: 76px; /* Alignement avec le nom (largeur des 2 boutons + gap) */
         }
 
         /* Input quantité */
@@ -772,7 +768,6 @@
             align-items: center;
             gap: var(--space-xs);
             flex-shrink: 0;
-            margin-left: auto;
         }
 
         /* Boutons d'action - toujours visibles et cliquables */
