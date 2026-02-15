@@ -4130,18 +4130,18 @@ Solutions possibles :
 
                 return `
                     <div class="food-item">
-                        <div class="food-item-actions">
-                            <button class="action-btn delete-btn" onclick="removeFoodFromMeal('${mealType}', ${normalizedFood.id})" title="Supprimer">
-                                <i data-lucide="trash-2"></i>
-                            </button>
-                            <button class="favorite-btn ${isFavorite(normalizedFood.name) ? 'active' : ''}"
-                                    onclick="event.stopPropagation(); toggleFavorite('${escapeJsString(normalizedFood.name)}')"
-                                    title="${isFavorite(normalizedFood.name) ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
-                                ⭐
-                            </button>
-                        </div>
                         <div class="food-item-content">
                             <div class="food-item-main">
+                                <div class="food-item-actions">
+                                    <button class="action-btn delete-btn" onclick="removeFoodFromMeal('${mealType}', ${normalizedFood.id})" title="Supprimer">
+                                        <i data-lucide="trash-2"></i>
+                                    </button>
+                                    <button class="favorite-btn ${isFavorite(normalizedFood.name) ? 'active' : ''}"
+                                            onclick="event.stopPropagation(); toggleFavorite('${escapeJsString(normalizedFood.name)}')"
+                                            title="${isFavorite(normalizedFood.name) ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
+                                        ⭐
+                                    </button>
+                                </div>
                                 <div class="food-name">${getDisplayName(normalizedFood)}${verifiedBadge}</div>
                                 <span class="calories-badge">${calories} kcal</span>
                             </div>
