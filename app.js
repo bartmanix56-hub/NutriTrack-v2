@@ -11603,7 +11603,6 @@ Solutions possibles :
 
         // Animate SVG progress rings with percentages
         function updateWizardRings(protein, carbs, fat, proteinPct, carbsPct, fatPct) {
-            const maxGrams = Math.max(protein, carbs, fat, 1);
             const circumference = 2 * Math.PI * 54; // radius = 54
 
             const rings = [
@@ -11616,7 +11615,7 @@ Solutions possibles :
                 const el = document.getElementById(ring.id);
                 const pctEl = document.getElementById(ring.percentId);
                 if (el) {
-                    const percent = ring.value / maxGrams;
+                    const percent = ring.pct / 100;
                     const offset = circumference * (1 - percent);
                     el.style.strokeDasharray = circumference;
                     el.style.strokeDashoffset = offset;
@@ -11629,7 +11628,6 @@ Solutions possibles :
 
         // Animate desktop SVG progress rings with percentages
         window.updateDesktopMacroRings = function(protein, carbs, fat, proteinPct, carbsPct, fatPct) {
-            const maxGrams = Math.max(protein, carbs, fat, 1);
             const circumference = 2 * Math.PI * 54; // radius = 54
 
             const rings = [
@@ -11642,7 +11640,7 @@ Solutions possibles :
                 const el = document.getElementById(ring.id);
                 const pctEl = document.getElementById(ring.percentId);
                 if (el) {
-                    const percent = ring.value / maxGrams;
+                    const percent = ring.pct / 100;
                     const offset = circumference * (1 - percent);
                     el.style.strokeDasharray = circumference;
                     el.style.strokeDashoffset = offset;
