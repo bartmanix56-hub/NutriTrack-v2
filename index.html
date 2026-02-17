@@ -2144,32 +2144,10 @@
                     <h2 style="font-size: 1.3rem; font-weight: 700; margin: 0; color: var(--text-primary); display: flex; align-items: center; gap: var(--space-sm);"><i data-lucide="search" style="width: 22px; height: 22px;"></i><span>Rechercher</span></h2>
                     <button class="btn add-food-header-btn" onclick="openAddFoodModal()" style="background: var(--accent-ui); color: white;"><i data-lucide="plus-circle" style="width: 18px; height: 18px;"></i> Ajouter un aliment</button>
                 </div>
-                <div style="margin-top: var(--space-md); margin-bottom: var(--space-xl); padding: var(--space-md); background: rgba(5, 150, 105, 0.1); border-radius: var(--radius-md); border-left: 3px solid var(--accent-ui);">
-                    <div style="display: flex; align-items: start; gap: var(--space-sm);">
-                        <i data-lucide="info" style="width: 18px; height: 18px; color: var(--accent-ui); flex-shrink: 0; margin-top: 2px;"></i>
-                        <span style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;"><strong>À noter :</strong> Les valeurs sont pour des aliments <strong>crus</strong>. Un œuf moyen pèse environ 50-60g sans coquille.</span>
-                    </div></div>
-
-                <div class="grid-2">
-                    <div class="input-group">
-                        <label>Filtrer</label>
-                        <select id="foodFilter" onchange="filterFoodDatabase()">
-                            <option value="all">Tous les aliments</option>
-                            <option value="verified">Aliments vérifiés ✓</option>
-                            <option value="custom">Mes aliments personnalisés</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Trier par</label>
-                        <select id="foodSort" onchange="filterFoodDatabase()">
-                            <option value="name">Nom (A-Z)</option>
-                            <option value="protein">Protéines (décroissant)</option>
-                            <option value="carbs">Glucides (décroissant)</option>
-                            <option value="fat">Lipides (décroissant)</option>
-                            <option value="calories">Calories (décroissant)</option>
-                        </select>
-                    </div></div>
+                <!-- Barre de recherche en premier -->
+                <div class="search-box" style="margin-bottom: var(--space-lg);">
+                    <input type="text" id="foodDbSearch" placeholder="Ex: Poulet, Riz basmati, Œufs..." autocomplete="off">
+                </div>
 
                 <!-- Filtres par catégorie -->
                 <div style="display: flex; gap: var(--space-sm); margin-bottom: var(--space-lg); flex-wrap: wrap;">
@@ -2202,8 +2180,36 @@
                     </button>
                 </div>
 
-                <div class="search-box">
-                    <input type="text" id="foodDbSearch" placeholder="Ex: Poulet, Riz basmati, Œufs..." autocomplete="off">
+                <!-- Filtrer / Trier -->
+                <div class="grid-2" style="margin-bottom: var(--space-lg);">
+                    <div class="input-group">
+                        <label>Filtrer</label>
+                        <select id="foodFilter" onchange="filterFoodDatabase()">
+                            <option value="all">Tous les aliments</option>
+                            <option value="verified">Aliments vérifiés ✓</option>
+                            <option value="custom">Mes aliments personnalisés</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Trier par</label>
+                        <select id="foodSort" onchange="filterFoodDatabase()">
+                            <option value="name">Nom (A-Z)</option>
+                            <option value="protein">Protéines (décroissant)</option>
+                            <option value="carbs">Glucides (décroissant)</option>
+                            <option value="fat">Lipides (décroissant)</option>
+                            <option value="calories">Calories (décroissant)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Info + compteur de résultats -->
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-sm); margin-bottom: var(--space-lg);">
+                    <div style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: rgba(5, 150, 105, 0.1); border-radius: var(--radius-md); border-left: 3px solid var(--accent-ui); flex: 1;">
+                        <i data-lucide="info" style="width: 16px; height: 16px; color: var(--accent-ui); flex-shrink: 0;"></i>
+                        <span style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4;">Valeurs pour 100g <strong>crus</strong>. Un œuf moyen ≈ 50-60g sans coquille.</span>
+                    </div>
+                    <div id="foodResultsCount" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; white-space: nowrap; padding: var(--space-xs) var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-full);"></div>
                 </div>
 
                 <div class="food-list" id="foodDatabase"></div></div></div>
@@ -2295,12 +2301,19 @@
 
             <!-- Templates List -->
             <div class="card">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2xl);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg);">
                     <div style="display: flex; align-items: center; gap: var(--space-md);">
                         <i data-lucide="book-open" style="width: 28px; height: 28px; color: var(--accent-ui);"></i>
-                        <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--text-primary);">Mes repas types sauvegardés</h2>
+                        <h2 style="font-size: 1.3rem; font-weight: 700; margin: 0; color: var(--text-primary);">Mes repas types sauvegardés</h2>
                     </div>
-                    <div style="padding: var(--space-sm) var(--space-lg); background: var(--accent-ui); border-radius: var(--radius-full); font-weight: 700; color: white;" id="templates-count">0</div></div>
+                    <div style="padding: var(--space-sm) var(--space-lg); background: var(--accent-ui); border-radius: var(--radius-full); font-weight: 700; color: white;" id="templates-count">0</div>
+                </div>
+
+                <!-- Recherche dans les repas types -->
+                <div class="search-box" style="margin-bottom: var(--space-xl);">
+                    <input type="text" id="templatesSearch" placeholder="Rechercher un repas type..." autocomplete="off"
+                           oninput="filterMealTemplatesList(this.value)">
+                </div>
 
                 <div id="templates-list" style="display: grid; gap: var(--space-lg);">
                     <!-- Templates will be rendered here -->
@@ -4192,6 +4205,38 @@
             </main>
         </div>
         <!-- End App Layout -->
+
+    <!-- Modale : choisir dans quel repas ajouter un repas type -->
+    <div id="templateToMealModal" class="modal" onclick="if(event.target===this)closeTemplateToMealModal()">
+        <div class="modal-content" style="max-width: 420px;">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeTemplateToMealModal()">×</button>
+                <h2 class="modal-title" style="display:flex;align-items:center;gap:8px;">
+                    <i data-lucide="calendar-plus" style="width:22px;height:22px;color:var(--accent-ui);"></i>
+                    Ajouter au journal
+                </h2>
+            </div>
+            <div class="modal-body">
+                <p style="color:var(--text-secondary);margin-bottom:var(--space-xl);font-size:0.95rem;">
+                    Dans quel repas veux-tu ajouter <strong id="templateToMealName"></strong> ?
+                </p>
+                <div style="display:grid;gap:var(--space-md);">
+                    <button class="btn" onclick="applyTemplateToMeal('breakfast')" style="background:var(--bg-tertiary);color:var(--text-primary);justify-content:flex-start;gap:var(--space-md);padding:var(--space-md) var(--space-lg);">
+                        <span style="font-size:1.4rem;">🌅</span> Petit-déjeuner
+                    </button>
+                    <button class="btn" onclick="applyTemplateToMeal('lunch')" style="background:var(--bg-tertiary);color:var(--text-primary);justify-content:flex-start;gap:var(--space-md);padding:var(--space-md) var(--space-lg);">
+                        <span style="font-size:1.4rem;">☀️</span> Déjeuner
+                    </button>
+                    <button class="btn" onclick="applyTemplateToMeal('snack')" style="background:var(--bg-tertiary);color:var(--text-primary);justify-content:flex-start;gap:var(--space-md);padding:var(--space-md) var(--space-lg);">
+                        <span style="font-size:1.4rem;">🍎</span> Collation
+                    </button>
+                    <button class="btn" onclick="applyTemplateToMeal('dinner')" style="background:var(--bg-tertiary);color:var(--text-primary);justify-content:flex-start;gap:var(--space-md);padding:var(--space-md) var(--space-lg);">
+                        <span style="font-size:1.4rem;">🌙</span> Dîner
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="foodModal" class="modal">
         <div class="modal-content">
