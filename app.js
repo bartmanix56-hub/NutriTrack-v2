@@ -7073,6 +7073,13 @@ Solutions possibles :
             // Store current foods for access by index
             window.currentFoodList = foods;
 
+            // Mise à jour du compteur de résultats
+            const total = favoriteFoodsList.length + regularFoods.length;
+            const countEl = document.getElementById('foodResultsCount');
+            if (countEl) {
+                countEl.textContent = total === 0 ? 'Aucun résultat' : `${total} aliment${total > 1 ? 's' : ''}`;
+            }
+
             // Reinitialize Lucide icons for delete buttons
             updateIcons();
         }
@@ -9285,8 +9292,7 @@ Solutions possibles :
         }
 
         function addFoodToTemplate(food) {
-            // No modal anymore, always use 100g default
-            const quantity = 100;
+            const quantity = parseFloat(document.getElementById('modal-quantity')?.value) || 100;
 
             currentTemplateFoods.push({
                 ...food,
@@ -9297,7 +9303,7 @@ Solutions possibles :
             renderTemplateFoodsList();
             updateTemplateMacros();
             closeFoodModal();
-            showToast('<i data-lucide="check-circle" class="icon-inline"></i> Aliment ajouté (100g)');
+            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> Aliment ajouté (${quantity}g)`);
         }
 
         function renderTemplateFoodsList() {
@@ -9505,25 +9511,81 @@ Solutions possibles :
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type "' + name + '" créé !');
         }
 
-        function renderMealTemplatesList() {
+        // Variable pour mémoriser le template sélectionné pour l'ajout au journal
+        let pendingTemplateId = null;
+
+        function openTemplateToMealModal(templateId) {
+            const template = mealTemplates.find(t => t.id === templateId);
+            if (!template) return;
+            pendingTemplateId = templateId;
+            const nameEl = document.getElementById('templateToMealName');
+            if (nameEl) nameEl.textContent = template.name;
+            const modal = document.getElementById('templateToMealModal');
+            if (modal) {
+                modal.classList.add('active');
+                updateIcons();
+            }
+        }
+
+        function closeTemplateToMealModal() {
+            const modal = document.getElementById('templateToMealModal');
+            if (modal) modal.classList.remove('active');
+            pendingTemplateId = null;
+        }
+
+        function applyTemplateToMeal(mealType) {
+            const template = mealTemplates.find(t => t.id === pendingTemplateId);
+            if (!template) return;
+
+            template.foods.forEach(food => {
+                dailyMeals[mealType].foods.push({ ...food, id: Date.now() + Math.random() });
+            });
+
+            renderMeal(mealType);
+            updateDayTotals();
+            saveDailyMeals();
+            if (typeof syncMealsToPlanning === 'function') syncMealsToPlanning();
+            if (typeof updateRemainingWidget === 'function') updateRemainingWidget();
+
+            closeTemplateToMealModal();
+
+            const mealNames = { breakfast: 'Petit-déjeuner', lunch: 'Déjeuner', snack: 'Collation', dinner: 'Dîner' };
+            showToast(`<i data-lucide="check-circle" class="icon-inline"></i> Ajouté au ${mealNames[mealType]}`);
+
+            // Naviguer vers l'onglet journal si pas déjà dessus
+            const journalTab = document.querySelector('[data-tab="journal"]') || document.querySelector('[onclick*="journal"]');
+            if (journalTab) journalTab.click();
+        }
+
+        function filterMealTemplatesList(query) {
+            const q = (query || '').toLowerCase().trim();
+            const filtered = q
+                ? mealTemplates.filter(t => t.name.toLowerCase().includes(q))
+                : mealTemplates;
+            renderMealTemplatesList(filtered);
+        }
+
+        function renderMealTemplatesList(templatesToRender) {
             const container = document.getElementById('templates-list');
             const countBadge = document.getElementById('templates-count');
+            const templates = templatesToRender !== undefined ? templatesToRender : mealTemplates;
 
             countBadge.textContent = mealTemplates.length;
 
-            if (mealTemplates.length === 0) {
+            if (templates.length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
                         <div style="font-size: 3rem; margin-bottom: var(--space-md);"><i data-lucide="clipboard-list" style="width: 48px; height: 48px;"></i></div>
-                        <p style="font-size: 1.1rem; margin: 0;">Aucun repas type sauvegardé</p>
-                        <p style="margin-top: var(--space-sm); margin-bottom: 0;">Crée-en un ci-dessus !</p>
+                        <p style="font-size: 1.1rem; margin: 0;">${mealTemplates.length === 0 ? 'Aucun repas type sauvegardé' : 'Aucun résultat'}</p>
+                        <p style="margin-top: var(--space-sm); margin-bottom: 0;">${mealTemplates.length === 0 ? 'Crée-en un ci-dessus !' : 'Essaie un autre terme de recherche.'}</p>
                     </div>
                 `;
+                updateIcons();
                 return;
             }
 
             // Sort by creation date (newest first)
-            const sorted = [...mealTemplates].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            const sorted = [...templates].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
             container.innerHTML = sorted.map(template => {
                 const totals = template.foods.reduce((acc, food) => {
@@ -9560,12 +9622,19 @@ Solutions possibles :
                                 </button>
                             </div></div>
 
-                        <!-- Dropdown Toggle Button -->
-                        <button onclick="toggleTemplateDetails('template-details-${template.id}')"
-                                style="width: 100%; margin-top: var(--space-md); padding: var(--space-sm); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-secondary); cursor: pointer; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
-                            <span>Voir les détails</span>
-                            <span id="arrow-template-details-${template.id}">▼</span>
-                        </button>
+                        <!-- Bouton Ajouter au journal + Toggle détails -->
+                        <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-md);">
+                            <button onclick="openTemplateToMealModal(${template.id})"
+                                    style="flex: 1; padding: var(--space-sm) var(--space-md); background: var(--accent-ui); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
+                                <i data-lucide="calendar-plus" style="width: 16px; height: 16px;"></i>
+                                <span>Ajouter au journal</span>
+                            </button>
+                            <button onclick="toggleTemplateDetails('template-details-${template.id}')"
+                                    style="padding: var(--space-sm) var(--space-md); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-secondary); cursor: pointer; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: var(--space-sm);">
+                                <span>Détails</span>
+                                <span id="arrow-template-details-${template.id}">▼</span>
+                            </button>
+                        </div>
 
                         <!-- Dropdown Content (hidden by default) -->
                         <div id="template-details-${template.id}" style="display: none; margin-top: var(--space-md);">
