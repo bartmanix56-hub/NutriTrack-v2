@@ -2179,14 +2179,6 @@
                 <!-- Tracking Tab -->
         <!-- Meal Templates Tab -->
         <div id="meal-templates" class="tab-content">
-            <!-- Premium: Bouton importer depuis repas du jour -->
-            <div style="margin-bottom: var(--space-xl); display: flex; gap: var(--space-md); flex-wrap: wrap;">
-                <button class="copy-yesterday-btn" onclick="importMealFromToday()" style="background: rgba(16, 185, 129, 0.15); border-color: var(--accent-main); color: var(--accent-main);">
-                    <i data-lucide="download" style="width: 16px; height: 16px;"></i>
-                    <span>Importer depuis un repas du jour</span>
-                </button>
-            </div>
-
             <!-- Create New Template Card -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); margin-bottom: var(--space-3xl);">
 
@@ -2211,9 +2203,14 @@
                             <p class="info-text" style="margin-top: var(--space-xs);">Ex: Lien YouTube, instructions de préparation, notes perso</p>
                         </div></div>
 
-                    <button class="btn" onclick="saveNewMealTemplate()" style="margin-top: auto; background: var(--accent-ui); color: white; padding: var(--space-md); font-weight: 700;">
-                        <i data-lucide="save" style="width: 18px; height: 18px;"></i> Enregistrer ce repas type
-                    </button>
+                    <div style="display: flex; flex-direction: column; gap: var(--space-sm); margin-top: auto;">
+                        <button class="btn" onclick="saveNewMealTemplate()" style="background: var(--accent-ui); color: white; padding: var(--space-md); font-weight: 700;">
+                            <i data-lucide="save" style="width: 18px; height: 18px;"></i> Enregistrer ce repas type
+                        </button>
+                        <button class="btn" onclick="importMealFromToday()" style="background: transparent; border: 1px solid var(--accent-ui); color: var(--accent-ui); padding: var(--space-sm) var(--space-md); font-weight: 600; font-size: 0.9rem;">
+                            <i data-lucide="download" style="width: 16px; height: 16px;"></i> Importer depuis un repas du jour
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Right: Foods List + Macros -->
