@@ -2207,6 +2207,9 @@
                         <button class="btn" onclick="saveNewMealTemplate()" style="background: var(--accent-ui); color: white; padding: var(--space-md); font-weight: 700;">
                             <i data-lucide="save" style="width: 18px; height: 18px;"></i> Enregistrer ce repas type
                         </button>
+                        <button class="btn" onclick="openCreateCustomFoodFromTemplateModal()" style="background: transparent; border: 1px solid var(--accent-main); color: var(--accent-main); padding: var(--space-sm) var(--space-md); font-weight: 600; font-size: 0.9rem;">
+                            <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i> Créer un aliment personnalisé (pour 100g)
+                        </button>
                         <button class="btn" onclick="importMealFromToday()" style="background: transparent; border: 1px solid var(--accent-ui); color: var(--accent-ui); padding: var(--space-sm) var(--space-md); font-weight: 600; font-size: 0.9rem;">
                             <i data-lucide="download" style="width: 16px; height: 16px;"></i> Importer depuis un repas du jour
                         </button>
@@ -4190,6 +4193,75 @@
 
                 <button class="btn" onclick="saveNewFood()" style="width: 100%; margin-top: 20px;"><i data-lucide="plus" class="icon-inline"></i> Ajouter à ma Base</button>
             </div></div></div>
+
+    <!-- Modal: Créer aliment personnalisé depuis repas type -->
+    <div class="custom-popup-overlay" id="create-custom-food-from-template-modal">
+        <div class="custom-popup" style="max-width: 500px;">
+            <h3 style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-lg);">
+                <i data-lucide="sparkles" style="width: 22px; height: 22px; color: var(--accent-main);"></i>
+                Créer un aliment personnalisé
+            </h3>
+
+            <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-lg); margin-bottom: var(--space-lg);">
+                <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                    NutriTrack va créer un nouvel aliment basé sur cette recette. Les valeurs seront automatiquement <strong style="color: var(--text-primary);">rapportées à 100g</strong>, pour que tu puisses ensuite l'ajouter à tes repas comme n'importe quel aliment.
+                </p>
+            </div>
+
+            <!-- Aperçu des macros calculées -->
+            <div id="custom-food-preview" style="background: var(--bg-secondary); border-radius: var(--radius-md); padding: var(--space-md); margin-bottom: var(--space-lg);">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: var(--space-sm);">Aperçu pour 100g</div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-sm); text-align: center;">
+                    <div>
+                        <div style="font-weight: 700; color: var(--accent-protein);" id="preview-protein">0g</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Prot</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 700; color: var(--accent-carbs);" id="preview-carbs">0g</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Glu</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 700; color: var(--accent-fat);" id="preview-fat">0g</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Lip</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 700; color: var(--accent-ui);" id="preview-calories">0</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">kcal</div>
+                    </div>
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: var(--space-sm); text-align: center;">
+                    Poids total de la recette : <strong id="preview-total-weight">0g</strong>
+                </div>
+            </div>
+
+            <div class="input-group" style="margin-bottom: var(--space-lg);">
+                <label style="font-weight: 600; margin-bottom: var(--space-xs); display: block;">
+                    Nom de l'aliment <span style="color: var(--accent-danger);">*</span>
+                </label>
+                <input type="text" id="custom-food-from-template-name" placeholder="Ex: Cookie maison, Brownie protéiné..."
+                       style="width: 100%; padding: var(--space-md); background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary); font-size: 1rem;">
+            </div>
+
+            <div class="input-group" style="margin-bottom: var(--space-lg);">
+                <label style="font-weight: 600; margin-bottom: var(--space-xs); display: block;">Catégorie</label>
+                <select id="custom-food-from-template-category" style="width: 100%; padding: var(--space-md); background: var(--bg-tertiary); border: 2px solid transparent; border-radius: var(--radius-md); color: var(--text-primary); font-size: 1rem;">
+                    <option value="autres">❓ Autres</option>
+                    <option value="proteines">🥩 Protéines</option>
+                    <option value="feculents">🍚 Féculents</option>
+                    <option value="legumes">🥬 Légumes</option>
+                    <option value="fruits">🍎 Fruits</option>
+                    <option value="produits-laitiers">🧀 Laitages</option>
+                    <option value="matieres-grasses">🧈 Graisses</option>
+                    <option value="liquides">💧 Liquides</option>
+                </select>
+            </div>
+
+            <div class="custom-popup-buttons">
+                <button onclick="closeCreateCustomFoodFromTemplateModal()" class="custom-popup-btn cancel">Annuler</button>
+                <button onclick="createCustomFoodFromTemplate()" class="custom-popup-btn confirm">Créer l'aliment</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Barcode Scanner Modal -->
     <div id="barcodeScannerModal" class="modal">
