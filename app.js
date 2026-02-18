@@ -9598,6 +9598,133 @@ Solutions possibles :
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Repas type "' + name + '" créé !');
         }
 
+        // === Création d'aliment personnalisé depuis repas type ===
+
+        function openCreateCustomFoodFromTemplateModal() {
+            // Vérifier qu'il y a des aliments dans le template
+            if (currentTemplateFoods.length === 0) {
+                customAlert('<i data-lucide="alert-circle" class="icon-inline"></i> Recette vide', 'Ajoute au moins un aliment à ta recette avant de créer un aliment personnalisé.');
+                return;
+            }
+
+            // Calculer les macros pour 100g
+            const totals = currentTemplateFoods.reduce((acc, food) => {
+                acc.protein += (food.protein * food.quantity) / 100;
+                acc.carbs += (food.carbs * food.quantity) / 100;
+                acc.fat += (food.fat * food.quantity) / 100;
+                acc.fiber += ((food.fiber || 0) * food.quantity) / 100;
+                acc.calories += (food.calories * food.quantity) / 100;
+                acc.totalWeight += food.quantity;
+                return acc;
+            }, { protein: 0, carbs: 0, fat: 0, fiber: 0, calories: 0, totalWeight: 0 });
+
+            // Calculer les valeurs pour 100g
+            const per100g = {
+                protein: (totals.protein / totals.totalWeight) * 100,
+                carbs: (totals.carbs / totals.totalWeight) * 100,
+                fat: (totals.fat / totals.totalWeight) * 100,
+                fiber: (totals.fiber / totals.totalWeight) * 100,
+                calories: (totals.calories / totals.totalWeight) * 100
+            };
+
+            // Mettre à jour l'aperçu dans le modal
+            document.getElementById('preview-protein').textContent = per100g.protein.toFixed(1) + 'g';
+            document.getElementById('preview-carbs').textContent = per100g.carbs.toFixed(1) + 'g';
+            document.getElementById('preview-fat').textContent = per100g.fat.toFixed(1) + 'g';
+            document.getElementById('preview-calories').textContent = Math.round(per100g.calories);
+            document.getElementById('preview-total-weight').textContent = Math.round(totals.totalWeight) + 'g';
+
+            // Pré-remplir le nom si disponible
+            const templateName = document.getElementById('new-template-name').value.trim();
+            document.getElementById('custom-food-from-template-name').value = templateName;
+
+            // Ouvrir le modal
+            const modal = document.getElementById('create-custom-food-from-template-modal');
+            modal.classList.add('active');
+            updateIcons();
+
+            // Focus sur le champ nom
+            setTimeout(() => {
+                document.getElementById('custom-food-from-template-name').focus();
+            }, 100);
+        }
+
+        function closeCreateCustomFoodFromTemplateModal() {
+            const modal = document.getElementById('create-custom-food-from-template-modal');
+            modal.classList.remove('active');
+        }
+
+        async function createCustomFoodFromTemplate() {
+            const name = document.getElementById('custom-food-from-template-name').value.trim();
+            const category = document.getElementById('custom-food-from-template-category').value;
+
+            if (!name) {
+                showToast('<i data-lucide="alert-circle" class="icon-inline"></i> Donne un nom à l\'aliment');
+                return;
+            }
+
+            // Vérifier doublon
+            const existingFood = customFoods.find(f => f.name.toLowerCase() === name.toLowerCase());
+            if (existingFood) {
+                customAlert('<i data-lucide="alert-triangle" class="icon-inline"></i> Nom déjà utilisé', 'Un aliment avec ce nom existe déjà dans ta base.');
+                return;
+            }
+
+            // Calculer les macros totales
+            const totals = currentTemplateFoods.reduce((acc, food) => {
+                acc.protein += (food.protein * food.quantity) / 100;
+                acc.carbs += (food.carbs * food.quantity) / 100;
+                acc.fat += (food.fat * food.quantity) / 100;
+                acc.fiber += ((food.fiber || 0) * food.quantity) / 100;
+                acc.calories += (food.calories * food.quantity) / 100;
+                acc.totalWeight += food.quantity;
+                return acc;
+            }, { protein: 0, carbs: 0, fat: 0, fiber: 0, calories: 0, totalWeight: 0 });
+
+            // Calculer les valeurs pour 100g (arrondi à 1 décimale)
+            const per100g = {
+                protein: Math.round((totals.protein / totals.totalWeight) * 1000) / 10,
+                carbs: Math.round((totals.carbs / totals.totalWeight) * 1000) / 10,
+                fat: Math.round((totals.fat / totals.totalWeight) * 1000) / 10,
+                fiber: Math.round((totals.fiber / totals.totalWeight) * 1000) / 10,
+                calories: Math.round((totals.calories / totals.totalWeight) * 100)
+            };
+
+            // Créer l'aliment personnalisé
+            const newFood = {
+                name: name,
+                unit: '100g',
+                protein: per100g.protein,
+                carbs: per100g.carbs,
+                fat: per100g.fat,
+                fiber: per100g.fiber,
+                calories: per100g.calories,
+                category: category,
+                custom: true
+            };
+
+            // Sauvegarder vers Firestore
+            const foodId = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+            try {
+                await saveCustomFoodToFirestore(foodId, newFood);
+            } catch (error) {
+                console.error('Erreur sauvegarde custom food:', error);
+                return;
+            }
+
+            // Recharger depuis Firestore pour s'assurer de la cohérence
+            customFoods = await loadCustomFoodsFromFirestore();
+
+            // Reconstruire foodDatabase avec les custom foods
+            foodDatabase = [...baseFoodDatabase, ...customFoods];
+
+            // Fermer le modal
+            closeCreateCustomFoodFromTemplateModal();
+
+            // Afficher confirmation
+            showToast('<i data-lucide="sparkles" class="icon-inline"></i> Aliment "' + name + '" créé !');
+        }
+
         // Variable pour mémoriser le template sélectionné pour l'ajout au journal
         let pendingTemplateId = null;
 
