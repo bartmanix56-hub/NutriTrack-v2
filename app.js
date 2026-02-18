@@ -9792,7 +9792,15 @@ Solutions possibles :
         }
 
         // Écouter les changements de taille d'écran
-        window.addEventListener('resize', initMobileAccordion);
+        window.addEventListener('resize', () => {
+            // Ne pas modifier l'accordéon si un input quick-add a le focus
+            // (évite que le clavier Android ferme quand le viewport change de taille)
+            const activeElement = document.activeElement;
+            if (activeElement?.id?.startsWith('quick-add-')) {
+                return;
+            }
+            initMobileAccordion();
+        });
 
         // Fermer les menus si on clique ailleurs
         document.addEventListener('click', (e) => {
