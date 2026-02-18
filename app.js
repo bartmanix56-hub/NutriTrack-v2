@@ -7567,39 +7567,37 @@ Solutions possibles :
             const targets = macroTargets;
             const circumference = 2 * Math.PI * 42; // r=42 dans le SVG
 
-            if (targets.protein > 0) {
-                const pVal = parseFloat(document.getElementById('day-protein').textContent);
-                const cVal = parseFloat(document.getElementById('day-carbs').textContent);
-                const fVal = parseFloat(document.getElementById('day-fat').textContent);
-                const calVal = parseFloat(document.getElementById('day-total').textContent);
+            const pVal = parseFloat(document.getElementById('day-protein').textContent) || 0;
+            const cVal = parseFloat(document.getElementById('day-carbs').textContent) || 0;
+            const fVal = parseFloat(document.getElementById('day-fat').textContent) || 0;
+            const calVal = parseFloat(document.getElementById('day-total').textContent) || 0;
 
-                const pProg = Math.min((pVal / targets.protein) * 100, 100);
-                const cProg = Math.min((cVal / targets.carbs) * 100, 100);
-                const fProg = Math.min((fVal / targets.fat) * 100, 100);
-                const calProg = targets.calories > 0 ? Math.min((calVal / targets.calories) * 100, 100) : 0;
+            const pProg = targets.protein > 0 ? Math.min((pVal / targets.protein) * 100, 100) : 0;
+            const cProg = targets.carbs > 0 ? Math.min((cVal / targets.carbs) * 100, 100) : 0;
+            const fProg = targets.fat > 0 ? Math.min((fVal / targets.fat) * 100, 100) : 0;
+            const calProg = targets.calories > 0 ? Math.min((calVal / targets.calories) * 100, 100) : 0;
 
-                // Mettre à jour les cercles SVG (stroke-dashoffset)
-                const pRing = document.getElementById('day-ring-protein');
-                const cRing = document.getElementById('day-ring-carbs');
-                const fRing = document.getElementById('day-ring-fat');
-                const calRing = document.getElementById('day-ring-cal');
+            // Mettre à jour les cercles SVG (stroke-dashoffset)
+            const pRing = document.getElementById('day-ring-protein');
+            const cRing = document.getElementById('day-ring-carbs');
+            const fRing = document.getElementById('day-ring-fat');
+            const calRing = document.getElementById('day-ring-cal');
 
-                if (pRing) pRing.style.strokeDashoffset = circumference * (1 - pProg / 100);
-                if (cRing) cRing.style.strokeDashoffset = circumference * (1 - cProg / 100);
-                if (fRing) fRing.style.strokeDashoffset = circumference * (1 - fProg / 100);
-                if (calRing) calRing.style.strokeDashoffset = circumference * (1 - calProg / 100);
+            if (pRing) pRing.style.strokeDashoffset = circumference * (1 - pProg / 100);
+            if (cRing) cRing.style.strokeDashoffset = circumference * (1 - cProg / 100);
+            if (fRing) fRing.style.strokeDashoffset = circumference * (1 - fProg / 100);
+            if (calRing) calRing.style.strokeDashoffset = circumference * (1 - calProg / 100);
 
-                // Mettre à jour les targets affichés
-                const pTarget = document.getElementById('day-protein-target');
-                const cTarget = document.getElementById('day-carbs-target');
-                const fTarget = document.getElementById('day-fat-target');
-                const calTarget = document.getElementById('day-cal-target');
+            // Mettre à jour les targets affichés
+            const pTarget = document.getElementById('day-protein-target');
+            const cTarget = document.getElementById('day-carbs-target');
+            const fTarget = document.getElementById('day-fat-target');
+            const calTarget = document.getElementById('day-cal-target');
 
-                if (pTarget) pTarget.textContent = targets.protein;
-                if (cTarget) cTarget.textContent = targets.carbs;
-                if (fTarget) fTarget.textContent = targets.fat;
-                if (calTarget) calTarget.textContent = targets.calories || 0;
-            }
+            if (pTarget) pTarget.textContent = targets.protein || 0;
+            if (cTarget) cTarget.textContent = targets.carbs || 0;
+            if (fTarget) fTarget.textContent = targets.fat || 0;
+            if (calTarget) calTarget.textContent = targets.calories || 0;
         }
 
         // ===== PLANNING AMÉLIORÉ =====
