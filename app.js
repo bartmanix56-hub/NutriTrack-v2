@@ -2754,6 +2754,7 @@ Solutions possibles :
             const mealCard = document.querySelector(`.meal-card[data-meal="${currentMealType}"]`);
             if (mealCard) {
                 mealCard.classList.remove('mobile-collapsed');
+                preserveAccordionState(); // Empêcher le re-collapse pendant le resize du clavier
             }
 
             renderMeal(currentMealType);
@@ -3103,6 +3104,7 @@ Solutions possibles :
             const mealCard = document.querySelector(`.meal-card[data-meal="${mealType}"]`);
             if (mealCard) {
                 mealCard.classList.remove('mobile-collapsed');
+                preserveAccordionState(); // Empêcher le re-collapse pendant le resize du clavier
             }
 
             renderMeal(mealType);
@@ -7622,6 +7624,7 @@ Solutions possibles :
             const mealCard = document.querySelector(`.meal-card[data-meal="${currentMealType}"]`);
             if (mealCard) {
                 mealCard.classList.remove('mobile-collapsed');
+                preserveAccordionState(); // Empêcher le re-collapse pendant le resize du clavier
             }
 
             renderMeal(currentMealType);
@@ -9629,6 +9632,7 @@ Solutions possibles :
             const mealCard = document.querySelector(`.meal-card[data-meal="${mealType}"]`);
             if (mealCard) {
                 mealCard.classList.remove('mobile-collapsed');
+                preserveAccordionState(); // Empêcher le re-collapse pendant le resize du clavier
             }
 
             renderMeal(mealType);
@@ -9844,7 +9848,12 @@ Solutions possibles :
 
             const card = document.querySelector(`.meal-card[data-meal="${mealType}"]`);
             if (card) {
+                const wasCollapsed = card.classList.contains('mobile-collapsed');
                 card.classList.toggle('mobile-collapsed');
+                // Si on vient d'ouvrir la carte, préserver cet état
+                if (wasCollapsed) {
+                    preserveAccordionState();
+                }
             }
         }
 
@@ -9862,8 +9871,24 @@ Solutions possibles :
             }
         }
 
+        // Flag pour empêcher initMobileAccordion de s'exécuter après ajout d'aliment
+        let preventAccordionReset = false;
+        let preventAccordionTimeout = null;
+
+        // Appelé après ajout d'aliment pour préserver l'état de l'accordéon
+        function preserveAccordionState() {
+            preventAccordionReset = true;
+            clearTimeout(preventAccordionTimeout);
+            preventAccordionTimeout = setTimeout(() => {
+                preventAccordionReset = false;
+            }, 1000); // Protéger pendant 1 seconde
+        }
+
         // Initialiser l'état des cards sur mobile
         function initMobileAccordion() {
+            // Ne pas réinitialiser si on vient d'ajouter un aliment
+            if (preventAccordionReset) return;
+
             if (window.innerWidth <= 768) {
                 // Garder seulement le premier repas ouvert sur mobile
                 document.querySelectorAll('.meal-card').forEach((card, index) => {
@@ -9881,11 +9906,14 @@ Solutions possibles :
 
         // Écouter les changements de taille d'écran
         window.addEventListener('resize', () => {
-            // Ne pas modifier l'accordéon si un input quick-add a le focus
-            // (évite que le clavier Android ferme quand le viewport change de taille)
+            // Ne pas modifier l'accordéon si un input a le focus dans un meal-card
+            // (évite que le clavier Android/iOS ferme quand le viewport change de taille)
             const activeElement = document.activeElement;
-            if (activeElement?.id?.startsWith('quick-add-')) {
-                return;
+            if (activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA') {
+                // Vérifier si l'input est dans un meal-card ou dans les repas
+                if (activeElement.closest('.meal-card') || activeElement.closest('#meals')) {
+                    return;
+                }
             }
             initMobileAccordion();
         });
