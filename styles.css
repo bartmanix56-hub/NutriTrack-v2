@@ -3484,8 +3484,8 @@
             fill: none;
             stroke-width: 6;
             stroke-linecap: round;
-            stroke-dasharray: 176;
-            stroke-dashoffset: 176;
+            stroke-dasharray: 263.89;
+            stroke-dashoffset: 263.89;
             transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
