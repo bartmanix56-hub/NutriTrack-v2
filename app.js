@@ -2750,6 +2750,12 @@ Solutions possibles :
                 quantity: quantity
             });
 
+            // Ensure meal card is expanded on mobile before rendering
+            const mealCard = document.querySelector(`.meal-card[data-meal="${currentMealType}"]`);
+            if (mealCard) {
+                mealCard.classList.remove('mobile-collapsed');
+            }
+
             renderMeal(currentMealType);
             updateDayTotals();
             saveDailyMeals();
@@ -3092,6 +3098,12 @@ Solutions possibles :
                 id: Date.now(),
                 quantity: 100
             });
+
+            // Ensure meal card is expanded on mobile
+            const mealCard = document.querySelector(`.meal-card[data-meal="${mealType}"]`);
+            if (mealCard) {
+                mealCard.classList.remove('mobile-collapsed');
+            }
 
             renderMeal(mealType);
             updateDayTotals();
@@ -4197,7 +4209,14 @@ Solutions possibles :
                 // Block negative quantities
                 if (parsedQuantity < 1 || isNaN(parsedQuantity)) {
                     showToast('<i data-lucide="alert-triangle" class="icon-inline"></i> Quantité invalide (min: 1g)', 'warning');
-                    renderMeal(mealType);
+                    // Reset input to old value without full re-render
+                    const container = document.getElementById(`${mealType}-foods`);
+                    const foodItems = container.querySelectorAll('.food-item');
+                    const foodIndex = dailyMeals[mealType].foods.findIndex(f => f.id === id);
+                    if (foodIndex >= 0 && foodItems[foodIndex]) {
+                        const input = foodItems[foodIndex].querySelector('input[type="number"]');
+                        if (input) input.value = food.quantity;
+                    }
                     return;
                 }
 
@@ -4205,8 +4224,12 @@ Solutions possibles :
                 const oldQuantity = food.quantity;
                 const quantityDiff = parsedQuantity - oldQuantity;
 
+                // Update the data
                 food.quantity = parsedQuantity;
-                renderMeal(mealType);
+
+                // Update display WITHOUT full re-render to preserve input focus
+                updateFoodItemDisplay(mealType, id, food);
+                updateMealTotals(mealType);
                 updateDayTotals();
                 saveDailyMeals();
                 updateRemainingWidget();
@@ -4216,6 +4239,59 @@ Solutions possibles :
                     showMacroFeedbackFromChange(food, oldQuantity, parsedQuantity);
                 }
             }
+        }
+
+        // Update a single food item's display without re-rendering the whole meal
+        function updateFoodItemDisplay(mealType, foodId, food) {
+            const container = document.getElementById(`${mealType}-foods`);
+            const foodIndex = dailyMeals[mealType].foods.findIndex(f => f.id === foodId);
+            const foodItems = container.querySelectorAll('.food-item');
+
+            if (foodIndex >= 0 && foodItems[foodIndex]) {
+                const foodItem = foodItems[foodIndex];
+                const normalizedFood = normalizeFoodData(food);
+                const multiplier = normalizedFood.quantity / 100;
+                const calories = Math.round(normalizedFood.calories * multiplier);
+
+                // Update calories badge
+                const caloriesBadge = foodItem.querySelector('.calories-badge');
+                if (caloriesBadge) caloriesBadge.textContent = `${calories} kcal`;
+
+                // Update macros
+                const macros = foodItem.querySelectorAll('.macro-badge');
+                if (macros.length >= 3) {
+                    macros[0].textContent = `${(normalizedFood.protein * multiplier).toFixed(1)}g P`;
+                    macros[1].textContent = `${(normalizedFood.carbs * multiplier).toFixed(1)}g G`;
+                    macros[2].textContent = `${(normalizedFood.fat * multiplier).toFixed(1)}g L`;
+                }
+            }
+        }
+
+        // Update meal totals without re-rendering
+        function updateMealTotals(mealType) {
+            const meal = dailyMeals[mealType];
+            const foods = meal.foods || [];
+
+            let mealTotal = 0;
+            let mealProtein = 0;
+            let mealCarbs = 0;
+            let mealFat = 0;
+
+            foods.forEach(food => {
+                const normalizedFood = normalizeFoodData(food);
+                const multiplier = normalizedFood.quantity / 100;
+                mealTotal += Math.round(normalizedFood.calories * multiplier);
+                mealProtein += normalizedFood.protein * multiplier;
+                mealCarbs += normalizedFood.carbs * multiplier;
+                mealFat += normalizedFood.fat * multiplier;
+            });
+
+            document.getElementById(`${mealType}-total`).innerHTML = `
+                <span style="color: var(--accent-protein);">${Math.round(mealProtein)}g</span> •
+                <span style="color: var(--accent-carbs);">${Math.round(mealCarbs)}g</span> •
+                <span style="color: var(--accent-fat);">${Math.round(mealFat)}g</span> •
+                <span style="color: var(--accent-ui);">${mealTotal} kcal</span>
+            `;
         }
 
         // Remove food from meal
@@ -7542,6 +7618,12 @@ Solutions possibles :
                 quantity: quantity
             });
 
+            // Ensure meal card is expanded on mobile
+            const mealCard = document.querySelector(`.meal-card[data-meal="${currentMealType}"]`);
+            if (mealCard) {
+                mealCard.classList.remove('mobile-collapsed');
+            }
+
             renderMeal(currentMealType);
             updateDayTotals();
             saveDailyMeals();
@@ -9542,6 +9624,12 @@ Solutions possibles :
             template.foods.forEach(food => {
                 dailyMeals[mealType].foods.push({ ...food, id: Date.now() + Math.random() });
             });
+
+            // Ensure meal card is expanded on mobile
+            const mealCard = document.querySelector(`.meal-card[data-meal="${mealType}"]`);
+            if (mealCard) {
+                mealCard.classList.remove('mobile-collapsed');
+            }
 
             renderMeal(mealType);
             updateDayTotals();
