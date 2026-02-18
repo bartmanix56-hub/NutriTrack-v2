@@ -7016,25 +7016,27 @@ Solutions possibles :
                         </h3>
                         ${favoriteFoodsList.map((food, index) => {
                             const globalIndex = foods.indexOf(food);
+                            const categoryLabels = { 'proteines': 'Protéines', 'feculents': 'Féculents', 'legumes': 'Légumes', 'fruits': 'Fruits', 'produits-laitiers': 'Laitages', 'matieres-grasses': 'Lipides', 'liquides': 'Liquides', 'autres': 'Autres' };
+                            const catLabel = food.category ? (categoryLabels[food.category] || '') : '';
                             return `
-                                <div class="food-item" data-food-index="${globalIndex}" style="background: rgba(0, 0, 0, 0.2);">
-                                    <div>
-                                        <div class="food-name">${escapeHtml(getDisplayName(food))} ${food.verified ? '<span style="color: #10b981; font-size: 1rem; cursor: help; margin-left: 4px;" title="Aliment vérifié par un administrateur">✓</span>' : ''} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''}</div>
-                                        ${food.custom ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Personnalisé</span>' : ''}
+                                <div class="food-item" data-food-index="${globalIndex}" style="background: rgba(0, 0, 0, 0.2); display: flex; align-items: center; gap: var(--space-md);">
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap;">
+                                            <span style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">${escapeHtml(getDisplayName(food))}</span>
+                                            ${food.verified ? '<span style="color: #10b981; font-size: 0.9rem;" title="Vérifié">✓</span>' : ''}
+                                            ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; color: var(--accent-ui);"></i>' : ''}
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: var(--space-sm); margin-top: 4px; flex-wrap: wrap; font-size: 0.82rem; color: var(--text-secondary);">
+                                            ${catLabel ? `<span style="background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 99px; font-size: 0.72rem;">${catLabel}</span>` : ''}
+                                            <span><span style="color: var(--accent-protein); font-weight: 600;">${food.protein}g</span> P · <span style="color: var(--accent-carbs); font-weight: 600;">${food.carbs}g</span> G · <span style="color: var(--accent-fat); font-weight: 600;">${food.fat}g</span> L · <span style="font-weight: 600;">${food.calories}</span> kcal</span>
+                                        </div>
                                     </div>
-                                    <div class="food-macros">
-                                        <span><div class="label">Prot</div><div class="value" style="color: var(--accent-protein)">${food.protein}g</div></span>
-                                        <span><div class="label">Glu</div><div class="value" style="color: var(--accent-carbs)">${food.carbs}g</div></span>
-                                        <span><div class="label">Lip</div><div class="value" style="color: var(--accent-fat)">${food.fat}g</div></span>
-                                        <span><div class="label">Cal</div><div class="value">${food.calories}</div></span>
+                                    <div style="display: flex; gap: 4px; align-items: center; flex-shrink: 0;">
+                                        <button class="icon-btn" style="background: rgba(255, 230, 109, 0.2); border: 1px solid var(--accent-fat); width: 32px; height: 32px; padding: 0;" onclick="toggleFavorite('${escapeJsString(food.name)}')"><i data-lucide="star" style="width: 14px; height: 14px; fill: var(--accent-fat); color: var(--accent-fat);"></i></button>
+                                        ${food.custom ? `<button class="icon-btn" style="width: 32px; height: 32px; padding: 0;" onclick="editCustomFoodByName('${escapeJsString(food.name)}')"><i data-lucide="pencil" style="width: 14px; height: 14px;"></i></button>` : ''}
+                                        ${food.custom ? `<button class="delete-btn" style="width: 32px; height: 32px; padding: 0;" onclick="deleteCustomFood('${escapeJsString(food.name)}')"><i data-lucide="trash-2" style="width: 14px; height: 14px;"></i></button>` : ''}
                                     </div>
-                                    <div style="display: flex; flex-direction: column; gap: var(--space-sm); align-items: flex-end;">
-                                        <span style="color: var(--text-secondary); font-size: 0.9rem;">pour ${escapeHtml(food.unit)}</span>
-                                        <div style="display: flex; gap: var(--space-sm); align-items: center;">
-                                            <button class="icon-btn" style="background: rgba(255, 230, 109, 0.2); border: 1px solid var(--accent-fat); width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${escapeJsString(food.name)}')"><i data-lucide="star" style="width: 16px; height: 16px; fill: var(--accent-fat); color: var(--accent-fat);"></i></button>
-                                            ${food.custom ? `<button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editCustomFoodByName('${escapeJsString(food.name)}')"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>` : ''}
-                                            ${food.custom ? `<button class="delete-btn" style="font-size: 1.1rem; width: 36px; height: 36px;" onclick="deleteCustomFood('${escapeJsString(food.name)}')"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>` : ''}
-                                        </div></div></div>
+                                </div>
                             `;
                         }).join('')}
                     </div>
@@ -7045,25 +7047,27 @@ Solutions possibles :
             if (regularFoods.length > 0) {
                 html += regularFoods.map((food, index) => {
                     const globalIndex = foods.indexOf(food);
+                    const categoryLabels = { 'proteines': 'Protéines', 'feculents': 'Féculents', 'legumes': 'Légumes', 'fruits': 'Fruits', 'produits-laitiers': 'Laitages', 'matieres-grasses': 'Lipides', 'liquides': 'Liquides', 'autres': 'Autres' };
+                    const catLabel = food.category ? (categoryLabels[food.category] || '') : '';
                     return `
-                        <div class="food-item" data-food-index="${globalIndex}">
-                            <div>
-                                <div class="food-name">${escapeHtml(getDisplayName(food))} ${food.verified ? '<span style="color: #10b981; font-size: 1rem; cursor: help; margin-left: 4px;" title="Aliment vérifié par un administrateur">✓</span>' : ''} ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: var(--accent-main);"></i>' : ''}</div>
-                                ${food.custom ? '<span style="font-size: 0.85rem; color: var(--accent-ui);">Personnalisé</span>' : ''}
+                        <div class="food-item" data-food-index="${globalIndex}" style="display: flex; align-items: center; gap: var(--space-md);">
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap;">
+                                    <span style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">${escapeHtml(getDisplayName(food))}</span>
+                                    ${food.verified ? '<span style="color: #10b981; font-size: 0.9rem;" title="Vérifié">✓</span>' : ''}
+                                    ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; color: var(--accent-ui);"></i>' : ''}
+                                </div>
+                                <div style="display: flex; align-items: center; gap: var(--space-sm); margin-top: 4px; flex-wrap: wrap; font-size: 0.82rem; color: var(--text-secondary);">
+                                    ${catLabel ? `<span style="background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 99px; font-size: 0.72rem;">${catLabel}</span>` : ''}
+                                    <span><span style="color: var(--accent-protein); font-weight: 600;">${food.protein}g</span> P · <span style="color: var(--accent-carbs); font-weight: 600;">${food.carbs}g</span> G · <span style="color: var(--accent-fat); font-weight: 600;">${food.fat}g</span> L · <span style="font-weight: 600;">${food.calories}</span> kcal</span>
+                                </div>
                             </div>
-                            <div class="food-macros">
-                                <span><div class="label">Prot</div><div class="value" style="color: var(--accent-protein)">${food.protein}g</div></span>
-                                <span><div class="label">Glu</div><div class="value" style="color: var(--accent-carbs)">${food.carbs}g</div></span>
-                                <span><div class="label">Lip</div><div class="value" style="color: var(--accent-fat)">${food.fat}g</div></span>
-                                <span><div class="label">Cal</div><div class="value">${food.calories}</div></span>
+                            <div style="display: flex; gap: 4px; align-items: center; flex-shrink: 0;">
+                                <button class="icon-btn" style="width: 32px; height: 32px; padding: 0;" onclick="toggleFavorite('${escapeJsString(food.name)}')"><i data-lucide="star" style="width: 14px; height: 14px;"></i></button>
+                                ${food.custom ? `<button class="icon-btn" style="width: 32px; height: 32px; padding: 0;" onclick="editCustomFoodByName('${escapeJsString(food.name)}')"><i data-lucide="pencil" style="width: 14px; height: 14px;"></i></button>` : ''}
+                                ${food.custom ? `<button class="delete-btn" style="width: 32px; height: 32px; padding: 0;" onclick="deleteCustomFood('${escapeJsString(food.name)}')"><i data-lucide="trash-2" style="width: 14px; height: 14px;"></i></button>` : ''}
                             </div>
-                            <div style="display: flex; flex-direction: column; gap: var(--space-sm); align-items: flex-end;">
-                                <span style="color: var(--text-secondary); font-size: 0.9rem;">pour ${escapeHtml(food.unit)}</span>
-                                <div style="display: flex; gap: var(--space-sm); align-items: center;">
-                                    <button class="icon-btn" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleFavorite('${escapeJsString(food.name)}')"><i data-lucide="star" style="width: 16px; height: 16px;"></i></button>
-                                    ${food.custom ? `<button class="icon-btn" style="padding: 8px 12px; font-size: 0.85rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" onclick="editCustomFoodByName('${escapeJsString(food.name)}')"><i data-lucide="pencil" style="width: 16px; height: 16px;"></i></button>` : ''}
-                                    ${food.custom ? `<button class="delete-btn" style="font-size: 1.1rem; width: 36px; height: 36px;" onclick="deleteCustomFood('${escapeJsString(food.name)}')"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>` : ''}
-                                </div></div></div>
+                        </div>
                     `;
                 }).join('');
             }
