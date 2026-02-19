@@ -9712,11 +9712,11 @@ Solutions possibles :
                 return;
             }
 
-            // Recharger depuis Firestore pour s'assurer de la cohérence
-            customFoods = await loadCustomFoodsFromFirestore();
-
-            // Reconstruire foodDatabase avec les custom foods
-            foodDatabase = [...baseFoodDatabase, ...customFoods];
+            // Ajouter le nouvel aliment à customFoods et foodDatabase
+            customFoods.push(newFood);
+            if (!foodDatabase.find(f => f.name === newFood.name)) {
+                foodDatabase.push(newFood);
+            }
 
             // Fermer le modal
             closeCreateCustomFoodFromTemplateModal();
