@@ -9446,11 +9446,11 @@ Solutions possibles :
             }
         }
 
-        function removeTemplateFood(foodId) {
+        window.removeTemplateFood = function(foodId) {
             currentTemplateFoods = currentTemplateFoods.filter(f => f.id !== foodId);
             renderTemplateFoodsList();
             updateTemplateMacros();
-        }
+        };
 
         function updateTemplateMacros() {
             const totals = currentTemplateFoods.reduce((acc, food) => {
@@ -10018,14 +10018,15 @@ Solutions possibles :
 
             if (window.innerWidth <= 768) {
                 // Garder seulement le premier repas ouvert sur mobile
-                document.querySelectorAll('.meal-card').forEach((card, index) => {
+                // Cibler uniquement les meal-cards des repas du jour (pas celles des templates)
+                document.querySelectorAll('#meals .meal-card').forEach((card, index) => {
                     if (index > 0) {
                         card.classList.add('mobile-collapsed');
                     }
                 });
             } else {
                 // Sur desktop, tout est ouvert
-                document.querySelectorAll('.meal-card').forEach(card => {
+                document.querySelectorAll('#meals .meal-card').forEach(card => {
                     card.classList.remove('mobile-collapsed');
                 });
             }
@@ -11240,7 +11241,7 @@ Solutions possibles :
                                    style="width: 100%; padding: var(--space-sm); background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary);">
                         </div>
                         <div>
-                            <button type="button" onclick="removeTemplateFood(${index})" class="delete-btn" title="Supprimer">
+                            <button type="button" onclick="removeAdminTemplateFood(${index})" class="delete-btn" title="Supprimer">
                                 <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
                             </button>
                         </div>
@@ -11533,7 +11534,8 @@ Solutions possibles :
             }, 100);
         };
 
-        window.removeTemplateFood = function(index) {
+        window.removeAdminTemplateFood = function(index) {
+            if (!window.templateFoodsData) return;
             window.templateFoodsData.splice(index, 1);
             // Recalculate priorities
             window.templateFoodsData.forEach((food, i) => {
