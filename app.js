@@ -9703,26 +9703,27 @@ Solutions possibles :
                 custom: true
             };
 
-            // Sauvegarder vers Firestore
-            const foodId = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
-            try {
-                await saveCustomFoodToFirestore(foodId, newFood);
-            } catch (error) {
-                console.error('Erreur sauvegarde custom food:', error);
-                return;
-            }
-
-            // Ajouter le nouvel aliment à customFoods et foodDatabase
+            // Ajouter immédiatement à customFoods et foodDatabase (optimistic UI)
             customFoods.push(newFood);
             if (!foodDatabase.find(f => f.name === newFood.name)) {
                 foodDatabase.push(newFood);
             }
 
-            // Fermer le modal
+            // Fermer le modal immédiatement
             closeCreateCustomFoodFromTemplateModal();
 
-            // Afficher confirmation
+            // Afficher confirmation immédiatement
             showToast('<i data-lucide="sparkles" class="icon-inline"></i> Aliment "' + name + '" créé !');
+
+            // Sauvegarder vers Firestore en arrière-plan
+            const foodId = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+            try {
+                await saveCustomFoodToFirestore(foodId, newFood);
+            } catch (error) {
+                console.error('Erreur sauvegarde custom food:', error);
+                // L'aliment est déjà ajouté localement, on informe juste d'un problème de sync
+                showToast('<i data-lucide="cloud-off" class="icon-inline"></i> Aliment créé localement, sync en attente');
+            }
         }
 
         // Variable pour mémoriser le template sélectionné pour l'ajout au journal
