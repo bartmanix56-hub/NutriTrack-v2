@@ -1575,17 +1575,15 @@
                 <div id="macro-warning" style="display: none; grid-column: 1 / -1; margin-bottom: var(--space-md); padding: var(--space-xl); background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--accent-danger); border-radius: var(--radius-lg); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);">
                 </div>
 
-                <!-- CALCULATE BUTTON (inside grid, spans all columns) -->
-                <div style="grid-column: 1 / -1; display: flex; justify-content: center; margin-top: 0;">
-                    <button id="calculate-btn" class="btn" onclick="calculateMacros()" style="background: var(--accent-ui); color: white; padding: var(--space-lg) var(--space-2xl); font-size: 1.1rem; font-weight: 700; border: none; box-shadow: var(--shadow-md); transition: all 0.3s; display: flex; align-items: center; gap: var(--space-sm);">
-                        <i data-lucide="calculator" style="width: 22px; height: 22px;"></i>
-                        Calculer mes Macros
-                    </button>
-                </div>
             </div><!-- Fin grid -->
 
-            <!-- Spacer after grid -->
-            <div style="margin-bottom: var(--space-md);"></div>
+            <!-- CALCULATE BUTTON (outside grid, properly centered) -->
+            <div style="display: flex; justify-content: center; margin-top: var(--space-lg); margin-bottom: var(--space-lg);">
+                <button id="calculate-btn" class="btn" onclick="calculateMacros()" style="background: var(--accent-ui); color: white; padding: var(--space-lg) var(--space-2xl); font-size: 1.1rem; font-weight: 700; border: none; box-shadow: var(--shadow-md); transition: all 0.3s; display: flex; align-items: center; gap: var(--space-sm);">
+                    <i data-lucide="calculator" style="width: 22px; height: 22px;"></i>
+                    Calculer mes Macros
+                </button>
+            </div>
 
             <div class="card" id="results" style="display: none;">
                 <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--text-primary);"><i data-lucide="bar-chart-3" style="width: 28px; height: 28px; color: var(--accent-ui);"></i>Tes Résultats</h2>
