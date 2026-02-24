@@ -1141,6 +1141,55 @@
                                 </div>
                             </div>
 
+                            <!-- Advanced Mode Toggle -->
+                            <div class="wizard-form-group wizard-advanced-toggle-container">
+                                <button class="wizard-advanced-toggle" onclick="wizardToggleAdvancedMode()">
+                                    <span class="wizard-advanced-toggle-text">
+                                        <i data-lucide="sliders" style="width: 18px; height: 18px;"></i>
+                                        <span id="wizard-advanced-toggle-label">Personnaliser les paramètres</span>
+                                    </span>
+                                    <i data-lucide="chevron-down" class="wizard-advanced-chevron" id="wizard-advanced-chevron" style="width: 18px; height: 18px;"></i>
+                                </button>
+                            </div>
+
+                            <!-- Advanced Mode Fields (hidden by default) -->
+                            <div id="wizard-advanced-fields" class="wizard-advanced-fields" style="display: none;">
+                                <!-- Deficit/Surplus -->
+                                <div class="wizard-form-group wizard-advanced-field" id="wizard-deficit-group">
+                                    <label class="wizard-label">
+                                        <i data-lucide="trending-down" style="width: 18px; height: 18px;"></i> Déficit calorique (%)
+                                    </label>
+                                    <input type="number" id="wizard-deficit" class="wizard-input" inputmode="decimal" placeholder="18" min="10" max="30" step="1" value="18">
+                                    <p class="wizard-hint">Recommandé : 15-25% • Min : 10%</p>
+                                </div>
+
+                                <div class="wizard-form-group wizard-advanced-field" id="wizard-surplus-group" style="display: none;">
+                                    <label class="wizard-label">
+                                        <i data-lucide="trending-up" style="width: 18px; height: 18px;"></i> Surplus calorique (%)
+                                    </label>
+                                    <input type="number" id="wizard-surplus" class="wizard-input" inputmode="decimal" placeholder="8" min="5" max="15" step="1" value="8">
+                                    <p class="wizard-hint">Recommandé : 5-10% • Min : 5%</p>
+                                </div>
+
+                                <!-- Protein -->
+                                <div class="wizard-form-group wizard-advanced-field">
+                                    <label class="wizard-label">
+                                        <i data-lucide="beef" style="width: 18px; height: 18px;"></i> Protéines (g/kg)
+                                    </label>
+                                    <input type="number" id="wizard-protein-coeff" class="wizard-input" inputmode="decimal" placeholder="2.0" min="1.5" max="2.2" step="0.1" value="2.0">
+                                    <p class="wizard-hint">Recommandé : 1.8-2.2 g/kg</p>
+                                </div>
+
+                                <!-- Fat -->
+                                <div class="wizard-form-group wizard-advanced-field">
+                                    <label class="wizard-label">
+                                        <i data-lucide="droplet" style="width: 18px; height: 18px;"></i> Lipides (g/kg)
+                                    </label>
+                                    <input type="number" id="wizard-fat-coeff" class="wizard-input" inputmode="decimal" placeholder="0.9" min="0.6" max="1.5" step="0.1" value="0.9">
+                                    <p class="wizard-hint">Recommandé : 0.8-1.0 g/kg</p>
+                                </div>
+                            </div>
+
                             <!-- Mobile Navigation -->
                             <div class="wizard-nav wizard-mobile-only">
                                 <button class="wizard-btn wizard-btn-prev" onclick="wizardGoToStep(1)">

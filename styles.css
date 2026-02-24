@@ -6124,6 +6124,93 @@ button.loading::after {
     line-height: 1.7;
 }
 
+/* Wizard Advanced Mode Toggle */
+.wizard-advanced-toggle-container {
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-lg);
+}
+
+.wizard-advanced-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--space-lg) var(--space-xl);
+    background: var(--bg-tertiary);
+    border: 2px solid transparent;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.wizard-advanced-toggle:hover {
+    background: rgba(16, 185, 129, 0.08);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: var(--text-primary);
+}
+
+.wizard-advanced-toggle.active {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: var(--accent-main);
+    color: var(--accent-main);
+}
+
+.wizard-advanced-toggle-text {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.wizard-advanced-chevron {
+    transition: transform 0.3s ease;
+}
+
+/* Wizard Advanced Fields */
+.wizard-advanced-fields {
+    padding: var(--space-xl);
+    background: rgba(16, 185, 129, 0.05);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    margin-bottom: var(--space-xl);
+    animation: wizardSlideDown 0.3s ease;
+}
+
+@keyframes wizardSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.wizard-advanced-field {
+    margin-bottom: var(--space-xl);
+}
+
+.wizard-advanced-field:last-child {
+    margin-bottom: 0;
+}
+
+.wizard-advanced-fields .wizard-input {
+    background: var(--bg-secondary);
+    border: 2px solid var(--bg-tertiary);
+}
+
+.wizard-advanced-fields .wizard-input:focus {
+    border-color: var(--accent-main);
+    background: var(--bg-secondary);
+}
+
+.wizard-advanced-fields .wizard-hint {
+    font-size: 0.8rem;
+}
+
 /* ===========================================
    DESKTOP CALCULATOR MACRO RINGS
    =========================================== */

@@ -11556,6 +11556,7 @@ Solutions possibles :
         // ===== CALCULATOR WIZARD =====
         let wizardCurrentStep = 1;
         const WIZARD_TOTAL_STEPS = 3;
+        let wizardAdvancedModeOpen = false;
 
         // Initialize wizard - called on page load
         window.initCalculatorWizard = function() {
@@ -11670,6 +11671,53 @@ Solutions possibles :
                     origEl.value = wizardEl.value;
                 }
             });
+
+            // Sync advanced mode fields if they have values
+            if (wizardAdvancedModeOpen) {
+                const activeGoalBtn = document.querySelector('.wizard-goal-btn.active');
+                const currentGoal = activeGoalBtn?.dataset.goal || 'cut';
+
+                // Sync deficit/surplus based on goal
+                if (currentGoal === 'cut') {
+                    const wizDeficit = document.getElementById('wizard-deficit');
+                    const origDeficit = document.getElementById('deficit');
+                    if (wizDeficit && origDeficit && wizDeficit.value) {
+                        origDeficit.value = wizDeficit.value;
+                    }
+                } else if (currentGoal === 'bulk') {
+                    const wizSurplus = document.getElementById('wizard-surplus');
+                    const origSurplus = document.getElementById('surplus');
+                    if (wizSurplus && origSurplus && wizSurplus.value) {
+                        origSurplus.value = wizSurplus.value;
+                    }
+                }
+
+                // Sync protein coefficient based on goal
+                const wizProtein = document.getElementById('wizard-protein-coeff');
+                if (wizProtein && wizProtein.value) {
+                    let proteinTargetId = 'proteinCoeff'; // default for cut
+                    if (currentGoal === 'maintain') proteinTargetId = 'proteinCoeffMaintain';
+                    else if (currentGoal === 'bulk') proteinTargetId = 'proteinCoeffBulk';
+
+                    const origProtein = document.getElementById(proteinTargetId);
+                    if (origProtein) {
+                        origProtein.value = wizProtein.value;
+                    }
+                }
+
+                // Sync fat coefficient based on goal
+                const wizFat = document.getElementById('wizard-fat-coeff');
+                if (wizFat && wizFat.value) {
+                    let fatTargetId = 'fatCoeff'; // default for cut
+                    if (currentGoal === 'maintain') fatTargetId = 'fatCoeffMaintain';
+                    else if (currentGoal === 'bulk') fatTargetId = 'fatCoeffBulk';
+
+                    const origFat = document.getElementById(fatTargetId);
+                    if (origFat) {
+                        origFat.value = wizFat.value;
+                    }
+                }
+            }
         }
 
         // Check if we're on desktop (>768px)
@@ -11852,6 +11900,11 @@ Solutions possibles :
             // Update lucide icons
             if (typeof updateIcons === 'function') updateIcons();
 
+            // Update advanced fields visibility if open
+            if (wizardAdvancedModeOpen) {
+                updateWizardAdvancedFields();
+            }
+
             // Call existing selectGoal function
             if (typeof selectGoal === 'function') {
                 selectGoal(goal);
@@ -11869,6 +11922,59 @@ Solutions possibles :
                 window.selectPace(pace, true); // skipCalculate = true
             }
         };
+
+        // Toggle advanced mode in wizard
+        window.wizardToggleAdvancedMode = function() {
+            wizardAdvancedModeOpen = !wizardAdvancedModeOpen;
+
+            const fieldsContainer = document.getElementById('wizard-advanced-fields');
+            const toggleLabel = document.getElementById('wizard-advanced-toggle-label');
+            const chevron = document.getElementById('wizard-advanced-chevron');
+            const toggleBtn = document.querySelector('.wizard-advanced-toggle');
+
+            if (fieldsContainer) {
+                if (wizardAdvancedModeOpen) {
+                    fieldsContainer.style.display = 'block';
+                    if (toggleLabel) toggleLabel.textContent = 'Masquer les paramètres';
+                    if (chevron) chevron.style.transform = 'rotate(180deg)';
+                    if (toggleBtn) toggleBtn.classList.add('active');
+
+                    // Show deficit or surplus based on current goal
+                    updateWizardAdvancedFields();
+                } else {
+                    fieldsContainer.style.display = 'none';
+                    if (toggleLabel) toggleLabel.textContent = 'Personnaliser les paramètres';
+                    if (chevron) chevron.style.transform = 'rotate(0deg)';
+                    if (toggleBtn) toggleBtn.classList.remove('active');
+                }
+            }
+
+            // Update lucide icons
+            if (typeof updateIcons === 'function') updateIcons();
+        };
+
+        // Update which advanced fields are visible based on goal
+        function updateWizardAdvancedFields() {
+            const activeGoalBtn = document.querySelector('.wizard-goal-btn.active');
+            const currentGoal = activeGoalBtn?.dataset.goal || 'cut';
+
+            const deficitGroup = document.getElementById('wizard-deficit-group');
+            const surplusGroup = document.getElementById('wizard-surplus-group');
+
+            if (deficitGroup && surplusGroup) {
+                if (currentGoal === 'cut') {
+                    deficitGroup.style.display = 'block';
+                    surplusGroup.style.display = 'none';
+                } else if (currentGoal === 'bulk') {
+                    deficitGroup.style.display = 'none';
+                    surplusGroup.style.display = 'block';
+                } else {
+                    // maintain - hide both
+                    deficitGroup.style.display = 'none';
+                    surplusGroup.style.display = 'none';
+                }
+            }
+        }
 
         // Update wizard results panel with calculated values
         // Exposed globally so it can be called after loadCalcSettings
