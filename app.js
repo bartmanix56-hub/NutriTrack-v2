@@ -6167,6 +6167,7 @@ Solutions possibles :
                 if (!foodDatabase.find(f => f.name === food.name))  { foodDatabase.push(food); }
             });
         }
+        window.loadCustomFoods = loadCustomFoods;
 
         function openAddFoodModal() {
             document.getElementById('addFoodModal').classList.add('active');
@@ -8258,12 +8259,12 @@ Solutions possibles :
             // Charger toutes les données depuis Firestore (via variables globales)
             // Note: customFoods, weeklyPlan, trackingData, favoriteFoods sont déjà en mémoire
             // allDailyMeals et profile aussi
-            const exportCustomFoods = window.customFoods || [];
-            const exportAllDailyMeals = window.allDailyMeals || {};
-            const exportWeeklyPlan = window.weeklyPlan || [];
-            const exportTrackingData = window.trackingData || [];
+            const exportCustomFoods = customFoods || [];
+            const exportAllDailyMeals = allDailyMeals || {};
+            const exportWeeklyPlan = weeklyPlan || [];
+            const exportTrackingData = trackingData || [];
             const exportProfile = await loadProfileFromFirestore();
-            const exportFavoriteFoods = window.favoriteFoods || [];
+            const exportFavoriteFoods = favoriteFoods || [];
             const exportCalcSettings = await loadCalculatorSettingsFromFirestore();
             const exportSettings = await loadCalcSettingsFromFirestore();
 
@@ -8487,6 +8488,13 @@ Solutions possibles :
             const aliases = await loadFoodAliasesFromFirestore();
             foodAliases = aliases;
         }
+
+        // Expose load functions to window so admin.js can call them after DataService init
+        window.loadMealTemplates = loadMealTemplates;
+        window.loadFavoriteFoods = loadFavoriteFoods;
+        window.loadWeeklyPlan = loadWeeklyPlan;
+        window.loadClosedDays = loadClosedDays;
+        window.loadFoodAliases = loadFoodAliases;
 
         function saveMealAsTemplate(mealType) {
             const dateKey = getCurrentDateKey();
