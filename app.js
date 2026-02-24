@@ -11932,12 +11932,21 @@ Solutions possibles :
             const chevron = document.getElementById('wizard-advanced-chevron');
             const toggleBtn = document.querySelector('.wizard-advanced-toggle');
 
+            // Pace selectors (guided mode)
+            const paceDeficit = document.getElementById('wizard-pace-deficit');
+            const paceMaintain = document.getElementById('wizard-pace-maintain');
+            const paceLabel = document.getElementById('wizard-pace-label');
+            const paceFormGroup = paceLabel?.closest('.wizard-form-group');
+
             if (fieldsContainer) {
                 if (wizardAdvancedModeOpen) {
                     fieldsContainer.style.display = 'block';
-                    if (toggleLabel) toggleLabel.textContent = 'Masquer les paramètres';
+                    if (toggleLabel) toggleLabel.textContent = 'Revenir au mode guidé';
                     if (chevron) chevron.style.transform = 'rotate(180deg)';
                     if (toggleBtn) toggleBtn.classList.add('active');
+
+                    // Hide pace selectors (guided mode)
+                    if (paceFormGroup) paceFormGroup.style.display = 'none';
 
                     // Show deficit or surplus based on current goal
                     updateWizardAdvancedFields();
@@ -11946,6 +11955,9 @@ Solutions possibles :
                     if (toggleLabel) toggleLabel.textContent = 'Personnaliser les paramètres';
                     if (chevron) chevron.style.transform = 'rotate(0deg)';
                     if (toggleBtn) toggleBtn.classList.remove('active');
+
+                    // Show pace selectors (guided mode)
+                    if (paceFormGroup) paceFormGroup.style.display = 'block';
                 }
             }
 
