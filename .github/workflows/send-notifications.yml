@@ -1,0 +1,32 @@
+name: Send Scheduled Notifications
+
+on:
+  schedule:
+    # Toutes les 5 minutes (minimum GitHub Actions)
+    - cron: '*/5 * * * *'
+  workflow_dispatch: # Permet de lancer manuellement pour tester
+
+jobs:
+  send-notifications:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd scripts
+          npm install
+
+      - name: Send notifications
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          cd scripts
+          node send-notifications.js
