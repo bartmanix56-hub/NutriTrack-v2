@@ -160,7 +160,7 @@
             line-height: 1.6;
             touch-action: manipulation;
             overflow-x: hidden;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
@@ -184,10 +184,6 @@
             padding: 0;
             position: relative;
             z-index: 1;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
         }
 
         /* Zoom Desktop pour une meilleure densité */
@@ -248,7 +244,6 @@
             gap: 0;
             flex: 1;
             min-height: 0;
-            overflow: hidden;
             animation: fadeIn 0.8s ease 0.2s both;
         }
 
@@ -261,7 +256,9 @@
             flex-direction: column;
             gap: var(--space-sm);
             padding: var(--space-md);
-            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
             overflow-y: auto;
             transition: width 0.3s ease, padding 0.3s ease;
         }
@@ -415,11 +412,6 @@
             flex: 1;
             padding: var(--space-2xl);
             min-width: 0; /* Important for flex shrinking */
-            overflow-y: auto; /* Enable vertical scrolling */
-            min-height: 0; /* Allow flex children to shrink properly */
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
         }
 
         /* Tab Content */
@@ -429,10 +421,7 @@
             position: relative;
         }
 
-        .tab-content.active  {
-            display: block;
-            flex: 1; /* Take available space in flex container */
-        }
+        .tab-content.active  { display: block; }
 
         /* Cards */
         .card {
@@ -1891,7 +1880,6 @@
         @media (max-width: 768px) {
             .app-layout {
                 flex-direction: column;
-                overflow: visible;
                 animation: none !important; /* CRITICAL: Remove animation that creates transform context */
                 /* Removed position: relative - breaks position: fixed for sidebar */
             }
@@ -1903,7 +1891,6 @@
             }
 
             body {
-                height: auto;
                 min-height: 100vh;
                 /* CRITICAL: Combine navbar space (90px) with safe area inset */
                 padding-bottom: max(90px, calc(90px + env(safe-area-inset-bottom))) !important;
@@ -3088,7 +3075,6 @@
         @media (min-width: 769px) {
             .footer-desktop {
                 display: block !important;
-                margin-top: auto;
             }
             .footer-mobile {
                 display: none !important;
