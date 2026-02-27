@@ -1469,7 +1469,8 @@
         };
 
         // Sélection du rythme en mode guidé
-        window.selectPace = async function(pace, skipCalculate = false) {
+        // isLoading = true : ne pas écraser les champs (on charge depuis Firestore)
+        window.selectPace = async function(pace, skipCalculate = false, isLoading = false) {
             // Mise à jour visuelle des boutons (cibler seulement .pace-btn, pas wizard-pace-btn)
             document.querySelectorAll('.pace-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -1532,30 +1533,33 @@
             }
 
             // Appliquer les valeurs selon l'objectif actuel
-            if (currentGoal === 'cut') {
-                const deficitInput = document.getElementById('deficit');
-                const proteinInput = document.getElementById('proteinCoeff');
-                const fatInput = document.getElementById('fatCoeff');
+            // Skip field filling si isLoading = true (valeurs déjà chargées depuis Firestore)
+            if (!isLoading) {
+                if (currentGoal === 'cut') {
+                    const deficitInput = document.getElementById('deficit');
+                    const proteinInput = document.getElementById('proteinCoeff');
+                    const fatInput = document.getElementById('fatCoeff');
 
-                if (deficitInput) deficitInput.value = settings.deficit;
-                if (proteinInput) proteinInput.value = settings.protein;
-                if (fatInput) fatInput.value = settings.fat;
+                    if (deficitInput) deficitInput.value = settings.deficit;
+                    if (proteinInput) proteinInput.value = settings.protein;
+                    if (fatInput) fatInput.value = settings.fat;
 
-            } else if (currentGoal === 'bulk') {
-                const surplusInput = document.getElementById('surplus');
-                const proteinInput = document.getElementById('proteinCoeffBulk');
-                const fatInput = document.getElementById('fatCoeffBulk');
+                } else if (currentGoal === 'bulk') {
+                    const surplusInput = document.getElementById('surplus');
+                    const proteinInput = document.getElementById('proteinCoeffBulk');
+                    const fatInput = document.getElementById('fatCoeffBulk');
 
-                if (surplusInput) surplusInput.value = settings.surplus;
-                if (proteinInput) proteinInput.value = settings.protein;
-                if (fatInput) fatInput.value = settings.fat;
+                    if (surplusInput) surplusInput.value = settings.surplus;
+                    if (proteinInput) proteinInput.value = settings.protein;
+                    if (fatInput) fatInput.value = settings.fat;
 
-            } else if (currentGoal === 'maintain') {
-                const proteinInput = document.getElementById('proteinCoeffMaintain');
-                const fatInput = document.getElementById('fatCoeffMaintain');
+                } else if (currentGoal === 'maintain') {
+                    const proteinInput = document.getElementById('proteinCoeffMaintain');
+                    const fatInput = document.getElementById('fatCoeffMaintain');
 
-                if (proteinInput) proteinInput.value = settings.protein;
-                if (fatInput) fatInput.value = settings.fat;
+                    if (proteinInput) proteinInput.value = settings.protein;
+                    if (fatInput) fatInput.value = settings.fat;
+                }
             }
 
             // Sauvegarder le rythme sélectionné vers Firestore
@@ -10213,8 +10217,9 @@ Solutions possibles :
             // Restaurer le rythme depuis Firestore (avec fallback localStorage)
             const savedPace = settings.selectedPace || localStorage.getItem('selectedPace');
             if (savedPace && typeof window.selectPace === 'function') {
-                // Appeler selectPace pour remplir les champs SANS déclencher calculateMacros
-                window.selectPace(savedPace, true); // true = skipCalculate
+                // Appeler selectPace pour mettre à jour l'UI SANS écraser les valeurs chargées
+                // skipCalculate = true, isLoading = true (ne pas écraser les champs)
+                window.selectPace(savedPace, true, true);
             }
 
             // Load saved macro targets and display results
