@@ -5312,7 +5312,7 @@ Solutions possibles :
             }
 
             // Attach save listeners to all objective inputs
-            const inputsToSave = ['deficit', 'surplus', 'proteinCoeff', 'fatCoeff', 'proteinCoeffBulk', 'fatCoeffBulk', 'activity', 'weight', 'bodyFat'];
+            const inputsToSave = ['deficit', 'surplus', 'proteinCoeff', 'fatCoeff', 'proteinCoeffMaintain', 'fatCoeffMaintain', 'proteinCoeffBulk', 'fatCoeffBulk', 'activity', 'weight', 'bodyFat'];
             inputsToSave.forEach(id => {
                 const input = document.getElementById(id);
                 if (input) { input.addEventListener('change', function() {
