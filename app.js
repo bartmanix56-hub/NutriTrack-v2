@@ -1340,7 +1340,7 @@
             const tabContent = document.getElementById(tab);
             if (tabContent)  { tabContent.classList.add('active'); }
 
-            if (tab === 'home') { if (typeof updateHomeTab === 'function') updateHomeTab(); }
+            if (tab === 'home') { if (typeof updateDashboard === 'function') updateDashboard(); }
             else if (tab === 'planner')  {
                 // Ne pas réinitialiser currentWeekStart pour garder la semaine sélectionnée par l'utilisateur
                 // currentWeekStart garde sa valeur actuelle ou celle sauvegardée
@@ -1368,6 +1368,11 @@
                             }, 200);
                         }
                     }
+                }, 100);
+            } else {
+                // Si on est sur home, mettre à jour le dashboard
+                setTimeout(() => {
+                    if (typeof updateDashboard === 'function') updateDashboard();
                 }, 100);
             }
         });
@@ -4441,6 +4446,9 @@ Solutions possibles :
 
             // Vérifier si objectifs atteints pour notification
             checkGoalsReached(totals);
+
+            // Mettre à jour le dashboard
+            if (typeof updateDashboard === 'function') updateDashboard();
         }
 
         // Vérifier si les objectifs sont atteints et envoyer notification
@@ -4525,6 +4533,157 @@ Solutions possibles :
             // Show widget
             widget.style.display = 'block';
         }
+
+        // ===== DASHBOARD HOME =====
+
+        /**
+         * Met à jour le dashboard de la page d'accueil avec les données du jour
+         */
+        function updateDashboard() {
+            const targets = macroTargets;
+
+            // Calculer les totaux du jour
+            let totals = { protein: 0, carbs: 0, fat: 0, calories: 0 };
+            ['breakfast', 'lunch', 'snack', 'dinner'].forEach(mealType => {
+                const foods = dailyMeals[mealType]?.foods || [];
+                foods.forEach(food => {
+                    const multiplier = (food.quantity || 100) / 100;
+                    totals.protein += (food.protein || 0) * multiplier;
+                    totals.carbs += (food.carbs || 0) * multiplier;
+                    totals.fat += (food.fat || 0) * multiplier;
+                    totals.calories += (food.calories || 0) * multiplier;
+                });
+            });
+
+            // Mettre à jour la date
+            const dateEl = document.getElementById('dashboard-date-text');
+            if (dateEl) {
+                const today = new Date();
+                const options = { weekday: 'long', day: 'numeric', month: 'long' };
+                const dateStr = today.toLocaleDateString('fr-FR', options);
+                dateEl.textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+            }
+
+            // Mettre à jour les macros
+            const updateMacro = (prefix, current, target, color) => {
+                const currentEl = document.getElementById(`dash-${prefix}-current`);
+                const targetEl = document.getElementById(`dash-${prefix}-target`);
+                const barEl = document.getElementById(`dash-${prefix}-bar`);
+
+                if (currentEl) currentEl.textContent = Math.round(current);
+                if (targetEl) targetEl.textContent = target > 0 ? Math.round(target) : '--';
+                if (barEl) {
+                    const pct = target > 0 ? Math.min(100, (current / target) * 100) : 0;
+                    barEl.style.width = pct + '%';
+                }
+            };
+
+            updateMacro('cal', totals.calories, targets.calories);
+            updateMacro('prot', totals.protein, targets.protein);
+            updateMacro('carbs', totals.carbs, targets.carbs);
+            updateMacro('fat', totals.fat, targets.fat);
+
+            // Mettre à jour le message contextuel
+            const messageEl = document.getElementById('dashboard-message');
+            const messageTextEl = document.getElementById('dashboard-message-text');
+            if (messageEl && messageTextEl) {
+                messageEl.classList.remove('warning', 'success', 'danger');
+
+                if (!targets.calories || targets.calories === 0) {
+                    messageTextEl.textContent = "Configure tes objectifs dans le calculateur pour commencer !";
+                    messageEl.querySelector('i').setAttribute('data-lucide', 'info');
+                } else {
+                    const remaining = targets.calories - totals.calories;
+                    const pct = (totals.calories / targets.calories) * 100;
+
+                    if (pct >= 95 && pct <= 105) {
+                        messageTextEl.textContent = "Objectif atteint ! Tu as parfaitement géré ta journée.";
+                        messageEl.classList.add('success');
+                        messageEl.querySelector('i').setAttribute('data-lucide', 'check-circle');
+                    } else if (pct > 105) {
+                        const over = Math.round(totals.calories - targets.calories);
+                        messageTextEl.textContent = `Tu as dépassé de ${over} kcal. Pas de panique, demain est un nouveau jour !`;
+                        messageEl.classList.add('warning');
+                        messageEl.querySelector('i').setAttribute('data-lucide', 'alert-triangle');
+                    } else if (remaining > 0) {
+                        messageTextEl.textContent = `Il te reste ${Math.round(remaining)} kcal pour atteindre ton objectif.`;
+                        messageEl.querySelector('i').setAttribute('data-lucide', 'zap');
+                    } else {
+                        messageTextEl.textContent = `Continue comme ça !`;
+                        messageEl.querySelector('i').setAttribute('data-lucide', 'zap');
+                    }
+                }
+                updateIcons(messageEl);
+            }
+
+            // Mettre à jour le statut
+            const statusEl = document.getElementById('dashboard-status');
+            const statusTextEl = document.getElementById('dashboard-status-text');
+            if (statusEl && statusTextEl) {
+                const pct = targets.calories > 0 ? (totals.calories / targets.calories) * 100 : 0;
+                if (pct >= 95 && pct <= 105) {
+                    statusTextEl.textContent = "Objectif atteint";
+                    statusEl.classList.add('completed');
+                } else if (totals.calories > 0) {
+                    statusTextEl.textContent = "En cours";
+                    statusEl.classList.remove('completed');
+                } else {
+                    statusTextEl.textContent = "Pas encore commencé";
+                    statusEl.classList.remove('completed');
+                }
+            }
+
+            // Mettre à jour les repas du jour
+            const mealNames = {
+                breakfast: { label: 'Petit-déjeuner', id: 'breakfast' },
+                lunch: { label: 'Déjeuner', id: 'lunch' },
+                snack: { label: 'Collation', id: 'snack' },
+                dinner: { label: 'Dîner', id: 'dinner' }
+            };
+
+            Object.keys(mealNames).forEach(mealType => {
+                const foods = dailyMeals[mealType]?.foods || [];
+                const mealRow = document.getElementById(`dash-meal-${mealType}`);
+                const detailEl = document.getElementById(`dash-${mealType}-detail`);
+                const calEl = document.getElementById(`dash-${mealType}-cal`);
+
+                if (!mealRow) return;
+
+                let mealCal = 0;
+                foods.forEach(food => {
+                    const multiplier = (food.quantity || 100) / 100;
+                    mealCal += (food.calories || 0) * multiplier;
+                });
+
+                if (foods.length > 0) {
+                    mealRow.classList.add('has-food');
+                    if (detailEl) {
+                        const foodNames = foods.slice(0, 2).map(f => f.name).join(', ');
+                        detailEl.textContent = foods.length > 2 ? foodNames + ` +${foods.length - 2}` : foodNames;
+                    }
+                    if (calEl) calEl.textContent = Math.round(mealCal);
+                } else {
+                    mealRow.classList.remove('has-food');
+                    if (detailEl) detailEl.textContent = 'Aucun aliment';
+                    if (calEl) calEl.textContent = '--';
+                }
+
+                // Ajouter l'événement click pour naviguer vers le repas
+                mealRow.onclick = () => {
+                    switchToTab('meals');
+                    setTimeout(() => {
+                        const mealCard = document.querySelector(`[data-meal="${mealType}"]`);
+                        if (mealCard) mealCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                };
+            });
+
+            // Mettre à jour les icônes Lucide
+            updateIcons();
+        }
+
+        // Exposer globalement
+        window.updateDashboard = updateDashboard;
 
         // ===== FEEDBACK ÉMOTIONNEL =====
 

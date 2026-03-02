@@ -713,90 +713,186 @@
         <!-- HOME TAB -->
         <div id="home" class="tab-content active">
 
-            <!-- Hero Section -->
-            <section class="home-hero">
+            <!-- ========== DASHBOARD ========== -->
+            <div class="dashboard">
 
-                <div class="home-hero-grid">
-                    <!-- Text with branding -->
-                    <div class="home-hero-text">
-                        <div class="home-hero-brand">
-                            <img src="logo.svg" alt="NutriTrack" class="home-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <span class="home-logo-fallback"><i data-lucide="target"></i></span>
-                            <span class="home-brand-name">NutriTrack</span>
+                <!-- Section 1: Résumé du jour -->
+                <section class="dashboard-summary">
+                    <div class="dashboard-header">
+                        <div class="dashboard-date">
+                            <i data-lucide="calendar" style="width: 20px; height: 20px;"></i>
+                            <span id="dashboard-date-text">Aujourd'hui</span>
                         </div>
-                        <h1>Mange mieux,<br><span>simplement.</span></h1>
-                        <p>Calcule tes besoins, suis tes repas et visualise ta progression. Tout est synchronisé entre tes appareils.</p>
-                        <div class="home-hero-buttons">
-                            <button class="home-btn-primary" onclick="switchToTab('calculator')">
-                                <i data-lucide="play"></i>
-                                Commencer
-                            </button>
-                            <button class="home-btn-ghost" onclick="switchToTab('meals')">
-                                <i data-lucide="utensils"></i>
-                                Entrer un repas
-                            </button>
+                        <div class="dashboard-status" id="dashboard-status">
+                            <span class="status-dot"></span>
+                            <span id="dashboard-status-text">En cours</span>
                         </div>
                     </div>
 
-                    <!-- 3D Food Image -->
-                    <div class="home-image-scene" id="home-image-scene">
-                        <div class="home-image-container" id="home-image-container">
-                            <!-- Info cards -->
-                            <div class="home-info home-info-1">
-                                <div class="home-info-icon"><i data-lucide="flame"></i></div>
-                                <div class="home-info-text">
-                                    <span class="home-info-value">1 850 kcal</span>
-                                    <span class="home-info-label">Objectif du jour</span>
-                                </div>
-                            </div>
-                            <div class="home-info home-info-2">
-                                <div class="home-info-icon"><i data-lucide="beef"></i></div>
-                                <div class="home-info-text">
-                                    <span class="home-info-value">142g</span>
-                                    <span class="home-info-label">Protéines</span>
-                                </div>
-                            </div>
-                            <div class="home-info home-info-3">
-                                <div class="home-info-icon"><i data-lucide="wheat"></i></div>
-                                <div class="home-info-text">
-                                    <span class="home-info-value">185g</span>
-                                    <span class="home-info-label">Glucides</span>
-                                </div>
-                            </div>
+                    <!-- Message contextuel -->
+                    <div class="dashboard-message" id="dashboard-message">
+                        <i data-lucide="zap" style="width: 18px; height: 18px;"></i>
+                        <span id="dashboard-message-text">Configure tes objectifs dans le calculateur pour commencer !</span>
+                    </div>
 
-                            <!-- Food bowl image (save your PNG as food-bowl.png) -->
-                            <img src="food-bowl.png"
-                                 alt="Healthy food bowl"
-                                 class="home-food-image"
-                                 loading="eager">
+                    <!-- Grille des macros -->
+                    <div class="dashboard-macros">
+                        <!-- Calories -->
+                        <div class="macro-card macro-calories">
+                            <div class="macro-icon">
+                                <i data-lucide="flame"></i>
+                            </div>
+                            <div class="macro-content">
+                                <div class="macro-values">
+                                    <span class="macro-current" id="dash-cal-current">0</span>
+                                    <span class="macro-separator">/</span>
+                                    <span class="macro-target" id="dash-cal-target">--</span>
+                                </div>
+                                <span class="macro-label">kcal</span>
+                                <div class="macro-progress">
+                                    <div class="macro-progress-bar" id="dash-cal-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Protéines -->
+                        <div class="macro-card macro-protein">
+                            <div class="macro-icon">
+                                <i data-lucide="beef"></i>
+                            </div>
+                            <div class="macro-content">
+                                <div class="macro-values">
+                                    <span class="macro-current" id="dash-prot-current">0</span>
+                                    <span class="macro-separator">/</span>
+                                    <span class="macro-target" id="dash-prot-target">--</span>
+                                </div>
+                                <span class="macro-label">Protéines (g)</span>
+                                <div class="macro-progress">
+                                    <div class="macro-progress-bar" id="dash-prot-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Glucides -->
+                        <div class="macro-card macro-carbs">
+                            <div class="macro-icon">
+                                <i data-lucide="wheat"></i>
+                            </div>
+                            <div class="macro-content">
+                                <div class="macro-values">
+                                    <span class="macro-current" id="dash-carbs-current">0</span>
+                                    <span class="macro-separator">/</span>
+                                    <span class="macro-target" id="dash-carbs-target">--</span>
+                                </div>
+                                <span class="macro-label">Glucides (g)</span>
+                                <div class="macro-progress">
+                                    <div class="macro-progress-bar" id="dash-carbs-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lipides -->
+                        <div class="macro-card macro-fat">
+                            <div class="macro-icon">
+                                <i data-lucide="droplet"></i>
+                            </div>
+                            <div class="macro-content">
+                                <div class="macro-values">
+                                    <span class="macro-current" id="dash-fat-current">0</span>
+                                    <span class="macro-separator">/</span>
+                                    <span class="macro-target" id="dash-fat-target">--</span>
+                                </div>
+                                <span class="macro-label">Lipides (g)</span>
+                                <div class="macro-progress">
+                                    <div class="macro-progress-bar" id="dash-fat-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Features -->
-            <div class="home-features">
-                <div class="home-feature" onclick="switchToTab('calculator')">
-                    <div class="home-feature-icon"><i data-lucide="target"></i></div>
-                    <h3>Calculateur</h3>
-                    <p>Calcule tes macros idéales</p>
-                </div>
-                <div class="home-feature" onclick="switchToTab('meals')">
-                    <div class="home-feature-icon"><i data-lucide="utensils"></i></div>
-                    <h3>Repas</h3>
-                    <p>Note ce que tu manges</p>
-                </div>
-                <div class="home-feature" onclick="switchToTab('tracking')">
-                    <div class="home-feature-icon"><i data-lucide="trending-up"></i></div>
-                    <h3>Progression</h3>
-                    <p>Suis ton évolution</p>
-                </div>
-                <div class="home-feature" onclick="switchToTab('planner')">
-                    <div class="home-feature-icon"><i data-lucide="calendar"></i></div>
-                    <h3>Planning</h3>
-                    <p>Visualise ta semaine</p>
-                </div>
+                <!-- Section 2: Actions rapides -->
+                <section class="dashboard-actions">
+                    <button class="action-btn action-primary" onclick="switchToTab('meals')">
+                        <i data-lucide="plus"></i>
+                        <span>Ajouter un repas</span>
+                    </button>
+                    <button class="action-btn action-secondary" onclick="switchToTab('meals'); setTimeout(() => { if(typeof openBarcodeScanner === 'function') openBarcodeScanner(); }, 300);">
+                        <i data-lucide="scan-barcode"></i>
+                        <span>Scanner</span>
+                    </button>
+                    <button class="action-btn action-secondary" onclick="switchToTab('tracking')">
+                        <i data-lucide="line-chart"></i>
+                        <span>Suivi</span>
+                    </button>
+                    <button class="action-btn action-secondary" onclick="switchToTab('calculator')">
+                        <i data-lucide="calculator"></i>
+                        <span>Objectifs</span>
+                    </button>
+                </section>
+
+                <!-- Section 3: Repas du jour -->
+                <section class="dashboard-meals">
+                    <div class="dashboard-section-header">
+                        <h3><i data-lucide="utensils" style="width: 20px; height: 20px;"></i> Repas du jour</h3>
+                        <button class="dashboard-link" onclick="switchToTab('meals')">
+                            Voir tout <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
+                        </button>
+                    </div>
+
+                    <div class="dashboard-meals-list" id="dashboard-meals-list">
+                        <!-- Petit-déjeuner -->
+                        <div class="meal-row" id="dash-meal-breakfast">
+                            <div class="meal-row-icon breakfast">
+                                <i data-lucide="sunrise"></i>
+                            </div>
+                            <div class="meal-row-content">
+                                <span class="meal-row-name">Petit-déjeuner</span>
+                                <span class="meal-row-detail" id="dash-breakfast-detail">Aucun aliment</span>
+                            </div>
+                            <div class="meal-row-calories" id="dash-breakfast-cal">--</div>
+                        </div>
+
+                        <!-- Déjeuner -->
+                        <div class="meal-row" id="dash-meal-lunch">
+                            <div class="meal-row-icon lunch">
+                                <i data-lucide="sun"></i>
+                            </div>
+                            <div class="meal-row-content">
+                                <span class="meal-row-name">Déjeuner</span>
+                                <span class="meal-row-detail" id="dash-lunch-detail">Aucun aliment</span>
+                            </div>
+                            <div class="meal-row-calories" id="dash-lunch-cal">--</div>
+                        </div>
+
+                        <!-- Collation -->
+                        <div class="meal-row" id="dash-meal-snack">
+                            <div class="meal-row-icon snack">
+                                <i data-lucide="cookie"></i>
+                            </div>
+                            <div class="meal-row-content">
+                                <span class="meal-row-name">Collation</span>
+                                <span class="meal-row-detail" id="dash-snack-detail">Aucun aliment</span>
+                            </div>
+                            <div class="meal-row-calories" id="dash-snack-cal">--</div>
+                        </div>
+
+                        <!-- Dîner -->
+                        <div class="meal-row" id="dash-meal-dinner">
+                            <div class="meal-row-icon dinner">
+                                <i data-lucide="moon"></i>
+                            </div>
+                            <div class="meal-row-content">
+                                <span class="meal-row-name">Dîner</span>
+                                <span class="meal-row-detail" id="dash-dinner-detail">Aucun aliment</span>
+                            </div>
+                            <div class="meal-row-calories" id="dash-dinner-cal">--</div>
+                        </div>
+                    </div>
+                </section>
+
             </div>
+            <!-- End Dashboard -->
 
             <!-- Nutrition Tips Carousel -->
             <div class="home-tips-section" id="home-tips-carousel">
@@ -857,42 +953,6 @@
 
                 // Auto-rotate every 8 seconds
                 setInterval(nextTip, 8000);
-            })();
-            </script>
-
-            <!-- 3D Tilt Script -->
-            <script>
-            (function() {
-                const scene = document.getElementById('home-image-scene');
-                const container = document.getElementById('home-image-container');
-                if (!scene || !container) return;
-
-                let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
-
-                function handleMove(clientX, clientY) {
-                    const rect = scene.getBoundingClientRect();
-                    targetX = ((clientX - rect.left) / rect.width - 0.5) * 2;
-                    targetY = ((clientY - rect.top) / rect.height - 0.5) * 2;
-                }
-
-                scene.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
-                scene.addEventListener('touchmove', (e) => {
-                    if (e.touches.length === 1) {
-                        e.preventDefault();
-                        handleMove(e.touches[0].clientX, e.touches[0].clientY);
-                    }
-                }, { passive: false });
-
-                scene.addEventListener('mouseleave', () => { targetX = 0; targetY = 0; });
-                scene.addEventListener('touchend', () => { targetX = 0; targetY = 0; });
-
-                function animate() {
-                    currentX += (targetX - currentX) * 0.08;
-                    currentY += (targetY - currentY) * 0.08;
-                    container.style.transform = `rotateY(${currentX * 12}deg) rotateX(${-currentY * 10}deg)`;
-                    requestAnimationFrame(animate);
-                }
-                animate();
             })();
             </script>
 
