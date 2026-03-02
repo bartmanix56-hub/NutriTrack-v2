@@ -9470,12 +9470,14 @@ Solutions possibles :
                 acc.carbs += (food.carbs * food.quantity) / 100;
                 acc.fat += (food.fat * food.quantity) / 100;
                 acc.calories += (food.calories * food.quantity) / 100;
+                acc.grams += food.quantity;
                 return acc;
-            }, { protein: 0, carbs: 0, fat: 0, calories: 0 });
+            }, { protein: 0, carbs: 0, fat: 0, calories: 0, grams: 0 });
 
             document.getElementById('template-protein-total').textContent = Math.round(totals.protein) + 'g';
             document.getElementById('template-carbs-total').textContent = Math.round(totals.carbs) + 'g';
             document.getElementById('template-fat-total').textContent = Math.round(totals.fat) + 'g';
+            document.getElementById('template-grams-total').textContent = Math.round(totals.grams) + 'g';
             document.getElementById('template-cal-total').textContent = Math.round(totals.calories) + ' kcal';
         }
 
@@ -9827,8 +9829,9 @@ Solutions possibles :
                     acc.carbs += (food.carbs * food.quantity) / 100;
                     acc.fat += (food.fat * food.quantity) / 100;
                     acc.calories += (food.calories * food.quantity) / 100;
+                    acc.grams += food.quantity;
                     return acc;
-                }, { protein: 0, carbs: 0, fat: 0, calories: 0 });
+                }, { protein: 0, carbs: 0, fat: 0, calories: 0, grams: 0 });
 
                 return `
                     <div class="card" style="padding: var(--space-lg); background: var(--bg-secondary); border: 1px solid rgba(255, 255, 255, 0.05);">
