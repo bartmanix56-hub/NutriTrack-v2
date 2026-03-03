@@ -5015,6 +5015,63 @@ Solutions possibles :
         }
 
         /**
+         * Ouvre la modale de détails du streak
+         */
+        function openStreakModal() {
+            const modal = document.getElementById('streakModal');
+            if (!modal) return;
+
+            // Récupérer les données
+            const { streak } = calculateStreak();
+            const jokerAvailable = canUseJoker();
+            const totalClosedDays = Object.keys(closedDays).filter(k => closedDays[k]).length;
+
+            // Mettre à jour le badge principal
+            const modalBadge = document.getElementById('streak-modal-badge');
+            const modalCount = document.getElementById('streak-modal-count');
+            if (modalBadge && modalCount) {
+                modalCount.textContent = streak;
+                const badgeClass = getStreakBadgeClass(streak);
+                modalBadge.className = 'streak-badge ' + badgeClass;
+            }
+
+            // Mettre à jour les stats
+            const bestEl = document.getElementById('streak-modal-best');
+            const closedEl = document.getElementById('streak-modal-closed');
+            if (bestEl) bestEl.textContent = streakData.bestStreak || 0;
+            if (closedEl) closedEl.textContent = totalClosedDays;
+
+            // Mettre à jour le statut du joker
+            const jokerSection = document.getElementById('streak-modal-joker');
+            const jokerStatus = document.getElementById('streak-modal-joker-status');
+            if (jokerSection && jokerStatus) {
+                if (jokerAvailable) {
+                    jokerSection.style.background = 'linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%)';
+                    jokerSection.style.borderColor = 'rgba(251, 191, 36, 0.3)';
+                    jokerStatus.textContent = 'Disponible ! Sauve ton streak si tu oublies de clôturer un jour.';
+                } else {
+                    jokerSection.style.background = 'var(--bg-tertiary)';
+                    jokerSection.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    jokerStatus.textContent = 'Déjà utilisé ce mois-ci. Prochain joker disponible le mois prochain.';
+                }
+            }
+
+            // Ouvrir la modale
+            modal.classList.add('active');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+        window.openStreakModal = openStreakModal;
+
+        /**
+         * Ferme la modale de détails du streak
+         */
+        function closeStreakModal() {
+            const modal = document.getElementById('streakModal');
+            if (modal) modal.classList.remove('active');
+        }
+        window.closeStreakModal = closeStreakModal;
+
+        /**
          * Met à jour l'affichage du streak dans l'UI
          */
         async function updateStreakDisplay() {
