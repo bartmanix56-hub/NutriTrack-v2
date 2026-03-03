@@ -4779,6 +4779,9 @@ Solutions possibles :
             if (typeof updateWeeklySummary === 'function') updateWeeklySummary();
             if (typeof updateDashboard === 'function') updateDashboard();
 
+            // Mettre à jour le streak
+            await onDayClosed(dateKey);
+
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Journée enregistrée dans ton planning !');
         }
 
@@ -4847,7 +4850,465 @@ Solutions possibles :
         }
 
         // ===== STREAK / GAMIFICATION =====
-        // TODO: Système de streak à refaire proprement
+
+        // Données de streak stockées localement
+        let streakData = {
+            currentStreak: 0,
+            bestStreak: 0,
+            lastClosedDate: null,
+            jokerUsedThisMonth: null, // Format: 'YYYY-MM'
+            jokerDateUsed: null // Date où le joker a été utilisé
+        };
+
+        /**
+         * Charge les données de streak depuis localStorage/Firestore
+         */
+        async function loadStreakData() {
+            const localData = localStorage.getItem('streakData');
+            if (localData) {
+                streakData = { ...streakData, ...JSON.parse(localData) };
+            }
+
+            if (window.dataService) {
+                try {
+                    const settings = await window.dataService.getSettings();
+                    if (settings && settings.streakData) {
+                        streakData = { ...streakData, ...settings.streakData };
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Erreur chargement streakData:', error);
+                }
+            }
+            return streakData;
+        }
+
+        /**
+         * Sauvegarde les données de streak
+         */
+        async function saveStreakData() {
+            localStorage.setItem('streakData', JSON.stringify(streakData));
+
+            if (window.dataService) {
+                try {
+                    await window.dataService.saveSettings({ streakData });
+                } catch (error) {
+                    console.error('❌ Erreur sauvegarde streakData:', error);
+                    markPendingSync('settings', 'streakData', { streakData });
+                }
+            }
+        }
+
+        /**
+         * Calcule le streak actuel basé sur les jours clôturés consécutifs
+         * Règle: Reset uniquement si un jour non clôturé est passé (après minuit)
+         * @returns {Object} { streak: number, needsJoker: boolean, missedDate: string|null }
+         */
+        function calculateStreak() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayKey = getDateKey(today);
+
+            // Hier (dernier jour complet)
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayKey = getDateKey(yesterday);
+
+            let streak = 0;
+            let missedDate = null;
+            let needsJoker = false;
+
+            // Si aujourd'hui est clôturé, on le compte
+            if (closedDays[todayKey]) {
+                streak = 1;
+            }
+
+            // Compter les jours consécutifs en arrière depuis hier
+            let checkDate = new Date(yesterday);
+            let consecutiveClosed = true;
+            let foundGap = false;
+
+            while (consecutiveClosed) {
+                const dateKey = getDateKey(checkDate);
+
+                if (closedDays[dateKey]) {
+                    streak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    consecutiveClosed = false;
+
+                    // Vérifier si c'est hier qui manque (jour passé non clôturé)
+                    if (dateKey === yesterdayKey && !closedDays[todayKey]) {
+                        // Hier n'est pas clôturé et aujourd'hui non plus
+                        // C'est un vrai break - vérifier si on peut utiliser le joker
+                        missedDate = dateKey;
+                        needsJoker = true;
+                        foundGap = true;
+                    }
+                }
+            }
+
+            // Si hier manque mais qu'on a une série avant, vérifier le joker
+            if (!closedDays[yesterdayKey] && streak === 0) {
+                // Compter la série d'avant-hier
+                let beforeYesterday = new Date(yesterday);
+                beforeYesterday.setDate(beforeYesterday.getDate() - 1);
+                let oldStreak = 0;
+
+                while (closedDays[getDateKey(beforeYesterday)]) {
+                    oldStreak++;
+                    beforeYesterday.setDate(beforeYesterday.getDate() - 1);
+                }
+
+                if (oldStreak > 0) {
+                    missedDate = yesterdayKey;
+                    needsJoker = true;
+                }
+            }
+
+            return { streak, needsJoker, missedDate };
+        }
+
+        /**
+         * Vérifie si le joker mensuel peut être utilisé
+         * @returns {boolean}
+         */
+        function canUseJoker() {
+            const currentMonth = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
+            return streakData.jokerUsedThisMonth !== currentMonth;
+        }
+
+        /**
+         * Utilise le joker pour sauver le streak
+         * @param {string} missedDate - Date du jour manqué
+         * @returns {boolean} - true si le joker a été utilisé avec succès
+         */
+        async function useJoker(missedDate) {
+            if (!canUseJoker()) {
+                return false;
+            }
+
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            streakData.jokerUsedThisMonth = currentMonth;
+            streakData.jokerDateUsed = missedDate;
+
+            // Marquer le jour comme "sauvé" (virtuellement clôturé pour le streak)
+            // On ne modifie pas closedDays mais on le note dans streakData
+            await saveStreakData();
+
+            showToast('<i data-lucide="shield" class="icon-inline"></i> Joker utilisé ! Ton streak est sauvé 🛡️', 'success');
+            return true;
+        }
+
+        /**
+         * Détermine la classe CSS du badge selon le niveau de streak
+         * @param {number} streak
+         * @returns {string}
+         */
+        function getStreakBadgeClass(streak) {
+            if (streak === 0) return 'streak-none';
+            if (streak < 7) return 'streak-starter';
+            if (streak < 30) return 'streak-common';
+            if (streak < 90) return 'streak-uncommon';
+            if (streak < 180) return 'streak-rare';
+            if (streak < 365) return 'streak-epic';
+            return 'streak-legendary';
+        }
+
+        /**
+         * Met à jour l'affichage du streak dans l'UI
+         */
+        async function updateStreakDisplay() {
+            const display = document.getElementById('streak-display');
+            if (!display) return;
+
+            await loadStreakData();
+            let { streak, needsJoker, missedDate } = calculateStreak();
+
+            // Gestion du joker : vérifier si hier est "sauvé" par le joker
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayKey = getDateKey(yesterday);
+
+            if (streakData.jokerDateUsed === yesterdayKey) {
+                // Le joker a déjà été utilisé pour hier, recalculer le streak en incluant hier
+                const beforeYesterday = new Date(yesterday);
+                beforeYesterday.setDate(beforeYesterday.getDate() - 1);
+
+                streak = 1; // hier (joker)
+                let checkDate = new Date(beforeYesterday);
+                while (closedDays[getDateKey(checkDate)]) {
+                    streak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                }
+
+                // Ajouter aujourd'hui si clôturé
+                const todayKey = getDateKey(new Date());
+                if (closedDays[todayKey]) streak++;
+
+                needsJoker = false;
+            }
+
+            // Proposition d'utiliser le joker si nécessaire
+            if (needsJoker && canUseJoker() && !streakData.jokerPromptShown) {
+                // Calculer l'ancien streak pour savoir si ça vaut le coup
+                const beforeYesterday = new Date(yesterday);
+                beforeYesterday.setDate(beforeYesterday.getDate() - 1);
+                let oldStreak = 0;
+                let checkDate = new Date(beforeYesterday);
+                while (closedDays[getDateKey(checkDate)]) {
+                    oldStreak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                }
+
+                if (oldStreak >= 3) { // Proposer le joker seulement si le streak valait quelque chose
+                    streakData.jokerPromptShown = true;
+                    setTimeout(() => {
+                        customConfirm(
+                            '🛡️ Utiliser ton joker ?',
+                            `Tu as oublié de clôturer hier.\n\nTon streak de ${oldStreak} jours va être perdu !\n\nTu as 1 joker par mois pour sauver ton streak.\n\nL'utiliser maintenant ?`
+                        ).then(async (confirmed) => {
+                            if (confirmed) {
+                                await useJoker(missedDate);
+                                // Recalculer le streak avec le joker
+                                streak = oldStreak + (closedDays[getDateKey(new Date())] ? 1 : 0);
+                                updateStreakBadge(display, streak);
+                            } else {
+                                // Streak perdu
+                                streakData.currentStreak = 0;
+                                await saveStreakData();
+                                updateStreakBadge(display, 0);
+                            }
+                            streakData.jokerPromptShown = false;
+                        });
+                    }, 1000);
+                    return;
+                }
+            }
+
+            // Vérifier les milestones
+            const previousStreak = streakData.currentStreak || 0;
+            if (streak > previousStreak) {
+                // Milestone 7 jours
+                if (previousStreak < 7 && streak >= 7) {
+                    setTimeout(() => showMilestoneAnimation(7, 'Première semaine !'), 500);
+                }
+                // Milestone 30 jours
+                else if (previousStreak < 30 && streak >= 30) {
+                    setTimeout(() => showMilestoneAnimation(30, 'Un mois complet !'), 500);
+                }
+                // Milestone 100 jours
+                else if (previousStreak < 100 && streak >= 100) {
+                    setTimeout(() => showMilestoneAnimation(100, 'Centenaire !'), 500);
+                }
+                // Milestone 365 jours
+                else if (previousStreak < 365 && streak >= 365) {
+                    setTimeout(() => showMilestoneAnimation(365, 'Une année entière !'), 500);
+                }
+            }
+
+            // Mettre à jour les données
+            streakData.currentStreak = streak;
+            if (streak > (streakData.bestStreak || 0)) {
+                streakData.bestStreak = streak;
+            }
+            await saveStreakData();
+
+            updateStreakBadge(display, streak);
+        }
+
+        /**
+         * Met à jour visuellement le badge de streak
+         */
+        function updateStreakBadge(display, streak) {
+            const countEl = display.querySelector('.streak-count');
+            const jokerIndicator = document.getElementById('joker-indicator');
+            const badgeClass = getStreakBadgeClass(streak);
+
+            // Retirer toutes les classes de streak
+            display.classList.remove('streak-none', 'streak-starter', 'streak-common',
+                                      'streak-uncommon', 'streak-rare', 'streak-epic', 'streak-legendary');
+            display.classList.add(badgeClass);
+
+            if (countEl) {
+                countEl.textContent = streak;
+            }
+
+            // Mettre à jour l'indicateur de joker
+            if (jokerIndicator) {
+                const jokerAvailable = canUseJoker();
+                jokerIndicator.classList.toggle('used', !jokerAvailable);
+                jokerIndicator.title = jokerAvailable
+                    ? 'Joker disponible ce mois'
+                    : 'Joker déjà utilisé ce mois';
+            }
+
+            // Rafraîchir l'icône Lucide
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        /**
+         * Affiche une animation de célébration pour un milestone
+         */
+        function showMilestoneAnimation(days, message) {
+            // Créer l'overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'milestone-overlay';
+            overlay.innerHTML = `
+                <div class="milestone-content">
+                    <div class="milestone-icon">🔥</div>
+                    <div class="milestone-days">${days}</div>
+                    <div class="milestone-label">jours</div>
+                    <div class="milestone-message">${message}</div>
+                    <div class="milestone-particles"></div>
+                </div>
+            `;
+
+            // Ajouter les styles s'ils n'existent pas
+            if (!document.getElementById('milestone-styles')) {
+                const styles = document.createElement('style');
+                styles.id = 'milestone-styles';
+                styles.textContent = `
+                    .milestone-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.8);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 10000;
+                        animation: milestoneIn 0.3s ease;
+                    }
+
+                    @keyframes milestoneIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+
+                    .milestone-content {
+                        text-align: center;
+                        color: white;
+                        animation: milestoneScale 0.5s ease;
+                    }
+
+                    @keyframes milestoneScale {
+                        0% { transform: scale(0.5); opacity: 0; }
+                        50% { transform: scale(1.1); }
+                        100% { transform: scale(1); opacity: 1; }
+                    }
+
+                    .milestone-icon {
+                        font-size: 80px;
+                        animation: milestoneFlame 1s ease-in-out infinite;
+                    }
+
+                    @keyframes milestoneFlame {
+                        0%, 100% { transform: scale(1) rotate(-5deg); }
+                        50% { transform: scale(1.2) rotate(5deg); }
+                    }
+
+                    .milestone-days {
+                        font-size: 72px;
+                        font-weight: 900;
+                        background: linear-gradient(135deg, #f97316, #fbbf24);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                        text-shadow: 0 0 40px rgba(249, 115, 22, 0.5);
+                    }
+
+                    .milestone-label {
+                        font-size: 24px;
+                        text-transform: uppercase;
+                        letter-spacing: 4px;
+                        opacity: 0.8;
+                        margin-top: -10px;
+                    }
+
+                    .milestone-message {
+                        font-size: 28px;
+                        margin-top: 20px;
+                        font-weight: 600;
+                        animation: milestonePulse 1.5s ease-in-out infinite;
+                    }
+
+                    @keyframes milestonePulse {
+                        0%, 100% { opacity: 1; }
+                        50% { opacity: 0.7; }
+                    }
+
+                    .milestone-particles {
+                        position: absolute;
+                        width: 100%;
+                        height: 100%;
+                        pointer-events: none;
+                    }
+
+                    .particle {
+                        position: absolute;
+                        width: 10px;
+                        height: 10px;
+                        background: #fbbf24;
+                        border-radius: 50%;
+                        animation: particleFloat 2s ease-out forwards;
+                    }
+
+                    @keyframes particleFloat {
+                        0% {
+                            opacity: 1;
+                            transform: translate(0, 0) scale(1);
+                        }
+                        100% {
+                            opacity: 0;
+                            transform: translate(var(--tx), var(--ty)) scale(0);
+                        }
+                    }
+                `;
+                document.head.appendChild(styles);
+            }
+
+            document.body.appendChild(overlay);
+
+            // Ajouter des particules
+            const particlesContainer = overlay.querySelector('.milestone-particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                particle.style.setProperty('--tx', (Math.random() - 0.5) * 400 + 'px');
+                particle.style.setProperty('--ty', (Math.random() - 0.5) * 400 + 'px');
+                particle.style.animationDelay = Math.random() * 0.5 + 's';
+                particle.style.background = ['#f97316', '#fbbf24', '#ef4444', '#a855f7'][Math.floor(Math.random() * 4)];
+                particlesContainer.appendChild(particle);
+            }
+
+            // Fermer au clic ou après 3 secondes
+            const closeOverlay = () => {
+                overlay.style.animation = 'milestoneIn 0.3s ease reverse';
+                setTimeout(() => overlay.remove(), 300);
+            };
+
+            overlay.addEventListener('click', closeOverlay);
+            setTimeout(closeOverlay, 3000);
+
+            // Toast de confirmation
+            showToast(`🎉 Félicitations ! ${days} jours de streak !`, 'success');
+        }
+
+        /**
+         * Appelé quand une journée est clôturée pour mettre à jour le streak
+         */
+        async function onDayClosed(dateKey) {
+            streakData.lastClosedDate = dateKey;
+            streakData.jokerPromptShown = false; // Reset pour permettre nouveau prompt si nécessaire
+            await saveStreakData();
+            await updateStreakDisplay();
+        }
 
         // ===== NOUVELLES FONCTIONNALITÉS =====
 
@@ -8649,6 +9110,9 @@ Solutions possibles :
             // Charger depuis Firestore (avec fallback localStorage)
             const days = await loadClosedDaysFromFirestore();
             closedDays = days;
+
+            // Mettre à jour l'affichage du streak après chargement des jours clôturés
+            await updateStreakDisplay();
         }
 
         // ===== FOOD ALIASES =====
@@ -8664,6 +9128,9 @@ Solutions possibles :
         window.loadWeeklyPlan = loadWeeklyPlan;
         window.loadClosedDays = loadClosedDays;
         window.loadFoodAliases = loadFoodAliases;
+        window.updateStreakDisplay = updateStreakDisplay;
+        window.getStreakData = () => streakData;
+        window.canUseJoker = canUseJoker;
 
         function saveMealAsTemplate(mealType) {
             const dateKey = getCurrentDateKey();

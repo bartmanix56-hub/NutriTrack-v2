@@ -5039,6 +5039,24 @@
             }
         }
 
+        /* ===== JOKER INDICATOR ===== */
+        .joker-indicator {
+            margin-left: 6px;
+            font-size: 14px;
+            opacity: 0.9;
+            transition: all 0.3s ease;
+            cursor: help;
+        }
+
+        .joker-indicator:hover {
+            transform: scale(1.2);
+        }
+
+        .joker-indicator.used {
+            opacity: 0.3;
+            filter: grayscale(1);
+        }
+
         /* ===== STREAK DISPLAY CONTAINER ===== */
         #streak-display {
             display: flex;
