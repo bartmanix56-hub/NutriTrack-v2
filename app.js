@@ -2787,7 +2787,7 @@ Solutions possibles :
 
         // loadFavoriteFoods déplacé plus bas (charge depuis Firestore via wrapper)
 
-        function isFavorite(foodName) { return favoriteFoods.includes(foodName); }
+        function isFavorite(foodName) { return (favoriteFoods || []).includes(foodName); }
 
         // ===== FUSE.JS FUZZY SEARCH =====
         function fuzzySearchFoods(foods, query, limit = 10) {
@@ -2848,8 +2848,8 @@ Solutions possibles :
         }
 
         function getSmartSuggestions(mealType, limit = 6) {
-            // 1. Get favorites
-            const favorites = favoriteFoods.slice(0, 3);
+            // 1. Get favorites (avec protection null)
+            const favorites = (favoriteFoods || []).slice(0, 3);
 
             // 2. Get historical foods for this meal type
             const historical = getHistoricalFoods(mealType, 5);
@@ -4590,10 +4590,6 @@ Solutions possibles :
                 messageEl.classList.remove('warning', 'success', 'danger');
                 const iconEl = messageEl.querySelector('i');
 
-                // Calculer le streak pour les messages
-                const streakData = typeof calculateStreak === 'function' ? calculateStreak() : { current: 0, todayClosed: false };
-                const streakMessage = typeof getStreakMessage === 'function' ? getStreakMessage(streakData) : null;
-
                 if (!targets.calories || targets.calories === 0) {
                     messageTextEl.textContent = "Configure tes objectifs dans le calculateur pour commencer !";
                     if (iconEl) iconEl.setAttribute('data-lucide', 'info');
@@ -4602,14 +4598,7 @@ Solutions possibles :
                     const pct = (totals.calories / targets.calories) * 100;
 
                     if (pct >= 95 && pct <= 105) {
-                        // Objectif atteint - afficher message streak si pertinent
-                        if (streakData.todayClosed && streakData.current > 0) {
-                            messageTextEl.textContent = streakMessage;
-                        } else if (!streakData.todayClosed) {
-                            messageTextEl.textContent = "Objectif atteint ! Ferme cette journee pour valider.";
-                        } else {
-                            messageTextEl.textContent = "Objectif atteint ! Tu as parfaitement gere ta journee.";
-                        }
+                        messageTextEl.textContent = "Objectif atteint ! Tu as parfaitement gere ta journee.";
                         messageEl.classList.add('success');
                         if (iconEl) iconEl.setAttribute('data-lucide', 'check-circle');
                     } else if (pct > 105) {
@@ -4618,12 +4607,7 @@ Solutions possibles :
                         messageEl.classList.add('warning');
                         if (iconEl) iconEl.setAttribute('data-lucide', 'alert-triangle');
                     } else if (remaining > 0) {
-                        // Afficher le message streak si jour pas encore ferme et streak en cours
-                        if (!streakData.todayClosed && streakData.current > 0 && pct >= 80) {
-                            messageTextEl.textContent = `Il te reste ${Math.round(remaining)} kcal. ${streakMessage}`;
-                        } else {
-                            messageTextEl.textContent = `Il te reste ${Math.round(remaining)} kcal pour atteindre ton objectif.`;
-                        }
+                        messageTextEl.textContent = `Il te reste ${Math.round(remaining)} kcal pour atteindre ton objectif.`;
                         if (iconEl) iconEl.setAttribute('data-lucide', 'zap');
                     } else {
                         messageTextEl.textContent = `Continue comme ca !`;
@@ -4632,9 +4616,6 @@ Solutions possibles :
                 }
                 updateIcons(messageEl);
             }
-
-            // Mettre à jour l'affichage du streak
-            if (typeof updateStreakDisplay === 'function') updateStreakDisplay();
 
             // Mettre à jour le statut
             const statusEl = document.getElementById('dashboard-status');
@@ -4733,7 +4714,6 @@ Solutions possibles :
                 emoji = '<i data-lucide="check"></i>';
                 message = 'Objectif atteint';
                 statusClass = 'status-green';
-                updateStreakDisplay();
             } else if (calPct >= 85 && calPct <= 115) {
                 emoji = '<i data-lucide="target"></i>';
                 message = 'Proche';
@@ -4797,9 +4777,6 @@ Solutions possibles :
 
             // Mettre à jour le résumé hebdomadaire
             if (typeof updateWeeklySummary === 'function') updateWeeklySummary();
-
-            // Mettre à jour le streak
-            if (typeof updateStreakDisplay === 'function') updateStreakDisplay();
             if (typeof updateDashboard === 'function') updateDashboard();
 
             showToast('<i data-lucide="check-circle" class="icon-inline"></i> Journée enregistrée dans ton planning !');
@@ -4819,9 +4796,6 @@ Solutions possibles :
 
             // Mettre à jour le résumé hebdomadaire
             if (typeof updateWeeklySummary === 'function') updateWeeklySummary();
-
-            // Mettre à jour le streak
-            if (typeof updateStreakDisplay === 'function') updateStreakDisplay();
             if (typeof updateDashboard === 'function') updateDashboard();
 
             showToast('<i data-lucide="unlock" class="icon-inline"></i> Journée rouverte, tu peux la modifier');
@@ -4873,105 +4847,7 @@ Solutions possibles :
         }
 
         // ===== STREAK / GAMIFICATION =====
-        function calculateStreak() {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            let streak = 0;
-            let checkDate = new Date(today);
-
-            // Si aujourd'hui est fermé, on compte depuis aujourd'hui
-            // Sinon, on commence depuis hier
-            const todayKey = getDateKey(today);
-            if (!closedDays[todayKey]) {
-                checkDate.setDate(checkDate.getDate() - 1);
-            }
-
-            // Compter les jours consécutifs fermés en arrière
-            while (true) {
-                const dateKey = getDateKey(checkDate);
-                if (closedDays[dateKey]) {
-                    streak++;
-                    checkDate.setDate(checkDate.getDate() - 1);
-                } else {
-                    break;
-                }
-            }
-
-            return {
-                current: streak,
-                todayClosed: !!closedDays[todayKey]
-            };
-        }
-
-        function getStreakLevel(streak) {
-            if (streak >= 365) return { level: 5, label: '1 an complet, tu es une legende !', color: 'legendary' };
-            if (streak >= 180) return { level: 4, label: '6 mois sans craquer, incroyable !', color: 'epic' };
-            if (streak >= 90) return { level: 3, label: '3 mois de suivi, tu es au top !', color: 'rare' };
-            if (streak >= 30) return { level: 2, label: 'Un mois d\'affilée, impressionnant !', color: 'uncommon' };
-            if (streak >= 7) return { level: 1, label: 'Une semaine complete, bravo !', color: 'common' };
-            if (streak > 0) return { level: 0, label: null, color: 'starter' };
-            return { level: -1, label: null, color: 'none' };
-        }
-
-        function getStreakMessage(streakData) {
-            const { current, todayClosed } = streakData;
-            const levelInfo = getStreakLevel(current);
-
-            // Message de palier atteint (prioritaire)
-            if (levelInfo.label && todayClosed) {
-                return levelInfo.label;
-            }
-
-            // Jour pas encore fermé avec streak en cours
-            if (!todayClosed && current > 0) {
-                return `Ferme cette journee pour garder ta serie de ${current} jour${current > 1 ? 's' : ''} !`;
-            }
-
-            // Pas de streak
-            if (current === 0 && !todayClosed) {
-                return 'Ferme cette journee pour demarrer une serie !';
-            }
-
-            // Streak actif mais pas de palier special
-            if (current > 0 && todayClosed) {
-                return `Serie de ${current} jour${current > 1 ? 's' : ''}, continue !`;
-            }
-
-            return 'Nouvelle serie, c\'est reparti !';
-        }
-
-        function updateStreakDisplay() {
-            const streakEl = document.getElementById('streak-display');
-            if (!streakEl) return;
-
-            const streakData = calculateStreak();
-            const levelInfo = getStreakLevel(streakData.current);
-
-            // Mettre à jour le contenu
-            const countEl = streakEl.querySelector('.streak-count');
-            const iconEl = streakEl.querySelector('i');
-
-            if (countEl) {
-                countEl.textContent = streakData.current;
-            }
-
-            // Appliquer la classe de couleur
-            streakEl.className = 'streak-badge';
-            streakEl.classList.add(`streak-${levelInfo.color}`);
-
-            // Afficher/masquer selon le streak
-            if (streakData.current === 0 && !streakData.todayClosed) {
-                streakEl.style.opacity = '0.5';
-            } else {
-                streakEl.style.opacity = '1';
-            }
-
-            // Mettre à jour l'icône
-            if (iconEl) {
-                updateIcons(streakEl);
-            }
-        }
+        // TODO: Système de streak à refaire proprement
 
         // ===== NOUVELLES FONCTIONNALITÉS =====
 
@@ -7460,11 +7336,13 @@ Solutions possibles :
         }
 
         async function toggleFavorite(foodName) {
-            const index = favoriteFoods.indexOf(foodName);
+            // Protection contre favoriteFoods null/undefined
+            const safeFavorites = favoriteFoods || [];
+            const index = safeFavorites.indexOf(foodName);
             const isRemoving = index > -1;
 
             // Créer une copie AVANT de modifier (save-first pattern)
-            const newFavorites = [...favoriteFoods];
+            const newFavorites = [...safeFavorites];
 
             if (isRemoving) {
                 newFavorites.splice(index, 1);
@@ -7839,8 +7717,6 @@ Solutions possibles :
                 console.error('Erreur sauvegarde repas:', error);
                 // L'erreur a déjà été affichée dans saveMealToFirestore via toast
             }
-            // Mettre à jour le streak en temps réel
-            if (typeof updateStreakDisplay === 'function') updateStreakDisplay();
             // Mettre à jour le résumé hebdomadaire si visible
             if (typeof updateWeeklySummary === 'function') updateWeeklySummary();
 
@@ -8757,7 +8633,8 @@ Solutions possibles :
         async function loadFavoriteFoods() {
             // Charger depuis Firestore (avec fallback localStorage)
             const foods = await loadFavoriteFoodsFromFirestore();
-            favoriteFoods = foods;
+            // PROTECTION: S'assurer que favoriteFoods est toujours un array valide
+            favoriteFoods = Array.isArray(foods) ? foods : [];
         }
 
         // ===== WEEKLY PLAN =====
