@@ -723,18 +723,17 @@
                             <i data-lucide="calendar" style="width: 20px; height: 20px;"></i>
                             <span id="dashboard-date-text">Aujourd'hui</span>
                         </div>
-                        <div class="dashboard-status" id="dashboard-status">
-                            <span class="status-dot"></span>
-                            <span id="dashboard-status-text">En cours</span>
+                        <div class="dashboard-status-group">
+                            <div id="streak-display" class="streak-badge streak-none">
+                                <i data-lucide="flame" style="width: 16px; height: 16px;"></i>
+                                <span class="streak-count">0</span>
+                                <span class="joker-indicator" id="joker-indicator" title="Joker disponible ce mois">🛡️</span>
+                            </div>
+                            <div class="dashboard-status" id="dashboard-status">
+                                <span class="status-dot"></span>
+                                <span id="dashboard-status-text">En cours</span>
+                            </div>
                         </div>
-                    </div>
-
-                    <!-- Streak display -->
-                    <div id="streak-display" class="streak-badge streak-none" style="margin-bottom: var(--space-md); display: inline-flex;">
-                        <i data-lucide="flame" style="width: 18px; height: 18px;"></i>
-                        <span class="streak-count">0</span>
-                        <span class="streak-label">jours</span>
-                        <span class="joker-indicator" id="joker-indicator" title="Joker disponible ce mois">🛡️</span>
                     </div>
 
                     <!-- Message contextuel -->

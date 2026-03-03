@@ -7277,6 +7277,22 @@ button.loading::after {
     color: var(--accent-main);
 }
 
+.dashboard-status-group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.dashboard-status-group #streak-display {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.8rem;
+}
+
+.dashboard-status-group #streak-display .joker-indicator {
+    font-size: 12px;
+    margin-left: 2px;
+}
+
 .dashboard-status {
     display: flex;
     align-items: center;
