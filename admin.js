@@ -1624,7 +1624,14 @@ onAuthStateChanged(auth, (user) => {
                     console.log('✅ Calc settings chargés depuis Firestore');
                 }
 
-                // Charger les repas APRÈS profile et settings
+                // Charger closed days AVANT les repas (car loadAllMeals appelle checkIfDayClosed)
+                if (typeof window.loadClosedDays === 'function') {
+                    console.log('🔄 Chargement closed days depuis Firestore...');
+                    await window.loadClosedDays();
+                    console.log('✅ Closed days chargés depuis Firestore');
+                }
+
+                // Charger les repas APRÈS closed days
                 if (typeof window.loadAllMeals === 'function') {
                     console.log('🔄 Chargement repas depuis Firestore...');
                     await window.loadAllMeals();
@@ -1664,13 +1671,6 @@ onAuthStateChanged(auth, (user) => {
                     console.log('🔄 Chargement weekly plan depuis Firestore...');
                     await window.loadWeeklyPlan();
                     console.log('✅ Weekly plan chargé depuis Firestore');
-                }
-
-                // Charger closed days
-                if (typeof window.loadClosedDays === 'function') {
-                    console.log('🔄 Chargement closed days depuis Firestore...');
-                    await window.loadClosedDays();
-                    console.log('✅ Closed days chargés depuis Firestore');
                 }
 
                 // Charger food aliases
