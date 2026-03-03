@@ -724,7 +724,7 @@
                             <span id="dashboard-date-text">Aujourd'hui</span>
                         </div>
                         <div class="dashboard-status-group">
-                            <div id="streak-display" class="streak-badge streak-none">
+                            <div id="streak-display" class="streak-badge streak-none" onclick="openStreakModal()" style="cursor: pointer;">
                                 <i data-lucide="flame" style="width: 16px; height: 16px;"></i>
                                 <span class="streak-count">0</span>
                                 <span class="streak-label">jours</span>
@@ -4240,6 +4240,57 @@
             </main>
         </div>
         <!-- End App Layout -->
+
+    <!-- Modale : Détails du Streak -->
+    <div id="streakModal" class="modal" onclick="if(event.target===this)closeStreakModal()">
+        <div class="modal-content" style="max-width: 380px;">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeStreakModal()">×</button>
+                <h2 class="modal-title" style="display:flex;align-items:center;gap:8px;">
+                    <i data-lucide="flame" style="width:24px;height:24px;color:var(--accent-main);"></i>
+                    Ton streak
+                </h2>
+            </div>
+            <div class="modal-body" style="padding-top: var(--space-md);">
+                <!-- Streak actuel - grand -->
+                <div style="text-align: center; margin-bottom: var(--space-xl);">
+                    <div id="streak-modal-badge" class="streak-badge streak-none" style="font-size: 1.5rem; padding: 12px 24px;">
+                        <i data-lucide="flame" style="width: 28px; height: 28px;"></i>
+                        <span id="streak-modal-count">0</span>
+                        <span>jours</span>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); margin-bottom: var(--space-xl);">
+                    <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-md); text-align: center;">
+                        <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-primary);" id="streak-modal-best">0</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">Meilleur streak</div>
+                    </div>
+                    <div style="background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-md); text-align: center;">
+                        <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-primary);" id="streak-modal-closed">0</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">Jours clôturés</div>
+                    </div>
+                </div>
+
+                <!-- Joker -->
+                <div id="streak-modal-joker" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: var(--radius-md); padding: var(--space-lg);">
+                    <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+                        <i data-lucide="shield" style="width: 18px; height: 18px; color: #fbbf24;"></i>
+                        <span style="font-weight: 600; color: var(--text-primary);">Joker mensuel</span>
+                    </div>
+                    <p id="streak-modal-joker-status" style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">
+                        Disponible ! Sauve ton streak si tu oublies de clôturer un jour.
+                    </p>
+                </div>
+
+                <!-- Explication -->
+                <p style="font-size: 0.8rem; color: var(--text-tertiary); margin-top: var(--space-lg); text-align: center;">
+                    Clôture ta journée chaque jour pour maintenir ton streak !
+                </p>
+            </div>
+        </div>
+    </div>
 
     <!-- Modale : choisir dans quel repas ajouter un repas type -->
     <div id="templateToMealModal" class="modal" onclick="if(event.target===this)closeTemplateToMealModal()">
