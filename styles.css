@@ -7235,6 +7235,15 @@ button.loading::after {
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--space-lg);
+    gap: var(--space-md);
+}
+
+/* Streak badge dans le header */
+.dashboard-header #streak-display {
+    flex-shrink: 0;
+    display: inline-flex !important;
+    visibility: visible !important;
+    min-width: 50px;
 }
 
 .dashboard-date {
