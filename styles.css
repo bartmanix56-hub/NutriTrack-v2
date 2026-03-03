@@ -4929,19 +4929,118 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
             color: white;
             padding: 6px 12px;
             border-radius: var(--radius-full);
             font-size: 0.85rem;
             font-weight: 700;
-            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .streak-badge i {
+            transition: transform 0.3s ease;
+        }
+
+        /* Niveau 0: Pas de streak - gris eteint */
+        .streak-none {
+            background: #6b7280;
+            box-shadow: none;
+        }
+
+        .streak-none i {
+            opacity: 0.5;
+        }
+
+        /* Niveau 1: 1-6 jours - orange petit */
+        .streak-starter {
+            background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+            box-shadow: 0 2px 6px rgba(249, 115, 22, 0.3);
+        }
+
+        .streak-starter i {
+            transform: scale(1);
+        }
+
+        /* Niveau 2: 7-29 jours - orange vif moyen */
+        .streak-common {
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+            box-shadow: 0 2px 8px rgba(234, 88, 12, 0.4);
             animation: streak-pulse 2s ease-in-out infinite;
+        }
+
+        .streak-common i {
+            transform: scale(1.1);
+        }
+
+        /* Niveau 3: 30-89 jours - rouge grand */
+        .streak-uncommon {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            box-shadow: 0 3px 10px rgba(220, 38, 38, 0.4);
+            animation: streak-pulse 1.8s ease-in-out infinite;
+        }
+
+        .streak-uncommon i {
+            transform: scale(1.2);
+        }
+
+        /* Niveau 4: 90-179 jours - rouge intense */
+        .streak-rare {
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+            box-shadow: 0 4px 12px rgba(185, 28, 28, 0.5);
+            animation: streak-pulse 1.5s ease-in-out infinite;
+        }
+
+        .streak-rare i {
+            transform: scale(1.3);
+        }
+
+        /* Niveau 5: 180-364 jours - violet */
+        .streak-epic {
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.5);
+            animation: streak-glow 2s ease-in-out infinite;
+        }
+
+        .streak-epic i {
+            transform: scale(1.4);
+        }
+
+        /* Niveau 6: 365+ jours - dore legendaire */
+        .streak-legendary {
+            background: linear-gradient(135deg, #d97706 0%, #fbbf24 50%, #d97706 100%);
+            box-shadow: 0 4px 20px rgba(251, 191, 36, 0.6);
+            animation: streak-legendary 2s ease-in-out infinite;
+        }
+
+        .streak-legendary i {
+            transform: scale(1.5);
         }
 
         @keyframes streak-pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
+        }
+
+        @keyframes streak-glow {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 15px rgba(124, 58, 237, 0.5);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 6px 25px rgba(124, 58, 237, 0.7);
+            }
+        }
+
+        @keyframes streak-legendary {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 20px rgba(251, 191, 36, 0.6);
+            }
+            50% {
+                transform: scale(1.08);
+                box-shadow: 0 8px 30px rgba(251, 191, 36, 0.9);
+            }
         }
 
         /* === ACCORDÉONS INFO (Premium) === */
