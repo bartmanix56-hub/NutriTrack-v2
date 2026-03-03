@@ -4629,7 +4629,7 @@ Solutions possibles :
                     statusTextEl.textContent = "En cours";
                     statusEl.classList.remove('completed');
                 } else {
-                    statusTextEl.textContent = "Pas encore commencé";
+                    statusTextEl.textContent = "À démarrer";
                     statusEl.classList.remove('completed');
                 }
             }
