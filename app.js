@@ -2787,7 +2787,7 @@ Solutions possibles :
 
         // loadFavoriteFoods déplacé plus bas (charge depuis Firestore via wrapper)
 
-        function isFavorite(foodName) { return favoriteFoods.includes(foodName); }
+        function isFavorite(foodName) { return (favoriteFoods || []).includes(foodName); }
 
         // ===== FUSE.JS FUZZY SEARCH =====
         function fuzzySearchFoods(foods, query, limit = 10) {
@@ -2848,8 +2848,8 @@ Solutions possibles :
         }
 
         function getSmartSuggestions(mealType, limit = 6) {
-            // 1. Get favorites
-            const favorites = favoriteFoods.slice(0, 3);
+            // 1. Get favorites (avec protection null)
+            const favorites = (favoriteFoods || []).slice(0, 3);
 
             // 2. Get historical foods for this meal type
             const historical = getHistoricalFoods(mealType, 5);
@@ -7460,11 +7460,13 @@ Solutions possibles :
         }
 
         async function toggleFavorite(foodName) {
-            const index = favoriteFoods.indexOf(foodName);
+            // Protection contre favoriteFoods null/undefined
+            const safeFavorites = favoriteFoods || [];
+            const index = safeFavorites.indexOf(foodName);
             const isRemoving = index > -1;
 
             // Créer une copie AVANT de modifier (save-first pattern)
-            const newFavorites = [...favoriteFoods];
+            const newFavorites = [...safeFavorites];
 
             if (isRemoving) {
                 newFavorites.splice(index, 1);
@@ -8757,7 +8759,8 @@ Solutions possibles :
         async function loadFavoriteFoods() {
             // Charger depuis Firestore (avec fallback localStorage)
             const foods = await loadFavoriteFoodsFromFirestore();
-            favoriteFoods = foods;
+            // PROTECTION: S'assurer que favoriteFoods est toujours un array valide
+            favoriteFoods = Array.isArray(foods) ? foods : [];
         }
 
         // ===== WEEKLY PLAN =====
