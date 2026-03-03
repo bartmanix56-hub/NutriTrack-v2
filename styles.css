@@ -64,6 +64,14 @@
             --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
 
+        /* ===== BLOCAGE SCROLL QUAND MODALE OUVERTE ===== */
+        body:has(.modal.active),
+        body:has(.custom-popup-overlay.active),
+        body:has(.custom-popup-overlay[style*="display: flex"]),
+        body.modal-open {
+            overflow: hidden !important;
+        }
+
         /* ===== SYSTÈME D'AUTHENTIFICATION OBLIGATOIRE ===== */
         /* DÉSACTIVÉ: Ces règles CSS causaient le flash de landing page
            La logique d'affichage est maintenant 100% gérée par initApp() en JavaScript
