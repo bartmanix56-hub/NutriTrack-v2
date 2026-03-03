@@ -108,6 +108,71 @@
         }
         // ===== FIN OPTIMISATION LUCIDE =====
 
+        // ===== MODAL SCROLL LOCK SYSTEM =====
+        // MutationObserver pour détecter automatiquement l'ouverture/fermeture des modals
+        // et bloquer le scroll du body (fix pour tous les navigateurs)
+        (function initModalScrollLock() {
+            function updateBodyScroll() {
+                const hasActiveModal = document.querySelector('.modal.active, .custom-popup-overlay.active, .custom-popup-overlay[style*="display: flex"]');
+                if (hasActiveModal) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            }
+
+            // Observer les changements de classe et d'attributs style sur tout le DOM
+            const observer = new MutationObserver((mutations) => {
+                for (const mutation of mutations) {
+                    // Vérifier si une modal a été ajoutée ou si une classe a changé
+                    if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                        const target = mutation.target;
+                        if (target.classList && (target.classList.contains('modal') || target.classList.contains('custom-popup-overlay'))) {
+                            updateBodyScroll();
+                            return;
+                        }
+                        // Vérifier aussi les enfants ajoutés
+                        if (mutation.addedNodes) {
+                            for (const node of mutation.addedNodes) {
+                                if (node.classList && (node.classList.contains('modal') || node.classList.contains('custom-popup-overlay'))) {
+                                    updateBodyScroll();
+                                    return;
+                                }
+                            }
+                        }
+                        if (mutation.removedNodes) {
+                            for (const node of mutation.removedNodes) {
+                                if (node.classList && (node.classList.contains('modal') || node.classList.contains('custom-popup-overlay'))) {
+                                    updateBodyScroll();
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Démarrer l'observation quand le DOM est prêt
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    observer.observe(document.body, {
+                        childList: true,
+                        subtree: true,
+                        attributes: true,
+                        attributeFilter: ['class', 'style']
+                    });
+                });
+            } else {
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true,
+                    attributeFilter: ['class', 'style']
+                });
+            }
+        })();
+        // ===== FIN MODAL SCROLL LOCK =====
+
         // Food database
         let foodDatabase = []; // CHARGÉ DEPUIS FIRESTORE (voir index.html loadFoodDatabaseFromFirestore)
 
