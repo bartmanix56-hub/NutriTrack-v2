@@ -2749,18 +2749,14 @@
                 display: none !important;
             }
 
-            /* Winstreak discret en haut à droite */
+            /* Winstreak dans le dashboard header */
             #streak-display {
-                position: absolute !important;
-                top: 8px !important;
-                right: 12px !important;
-                left: auto !important;
-                z-index: 10;
+                order: 1;
             }
 
-            #streak-display .streak-badge {
-                font-size: 0.7rem !important;
-                padding: 3px 8px !important;
+            #streak-display.streak-badge {
+                font-size: 0.75rem !important;
+                padding: 4px 10px !important;
             }
 
             .header-main-row {
@@ -5041,6 +5037,13 @@
                 transform: scale(1.08);
                 box-shadow: 0 8px 30px rgba(251, 191, 36, 0.9);
             }
+        }
+
+        /* ===== STREAK DISPLAY CONTAINER ===== */
+        #streak-display {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
         }
 
         /* === ACCORDÉONS INFO (Premium) === */
