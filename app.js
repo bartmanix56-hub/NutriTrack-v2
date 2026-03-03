@@ -4588,10 +4588,11 @@ Solutions possibles :
             const messageTextEl = document.getElementById('dashboard-message-text');
             if (messageEl && messageTextEl) {
                 messageEl.classList.remove('warning', 'success', 'danger');
+                const iconEl = messageEl.querySelector('i');
 
                 if (!targets.calories || targets.calories === 0) {
                     messageTextEl.textContent = "Configure tes objectifs dans le calculateur pour commencer !";
-                    messageEl.querySelector('i').setAttribute('data-lucide', 'info');
+                    if (iconEl) iconEl.setAttribute('data-lucide', 'info');
                 } else {
                     const remaining = targets.calories - totals.calories;
                     const pct = (totals.calories / targets.calories) * 100;
@@ -4599,18 +4600,18 @@ Solutions possibles :
                     if (pct >= 95 && pct <= 105) {
                         messageTextEl.textContent = "Objectif atteint ! Tu as parfaitement géré ta journée.";
                         messageEl.classList.add('success');
-                        messageEl.querySelector('i').setAttribute('data-lucide', 'check-circle');
+                        if (iconEl) iconEl.setAttribute('data-lucide', 'check-circle');
                     } else if (pct > 105) {
                         const over = Math.round(totals.calories - targets.calories);
                         messageTextEl.textContent = `Tu as dépassé de ${over} kcal. Pas de panique, demain est un nouveau jour !`;
                         messageEl.classList.add('warning');
-                        messageEl.querySelector('i').setAttribute('data-lucide', 'alert-triangle');
+                        if (iconEl) iconEl.setAttribute('data-lucide', 'alert-triangle');
                     } else if (remaining > 0) {
                         messageTextEl.textContent = `Il te reste ${Math.round(remaining)} kcal pour atteindre ton objectif.`;
-                        messageEl.querySelector('i').setAttribute('data-lucide', 'zap');
+                        if (iconEl) iconEl.setAttribute('data-lucide', 'zap');
                     } else {
                         messageTextEl.textContent = `Continue comme ça !`;
-                        messageEl.querySelector('i').setAttribute('data-lucide', 'zap');
+                        if (iconEl) iconEl.setAttribute('data-lucide', 'zap');
                     }
                 }
                 updateIcons(messageEl);
