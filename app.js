@@ -116,8 +116,10 @@
                 const hasActiveModal = document.querySelector('.modal.active, .custom-popup-overlay.active, .custom-popup-overlay[style*="display: flex"]');
                 if (hasActiveModal) {
                     document.body.style.overflow = 'hidden';
+                    document.documentElement.style.overflow = 'hidden';
                 } else {
                     document.body.style.overflow = '';
+                    document.documentElement.style.overflow = '';
                 }
             }
 
@@ -2640,6 +2642,7 @@ Solutions possibles :
             currentMealType = mealType;
             document.getElementById('foodModal').classList.add('active');
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
             // Auto-focus seulement sur desktop (évite clavier mobile intempestif)
             if (window.innerWidth > 768) {
                 setTimeout(() => {
@@ -2654,6 +2657,7 @@ Solutions possibles :
             document.getElementById('modalSearchResults').style.display = 'none';
             currentMealType = null;
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         }
 
         // Food search in modal - Initialisé après DOMContentLoaded
@@ -3514,6 +3518,7 @@ Solutions possibles :
             `;
             document.body.appendChild(modal);
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
             renderCalendar(new Date());
             updateIcons();
         };
@@ -3523,6 +3528,7 @@ Solutions possibles :
             if (modal) {
                 modal.remove();
                 document.body.style.overflow = '';
+                document.documentElement.style.overflow = '';
             }
         };
 
@@ -5123,6 +5129,8 @@ Solutions possibles :
 
             // Ouvrir la modale
             modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
         window.openStreakModal = openStreakModal;
@@ -5133,6 +5141,8 @@ Solutions possibles :
         function closeStreakModal() {
             const modal = document.getElementById('streakModal');
             if (modal) modal.classList.remove('active');
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         }
         window.closeStreakModal = closeStreakModal;
 
@@ -6158,11 +6168,13 @@ Solutions possibles :
             // Afficher modal custom d'avertissement
             document.getElementById('export-warning-modal').style.display = 'flex';
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
         }
 
         function cancelExport() {
             document.getElementById('export-warning-modal').style.display = 'none';
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         }
 
         async function cleanDuplicateRecipes() {
@@ -6251,6 +6263,7 @@ Solutions possibles :
             // Fermer modal
             document.getElementById('export-warning-modal').style.display = 'none';
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
 
             showToast('<i data-lucide="loader" class="icon-inline spinning"></i> Génération de l\'image...');
 
@@ -6806,11 +6819,13 @@ Solutions possibles :
         function showPrivacyPolicy() {
             document.getElementById('privacy-modal').style.display = 'flex';
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
         }
 
         function closePrivacyPolicy() {
             document.getElementById('privacy-modal').style.display = 'none';
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         }
 
         function initV2() {
@@ -7304,6 +7319,7 @@ Solutions possibles :
 
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
 
             updateIcons();
 
@@ -7315,6 +7331,7 @@ Solutions possibles :
             const modal = document.getElementById('barcodeScannerModal');
             modal.classList.remove('active');
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
 
             // Reset flash
             scannerFlashOn = false;
@@ -7481,6 +7498,7 @@ Solutions possibles :
                 const modal = document.getElementById('barcodeScannerModal');
                 modal.classList.remove('active');
                 document.body.style.overflow = '';
+                document.documentElement.style.overflow = '';
 
                 // Ouvrir le modal d'ajout avec les données
                 if (product) {
@@ -7491,6 +7509,7 @@ Solutions possibles :
                     // Ouvrir le modal
                     document.getElementById('addFoodModal').classList.add('active');
                     document.body.style.overflow = 'hidden';
+                    document.documentElement.style.overflow = 'hidden';
 
                     // Pré-remplir les champs
                     setTimeout(() => {
@@ -7559,6 +7578,7 @@ Solutions possibles :
                     window.pendingProductSource = 'manual';
                     document.getElementById('addFoodModal').classList.add('active');
                     document.body.style.overflow = 'hidden';
+                    document.documentElement.style.overflow = 'hidden';
                     showToast('❌ Produit non trouvé - entre les macros manuellement');
                 }
             } catch (err) {
@@ -9338,11 +9358,15 @@ Solutions possibles :
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = modalHtml;
             document.body.appendChild(tempDiv.firstElementChild);
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
         }
 
         function closeTemplatesModal() {
             const modal = document.getElementById('templatesModal');
             if (modal) modal.remove();
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         }
 
         function toggleRecipe(recipeId) {
@@ -9925,6 +9949,7 @@ Solutions possibles :
 
             document.body.insertAdjacentHTML('beforeend', modalHtml);
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
 
             updateIcons();
 
@@ -9936,6 +9961,7 @@ Solutions possibles :
             const modal = document.getElementById('templateSelectionModal');
             if (modal) modal.remove();
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
             window.currentTemplateChoices = null;
         };
 
@@ -10054,6 +10080,7 @@ Solutions possibles :
 
             document.body.insertAdjacentHTML('beforeend', modalHtml);
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
 
             // Re-init lucide icons for modal
             updateIcons();
@@ -10066,6 +10093,7 @@ Solutions possibles :
             const modal = document.getElementById('smartMealModal');
             if (modal) modal.remove();
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
             window.currentSmartMealResult = null;
         };
 
@@ -10141,6 +10169,8 @@ Solutions possibles :
             const modal = document.getElementById('foodModal');
             modal.dataset.target = 'template';
             modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
             renderFoodDatabase();
         }
 
@@ -10409,6 +10439,8 @@ Solutions possibles :
             // Ouvrir le modal
             const modal = document.getElementById('create-custom-food-from-template-modal');
             modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
             updateIcons();
 
             // Focus sur le champ nom
@@ -10420,6 +10452,8 @@ Solutions possibles :
         function closeCreateCustomFoodFromTemplateModal() {
             const modal = document.getElementById('create-custom-food-from-template-modal');
             modal.classList.remove('active');
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         }
 
         async function createCustomFoodFromTemplate() {
@@ -10506,6 +10540,8 @@ Solutions possibles :
             const modal = document.getElementById('templateToMealModal');
             if (modal) {
                 modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                document.documentElement.style.overflow = 'hidden';
                 updateIcons();
             }
         }
@@ -10513,6 +10549,8 @@ Solutions possibles :
         function closeTemplateToMealModal() {
             const modal = document.getElementById('templateToMealModal');
             if (modal) modal.classList.remove('active');
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
             pendingTemplateId = null;
         }
 
@@ -11764,6 +11802,7 @@ Solutions possibles :
 
                 document.getElementById('custom-popup').classList.add('active');
                 document.body.style.overflow = 'hidden';
+                document.documentElement.style.overflow = 'hidden';
                 updateIcons();
             });
         }
@@ -11771,6 +11810,7 @@ Solutions possibles :
         function closePopup(result) {
             document.getElementById('custom-popup').classList.remove('active');
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
             if (popupResolve) {
                 popupResolve(result);
                 popupResolve = null;
@@ -11858,11 +11898,13 @@ Solutions possibles :
                     popup.classList.remove('active');
                     cancelBtn.style.display = 'block'; // Restaurer pour les autres pop-ups
                     document.body.style.overflow = '';
+                    document.documentElement.style.overflow = '';
                     resolve(true);
                 };
 
                 popup.classList.add('active');
                 document.body.style.overflow = 'hidden';
+                document.documentElement.style.overflow = 'hidden';
                 setTimeout(() => {
                     updateIcons();
                 }, 0);
@@ -11887,6 +11929,7 @@ Solutions possibles :
                 promptEl.classList.add('active');
                 console.log('prompt classList:', promptEl.classList.toString());
                 document.body.style.overflow = 'hidden';
+                document.documentElement.style.overflow = 'hidden';
 
                 // Focus sur l'input
                 setTimeout(() => {
@@ -11898,6 +11941,7 @@ Solutions possibles :
         function closePrompt(result) {
             document.getElementById('custom-prompt').classList.remove('active');
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
             if (promptResolve) {
                 promptResolve(result);
                 promptResolve = null;
