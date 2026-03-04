@@ -4224,32 +4224,30 @@ Solutions possibles :
 
                 return `
                     <div class="food-item">
-                        <div class="food-item-content">
-                            <div class="food-item-main">
-                                <div class="food-item-actions">
-                                    <button class="action-btn delete-btn" onclick="removeFoodFromMeal('${mealType}', ${normalizedFood.id})" title="Supprimer">
-                                        <i data-lucide="trash-2"></i>
-                                    </button>
-                                    <button class="favorite-btn ${isFavorite(normalizedFood.name) ? 'active' : ''}"
-                                            onclick="event.stopPropagation(); toggleFavorite('${escapeJsString(normalizedFood.name)}')"
-                                            title="${isFavorite(normalizedFood.name) ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
-                                        ⭐
-                                    </button>
-                                </div>
-                                <div class="food-name">${getDisplayName(normalizedFood)}${verifiedBadge}</div>
-                                <span class="calories-badge">${calories} kcal</span>
+                        <div class="food-item-header">
+                            <div class="food-name">${getDisplayName(normalizedFood)}${verifiedBadge}</div>
+                            <span class="calories-badge">${calories} kcal</span>
+                        </div>
+                        <div class="food-item-footer">
+                            <div class="food-quantity">
+                                <input type="number" value="${normalizedFood.quantity}" min="1"
+                                       onchange="updateMealQuantity('${mealType}', ${normalizedFood.id}, this.value)">
+                                <span>g</span>
                             </div>
-                            <div class="food-item-details">
-                                <div class="food-quantity">
-                                    <input type="number" value="${normalizedFood.quantity}" min="1"
-                                           onchange="updateMealQuantity('${mealType}', ${normalizedFood.id}, this.value)">
-                                    <span>g</span>
-                                </div>
-                                <div class="food-macros">
-                                    <span class="macro-badge protein">${(normalizedFood.protein * multiplier).toFixed(1)}g P</span>
-                                    <span class="macro-badge carbs">${(normalizedFood.carbs * multiplier).toFixed(1)}g G</span>
-                                    <span class="macro-badge fat">${(normalizedFood.fat * multiplier).toFixed(1)}g L</span>
-                                </div>
+                            <div class="food-macros">
+                                <span class="macro-badge protein">${(normalizedFood.protein * multiplier).toFixed(1)}g P</span>
+                                <span class="macro-badge carbs">${(normalizedFood.carbs * multiplier).toFixed(1)}g G</span>
+                                <span class="macro-badge fat">${(normalizedFood.fat * multiplier).toFixed(1)}g L</span>
+                            </div>
+                            <div class="food-item-actions">
+                                <button class="favorite-btn ${isFavorite(normalizedFood.name) ? 'active' : ''}"
+                                        onclick="event.stopPropagation(); toggleFavorite('${escapeJsString(normalizedFood.name)}')"
+                                        title="${isFavorite(normalizedFood.name) ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
+                                    ⭐
+                                </button>
+                                <button class="action-btn delete-btn" onclick="removeFoodFromMeal('${mealType}', ${normalizedFood.id})" title="Supprimer">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
