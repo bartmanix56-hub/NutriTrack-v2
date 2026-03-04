@@ -1235,7 +1235,7 @@
 
             // iOS - pas de beforeinstallprompt
             if (isIOS) {
-                showToast('<i data-lucide="share" class="icon-inline"></i> Appuie sur Partager <i data-lucide="square-plus" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> puis "Sur l\'écran d\'accueil"', 6000);
+                showToast('<i data-lucide="share" class="icon-inline"></i> Appuie sur Partager <i data-lucide="square-plus" class="icon-16 icon-inline-text"></i> puis "Sur l\'écran d\'accueil"', 6000);
                 return;
             }
 
@@ -1486,7 +1486,7 @@
             if (goal === 'maintain') {
                 // Mode maintien : afficher la question de répartition
                 if (paceLabel) {
-                    paceLabel.innerHTML = '<i data-lucide="scale" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 4px;"></i>Quelle répartition préfères-tu ?';
+                    paceLabel.innerHTML = '<i data-lucide="scale" class="icon-16 icon-inline-text mr-xs"></i>Quelle répartition préfères-tu ?';
                     updateIcons();
                 }
                 if (paceDeficitBtns) paceDeficitBtns.style.display = 'none';
@@ -1504,7 +1504,7 @@
             } else {
                 // Mode sèche/prise : afficher la question de rythme
                 if (paceLabel) {
-                    paceLabel.innerHTML = '<i data-lucide="gauge" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 4px;"></i>Quel rythme souhaites-tu ?';
+                    paceLabel.innerHTML = '<i data-lucide="gauge" class="icon-16 icon-inline-text mr-xs"></i>Quel rythme souhaites-tu ?';
                     updateIcons();
                 }
                 if (paceDeficitBtns) paceDeficitBtns.style.display = 'grid';
@@ -1816,17 +1816,17 @@
                 // AFFICHER WARNING + DÉSACTIVER BOUTON
                 warningBox.style.display = 'block';
                 warningBox.innerHTML = `
-                    <div style="font-weight: 600; color: var(--accent-danger); margin-bottom: var(--space-sm);"><i data-lucide="alert-triangle" class="icon-inline"></i> Configuration impossible</div>
-                    <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                    <div class="error-config-title"><i data-lucide="alert-triangle" class="icon-inline"></i> Configuration impossible</div>
+                    <div class="error-config-text">
                         Avec ces réglages, ton objectif calorique ne peut pas être respecté.
                     </div>
-                    <div style="margin-top: var(--space-md); padding: var(--space-md); background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); font-size: 0.85rem;">
-                        <strong style="color: var(--text-primary);">Budget calorique :</strong> ${Math.round(targetCalories)} kcal<br>
-                        <strong style="color: var(--text-primary);">Protéines + Lipides :</strong> ${Math.round(usedCal)} kcal<br>
+                    <div class="info-box">
+                        <strong class="text-primary">Budget calorique :</strong> ${Math.round(targetCalories)} kcal<br>
+                        <strong class="text-primary">Protéines + Lipides :</strong> ${Math.round(usedCal)} kcal<br>
                         <strong style="color: ${carbs < 0 ? 'var(--accent-danger)' : 'var(--accent-fat)'};">Reste pour glucides :</strong> ${Math.round(remainingCal)} kcal ${carbs < 0 ? '(<i data-lucide="x-circle" class="icon-inline"></i> négatif)' : `(<i data-lucide="alert-triangle" class="icon-inline"></i> ${Math.round(carbs)}g - trop faible)`}
                     </div>
-                    <div style="margin-top: var(--space-md); font-size: 0.85rem; color: var(--text-secondary);">
-                        <strong style="color: var(--text-primary);">Solutions :</strong> Réduis ton déficit, tes protéines ou tes lipides.
+                    <div class="mt-md text-sm text-secondary">
+                        <strong class="text-primary">Solutions :</strong> Réduis ton déficit, tes protéines ou tes lipides.
                     </div>
                 `;
                 calculateBtn.disabled = true;
@@ -1857,7 +1857,7 @@
             // FEEDBACK VISUEL DU BOUTON (seulement si pas silencieux)
             const btn = document.getElementById('calculate-btn');
             if (btn && !silent) {
-                btn.innerHTML = '<i data-lucide="loader" style="width: 18px; height: 18px; animation: spin 1s linear infinite;"></i> Calcul en cours...';
+                btn.innerHTML = '<i data-lucide="loader" class="icon-18 spin"></i> Calcul en cours...';
                 updateIcons();
                 btn.disabled = true;
             }
@@ -1872,7 +1872,7 @@
             if (!birthDay || !birthMonth || !birthYear) {
                 showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Date de naissance manquante - Remplis jour, mois et année'); document.getElementById('birth-day')?.focus(); document.getElementById('birth-day')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
                 if (btn) {
-                    btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
+                    btn.innerHTML = '<i data-lucide="calculator" class="icon-18"></i> Calculer mes macros';
                     updateIcons();
                     btn.disabled = false;
                 }
@@ -1883,7 +1883,7 @@
             if (!gender) {
                 showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Sexe non sélectionné - Choisis Homme ou Femme'); document.getElementById('profile-gender')?.focus(); document.getElementById('profile-gender')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
                 if (btn) {
-                    btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
+                    btn.innerHTML = '<i data-lucide="calculator" class="icon-18"></i> Calculer mes macros';
                     updateIcons();
                     btn.disabled = false;
                 }
@@ -1894,7 +1894,7 @@
             if (!height || height <= 0) {
                 showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Taille manquante ou invalide - Entre ta taille en cm'); document.getElementById('height')?.focus(); document.getElementById('height')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
                 if (btn) {
-                    btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
+                    btn.innerHTML = '<i data-lucide="calculator" class="icon-18"></i> Calculer mes macros';
                     updateIcons();
                     btn.disabled = false;
                 }
@@ -1905,7 +1905,7 @@
             if (!weight || weight <= 0) {
                 showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Poids manquant ou invalide - Entre ton poids en kg'); document.getElementById('weight')?.focus(); document.getElementById('weight')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
                 if (btn) {
-                    btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
+                    btn.innerHTML = '<i data-lucide="calculator" class="icon-18"></i> Calculer mes macros';
                     updateIcons();
                     btn.disabled = false;
                 }
@@ -1916,7 +1916,7 @@
             if (!activity) {
                 showProfileAlert('<i data-lucide="x-circle" class="icon-inline"></i> Niveau d\'activité non sélectionné - Choisis ton niveau');
                 if (btn) {
-                    btn.innerHTML = '<i data-lucide="calculator" style="width: 18px; height: 18px;"></i> Calculer mes macros';
+                    btn.innerHTML = '<i data-lucide="calculator" class="icon-18"></i> Calculer mes macros';
                     updateIcons();
                     btn.disabled = false;
                 }
@@ -2287,10 +2287,10 @@ Solutions possibles :
 
             // FEEDBACK SUCCÈS DU BOUTON (seulement si pas silencieux)
             if (btn && !silent) {
-                btn.innerHTML = '<i data-lucide="check" style="width: 22px; height: 22px;"></i> Calcul effectué <i data-lucide="check-circle" class="icon-inline"></i>';
+                btn.innerHTML = '<i data-lucide="check" class="icon-22"></i> Calcul effectué <i data-lucide="check-circle" class="icon-inline"></i>';
                 updateIcons();
                 setTimeout(() => {
-                    btn.innerHTML = '<i data-lucide="calculator" style="width: 22px; height: 22px;"></i> Calculer mes Macros';
+                    btn.innerHTML = '<i data-lucide="calculator" class="icon-22"></i> Calculer mes Macros';
                     updateIcons();
                     btn.disabled = false;
                 }, 2000);
@@ -2477,11 +2477,11 @@ Solutions possibles :
                     overlay.className = 'section-disabled-overlay';
                     overlay.innerHTML = `
                         <div class="section-disabled-message">
-                            <h3><i data-lucide="lock" style="width: 24px; height: 24px;"></i> Section verrouillée</h3>
+                            <h3><i data-lucide="lock" class="icon-24"></i> Section verrouillée</h3>
                             <p>Cette section sera disponible après avoir calculé tes besoins nutritionnels.</p>
-                            <p style="margin-top: var(--space-md);">Va dans <strong>Calculateur</strong> pour commencer !</p>
-                            <button onclick="switchToTab('calculator')" class="btn" style="margin-top: var(--space-lg); background: var(--accent-ui); color: white;">
-                                <i data-lucide="calculator" style="width: 18px; height: 18px;"></i>
+                            <p class="mt-md">Va dans <strong>Calculateur</strong> pour commencer !</p>
+                            <button onclick="switchToTab('calculator')" class="btn" class="locked-section-btn">
+                                <i data-lucide="calculator" class="icon-18"></i>
                                 Aller au Calculateur
                             </button>
                         </div>
@@ -2496,11 +2496,11 @@ Solutions possibles :
                     overlay.className = 'section-disabled-overlay';
                     overlay.innerHTML = `
                         <div class="section-disabled-message">
-                            <h3><i data-lucide="lock" style="width: 24px; height: 24px;"></i> Section verrouillée</h3>
+                            <h3><i data-lucide="lock" class="icon-24"></i> Section verrouillée</h3>
                             <p>Cette section sera disponible après avoir calculé tes besoins nutritionnels.</p>
-                            <p style="margin-top: var(--space-md);">Va dans <strong>Calculateur</strong> pour commencer !</p>
-                            <button onclick="switchToTab('calculator')" class="btn" style="margin-top: var(--space-lg); background: var(--accent-ui); color: white;">
-                                <i data-lucide="calculator" style="width: 18px; height: 18px;"></i>
+                            <p class="mt-md">Va dans <strong>Calculateur</strong> pour commencer !</p>
+                            <button onclick="switchToTab('calculator')" class="btn" class="locked-section-btn">
+                                <i data-lucide="calculator" class="icon-18"></i>
                                 Aller au Calculateur
                             </button>
                         </div>
@@ -2696,9 +2696,9 @@ Solutions possibles :
                 modalSearchTimeout = setTimeout(async () => {
                     // Afficher le loading spinner
                     modalSearchResults.innerHTML = `
-                        <div style="text-align: center; padding: var(--space-xl); color: var(--text-secondary);">
-                            <i data-lucide="loader" class="spinner" style="width: 24px; height: 24px; margin: 0 auto;"></i>
-                            <p style="margin-top: var(--space-sm); font-size: 0.9rem; opacity: 0.7;">Recherche en cours...</p>
+                        <div class="loading-indicator">
+                            <i data-lucide="loader" class="spinner" class="icon-24 mx-auto"></i>
+                            <p class="loading-text">Recherche en cours...</p>
                         </div>
                     `;
                     modalSearchResults.style.display = 'block';
@@ -2775,17 +2775,17 @@ Solutions possibles :
             modalSearchResults.innerHTML = foods.map(food => {
                 const displayName = (typeof getDisplayName === 'function') ? getDisplayName(food) : food.name;
                 const isFav = isFavorite(food.name);
-                const verifiedBadge = food.verified ? ' <span style="display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 6px; font-size: 0.7rem; font-weight: 600;" title="Aliment vérifié">✅ Vérifié</span>' : '';
+                const verifiedBadge = food.verified ? ' <span class="verified-badge-inline" title="Aliment vérifié">✅ Vérifié</span>' : '';
                 return `
                 <div class="search-result-item" onclick='addFoodToMeal(${JSON.stringify(food).replace(/'/g, "&apos;")})'
-                     style="display: flex; align-items: center; gap: var(--space-sm); cursor: pointer;">
+                     class="flex items-center gap-sm cursor-pointer">
                     <button onclick="event.stopPropagation(); toggleFavorite('${escapeJsString(food.name)}')"
                             class="star-btn"
                             style="background: none; border: none; font-size: 1.3rem; cursor: pointer; padding: 0; line-height: 1; flex-shrink: 0; color: ${isFav ? 'inherit' : 'var(--text-secondary)'};"
                             title="${isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
                         ${isFav ? '⭐' : '☆'}
                     </button>
-                    <div style="flex: 1; min-width: 0;">
+                    <div class="flex-1 min-w-0">
                         <div class="search-result-name">${displayName}${verifiedBadge}</div>
                         <div class="search-result-macros">
                             P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
@@ -3011,9 +3011,9 @@ Solutions possibles :
                 // Afficher le loading spinner si des résultats locaux sont déjà affichés
                 if (dropdown && localFiltered.length > 0) {
                     const loadingIndicator = `
-                        <div style="padding: var(--space-sm); text-align: center; border-top: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.85rem;">
-                            <i data-lucide="loader" class="spinner" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i>
-                            <span style="margin-left: var(--space-xs); vertical-align: middle;">Recherche Cloud...</span>
+                        <div class="cloud-search-indicator">
+                            <i data-lucide="loader" class="spinner" class="icon-16 icon-inline-text"></i>
+                            <span class="ml-xs icon-inline-text">Recherche Cloud...</span>
                         </div>
                     `;
                     dropdown.innerHTML += loadingIndicator;
@@ -3086,8 +3086,8 @@ Solutions possibles :
             };
 
             let html = `
-                <div style="padding: var(--space-sm) var(--space-md); background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: var(--space-xs);">
-                    <i data-lucide="sparkles" style="width: 14px; height: 14px; color: var(--accent-main);"></i>
+                <div class="cloud-results-header">
+                    <i data-lucide="sparkles" class="icon-14" class="text-accent"></i>
                     <span>Suggestions pour ${mealNames[mealType] || 'ce repas'}</span>
                 </div>
             `;
@@ -3096,17 +3096,17 @@ Solutions possibles :
                 const isFav = isFavorite(food.name);
                 const displayName = (typeof getDisplayName === 'function') ? getDisplayName(food) : food.name;
                 return `
-                <div class="quick-add-item" onclick="quickAddFood('${currentQuickAddMealType}', ${JSON.stringify(food).replace(/"/g, '&quot;')})" style="display: flex; align-items: center; gap: var(--space-xs);">
+                <div class="quick-add-item" onclick="quickAddFood('${currentQuickAddMealType}', ${JSON.stringify(food).replace(/"/g, '&quot;')})" class="flex items-center gap-xs">
                     <button onclick="event.stopPropagation(); toggleFavorite('${escapeJsString(food.name)}')"
                             class="star-btn"
                             style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: var(--space-xs); line-height: 1; flex-shrink: 0; color: ${isFav ? 'inherit' : 'var(--text-secondary)'};"
                             title="${isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
                         ${isFav ? '⭐' : '☆'}
                     </button>
-                    <div style="flex: 1; min-width: 0;">
+                    <div class="flex-1 min-w-0">
                         <div class="quick-add-item-name">
                             ${displayName}
-                            ${food.verified ? ' <span style="color: #10b981; font-size: 0.9rem; cursor: help;" title="Aliment vérifié par un administrateur">✓</span>' : ''}
+                            ${food.verified ? ' <span class="verified-check" title="Aliment vérifié par un administrateur">✓</span>' : ''}
                         </div>
                         <div class="quick-add-item-macros">
                             P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
@@ -3133,17 +3133,17 @@ Solutions possibles :
                 const displayName = (typeof getDisplayName === 'function') ? getDisplayName(food) : food.name;
                 const isFav = isFavorite(food.name);
                 return `
-                <div class="quick-add-item" onclick="quickAddFood('${currentQuickAddMealType}', ${JSON.stringify(food).replace(/"/g, '&quot;')})" style="display: flex; align-items: center; gap: var(--space-xs);">
+                <div class="quick-add-item" onclick="quickAddFood('${currentQuickAddMealType}', ${JSON.stringify(food).replace(/"/g, '&quot;')})" class="flex items-center gap-xs">
                     <button onclick="event.stopPropagation(); toggleFavorite('${escapeJsString(food.name)}')"
                             class="star-btn"
                             style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: var(--space-xs); line-height: 1; flex-shrink: 0; color: ${isFav ? 'inherit' : 'var(--text-secondary)'};"
                             title="${isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
                         ${isFav ? '⭐' : '☆'}
                     </button>
-                    <div style="flex: 1; min-width: 0;">
+                    <div class="flex-1 min-w-0">
                         <div class="quick-add-item-name">
                             ${displayName}
-                            ${food.verified ? ' <span style="color: #10b981; font-size: 0.9rem; cursor: help;" title="Aliment vérifié par un administrateur">✓</span>' : ''}
+                            ${food.verified ? ' <span class="verified-check" title="Aliment vérifié par un administrateur">✓</span>' : ''}
                         </div>
                         <div class="quick-add-item-macros">
                             P: ${food.protein}g • G: ${food.carbs}g • L: ${food.fat}g • ${food.calories} kcal
@@ -3477,38 +3477,38 @@ Solutions possibles :
             modal.className = 'modal active';
             modal.id = 'calendar-modal';
             modal.innerHTML = `
-                <div class="modal-content" style="max-width: 650px;">
+                <div class="modal-content" class="modal-calendar">
                     <div class="modal-header">
-                        <h2 style="margin: 0; display: flex; align-items: center; gap: var(--space-sm);">
-                            <i data-lucide="calendar" style="width: 24px; height: 24px;"></i> Calendrier
+                        <h2 class="section-header-icon">
+                            <i data-lucide="calendar" class="icon-24"></i> Calendrier
                         </h2>
                         <button onclick="closeCalendarView()" class="modal-close">✕</button>
                     </div>
                     <div class="modal-body">
                         <!-- Légende -->
-                        <div style="display: flex; gap: var(--space-lg); margin-bottom: var(--space-lg); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-md); flex-wrap: wrap; justify-content: center;">
-                            <div style="display: flex; align-items: center; gap: var(--space-xs);">
-                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: var(--bg-secondary); border: 2px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 0.7rem;"></div>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Vide</span>
+                        <div class="calendar-legend">
+                            <div class="flex items-center gap-xs">
+                                <div class="calendar-legend-box calendar-legend-box--empty"></div>
+                                <span class="calendar-legend-text">Vide</span>
                             </div>
-                            <div style="display: flex; align-items: center; gap: var(--space-xs);">
-                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(239, 68, 68, 0.15); border: 2px solid rgba(239, 68, 68, 0.4); display: flex; align-items: center; justify-content: center; color: rgba(239, 68, 68, 0.85); font-size: 0.9rem; font-weight: bold;">✗</div>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Insuffisant</span>
+                            <div class="flex items-center gap-xs">
+                                <div class="calendar-legend-box calendar-legend-box--fail">✗</div>
+                                <span class="calendar-legend-text">Insuffisant</span>
                             </div>
-                            <div style="display: flex; align-items: center; gap: var(--space-xs);">
-                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(245, 158, 11, 0.15); border: 2px solid rgba(245, 158, 11, 0.4); display: flex; align-items: center; justify-content: center; color: rgba(245, 158, 11, 0.8); font-size: 0.9rem;">∼</div>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Presque bon (≥2 macros OK)</span>
+                            <div class="flex items-center gap-xs">
+                                <div class="calendar-legend-box calendar-legend-box--partial">∼</div>
+                                <span class="calendar-legend-text">Presque bon (≥2 macros OK)</span>
                             </div>
-                            <div style="display: flex; align-items: center; gap: var(--space-xs);">
-                                <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(16, 185, 129, 0.15); border: 2px solid var(--accent-main); display: flex; align-items: center; justify-content: center; color: var(--accent-main); font-size: 0.9rem;">✓</div>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary);">Objectif atteint</span>
+                            <div class="flex items-center gap-xs">
+                                <div class="calendar-legend-box calendar-legend-box--success">✓</div>
+                                <span class="calendar-legend-text">Objectif atteint</span>
                             </div>
                         </div>
 
                         <div class="calendar-container">
                             <div class="calendar-header">
                                 <button class="btn-ghost" onclick="changeCalendarMonth(-1)"><i data-lucide="chevron-left"></i></button>
-                                <h3 id="calendar-month-year" style="margin: 0; font-size: 1.3rem; font-weight: 700;"></h3>
+                                <h3 id="calendar-month-year" class="m-0 text-lg font-bold"></h3>
                                 <button class="btn-ghost" onclick="changeCalendarMonth(1)"><i data-lucide="chevron-right"></i></button>
                             </div>
                             <div id="calendar-content"></div>
@@ -4020,18 +4020,18 @@ Solutions possibles :
             banner.id = 'template-suggestion-banner';
             banner.className = 'template-suggestion-banner';
             banner.innerHTML = `
-                <div style="display: flex; align-items: center; gap: var(--space-md); flex: 1;">
-                    <i data-lucide="lightbulb" style="width: 24px; height: 24px; color: var(--accent-main); flex-shrink: 0;"></i>
+                <div class="flex items-center gap-md flex-1">
+                    <i data-lucide="lightbulb" class="icon-24 text-accent flex-shrink-0"></i>
                     <div>
-                        <div style="font-weight: 600; margin-bottom: var(--space-xs);">Tu manges souvent ce ${mealNames[recurrent.mealType]} !</div>
-                        <div style="font-size: 0.85rem; opacity: 0.8;">Tu l'as déjà mangé ${recurrent.count} fois. Veux-tu le sauvegarder comme repas type ?</div>
+                        <div class="font-semibold mb-xs">Tu manges souvent ce ${mealNames[recurrent.mealType]} !</div>
+                        <div class="text-sm opacity-80">Tu l'as déjà mangé ${recurrent.count} fois. Veux-tu le sauvegarder comme repas type ?</div>
                     </div>
                 </div>
-                <div style="display: flex; gap: var(--space-sm);">
-                    <button onclick="saveRecurrentAsTemplate('${recurrent.mealType}')" class="btn" style="padding: var(--space-sm) var(--space-lg);">
-                        <i data-lucide="save" style="width: 16px; height: 16px;"></i> Sauvegarder
+                <div class="flex gap-sm">
+                    <button onclick="saveRecurrentAsTemplate('${recurrent.mealType}')" class="btn" class="py-sm px-lg">
+                        <i data-lucide="save" class="icon-16"></i> Sauvegarder
                     </button>
-                    <button onclick="dismissTemplateSuggestion('${recurrent.mealType}')" class="btn-ghost" style="padding: var(--space-sm) var(--space-md);">
+                    <button onclick="dismissTemplateSuggestion('${recurrent.mealType}')" class="btn-ghost" class="py-sm px-md">
                         Plus tard
                     </button>
                 </div>
@@ -4096,7 +4096,7 @@ Solutions possibles :
             const recipeDiv = document.getElementById(`${mealType}-recipe`);
             if (recipeDiv)  { recipeDiv.style.display = 'none'; }
 
-            showToast('<i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette supprimée');
+            showToast('<i data-lucide="book-open" class="icon-16 icon-inline-text"></i> Recette supprimée');
         }
 
 
@@ -4131,7 +4131,7 @@ Solutions possibles :
             // Debounce le toast pour éviter le spam
             if (recipeDebounceTimer) clearTimeout(recipeDebounceTimer);
             recipeDebounceTimer = setTimeout(() => {
-                showToast('<i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette sauvegardée');
+                showToast('<i data-lucide="book-open" class="icon-16 icon-inline-text"></i> Recette sauvegardée');
             }, 1000);
         }
 
@@ -4193,10 +4193,10 @@ Solutions possibles :
                     dinner: 'dîner'
                 };
                 container.innerHTML = `
-                    <div style="text-align: center; padding: var(--space-2xl) var(--space-lg); color: var(--text-secondary);">
-                        <div style="margin-bottom: var(--space-md);"><i data-lucide="${mealIcons[mealType]}" style="width: 48px; height: 48px; opacity: 0.3;"></i></div>
-                        <p style="font-size: 0.95rem; margin: 0; opacity: 0.8;">Ton ${mealNames[mealType]} est vide</p>
-                        <p style="font-size: 0.85rem; margin-top: var(--space-xs); margin-bottom: 0; opacity: 0.6;">Ajoute des aliments pour commencer ✨</p>
+                    <div class="empty-state">
+                        <div class="mb-md"><i data-lucide="${mealIcons[mealType]}" class="empty-state-icon"></i></div>
+                        <p class="empty-state-title">Ton ${mealNames[mealType]} est vide</p>
+                        <p class="empty-state-subtitle">Ajoute des aliments pour commencer ✨</p>
                     </div>
                 `;
                 updateIcons();
@@ -4251,10 +4251,10 @@ Solutions possibles :
             }).join('');
 
             document.getElementById(`${mealType}-total`).innerHTML = `
-                <span style="color: var(--accent-protein);">${Math.round(mealProtein)}g</span> •
-                <span style="color: var(--accent-carbs);">${Math.round(mealCarbs)}g</span> •
-                <span style="color: var(--accent-fat);">${Math.round(mealFat)}g</span> •
-                <span style="color: var(--accent-ui);">${mealTotal} kcal</span>
+                <span class="text-protein">${Math.round(mealProtein)}g</span> •
+                <span class="text-carbs">${Math.round(mealCarbs)}g</span> •
+                <span class="text-fat">${Math.round(mealFat)}g</span> •
+                <span class="text-accent">${mealTotal} kcal</span>
             `;
 
             // Display recipe if exists - DESACTIVÉ TEMPORAIREMENT
@@ -4363,10 +4363,10 @@ Solutions possibles :
             });
 
             document.getElementById(`${mealType}-total`).innerHTML = `
-                <span style="color: var(--accent-protein);">${Math.round(mealProtein)}g</span> •
-                <span style="color: var(--accent-carbs);">${Math.round(mealCarbs)}g</span> •
-                <span style="color: var(--accent-fat);">${Math.round(mealFat)}g</span> •
-                <span style="color: var(--accent-ui);">${mealTotal} kcal</span>
+                <span class="text-protein">${Math.round(mealProtein)}g</span> •
+                <span class="text-carbs">${Math.round(mealCarbs)}g</span> •
+                <span class="text-fat">${Math.round(mealFat)}g</span> •
+                <span class="text-accent">${mealTotal} kcal</span>
             `;
         }
 
@@ -4409,12 +4409,12 @@ Solutions possibles :
             let badgeText = '';
 
             if (Math.abs(diff) <= 10)  { badgeClass = 'badge-green';
-                badgeText = '<i data-lucide="check-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Objectif atteint'; } else if (Math.abs(diff) <= 20) {
+                badgeText = '<i data-lucide="check-circle" class="icon-14" class="icon-inline-text"></i> Objectif atteint'; } else if (Math.abs(diff) <= 20) {
                 badgeClass = 'badge-orange';
-                badgeText = diff > 0 ? '<i data-lucide="arrow-up" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Un peu au-dessus' : '<i data-lucide="arrow-down" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Un peu en-dessous';
+                badgeText = diff > 0 ? '<i data-lucide="arrow-up" class="icon-14" class="icon-inline-text"></i> Un peu au-dessus' : '<i data-lucide="arrow-down" class="icon-14" class="icon-inline-text"></i> Un peu en-dessous';
             } else {
                 badgeClass = 'badge-red';
-                badgeText = diff > 0 ? '<i data-lucide="alert-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Trop' : '<i data-lucide="alert-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Pas assez';
+                badgeText = diff > 0 ? '<i data-lucide="alert-circle" class="icon-14" class="icon-inline-text"></i> Trop' : '<i data-lucide="alert-circle" class="icon-14" class="icon-inline-text"></i> Pas assez';
             }
 
             badgeHTML = `<span class="calorie-badge ${badgeClass}">${badgeText}</span>`;
@@ -4450,12 +4450,12 @@ Solutions possibles :
 
             // Tolérance 20% pour macros (vs 10% pour calories)
             if (Math.abs(diff) <= 20)  { badgeClass = 'badge-green';
-                badgeText = '<i data-lucide="check-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Objectif atteint'; } else if (Math.abs(diff) <= 35) {
+                badgeText = '<i data-lucide="check-circle" class="icon-14" class="icon-inline-text"></i> Objectif atteint'; } else if (Math.abs(diff) <= 35) {
                 badgeClass = 'badge-orange';
-                badgeText = diff > 0 ? '<i data-lucide="arrow-up" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Un peu au-dessus' : '<i data-lucide="arrow-down" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Un peu en-dessous';
+                badgeText = diff > 0 ? '<i data-lucide="arrow-up" class="icon-14" class="icon-inline-text"></i> Un peu au-dessus' : '<i data-lucide="arrow-down" class="icon-14" class="icon-inline-text"></i> Un peu en-dessous';
             } else {
                 badgeClass = 'badge-red';
-                badgeText = diff > 0 ? '<i data-lucide="alert-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Trop' : '<i data-lucide="alert-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Pas assez';
+                badgeText = diff > 0 ? '<i data-lucide="alert-circle" class="icon-14" class="icon-inline-text"></i> Trop' : '<i data-lucide="alert-circle" class="icon-14" class="icon-inline-text"></i> Pas assez';
             }
 
             const badgeHTML = `<span class="calorie-badge ${badgeClass}">${badgeText}</span>`;
@@ -4815,7 +4815,7 @@ Solutions possibles :
                 return;
             }
 
-            customConfirm('<i data-lucide="lock" style="width: 18px; height: 18px;"></i> Clôturer cette journée', '• Les repas seront enregistrés au planning\n• La journée sera verrouillée\n• Tu pourras la rouvrir si besoin\n\nContinuer ?').then((confirmed) =>  { if (!confirmed) return;
+            customConfirm('<i data-lucide="lock" class="icon-18"></i> Clôturer cette journée', '• Les repas seront enregistrés au planning\n• La journée sera verrouillée\n• Tu pourras la rouvrir si besoin\n\nContinuer ?').then((confirmed) =>  { if (!confirmed) return;
 
                 closeDay(dateKey); });
         }
@@ -4876,7 +4876,7 @@ Solutions possibles :
             const badge = document.getElementById('closed-day-badge');
 
             if (isClosed) {
-                btn.innerHTML = '<i data-lucide="lock-open" style="width: 18px; height: 18px;"></i><span id="close-day-text">Rouvrir cette journée</span>';
+                btn.innerHTML = '<i data-lucide="lock-open" class="icon-18"></i><span id="close-day-text">Rouvrir cette journée</span>';
                 updateIcons();
                 btn.style.background = '#d4a847';
                 btn.style.color = '#1a1a1a';
@@ -4891,7 +4891,7 @@ Solutions possibles :
                     btn.style.cursor = 'not-allowed';
                 });
             } else {
-                btn.innerHTML = '<i data-lucide="check-circle" style="width: 18px; height: 18px;"></i><span id="close-day-text">Clôturer cette journée</span>';
+                btn.innerHTML = '<i data-lucide="check-circle" class="icon-18"></i><span id="close-day-text">Clôturer cette journée</span>';
                 updateIcons();
                 btn.style.background = '#5b8dd9';
                 btn.style.color = 'white';
@@ -5730,21 +5730,21 @@ Solutions possibles :
                 return `
                     <div class="day-card">
                         <div class="day-name">${day}</div>
-                        <div class="day-date" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px;">
+                        <div class="day-date" class="text-secondary text-sm mb-md">
                             ${formatDate(date)}
                         </div>
                         <div class="day-meals">
                             <div class="day-meal-item">
-                                <div class="day-meal-label"><i data-lucide="coffee" style="width: 16px; height: 16px; display: inline; vertical-align: middle; color: var(--accent-fat);"></i> Petit-déjeuner</div>
+                                <div class="day-meal-label"><i data-lucide="coffee" class="icon-16 icon-inline-text text-fat"></i> Petit-déjeuner</div>
                                 <div class="day-meal-foods">${dayPlan.breakfast}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label"><i data-lucide="utensils" style="width: 16px; height: 16px; display: inline; vertical-align: middle; color: var(--accent-carbs);"></i> Déjeuner</div>
+                                <div class="day-meal-label"><i data-lucide="utensils" class="icon-16 icon-inline-text text-carbs"></i> Déjeuner</div>
                                 <div class="day-meal-foods">${dayPlan.lunch}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label"><i data-lucide="apple" style="width: 16px; height: 16px; display: inline; vertical-align: middle; color: var(--accent-ui);"></i> Goûter</div>
+                                <div class="day-meal-label"><i data-lucide="apple" class="icon-16 icon-inline-text text-ui"></i> Goûter</div>
                                 <div class="day-meal-foods">${dayPlan.snack}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label"><i data-lucide="moon" style="width: 16px; height: 16px; display: inline; vertical-align: middle; color: var(--accent-purple);"></i> Dîner</div>
+                                <div class="day-meal-label"><i data-lucide="moon" class="icon-16 icon-inline-text text-purple"></i> Dîner</div>
                                 <div class="day-meal-foods">${dayPlan.dinner}</div></div></div>
                         <div class="day-total-cal">${dayPlan.totalCal} kcal</div></div>
                 `;
@@ -5939,7 +5939,7 @@ Solutions possibles :
         }
 
         function renderFoodDatabase(foods = foodDatabase) {
-            const verifiedBadgeHtml = '<span style="color: #10b981; font-size: 1rem; cursor: help; margin-left: 4px;" title="Aliment vérifié par un administrateur">✓</span>';
+            const verifiedBadgeHtml = '<span class="verified-check ml-xs" title="Aliment vérifié par un administrateur">✓</span>';
 
             foodDatabaseContainer.innerHTML = foods.map(food => `
                 <div class="food-item">
@@ -5950,22 +5950,22 @@ Solutions possibles :
                     <div class="food-macros">
                         <span>
                             <div class="label">Prot</div>
-                            <div class="value" style="color: var(--accent-protein)">${food.protein}g</div>
+                            <div class="value" class="text-protein">${food.protein}g</div>
                         </span>
                         <span>
                             <div class="label">Glu</div>
-                            <div class="value" style="color: var(--accent-carbs)">${food.carbs}g</div>
+                            <div class="value" class="text-carbs">${food.carbs}g</div>
                         </span>
                         <span>
                             <div class="label">Lip</div>
-                            <div class="value" style="color: var(--accent-fat)">${food.fat}g</div>
+                            <div class="value" class="text-fat">${food.fat}g</div>
                         </span>
                         <span>
                             <div class="label">Cal</div>
                             <div class="value">${food.calories}</div>
                         </span>
                     </div>
-                    <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                    <div class="text-secondary text-sm">
                         pour ${food.unit}
                     </div></div>
             `).join('');
@@ -6173,7 +6173,7 @@ Solutions possibles :
 
         async function cleanDuplicateRecipes() {
             const confirmed = await customConfirm(
-                '<i data-lucide="sparkles" style="width: 18px; height: 18px;"></i> Nettoyer les recettes',
+                '<i data-lucide="sparkles" class="icon-18"></i> Nettoyer les recettes',
                 'Cette action va supprimer les recettes dupliquées par erreur sur plusieurs jours.\n\nContinuer ?',
                 false
             );
@@ -7038,12 +7038,12 @@ Solutions possibles :
                         message.style.background = 'rgba(16, 185, 129, 0.1)';
                         message.style.border = '1px solid rgba(16, 185, 129, 0.3)';
                         message.style.color = 'var(--accent-main)';
-                        message.innerHTML = '<i data-lucide="database" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> <strong>Produit trouvé dans la base communautaire</strong>';
+                        message.innerHTML = '<i data-lucide="database" class="icon-16 icon-inline-text"></i> <strong>Produit trouvé dans la base communautaire</strong>';
                     } else {
                         message.style.background = 'rgba(251, 191, 36, 0.1)';
                         message.style.border = '1px solid rgba(251, 191, 36, 0.3)';
                         message.style.color = '#fbbf24';
-                        message.innerHTML = '<i data-lucide="globe" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> <strong>Données d\'Open Food Facts</strong><br><span style="font-size: 0.85rem;">Vérifie les macros et <strong>choisis une catégorie</strong> avant de valider. En validant, ce produit sera ajouté à la base communautaire.</span>';
+                        message.innerHTML = '<i data-lucide="globe" class="icon-16 icon-inline-text"></i> <strong>Données d\'Open Food Facts</strong><br><span class="text-sm">Vérifie les macros et <strong>choisis une catégorie</strong> avant de valider. En validant, ce produit sera ajouté à la base communautaire.</span>';
                     }
 
                     modalBody.insertBefore(message, modalBody.firstChild);
@@ -7280,12 +7280,12 @@ Solutions possibles :
                     message.style.background = 'rgba(16, 185, 129, 0.1)';
                     message.style.border = '1px solid rgba(16, 185, 129, 0.3)';
                     message.style.color = 'var(--accent-main)';
-                    message.innerHTML = '<i data-lucide="database" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> <strong>Produit trouvé dans la base communautaire</strong>';
+                    message.innerHTML = '<i data-lucide="database" class="icon-16 icon-inline-text"></i> <strong>Produit trouvé dans la base communautaire</strong>';
                 } else {
                     message.style.background = 'rgba(251, 191, 36, 0.1)';
                     message.style.border = '1px solid rgba(251, 191, 36, 0.3)';
                     message.style.color = '#fbbf24';
-                    message.innerHTML = '<i data-lucide="globe" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> <strong>Données d\'Open Food Facts</strong><br><span style="font-size: 0.85rem;">Vérifie les macros et <strong>choisis une catégorie</strong> avant de valider.</span>';
+                    message.innerHTML = '<i data-lucide="globe" class="icon-16 icon-inline-text"></i> <strong>Données d\'Open Food Facts</strong><br><span class="text-sm">Vérifie les macros et <strong>choisis une catégorie</strong> avant de valider.</span>';
                 }
 
                 modalBody.insertBefore(message, modalBody.firstChild);
@@ -7470,9 +7470,9 @@ Solutions possibles :
                 scannerResult.style.display = 'block';
                 scannerResult.innerHTML = `
                     <div class="scanner-result-content">
-                        <i data-lucide="loader" class="spinner" style="width: 32px; height: 32px;"></i>
+                        <i data-lucide="loader" class="spinner" class="icon-32"></i>
                         <p>Recherche du produit...</p>
-                        <p style="font-size: 0.85rem; color: var(--text-secondary);">Code: ${decodedText}</p>
+                        <p class="calendar-legend-text">Code: ${decodedText}</p>
                     </div>
                 `;
                 updateIcons();
@@ -7559,7 +7559,7 @@ Solutions possibles :
                             message.style.background = 'rgba(251, 191, 36, 0.1)';
                             message.style.border = '1px solid rgba(251, 191, 36, 0.3)';
                             message.style.color = '#fbbf24';
-                            message.innerHTML = '🌐 <strong>Données Open Food Facts</strong><br><span style="font-size: 0.85rem;">Vérifie les macros et choisis une catégorie.</span>';
+                            message.innerHTML = '🌐 <strong>Données Open Food Facts</strong><br><span class="text-sm">Vérifie les macros et choisis une catégorie.</span>';
                         }
                         modalBody.insertBefore(message, modalBody.firstChild);
 
@@ -7706,8 +7706,8 @@ Solutions possibles :
                 if (container) {
                     container.innerHTML = `
                         <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
-                            <i data-lucide="loader" class="spinner" style="width: 32px; height: 32px; margin: 0 auto;"></i>
-                            <p style="margin-top: var(--space-md); font-size: 1rem; opacity: 0.8;">Recherche en cours...</p>
+                            <i data-lucide="loader" class="spinner" class="icon-32 mx-auto"></i>
+                            <p class="mt-md opacity-80">Recherche en cours...</p>
                         </div>
                     `;
                     updateIcons();
@@ -7863,22 +7863,22 @@ Solutions possibles :
                             const categoryLabels = { 'proteines': 'Protéines', 'feculents': 'Féculents', 'legumes': 'Légumes', 'fruits': 'Fruits', 'produits-laitiers': 'Laitages', 'matieres-grasses': 'Lipides', 'liquides': 'Liquides', 'autres': 'Autres' };
                             const catLabel = food.category ? (categoryLabels[food.category] || '') : '';
                             return `
-                                <div class="food-item" data-food-index="${globalIndex}" style="background: rgba(0, 0, 0, 0.2); display: flex; align-items: center; gap: var(--space-md);">
-                                    <div style="flex: 1; min-width: 0;">
-                                        <div style="display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap;">
-                                            <span style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">${escapeHtml(getDisplayName(food))}</span>
-                                            ${food.verified ? '<span style="color: #10b981; font-size: 0.9rem;" title="Vérifié">✓</span>' : ''}
-                                            ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; color: var(--accent-ui);"></i>' : ''}
+                                <div class="food-item" data-food-index="${globalIndex}" class="bg-dark-overlay flex items-center gap-md">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center gap-sm flex-wrap">
+                                            <span class="font-bold text-primary">${escapeHtml(getDisplayName(food))}</span>
+                                            ${food.verified ? '<span class="verified-check" title="Vérifié">✓</span>' : ''}
+                                            ${food.custom ? '<i data-lucide="sparkles" class="icon-14" class="text-ui"></i>' : ''}
                                         </div>
                                         <div style="display: flex; align-items: center; gap: var(--space-sm); margin-top: 4px; flex-wrap: wrap; font-size: 0.82rem; color: var(--text-secondary);">
-                                            ${catLabel ? `<span style="background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 99px; font-size: 0.72rem;">${catLabel}</span>` : ''}
+                                            ${catLabel ? `<span class="category-tag">${catLabel}</span>` : ''}
                                             <span><span style="color: var(--accent-protein); font-weight: 600;">${food.protein}g</span> P · <span style="color: var(--accent-carbs); font-weight: 600;">${food.carbs}g</span> G · <span style="color: var(--accent-fat); font-weight: 600;">${food.fat}g</span> L · <span style="font-weight: 600;">${food.calories}</span> kcal</span>
                                         </div>
                                     </div>
-                                    <div style="display: flex; gap: 4px; align-items: center; flex-shrink: 0;">
-                                        <button class="icon-btn" style="background: rgba(255, 230, 109, 0.2); border: 1px solid var(--accent-fat); width: 32px; height: 32px; padding: 0;" onclick="toggleFavorite('${escapeJsString(food.name)}')"><i data-lucide="star" style="width: 14px; height: 14px; fill: var(--accent-fat); color: var(--accent-fat);"></i></button>
-                                        ${food.custom ? `<button class="icon-btn" style="width: 32px; height: 32px; padding: 0;" onclick="editCustomFoodByName('${escapeJsString(food.name)}')"><i data-lucide="pencil" style="width: 14px; height: 14px;"></i></button>` : ''}
-                                        ${food.custom ? `<button class="delete-btn" style="width: 32px; height: 32px; padding: 0;" onclick="deleteCustomFood('${escapeJsString(food.name)}')"><i data-lucide="trash-2" style="width: 14px; height: 14px;"></i></button>` : ''}
+                                    <div class="flex items-center gap-xs flex-shrink-0">
+                                        <button class="icon-btn" style="background: rgba(255, 230, 109, 0.2); border: 1px solid var(--accent-fat); width: 32px; height: 32px; padding: 0;" onclick="toggleFavorite('${escapeJsString(food.name)}')"><i data-lucide="star" class="icon-14" style=" fill: var(--accent-fat); color: var(--accent-fat);"></i></button>
+                                        ${food.custom ? `<button class="icon-btn" class="icon-btn-square" onclick="editCustomFoodByName('${escapeJsString(food.name)}')"><i data-lucide="pencil" class="icon-14" ></i></button>` : ''}
+                                        ${food.custom ? `<button class="delete-btn" class="icon-btn-square" onclick="deleteCustomFood('${escapeJsString(food.name)}')"><i data-lucide="trash-2" class="icon-14" ></i></button>` : ''}
                                     </div>
                                 </div>
                             `;
@@ -7894,22 +7894,22 @@ Solutions possibles :
                     const categoryLabels = { 'proteines': 'Protéines', 'feculents': 'Féculents', 'legumes': 'Légumes', 'fruits': 'Fruits', 'produits-laitiers': 'Laitages', 'matieres-grasses': 'Lipides', 'liquides': 'Liquides', 'autres': 'Autres' };
                     const catLabel = food.category ? (categoryLabels[food.category] || '') : '';
                     return `
-                        <div class="food-item" data-food-index="${globalIndex}" style="display: flex; align-items: center; gap: var(--space-md);">
-                            <div style="flex: 1; min-width: 0;">
-                                <div style="display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap;">
-                                    <span style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">${escapeHtml(getDisplayName(food))}</span>
-                                    ${food.verified ? '<span style="color: #10b981; font-size: 0.9rem;" title="Vérifié">✓</span>' : ''}
-                                    ${food.custom ? '<i data-lucide="sparkles" style="width: 14px; height: 14px; color: var(--accent-ui);"></i>' : ''}
+                        <div class="food-item" data-food-index="${globalIndex}" class="flex items-center gap-md">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-sm flex-wrap">
+                                    <span class="font-bold text-primary">${escapeHtml(getDisplayName(food))}</span>
+                                    ${food.verified ? '<span class="verified-check" title="Vérifié">✓</span>' : ''}
+                                    ${food.custom ? '<i data-lucide="sparkles" class="icon-14" class="text-ui"></i>' : ''}
                                 </div>
                                 <div style="display: flex; align-items: center; gap: var(--space-sm); margin-top: 4px; flex-wrap: wrap; font-size: 0.82rem; color: var(--text-secondary);">
-                                    ${catLabel ? `<span style="background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 99px; font-size: 0.72rem;">${catLabel}</span>` : ''}
+                                    ${catLabel ? `<span class="category-tag">${catLabel}</span>` : ''}
                                     <span><span style="color: var(--accent-protein); font-weight: 600;">${food.protein}g</span> P · <span style="color: var(--accent-carbs); font-weight: 600;">${food.carbs}g</span> G · <span style="color: var(--accent-fat); font-weight: 600;">${food.fat}g</span> L · <span style="font-weight: 600;">${food.calories}</span> kcal</span>
                                 </div>
                             </div>
-                            <div style="display: flex; gap: 4px; align-items: center; flex-shrink: 0;">
-                                <button class="icon-btn" style="width: 32px; height: 32px; padding: 0;" onclick="toggleFavorite('${escapeJsString(food.name)}')"><i data-lucide="star" style="width: 14px; height: 14px;"></i></button>
-                                ${food.custom ? `<button class="icon-btn" style="width: 32px; height: 32px; padding: 0;" onclick="editCustomFoodByName('${escapeJsString(food.name)}')"><i data-lucide="pencil" style="width: 14px; height: 14px;"></i></button>` : ''}
-                                ${food.custom ? `<button class="delete-btn" style="width: 32px; height: 32px; padding: 0;" onclick="deleteCustomFood('${escapeJsString(food.name)}')"><i data-lucide="trash-2" style="width: 14px; height: 14px;"></i></button>` : ''}
+                            <div class="flex items-center gap-xs flex-shrink-0">
+                                <button class="icon-btn" class="icon-btn-square" onclick="toggleFavorite('${escapeJsString(food.name)}')"><i data-lucide="star" class="icon-14" ></i></button>
+                                ${food.custom ? `<button class="icon-btn" class="icon-btn-square" onclick="editCustomFoodByName('${escapeJsString(food.name)}')"><i data-lucide="pencil" class="icon-14" ></i></button>` : ''}
+                                ${food.custom ? `<button class="delete-btn" class="icon-btn-square" onclick="deleteCustomFood('${escapeJsString(food.name)}')"><i data-lucide="trash-2" class="icon-14" ></i></button>` : ''}
                             </div>
                         </div>
                     `;
@@ -8488,16 +8488,16 @@ Solutions possibles :
                         <div class="day-date">${formatDate(date)}</div>
                         <div class="day-meals">
                             <div class="day-meal-item">
-                                <div class="day-meal-label"><i data-lucide="coffee" style="width: 16px; height: 16px; display: inline; vertical-align: middle; color: var(--accent-fat);"></i> Petit-déjeuner</div>
+                                <div class="day-meal-label"><i data-lucide="coffee" class="icon-16 icon-inline-text text-fat"></i> Petit-déjeuner</div>
                                 <div class="day-meal-foods">${dayPlan.breakfast}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label"><i data-lucide="utensils" style="width: 16px; height: 16px; display: inline; vertical-align: middle; color: var(--accent-carbs);"></i> Déjeuner</div>
+                                <div class="day-meal-label"><i data-lucide="utensils" class="icon-16 icon-inline-text text-carbs"></i> Déjeuner</div>
                                 <div class="day-meal-foods">${dayPlan.lunch}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label"><i data-lucide="apple" style="width: 16px; height: 16px; display: inline; vertical-align: middle; color: var(--accent-ui);"></i> Goûter</div>
+                                <div class="day-meal-label"><i data-lucide="apple" class="icon-16 icon-inline-text text-ui"></i> Goûter</div>
                                 <div class="day-meal-foods">${dayPlan.snack}</div></div>
                             <div class="day-meal-item">
-                                <div class="day-meal-label"><i data-lucide="moon" style="width: 16px; height: 16px; display: inline; vertical-align: middle; color: var(--accent-purple);"></i> Dîner</div>
+                                <div class="day-meal-label"><i data-lucide="moon" class="icon-16 icon-inline-text text-purple"></i> Dîner</div>
                                 <div class="day-meal-foods">${dayPlan.dinner}</div></div></div>
                         <div class="day-total-cal">${dayPlan.totalCal} kcal</div></div>
                 `;
@@ -8902,9 +8902,9 @@ Solutions possibles :
                                 ${summaryMetrics.map(m => `<div class="tracking-compact-metric">${m}</div>`).join('')}
                             </div>
                             <div class="tracking-compact-actions">
-                                <button class="icon-btn" style="width: 32px; height: 32px; padding: 0;" onclick="event.stopPropagation(); editTracking('${entry.date}')"><i data-lucide="pencil" style="width: 14px; height: 14px;"></i></button>
-                                <button class="delete-btn" style="width: 32px; height: 32px; padding: 0;" onclick="event.stopPropagation(); deleteTracking('${entry.date}')"><i data-lucide="trash-2" style="width: 14px; height: 14px;"></i></button>
-                                <button class="tracking-compact-toggle" id="${entryId}-toggle"><i data-lucide="chevron-down" style="width: 16px; height: 16px;"></i></button>
+                                <button class="icon-btn" class="icon-btn-square" onclick="event.stopPropagation(); editTracking('${entry.date}')"><i data-lucide="pencil" class="icon-14" ></i></button>
+                                <button class="delete-btn" class="icon-btn-square" onclick="event.stopPropagation(); deleteTracking('${entry.date}')"><i data-lucide="trash-2" class="icon-14" ></i></button>
+                                <button class="tracking-compact-toggle" id="${entryId}-toggle"><i data-lucide="chevron-down" class="icon-16"></i></button>
                             </div>
                         </div>
                         <div class="tracking-compact-details" id="${entryId}-details">
@@ -8931,11 +8931,11 @@ Solutions possibles :
                 html += `
                     <div class="tracking-pagination">
                         <button class="tracking-pagination-btn" onclick="changeTrackingPage(-1)" ${trackingCurrentPage === 1 ? 'disabled' : ''}>
-                            <i data-lucide="chevron-left" style="width: 18px; height: 18px;"></i>
+                            <i data-lucide="chevron-left" class="icon-18"></i>
                         </button>
                         <span class="tracking-pagination-info">${trackingCurrentPage} / ${totalPages}</span>
                         <button class="tracking-pagination-btn" onclick="changeTrackingPage(1)" ${trackingCurrentPage === totalPages ? 'disabled' : ''}>
-                            <i data-lucide="chevron-right" style="width: 18px; height: 18px;"></i>
+                            <i data-lucide="chevron-right" class="icon-18"></i>
                         </button>
                     </div>
                 `;
@@ -9332,13 +9332,13 @@ Solutions possibles :
                                                 <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 8px;">
                                                     P: ${Math.round(totalP)}g • g: ${Math.round(totalG)}g • L: ${Math.round(totalL)}g • ${Math.round(totalCal)} kcal
                                                 </div></div>
-                                            <button class="delete-btn" onclick="event.stopPropagation(); deleteMealTemplate(${t.id})" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i></button>
+                                            <button class="delete-btn" onclick="event.stopPropagation(); deleteMealTemplate(${t.id})" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;"><i data-lucide="trash-2" class="icon-16"></i></button>
                                         </div>
                                         ${t.recipe ? `
                                             <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
                                                 <button onclick="event.stopPropagation(); toggleRecipe('recipe-${t.id}')"
                                                         style="background: none; border: none; color: var(--accent-carbs); font-size: 0.9rem; cursor: pointer; padding: 4px 0; font-weight: 600;">
-                                                    <i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Voir la recette ▼
+                                                    <i data-lucide="book-open" class="icon-16 icon-inline-text"></i> Voir la recette ▼
                                                 </button>
                                                 <div id="recipe-${t.id}" style="display: none; margin-top: 8px; padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-sm); border-left: 3px solid var(--accent-carbs); font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(t.recipe)}</div></div>
                                         ` : ''}
@@ -9368,10 +9368,10 @@ Solutions possibles :
             const btn = event.target;
             if (recipeDiv.style.display === 'none') {
                 recipeDiv.style.display = 'block';
-                btn.innerHTML = '<i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Masquer la recette ▲';
+                btn.innerHTML = '<i data-lucide="book-open" class="icon-16 icon-inline-text"></i> Masquer la recette ▲';
             } else {
                 recipeDiv.style.display = 'none';
-                btn.innerHTML = '<i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Voir la recette ▼';
+                btn.innerHTML = '<i data-lucide="book-open" class="icon-16 icon-inline-text"></i> Voir la recette ▼';
             }
             updateIcons();
         }
@@ -9896,10 +9896,10 @@ Solutions possibles :
         // Show template selection modal
         function showTemplateSelectionModal(mealType, templates) {
             const variantIcons = {
-                'vegan': '<i data-lucide="leaf" style="width: 16px; height: 16px;"></i>',
-                'glutenFree': '<i data-lucide="wheat-off" style="width: 16px; height: 16px;"></i>',
-                'vegetarian': '<i data-lucide="salad" style="width: 16px; height: 16px;"></i>',
-                'lowCarb': '<i data-lucide="trending-down" style="width: 16px; height: 16px;"></i>'
+                'vegan': '<i data-lucide="leaf" class="icon-16"></i>',
+                'glutenFree': '<i data-lucide="wheat-off" class="icon-16"></i>',
+                'vegetarian': '<i data-lucide="salad" class="icon-16"></i>',
+                'lowCarb': '<i data-lucide="trending-down" class="icon-16"></i>'
             };
 
             const templatesHtml = templates.map((template, index) => {
@@ -9914,7 +9914,7 @@ Solutions possibles :
                         </div>
                         <div style="flex: 1;">
                             <div style="font-weight: 600; font-size: 1rem; margin-bottom: 4px;">${template.displayName}</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">${template.variant || 'Standard'}</div>
+                            <div class="calendar-legend-text">${template.variant || 'Standard'}</div>
                         </div>
                         <i data-lucide="chevron-right" style="width: 20px; height: 20px; color: var(--text-secondary);"></i>
                     </button>
@@ -9990,9 +9990,9 @@ Solutions possibles :
 
             // Generate variant badge if applicable
             const variantBadges = {
-                'vegan': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;"><i data-lucide="leaf" style="width: 14px; height: 14px;"></i> Vegan</span>',
-                'glutenFree': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;"><i data-lucide="wheat-off" style="width: 14px; height: 14px;"></i> Sans gluten</span>',
-                'vegetarian': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;"><i data-lucide="salad" style="width: 14px; height: 14px;"></i> Végétarien</span>'
+                'vegan': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;"><i data-lucide="leaf" class="icon-14" ></i> Vegan</span>',
+                'glutenFree': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;"><i data-lucide="wheat-off" class="icon-14" ></i> Sans gluten</span>',
+                'vegetarian': '<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;"><i data-lucide="salad" class="icon-14" ></i> Végétarien</span>'
             };
             const variantBadge = result.variant && variantBadges[result.variant] ? variantBadges[result.variant] : '';
 
@@ -10031,7 +10031,7 @@ Solutions possibles :
                             <!-- Composition - Plus compact -->
                             <div style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md);">
                                 <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: var(--space-sm); color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
-                                    <i data-lucide="utensils" style="width: 14px; height: 14px;"></i>
+                                    <i data-lucide="utensils" class="icon-14" ></i>
                                     Composition
                                 </div>
                                 ${result.foods.map(food => `
@@ -10045,7 +10045,7 @@ Solutions possibles :
                             ${result.recipe ? `
                                 <details style="background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md);">
                                     <summary style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                                        <i data-lucide="book-open" style="width: 14px; height: 14px;"></i>
+                                        <i data-lucide="book-open" class="icon-14" ></i>
                                         Recette
                                     </summary>
                                     <div style="color: var(--text-secondary); line-height: 1.5; white-space: pre-line; font-size: 0.85rem; margin-top: var(--space-sm);">
@@ -10059,7 +10059,7 @@ Solutions possibles :
                                     Annuler
                                 </button>
                                 <button class="btn" onclick="applySmartMeal('${mealType}')" style="background: var(--accent-main); display: flex; align-items: center; justify-content: center; gap: 6px; padding: var(--space-sm);">
-                                    <i data-lucide="check" style="width: 16px; height: 16px;"></i>
+                                    <i data-lucide="check" class="icon-16"></i>
                                     Charger
                                 </button>
                             </div>
@@ -10206,18 +10206,18 @@ Solutions possibles :
                 return `
                     <div class="food-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-md); background: var(--bg-secondary); border-radius: var(--radius-md); margin-bottom: var(--space-sm); gap: var(--space-md);">
                         <div style="flex: 1;">
-                            <div style="font-weight: 600; margin-bottom: var(--space-xs);">${escapeHtml(food.name)}</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                            <div class="font-semibold mb-xs">${escapeHtml(food.name)}</div>
+                            <div class="calendar-legend-text">
                                 P: ${protein}g • g: ${carbs}g • L: ${fat}g • ${calories} kcal
                             </div></div>
-                        <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                        <div class="flex items-center gap-sm">
                             <input type="number" value="${food.quantity}" min="1"
                                    onchange="updateTemplateFoodQuantity(${food.id}, this.value)"
                                    style="width: 70px; padding: var(--space-xs); background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: var(--text-primary); text-align: center;">
-                            <span style="color: var(--text-secondary); font-size: 0.9rem;">g</span>
+                            <span class="text-secondary text-sm">g</span>
                         </div>
                         <button class="delete-btn" onclick="removeTemplateFood(${food.id})" style="padding: var(--space-sm);">
-                            <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
+                            <i data-lucide="trash-2" class="icon-18"></i>
                         </button>
                     </div>
                 `;
@@ -10638,10 +10638,10 @@ Solutions possibles :
                             <!-- Action Buttons -->
                             <div style="display: flex; gap: var(--space-xs);">
                                 <button class="icon-btn" onclick="editMealTemplate(${template.id})" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;">
-                                    <i data-lucide="pencil" style="width: 16px; height: 16px;"></i>
+                                    <i data-lucide="pencil" class="icon-16"></i>
                                 </button>
                                 <button class="delete-btn" onclick="deleteMealTemplateFromPage(${template.id})" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;">
-                                    <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                                    <i data-lucide="trash-2" class="icon-16"></i>
                                 </button>
                             </div></div>
 
@@ -10649,7 +10649,7 @@ Solutions possibles :
                         <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-md);">
                             <button onclick="openTemplateToMealModal(${template.id})"
                                     style="flex: 1; padding: var(--space-sm) var(--space-md); background: var(--accent-ui); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: var(--space-sm);">
-                                <i data-lucide="calendar-plus" style="width: 16px; height: 16px;"></i>
+                                <i data-lucide="calendar-plus" class="icon-16"></i>
                                 <span>Ajouter au journal</span>
                             </button>
                             <button onclick="toggleTemplateDetails('template-details-${template.id}')"
@@ -10664,12 +10664,12 @@ Solutions possibles :
 
                             ${template.recipe ? `
                                 <div style="padding: var(--space-md); background: var(--bg-tertiary); border-radius: 0 0 var(--radius-md) var(--radius-md); margin-bottom: var(--space-md);">
-                                    <div style="font-size: 0.85rem; color: var(--accent-carbs); font-weight: 600; margin-bottom: var(--space-xs);"><i data-lucide="book-open" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Recette</div>
+                                    <div style="font-size: 0.85rem; color: var(--accent-carbs); font-weight: 600; margin-bottom: var(--space-xs);"><i data-lucide="book-open" class="icon-16 icon-inline-text"></i> Recette</div>
                                     <div style="color: var(--text-primary); font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(template.recipe)}</div></div>
                             ` : ''}
 
                             <!-- Foods List -->
-                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: var(--space-sm); font-weight: 600;"><i data-lucide="utensils" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i> Aliments (${template.foods.length})</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: var(--space-sm); font-weight: 600;"><i data-lucide="utensils" class="icon-16 icon-inline-text"></i> Aliments (${template.foods.length})</div>
                             <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
                                 ${template.foods.map(food => {
                                     const protein = Math.round((food.protein * food.quantity) / 100);
@@ -10935,7 +10935,7 @@ Solutions possibles :
                 return; }
 
             const confirmed = await customConfirm(
-                '<i data-lucide="trash-2" style="width: 18px; height: 18px;"></i> Vider ce repas',
+                '<i data-lucide="trash-2" class="icon-18"></i> Vider ce repas',
                 `Supprimer tous les aliments du ${mealNames[mealType]} ?\n\nCette action ne peut pas être annulée.`,
                 true
             );
@@ -11274,7 +11274,7 @@ Solutions possibles :
                 else if (hour < 18) greeting = '👋';
                 else greeting = '🌙';
 
-                displayEl.innerHTML = `<span>${greeting}</span><span>Salut, <strong style="color: var(--text-primary);">${username}</strong> !</span>`;
+                displayEl.innerHTML = `<span>${greeting}</span><span>Salut, <strong class="text-primary">${username}</strong> !</span>`;
             }
         }
 
@@ -11523,7 +11523,7 @@ Solutions possibles :
                             </div>
                             ${e.notes ? `<div style="margin-top: 10px; color: var(--text-secondary); font-style: italic;">📝 ${escapeHtml(e.notes)}</div>` : ''}
                         </div>
-                        <button class="delete-btn" onclick="deleteAdvancedTracking('${e.date}')"><i data-lucide="trash-2" style="width: 18px; height: 18px;"></i></button>
+                        <button class="delete-btn" onclick="deleteAdvancedTracking('${e.date}')"><i data-lucide="trash-2" class="icon-18"></i></button>
                     </div></div>
             `).join('');
             
@@ -12051,7 +12051,7 @@ Solutions possibles :
                         </div>
                         <div>
                             <button type="button" onclick="removeAdminTemplateFood(${index})" class="delete-btn" title="Supprimer">
-                                <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
+                                <i data-lucide="trash-2" class="icon-18"></i>
                             </button>
                         </div>
                     </div>
@@ -12085,17 +12085,17 @@ Solutions possibles :
             container.innerHTML = `
                 <div style="background: var(--bg-secondary); padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid rgba(56, 189, 248, 0.3);">
                     <div style="font-size: 0.9rem; font-weight: 600; color: var(--accent-main); margin-bottom: var(--space-sm); display: flex; align-items: center; gap: var(--space-xs);">
-                        <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
+                        <i data-lucide="check-circle" class="icon-16"></i>
                         Aliments déjà ajoutés (${selectedFoods.length})
                     </div>
                     <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
                         ${selectedFoods.map((food, index) => `
                             <div style="display: inline-flex; align-items: center; gap: var(--space-xs); background: var(--bg-tertiary); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.85rem;">
-                                <span style="color: var(--text-primary);">${food.foodName}</span>
+                                <span class="text-primary">${food.foodName}</span>
                                 <button type="button" onclick="removeTemplateFoodFromModal(${index})"
                                         style="background: none; border: none; color: var(--accent-danger); cursor: pointer; padding: 0; display: flex; align-items: center;"
                                         title="Retirer">
-                                    <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+                                    <i data-lucide="x" class="icon-14" ></i>
                                 </button>
                             </div>
                         `).join('')}
@@ -12130,7 +12130,7 @@ Solutions possibles :
 
             if (!foods || foods.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; padding: var(--space-xl); color: var(--text-secondary);">
+                    <div class="loading-indicator">
                         Aucun aliment trouvé
                     </div>
                 `;
@@ -12147,7 +12147,7 @@ Solutions possibles :
             // OPTIMIZATION: Event delegation instead of inline onclick (1 handler vs 30)
             container.innerHTML = sortedFoods.map(food => {
                 const verifiedBadge = food.verified
-                    ? ' <span style="color: #10b981; font-size: 0.85rem;" title="Aliment vérifié">✓</span>'
+                    ? ' <span class="verified-check" title="Aliment vérifié">✓</span>'
                     : '';
 
                 return `
@@ -12175,7 +12175,7 @@ Solutions possibles :
             // Afficher un message si la recherche est vide ou trop courte
             if (!query || query.trim().length < 2) {
                 container.innerHTML = `
-                    <div style="text-align: center; padding: var(--space-xl); color: var(--text-secondary);">
+                    <div class="loading-indicator">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto var(--space-md); opacity: 0.5; display: block;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                         <p style="font-size: 1.1rem; margin-bottom: var(--space-xs);">Recherchez un aliment</p>
                         <p style="font-size: 0.9rem; opacity: 0.7;">Tapez au moins 2 caractères pour afficher les résultats</p>
@@ -12291,7 +12291,7 @@ Solutions possibles :
                         <!-- Footer avec bouton Terminé -->
                         <div class="modal-footer" style="padding: var(--space-md); border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
                             <button type="button" onclick="closeFoodSelectionModal()" class="btn" style="background: var(--accent-main); color: white; display: flex; align-items: center; gap: var(--space-xs);">
-                                <i data-lucide="check" style="width: 16px; height: 16px;"></i>
+                                <i data-lucide="check" class="icon-16"></i>
                                 Terminé
                             </button>
                         </div>
@@ -12312,7 +12312,7 @@ Solutions possibles :
             const container = document.getElementById('food-selection-list');
             if (container) {
                 container.innerHTML = `
-                    <div style="text-align: center; padding: var(--space-xl); color: var(--text-secondary);">
+                    <div class="loading-indicator">
                         <i data-lucide="search" style="width: 48px; height: 48px; margin: 0 auto var(--space-md); opacity: 0.5;"></i>
                         <p style="font-size: 1.1rem; margin-bottom: var(--space-xs);">Recherchez un aliment</p>
                         <p style="font-size: 0.9rem; opacity: 0.7;">Tapez au moins 2 caractères pour afficher les résultats</p>
@@ -12691,11 +12691,11 @@ Solutions possibles :
             if (goal === 'maintain') {
                 if (paceDeficit) paceDeficit.style.display = 'none';
                 if (paceMaintain) paceMaintain.style.display = 'grid';
-                if (paceLabel) paceLabel.innerHTML = '<i data-lucide="scale" style="width: 18px; height: 18px;"></i> Quelle répartition ?';
+                if (paceLabel) paceLabel.innerHTML = '<i data-lucide="scale" class="icon-18"></i> Quelle répartition ?';
             } else {
                 if (paceDeficit) paceDeficit.style.display = 'grid';
                 if (paceMaintain) paceMaintain.style.display = 'none';
-                if (paceLabel) paceLabel.innerHTML = '<i data-lucide="gauge" style="width: 18px; height: 18px;"></i> Quel rythme ?';
+                if (paceLabel) paceLabel.innerHTML = '<i data-lucide="gauge" class="icon-18"></i> Quel rythme ?';
             }
             // Update lucide icons
             if (typeof updateIcons === 'function') updateIcons();
