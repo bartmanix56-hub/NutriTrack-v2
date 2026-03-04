@@ -4229,15 +4229,17 @@ Solutions possibles :
                             <span class="calories-badge">${calories} kcal</span>
                         </div>
                         <div class="food-item-footer">
-                            <div class="food-quantity">
-                                <input type="number" value="${normalizedFood.quantity}" min="1"
-                                       onchange="updateMealQuantity('${mealType}', ${normalizedFood.id}, this.value)">
-                                <span>g</span>
-                            </div>
-                            <div class="food-macros">
-                                <span class="macro-badge protein">${(normalizedFood.protein * multiplier).toFixed(1)}g P</span>
-                                <span class="macro-badge carbs">${(normalizedFood.carbs * multiplier).toFixed(1)}g G</span>
-                                <span class="macro-badge fat">${(normalizedFood.fat * multiplier).toFixed(1)}g L</span>
+                            <div class="food-left-group">
+                                <div class="food-quantity">
+                                    <input type="number" value="${normalizedFood.quantity}" min="1"
+                                           onchange="updateMealQuantity('${mealType}', ${normalizedFood.id}, this.value)">
+                                    <span>g</span>
+                                </div>
+                                <div class="food-macros">
+                                    <span class="macro-badge protein">${(normalizedFood.protein * multiplier).toFixed(1)}g P</span>
+                                    <span class="macro-badge carbs">${(normalizedFood.carbs * multiplier).toFixed(1)}g G</span>
+                                    <span class="macro-badge fat">${(normalizedFood.fat * multiplier).toFixed(1)}g L</span>
+                                </div>
                             </div>
                             <div class="food-item-actions">
                                 <button class="favorite-btn ${isFavorite(normalizedFood.name) ? 'active' : ''}"
