@@ -634,11 +634,13 @@
         }
 
         /* === STRUCTURE FOOD-ITEM DANS MEALS - LAYOUT PREMIUM === */
+        /* === DESKTOP FOOD ITEM - SINGLE ROW LAYOUT === */
+        /* Layout: [Trash] [Favorite] [Name] [Quantity] [P] [G] [L] [kcal] */
         #meals .food-item {
             display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            gap: var(--space-sm);
+            flex-direction: row;
+            align-items: center;
+            gap: var(--space-md);
             padding: var(--space-md) var(--space-lg);
             background: var(--bg-tertiary);
             border-radius: var(--radius-lg);
@@ -658,12 +660,12 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
-        /* === HEADER: Nom (gauche) + Calories (droite) === */
-        #meals .food-item-header {
+        /* Actions (Trash + Favorite) - first on desktop */
+        #meals .food-item-actions {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            width: 100%;
+            gap: 4px;
+            flex-shrink: 0;
         }
 
         #meals .food-item .food-name {
@@ -671,36 +673,18 @@
             font-size: 0.95rem;
             color: var(--text-primary);
             line-height: 1.3;
-        }
-
-        #meals .food-item .calories-badge {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: var(--accent-main);
-            padding: 4px 10px;
-            background: rgba(16, 185, 129, 0.12);
-            border-radius: var(--radius-full);
-        }
-
-        /* === FOOTER: [Quantité + Macros] gauche | [Actions] droite === */
-        #meals .food-item-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-        }
-
-        /* Groupe gauche */
-        #meals .food-item .food-left-group {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         #meals .food-item .food-quantity {
             display: flex;
             align-items: center;
             gap: 4px;
+            flex-shrink: 0;
         }
 
         #meals .food-item .food-quantity input {
@@ -729,6 +713,7 @@
         #meals .food-item .food-macros {
             display: flex;
             gap: 4px;
+            flex-shrink: 0;
         }
 
         #meals .food-item .food-macros .macro-badge {
@@ -753,31 +738,14 @@
             background: rgba(251, 191, 36, 0.15);
         }
 
-        /* Actions à droite */
-        #meals .food-item-actions {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        #meals .food-item .favorite-btn {
-            width: 28px;
-            height: 28px;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 0.8rem;
-            opacity: 0.4;
-            transition: opacity 0.15s ease;
-        }
-
-        #meals .food-item .favorite-btn:hover,
-        #meals .food-item .favorite-btn.active {
-            opacity: 1;
+        #meals .food-item .calories-badge {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--accent-main);
+            padding: 4px 10px;
+            background: rgba(16, 185, 129, 0.12);
+            border-radius: var(--radius-full);
+            flex-shrink: 0;
         }
 
         #meals .food-item .action-btn {
@@ -807,16 +775,15 @@
             height: 16px;
         }
 
-        /* Bouton favori - toujours visible */
         #meals .food-item .favorite-btn {
-            width: 32px;
-            height: 32px;
-            min-width: 32px;
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
             border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.9rem;
             transition: all 0.15s ease;
             display: flex;
             align-items: center;
@@ -7086,30 +7053,38 @@ button.loading::after {
         padding: var(--space-md) var(--space-lg) !important;
     }
 
-    /* === FOOD ITEMS MOBILE - LAYOUT PREMIUM === */
+    /* === FOOD ITEMS MOBILE - TWO ROW LAYOUT === */
+    /* Row 1: Name + Calories | Row 2: Quantity + Macros + Actions */
     #meals .food-item {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
         padding: var(--space-md) !important;
         gap: var(--space-sm) !important;
         border-radius: var(--radius-md) !important;
     }
 
-    #meals .food-item-header {
-        gap: var(--space-sm) !important;
-    }
-
+    /* Name takes most space, calories at the end of first row */
     #meals .food-item .food-name {
         font-size: 0.9rem !important;
-        flex: 1 !important;
+        flex: 1 1 auto !important;
+        order: 1 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }
 
     #meals .food-item .calories-badge {
         font-size: 0.85rem !important;
         padding: 4px 10px !important;
+        order: 2 !important;
+        flex-shrink: 0 !important;
     }
 
-    #meals .food-item-footer {
-        gap: var(--space-sm) !important;
-        flex-wrap: wrap !important;
+    /* Force second row */
+    #meals .food-item .food-quantity {
+        order: 3 !important;
+        flex-shrink: 0 !important;
     }
 
     #meals .food-item .food-quantity input {
@@ -7119,7 +7094,9 @@ button.loading::after {
     }
 
     #meals .food-item .food-macros {
+        order: 4 !important;
         gap: 4px !important;
+        flex-shrink: 0 !important;
     }
 
     #meals .food-item .food-macros .macro-badge {
@@ -7127,11 +7104,13 @@ button.loading::after {
         font-size: 0.7rem !important;
     }
 
-    /* === BOUTONS ACTIONS - TOUJOURS VISIBLES SUR MOBILE === */
+    /* Actions at the end of second row */
     #meals .food-item-actions {
         display: flex !important;
         gap: var(--space-xs) !important;
         margin-left: auto !important;
+        order: 5 !important;
+        flex-shrink: 0 !important;
     }
 
     #meals .food-item .action-btn,
