@@ -3,103 +3,130 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ===== FONCTIONS HELPER =====
+    // Helper function to check if user is admin
+    // NOTE: Update this UID if you change the admin user
+    function isAdmin() {
+      return request.auth != null &&
+             request.auth.uid == 'qEuqSbWO73OwTEwL6LhEILS5djD2';
+    }
 
-    // Vérifier si l'utilisateur est authentifié
+    // Helper function to check if user is authenticated
     function isAuthenticated() {
       return request.auth != null;
     }
 
-    // Vérifier si l'utilisateur accède ses propres données
-    function isOwner(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
-    }
-
-    // Vérifier si l'utilisateur est admin
-    function isAdmin() {
-      return isAuthenticated() &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-
-    // Vérifier la taille des données
-    function isValidSize() {
-      return request.resource.data.size() < 50;
-    }
-
-    // ===== USERS =====
-    match /users/{userId} {
-      // L'utilisateur peut lire/écrire ses propres données
-      // Les admins peuvent lire toutes les données utilisateur
-      allow read: if isOwner(userId) || isAdmin();
-      allow create: if isOwner(userId);
-      allow update: if isOwner(userId) || isAdmin();
-      allow delete: if isAdmin();
-
-      // Sous-collections utilisateur
-      match /profile/{document=**} {
-        allow read, write: if isOwner(userId);
-      }
-
-      match /meals/{date} {
-        allow read, write: if isOwner(userId);
-      }
-
-      match /tracking/{date} {
-        allow read, write: if isOwner(userId);
-      }
-
-      match /customFoods/{foodId} {
-        allow read, write: if isOwner(userId);
-      }
-
-      match /mealTemplates/{templateId} {
-        allow read, write: if isOwner(userId);
-      }
-
-      match /settings/{document=**} {
-        allow read, write: if isOwner(userId);
-      }
-
-      match /userData/{document=**} {
-        allow read, write: if isOwner(userId);
-      }
-    }
-
-    // ===== ALIMENTS COMMUNS =====
-    match /aliments_communs/{barcode} {
-      // Lecture publique pour les utilisateurs authentifiés
-      allow read: if isAuthenticated();
-      // Écriture réservée aux admins
-      allow write: if isAdmin();
-    }
-
-    // ===== SMART TEMPLATES =====
+    // ===== SMART TEMPLATES COLLECTION =====
+    // Collection publique en lecture, admin seulement en écriture
     match /smartTemplates/{templateId} {
-      // Lecture publique pour templates actifs
-      allow read: if isAuthenticated() &&
-        (resource == null || resource.data.active == true || isAdmin());
-      // Écriture réservée aux admins
-      allow write: if isAdmin();
+      // Les admins peuvent tout lire (actifs et inactifs)
+      allow read: if isAdmin();
+
+      // Tout le monde peut lire les templates actifs (pour le client)
+      allow read: if resource.data.active == true;
+
+      // Seuls les admins peuvent créer, modifier ou supprimer
+      allow create, update, delete: if isAdmin();
     }
 
-    // ===== FEEDBACKS =====
-    match /feedbacks/{feedbackId} {
-      // Les utilisateurs authentifiés peuvent créer des feedbacks
+    // ===== USERS COLLECTION =====
+    match /users/{userId} {
+      // ANCIEN FORMAT (compatibilité pendant migration)
+      // Les utilisateurs peuvent lire et écrire leurs propres données
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+
+      // Les admins peuvent tout lire et modifier
+      allow read, update: if isAdmin();
+
+      // Les admins peuvent désactiver des comptes (soft delete)
+      allow update: if isAdmin() &&
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['disabled', 'disabledAt']);
+
+      // ===== NOUVELLE ARCHITECTURE - SOUS-COLLECTIONS =====
+
+      // Profile (poids, taille, âge, genre, etc.)
+      match /profile/{profileId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+        allow read: if isAdmin();
+      }
+
+      // Settings (macroTargets, calcSettings, etc.)
+      match /settings/{settingId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+        allow read: if isAdmin();
+      }
+
+      // Meals (un document par jour - YYYY-MM-DD)
+      match /meals/{date} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+        allow read: if isAdmin();
+      }
+
+      // Tracking (poids, composition corporelle par date)
+      match /tracking/{date} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+        allow read: if isAdmin();
+      }
+
+      // Custom Foods (aliments personnalisés)
+      match /customFoods/{foodId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+        allow read: if isAdmin();
+      }
+
+      // Meal Templates (templates perso de l'utilisateur)
+      match /mealTemplates/{templateId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+        allow read: if isAdmin();
+      }
+
+      // Metadata (info sync, version, etc.)
+      match /metadata/{metaId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+        allow read: if isAdmin();
+      }
+
+      // UserData (weeklyPlan, favoriteFoods, closedDays, foodAliases)
+      match /userData/{dataId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+        allow read: if isAdmin();
+      }
+    }
+
+    // ===== COMMON FOODS DATABASE =====
+    match /aliments_communs/{alimentId} {
+      // Tout le monde peut lire
+      allow read: if true;
+
+      // Seuls les utilisateurs authentifiés peuvent créer
       allow create: if isAuthenticated();
-      // Seuls les admins peuvent lire, modifier, supprimer
-      allow read, update, delete: if isAdmin();
+
+      // Seuls les admins peuvent modifier ou supprimer
+      allow update, delete: if isAdmin();
     }
 
     // ===== ADMIN LOGS =====
     match /admin_logs/{logId} {
-      // Seuls les admins peuvent accéder aux logs
+      // Seuls les admins peuvent lire et écrire
       allow read, write: if isAdmin();
     }
 
-    // ===== RÈGLE PAR DÉFAUT =====
-    // Refuser tout ce qui n'est pas explicitement autorisé
+    // ===== FEEDBACKS COLLECTION =====
+    match /feedbacks/{feedbackId} {
+      // Les utilisateurs peuvent créer des feedbacks
+      allow create: if isAuthenticated();
+
+      // Les utilisateurs peuvent lire leurs propres feedbacks
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+
+      // Les admins peuvent tout lire et modifier
+      allow read, update: if isAdmin();
+    }
+
+    // ===== DEFAULT DENY =====
+    // Toute autre collection est interdite par défaut
     match /{document=**} {
       allow read, write: if false;
     }
+
   }
 }
