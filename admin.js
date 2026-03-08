@@ -27,6 +27,7 @@ const { getMessaging, getToken, onMessage } = await import('https://www.gstatic.
 // Import DataService
 const { default: DataService } = await import('./DataService.js');
 
+// Configuration Firebase centralisée (voir firebase-config.js pour référence)
 const firebaseConfig = {
     apiKey: "AIzaSyBkxISTONDblC5MoRQYhaz9IusWg4GNIuY",
     authDomain: "nutritraack.firebaseapp.com",

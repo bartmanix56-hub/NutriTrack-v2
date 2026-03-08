@@ -6,7 +6,8 @@ const NOTIFICATION_TAG = 'nutritrack-reminder';
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
 
-// Configuration Firebase (même config que l'app)
+// Configuration Firebase centralisée (voir firebase-config.js pour référence)
+// Note: Les Service Workers ne peuvent pas utiliser import ES6, la config est inline
 firebase.initializeApp({
     apiKey: "AIzaSyBkxISTONDblC5MoRQYhaz9IusWg4GNIuY",
     authDomain: "nutritraack.firebaseapp.com",

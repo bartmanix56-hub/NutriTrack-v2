@@ -1,0 +1,105 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===== FONCTIONS HELPER =====
+
+    // Vérifier si l'utilisateur est authentifié
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Vérifier si l'utilisateur accède ses propres données
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Vérifier si l'utilisateur est admin
+    function isAdmin() {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Vérifier la taille des données
+    function isValidSize() {
+      return request.resource.data.size() < 50;
+    }
+
+    // ===== USERS =====
+    match /users/{userId} {
+      // L'utilisateur peut lire/écrire ses propres données
+      // Les admins peuvent lire toutes les données utilisateur
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+
+      // Sous-collections utilisateur
+      match /profile/{document=**} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /meals/{date} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /tracking/{date} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /customFoods/{foodId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /mealTemplates/{templateId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /settings/{document=**} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /userData/{document=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // ===== ALIMENTS COMMUNS =====
+    match /aliments_communs/{barcode} {
+      // Lecture publique pour les utilisateurs authentifiés
+      allow read: if isAuthenticated();
+      // Écriture réservée aux admins
+      allow write: if isAdmin();
+    }
+
+    // ===== SMART TEMPLATES =====
+    match /smartTemplates/{templateId} {
+      // Lecture publique pour templates actifs
+      allow read: if isAuthenticated() &&
+        (resource == null || resource.data.active == true || isAdmin());
+      // Écriture réservée aux admins
+      allow write: if isAdmin();
+    }
+
+    // ===== FEEDBACKS =====
+    match /feedbacks/{feedbackId} {
+      // Les utilisateurs authentifiés peuvent créer des feedbacks
+      allow create: if isAuthenticated();
+      // Seuls les admins peuvent lire, modifier, supprimer
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ===== ADMIN LOGS =====
+    match /admin_logs/{logId} {
+      // Seuls les admins peuvent accéder aux logs
+      allow read, write: if isAdmin();
+    }
+
+    // ===== RÈGLE PAR DÉFAUT =====
+    // Refuser tout ce qui n'est pas explicitement autorisé
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
